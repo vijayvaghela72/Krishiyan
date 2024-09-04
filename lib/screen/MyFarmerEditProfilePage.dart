@@ -24,7 +24,7 @@ class MyFarmerEditProfilePage extends StatefulWidget {
       geoLocationLeaseFarm,
       pincode,
       state,
-      district, bankName, accountName, accountNumber, ifscCode, panNumber, aadhaarNumber, dealerNumber;
+      district,village, bankName, accountName, accountNumber, ifscCode, panNumber, aadhaarNumber, dealerNumber;
 
   String? farmerName, farmerWhatsappNumber;
 
@@ -40,6 +40,7 @@ class MyFarmerEditProfilePage extends StatefulWidget {
       this.pincode,
       this.state,
       this.district,
+        this.village,
       this.farmerName,
       this.farmerWhatsappNumber, this.bankName, this.accountName, this.dealerNumber,
         this.accountNumber, this.ifscCode, this.panNumber, this.aadhaarNumber});
@@ -56,6 +57,7 @@ class _MyFarmerEditProfilePageState extends State<MyFarmerEditProfilePage> {
   TextEditingController goeLocationLeasedController = TextEditingController();
   TextEditingController pincodeController = TextEditingController();
   TextEditingController addressController = TextEditingController();
+  TextEditingController villageController = TextEditingController();
   TextEditingController bankNameController = TextEditingController();
   TextEditingController accountNameController = TextEditingController();
   TextEditingController accountNumberController = TextEditingController();
@@ -88,6 +90,7 @@ class _MyFarmerEditProfilePageState extends State<MyFarmerEditProfilePage> {
     goeLocationLeasedController.text = widget.geoLocationLeaseFarm ?? "";
     // pincodeController.text = widget.pincode ?? "";
     addressController.text = widget.address ?? "";
+    villageController.text = widget.village ?? "";
     bankNameController.text = widget.bankName ?? "";
     accountNameController.text = widget.accountName ?? "";
     accountNumberController.text = widget.accountNumber ?? "";
@@ -603,6 +606,56 @@ class _MyFarmerEditProfilePageState extends State<MyFarmerEditProfilePage> {
             //     controller: districtController,
             //   ),
             // ),
+            const SizedBox(
+              height: 20,
+            ),
+
+            // village
+            Padding(
+              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+              child: Text(
+                buildTranslate("village")!,
+                style: const TextStyle(
+                    fontSize: 15,
+                    color: Color(0xFF666666),
+                    fontFamily: 'poppins-semibold'),
+              ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+              child: TextFormField(
+                decoration: InputDecoration(
+                    alignLabelWithHint: true,
+                    fillColor: Colors.white,
+                    filled: true,
+                    border: const OutlineInputBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(10.0),
+                      ),
+                    ),
+                    enabledBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.white,
+                        width: 1.0,
+                      ),
+                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                        vertical: 10.0, horizontal: 10.0),
+                    hintText: buildTranslate("village")!,
+                    hintStyle: const TextStyle(color: Color(0xFFe7e7e7)),
+                    focusedBorder: const OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                      borderSide: BorderSide(color: Colors.white, width: 0.5),
+                    )),
+                validator: (value) =>
+                    value!.isEmpty ? buildTranslate('enterVillage') : null,
+                controller: villageController,
+              ),
+            ),
             const SizedBox(
               height: 20,
             ),

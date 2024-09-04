@@ -6,14 +6,13 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
+import 'package:krishiyan/mvc/model/FarmerDashboardData.dart';
 import 'package:krishiyan/mvc/model/InsightData.dart';
 import 'package:krishiyan/screen/MyFarmerEditProfilePage.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../helper/AlertHelper.dart';
-import '../helper/SharedPref.dart';
 import '../localization/AppLocalizations.dart';
-import '../mvc/controller/SearchByInsightController.dart';
 import '../mvc/controller/farmerDashboardController.dart';
 import '../mvc/model/SelectCropNamesData.dart';
 import '../mvc/model/SelectVillagesNameData.dart';
@@ -23,7 +22,6 @@ import 'MyBottomCenterEnquiryPage.dart';
 import 'MyBottomOnePage.dart';
 import 'MyBottomThreePage.dart';
 import 'MyCropCultivationPage.dart';
-import 'MyDrawer.dart';
 import 'MyFarmerProfile.dart';
 import 'MyProfilePage.dart';
 import 'MySelectLanguagePage.dart';
@@ -31,8 +29,9 @@ import 'package:intl/intl.dart';
 
 class MyBottomTwoPage extends StatefulWidget {
   bool aapbarVisibility;
+  String? villageName, typeName;
 
-  MyBottomTwoPage({super.key, required this.aapbarVisibility});
+  MyBottomTwoPage({super.key, required this.aapbarVisibility, this.villageName, this.typeName});
 
   @override
   State<MyBottomTwoPage> createState() => _MyBottomTwoPageState();
@@ -106,7 +105,6 @@ class _MyBottomTwoPageState extends State<MyBottomTwoPage>
   String? selectedSortItemsValue;
 
   var farmerDashboardList;
-  List<dynamic> farmerItem = [];
 
   TextEditingController searchByNaneController = TextEditingController();
   TextEditingController nameController = TextEditingController();
@@ -129,68 +127,33 @@ class _MyBottomTwoPageState extends State<MyBottomTwoPage>
   String number = "";
 
   Future<InsightDetails?>? futureSearchInsightDetails;
+  String dealerNumberData = "";
+
+  late Future<List<FarmerDashboard>> futureFarmerProfiles;
+  String _searchText = '';
 
   @override
   void initState() {
     super.initState();
-    getDashboardApi();
     _fetchCropData();
     _fetchFarmerNameData();
     _fetchVillageData();
+    futureFarmerProfiles = FarmerDashboardController.fetchFarmerDashboard(context, widget.villageName, widget.typeName);
   }
 
-  Future<void> _fetchFarmerNameData() async {
-    try {
-      String? number = await AppGlobal.getStringPreference('dealerNumber');
-      var num = number ?? "1";
-      var response = await Dio().get(FARMER_NAME+num);
+  // onTextChanged function to call the API
+  void _onSearchTextChanged(String text) {
+    setState(() {
+      _searchText = text;
+    });
 
-      if (response.statusCode == 200) {
-        dropdownItems =
-            response.data['data'].map<DropdownMenuItem<String>>((item) {
-              return DropdownMenuItem<String>(
-                value: item['name'],
-                child: Text(item['name']),
-              );
-            }).toList();
-      } else {
-        throw Exception('Failed to load farmers name');
-      }
-    } catch (e) {
-      print('Error fetching farmer name data: $e');
-    }
-  }
-
-  Future<void> _fetchVillageData() async {
-    try {
-      // Replace with your actual API endpoint
-      var response = await Dio().get(VILLAGES_NAMES);
-
-      if (response.statusCode == 200) {
-        setState(() {
-          _villageNameData = SelectVillagesNameData.fromJson(response.data);
-        });
-      } else {
-        throw Exception('Failed to load villages');
-      }
-    } catch (e) {
-      print('Error fetching _village name data: $e');
-    }
-  }
-
-  Future<void> _fetchCropData() async {
-    try {
-      var response = await Dio().get(CROPS_NAMES);
-
-      if (response.statusCode == 200) {
-        setState(() {
-          _cropData = SelectCropNamesData.fromJson(response.data);
-        });
-      } else {
-        throw Exception('Failed to load crops');
-      }
-    } catch (e) {
-      print('Error fetching crop data: $e');
+    if (_searchText.isNotEmpty) {
+      // _fetchData(_searchText);
+      futureFarmerProfiles = FarmerDashboardController.fetchSearchFarmerDashboard(context, _searchText);
+    } else {
+      setState(() {
+        futureFarmerProfiles = FarmerDashboardController.fetchFarmerDashboard(context, widget.villageName, widget.typeName);
+      });
     }
   }
 
@@ -329,8 +292,18 @@ class _MyBottomTwoPageState extends State<MyBottomTwoPage>
                             child: Padding(
                               padding: const EdgeInsets.only(left: 20.0),
                               child: TextFormField(
+                                maxLength: 10,
+                                keyboardType: TextInputType.number,
+                                inputFormatters: <TextInputFormatter>[
+                                  FilteringTextInputFormatter.allow(RegExp('[0-9]')),
+                                  //To remove first '0'
+                                  FilteringTextInputFormatter.deny(RegExp(r'^0+')),
+                                  //To remove first '94' or your country code
+                                  FilteringTextInputFormatter.deny(RegExp(r'^94+')),
+                                ],
                                 decoration: InputDecoration(
-                                  alignLabelWithHint: true,
+                                  // alignLabelWithHint: true,
+                                  counterText: '', // This hides the "1/10" counter label
                                   fillColor: Colors.white,
                                   filled: true,
                                   border: const OutlineInputBorder(
@@ -355,6 +328,7 @@ class _MyBottomTwoPageState extends State<MyBottomTwoPage>
                                     ? 'Please, fill this field.'
                                     : null,
                                 controller: searchByNaneController,
+                                onChanged: _onSearchTextChanged,
                               ),
                             )),
                       ],
@@ -396,549 +370,556 @@ class _MyBottomTwoPageState extends State<MyBottomTwoPage>
                     ],
                   ),
                 ),
-                ListView.builder(
-                    itemCount: farmerItem.length,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      print("farmerItem[index] : ${index}");
-                      final dealerNumber = farmerItem[index]['dealerNumber'];
-                      final name = farmerItem[index]['name'];
-                      final address = farmerItem[index]['address'];
-                      final whatsappNumber =
-                      farmerItem[index]['whatsappNumber'];
-                      final geoLocationOwnedFarm =
-                      farmerItem[index]['geoLocationOwnedFarm'];
-                      final totalOwnedFarm =
-                      farmerItem[index]['totalOwnedFarm'].toString();
-                      final totalLeaseFarm =
-                      farmerItem[index]['totalLeaseFarm'].toString();
-                      final geoLocationLeaseFarm =
-                      farmerItem[index]['geoLocationLeaseFarm'];
-                      final pincode = farmerItem[index]['pincode'];
-                      final state = farmerItem[index]['state'];
-                      final district = farmerItem[index]['district'];
-                      final bankName = farmerItem[index]['bankName'];
-                      final accountName =
-                      farmerItem[index]['accountName'];
-                      final accountNumber =
-                      farmerItem[index]['accountNumber'];
-                      final ifscCode = farmerItem[index]['ifscCode'];
-                      final panNumber = farmerItem[index]['pan'];
-                      final aadhaarNumber =
-                      farmerItem[index]['aadhaarNumber'];
+                FutureBuilder<List<FarmerDashboard>>(
+                future: futureFarmerProfiles,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return const Center(child: Text('No data available'));
+                    // return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (snapshot.hasData) {
+                    List<FarmerDashboard> farmers = snapshot.data!;
+                    return ListView.builder(
+                        itemCount: snapshot.data!.length,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          final dealerNumber = farmers[index].dealerNumber ?? "";
+                          final name = farmers[index].name ?? "";
+                          final address = farmers[index].address ?? "";
+                          final whatsappNumber = farmers[index].whatsappNumber ?? "";
+                          final geoLocationOwnedFarm = farmers[index].geoLocationOwnedFarm ?? "";
+                          final totalOwnedFarm = farmers[index].totalOwnedFarm.toString();
+                          final totalLeaseFarm = farmers[index].totalLeaseFarm.toString();
+                          final geoLocationLeaseFarm = farmers[index].geoLocationLeaseFarm ?? "";
+                          final pincode = farmers[index].pincode ??"";
+                          final state = farmers[index].state ?? "";
+                          final village = farmers[index].village ?? "";
+                          final district = farmers[index].district ?? "";
+                          final bankName = farmers[index].bankName ?? "";
+                          final accountName = farmers[index].accountName ?? "";
+                          final accountNumber = farmers[index].accountNumber ?? "";
+                          final ifscCode = farmers[index].ifscCode ?? "";
+                          final panNumber = farmers[index].pan ?? "";
+                          final aadhaarNumber = farmers[index].aadhaarNumber ?? "";
 
-                      return
-                        // user card
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              top: 10.0, right: 20.0, left: 20.0),
-                          child: Container(
-                            decoration: const BoxDecoration(
-                                color: Color(0xFFe7e7e7),
-                                borderRadius:
-                                BorderRadius.all(Radius.circular(12))),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 10.0, right: 15.0, left: 15.0),
-                                  child: Row(
-                                    children: <Widget>[
-                                      Container(
-                                        height: 50.0,
-                                        width: 50.0,
-                                        decoration: const BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            image: DecorationImage(
-                                                image: AssetImage(
-                                                    "assets/images/profile_image.png"),
-                                                fit: BoxFit.cover)),
-                                      ),
-                                      const SizedBox(
-                                        width: 15,
-                                      ),
-                                      Flexible(
-                                        child: Column(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              name ?? "",
-                                              softWrap: true,
-                                              style: const TextStyle(
-                                                  color: Color(0xFF808080),
-                                                  fontSize: 15,
-                                                  fontFamily:
-                                                  'poppins-semibold'),
-                                            ),
-                                            Text(
-                                              address ?? "",
-                                              softWrap: true,
-                                              style: const TextStyle(
-                                                  color: Color(0xFF959595),
-                                                  fontSize: 11,
-                                                  fontFamily:
-                                                  'poppins-semibold'),
-                                            ),
-                                            Text(
-                                              whatsappNumber ?? "",
-                                              softWrap: true,
-                                              style: const TextStyle(
-                                                  color: Color(0xFF959595),
-                                                  fontSize: 11,
-                                                  fontFamily:
-                                                  'poppins-semibold'),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 20.0,
-                                      right: 20.0,
-                                      top: 8.0,
-                                      bottom: 12.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.start,
-                                    children: [
-                                      Expanded(
-                                          child: InkWell(
-                                            highlightColor: Colors.transparent,
-                                            splashColor: Colors.transparent,
-                                            onTap: () {
-                                              setState(() {
-                                                if (firstCardVisibleValue == index) {
-                                                  firstCardVisibleValue = null; // Deselect if tapped again
-                                                } else {
-                                                  firstCardVisibleValue = index; // Select the item
-                                                }
-                                              });
-                                            },
-                                            child: Row(
+                          return
+                            // user card
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  top: 10.0, right: 20.0, left: 20.0),
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                    color: Color(0xFFe7e7e7),
+                                    borderRadius:
+                                    BorderRadius.all(Radius.circular(12))),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          top: 10.0, right: 15.0, left: 15.0),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Container(
+                                            height: 50.0,
+                                            width: 50.0,
+                                            decoration: const BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                image: DecorationImage(
+                                                    image: AssetImage(
+                                                        "assets/images/profile_image.png"),
+                                                    fit: BoxFit.cover)),
+                                          ),
+                                          const SizedBox(
+                                            width: 15,
+                                          ),
+                                          Flexible(
+                                            child: Column(
+                                              mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                               children: [
                                                 Text(
-                                                  buildTranslate(
-                                                      "showCropData")!,
+                                                  name ?? "",
                                                   softWrap: true,
                                                   style: const TextStyle(
-                                                    color: Color(0XFF008000),
-                                                    fontSize: 15,
-                                                    fontFamily:
-                                                    'poppins-semibold',
-                                                    decoration: TextDecoration
-                                                        .underline,
-                                                    decorationColor:
-                                                    Color(0XFF008000),
-                                                  ),
+                                                      color: Color(0xFF808080),
+                                                      fontSize: 15,
+                                                      fontFamily:
+                                                      'poppins-semibold'),
                                                 ),
-                                                Image.asset(
-                                                    'assets/images/dropdown_arrow.png'),
+                                                Text(
+                                                  address ?? "",
+                                                  softWrap: true,
+                                                  style: const TextStyle(
+                                                      color: Color(0xFF959595),
+                                                      fontSize: 11,
+                                                      fontFamily:
+                                                      'poppins-semibold'),
+                                                ),
+                                                Text(
+                                                  whatsappNumber ?? "",
+                                                  softWrap: true,
+                                                  style: const TextStyle(
+                                                      color: Color(0xFF959595),
+                                                      fontSize: 11,
+                                                      fontFamily:
+                                                      'poppins-semibold'),
+                                                ),
                                               ],
                                             ),
-                                          )),
-                                      const VerticalDivider(width: 1.0),
-                                      Expanded(
-                                          child: Align(
-                                            alignment: Alignment.centerRight,
-                                            child: InkWell(
-                                              highlightColor:
-                                              Colors.transparent,
-                                              splashColor: Colors.transparent,
-                                              onTap: () {
-                                                Navigator.of(context).push(
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          MyFarmerEditProfilePage(
-                                                              dealerNumber : dealerNumber,
-                                                              name: name,
-                                                              address: address,
-                                                              whatsappNumber: whatsappNumber,
-                                                              geoLocationOwnedFarm: geoLocationOwnedFarm,
-                                                              totalOwnedFarm : totalOwnedFarm,
-                                                              totalLeaseFarm: totalLeaseFarm,
-                                                              geoLocationLeaseFarm: geoLocationLeaseFarm,
-                                                              pincode: pincode,
-                                                              state: state,
-                                                              district: district,
-                                                              bankName: bankName,
-                                                              accountName: accountName,
-                                                              accountNumber : accountNumber,
-                                                              ifscCode: ifscCode,
-                                                              panNumber: panNumber,
-                                                              aadhaarNumber : aadhaarNumber)),
-                                                );
-                                              },
-                                              child: Text(
-                                                buildTranslate("editProfile")!,
-                                                softWrap: true,
-                                                style: const TextStyle(
-                                                  color: Color(0XFF008000),
-                                                  fontSize: 15,
-                                                  fontFamily:
-                                                  'poppins-semibold',
-                                                  decoration:
-                                                  TextDecoration.underline,
-                                                  decorationColor:
-                                                  Color(0XFF008000),
-                                                ),
-                                              ),
-                                            ),
-                                          )),
-                                    ],
-                                  ),
-                                ),
-                                firstCardVisibleValue == index ? Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 20.0,
-                                      right: 20.0,
-                                      top: 20.0,
-                                      bottom: 12.0),
-                                  child: Text(
-                                    buildTranslate("cropCultivations")!,
-                                    softWrap: true,
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 17,
-                                      fontFamily: 'poppins-semibold',
-                                      decorationColor: Color(0XFF008000),
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                ) : Container(),
-                                firstCardVisibleValue == index  ? Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 25.0,
-                                      right: 15.0,
-                                      bottom: 12.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.start,
-                                    children: [
-                                      const Expanded(
-                                          child: Row(
-                                            children: [
-                                              Text(
-                                                "1:Maze",
-                                                softWrap: true,
-                                                style: TextStyle(
-                                                  color: Colors.grey,
-                                                  fontSize: 15,
-                                                  fontFamily:
-                                                  'poppins-semibold',
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 20.0,
+                                          right: 20.0,
+                                          top: 8.0,
+                                          bottom: 12.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                        children: [
+                                          Expanded(
+                                              child: InkWell(
+                                                highlightColor: Colors.transparent,
+                                                splashColor: Colors.transparent,
+                                                onTap: () {
+                                                  setState(() {
+                                                    if (firstCardVisibleValue == index) {
+                                                      firstCardVisibleValue = null; // Deselect if tapped again
+                                                    } else {
+                                                      firstCardVisibleValue = index; // Select the item
+                                                    }
+                                                  });
+                                                },
+                                                child: Row(
+                                                  children: [
+                                                    Text(
+                                                      buildTranslate(
+                                                          "showCropData")!,
+                                                      softWrap: true,
+                                                      style: const TextStyle(
+                                                        color: Color(0XFF008000),
+                                                        fontSize: 15,
+                                                        fontFamily:
+                                                        'poppins-semibold',
+                                                        decoration: TextDecoration
+                                                            .underline,
+                                                        decorationColor:
+                                                        Color(0XFF008000),
+                                                      ),
+                                                    ),
+                                                    Image.asset(
+                                                        'assets/images/dropdown_arrow.png'),
+                                                  ],
                                                 ),
-                                              ),
-                                              SizedBox(
-                                                width: 20,
-                                              ),
-                                              Text(
-                                                "Stage: \nFlowering",
-                                                softWrap: true,
-                                                style: TextStyle(
-                                                  color: Colors.grey,
-                                                  fontSize: 15,
-                                                  fontFamily:
-                                                  'poppins-semibold',
-                                                ),
-                                              ),
-                                            ],
-                                          )),
-                                      const VerticalDivider(width: 1.0),
-                                      Expanded(
-                                          child: Align(
-                                            alignment: Alignment.centerRight,
-                                            child: InkWell(
-                                              onTap: () {
-                                                Navigator.of(context).push(
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                        const MyCropCultivationPage()));
-                                              },
-                                              child: Text(
-                                                buildTranslate(
-                                                    "editCropData")!,
-                                                softWrap: true,
-                                                style: const TextStyle(
-                                                  color: Color(0XFF008000),
-                                                  fontSize: 15,
-                                                  fontFamily:
-                                                  'poppins-semibold',
-                                                ),
-                                              ),
-                                            ),
-                                          )),
-                                    ],
-                                  ),
-                                ) : Container(),
-                                firstCardVisibleValue == index  ? const Padding(
-                                  padding: EdgeInsets.only(
-                                    left: 15.0,
-                                    right: 15.0,
-                                  ),
-                                  child: Divider(
-                                    color: Colors.black,
-                                    thickness: 1,
-                                  ),
-                                ) : Container(),
-                                firstCardVisibleValue == index  ? Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 25.0,
-                                      right: 15.0,
-                                      bottom: 12.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.start,
-                                    children: [
-                                      const Expanded(
-                                          child: Row(
-                                            children: [
-                                              Text(
-                                                "2:Maze",
-                                                softWrap: true,
-                                                style: TextStyle(
-                                                  color: Colors.grey,
-                                                  fontSize: 15,
-                                                  fontFamily:
-                                                  'poppins-semibold',
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                width: 20,
-                                              ),
-                                              Text(
-                                                "Stage: \nFlowering",
-                                                softWrap: true,
-                                                style: TextStyle(
-                                                  color: Colors.grey,
-                                                  fontSize: 15,
-                                                  fontFamily:
-                                                  'poppins-semibold',
-                                                ),
-                                              ),
-                                            ],
-                                          )),
-                                      const VerticalDivider(width: 1.0),
-                                      Expanded(
-                                          child: Align(
-                                            alignment: Alignment.centerRight,
-                                            child: InkWell(
-                                              onTap: () {
-                                                Navigator.of(context).push(
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                        const MyCropCultivationPage()));
-                                              },
-                                              child: Text(
-                                                buildTranslate(
-                                                    "editCropData")!,
-                                                softWrap: true,
-                                                style: const TextStyle(
-                                                  color: Color(0XFF008000),
-                                                  fontSize: 15,
-                                                  fontFamily:
-                                                  'poppins-semibold',
-                                                ),
-                                              ),
-                                            ),
-                                          )),
-                                    ],
-                                  ),
-                                ) : Container(),
-                                firstCardVisibleValue == index  ? const Padding(
-                                  padding: EdgeInsets.only(
-                                    left: 15.0,
-                                    right: 15.0,
-                                  ),
-                                  child: Divider(
-                                    color: Colors.black,
-                                    thickness: 1,
-                                  ),
-                                ) : Container(),
-                                firstCardVisibleValue == index  ? Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 25.0,
-                                      right: 15.0,
-                                      bottom: 12.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.start,
-                                    children: [
-                                      const Expanded(
-                                          child: Row(
-                                            children: [
-                                              Text(
-                                                "3:Maze",
-                                                softWrap: true,
-                                                style: TextStyle(
-                                                  color: Colors.grey,
-                                                  fontSize: 15,
-                                                  fontFamily:
-                                                  'poppins-semibold',
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                width: 20,
-                                              ),
-                                              Text(
-                                                "Stage: \nFlowering",
-                                                softWrap: true,
-                                                style: TextStyle(
-                                                  color: Colors.grey,
-                                                  fontSize: 15,
-                                                  fontFamily:
-                                                  'poppins-semibold',
-                                                ),
-                                              ),
-                                            ],
-                                          )),
-                                      const VerticalDivider(width: 1.0),
-                                      Expanded(
-                                          child: Align(
-                                            alignment: Alignment.centerRight,
-                                            child: InkWell(
-                                              onTap: () {
-                                                Navigator.of(context).push(
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                        const MyCropCultivationPage()));
-                                              },
-                                              child: Text(
-                                                buildTranslate(
-                                                    "editCropData")!,
-                                                softWrap: true,
-                                                style: const TextStyle(
-                                                  color: Color(0XFF008000),
-                                                  fontSize: 15,
-                                                  fontFamily:
-                                                  'poppins-semibold',
-                                                ),
-                                              ),
-                                            ),
-                                          )),
-                                    ],
-                                  ),
-                                ) : Container(),
-                                // showCropDataFlag1
-                                //     ? const SizedBox(
-                                //         height: 10,
-                                //       )
-                                //     : Container(),
-                                firstCardVisibleValue == index  ? Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 10.0,
-                                      right: 10.0,
-                                      top: 8.0,
-                                      bottom: 20.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.start,
-                                    children: [
-                                      Expanded(
-                                          flex: 2,
-                                          child: InkWell(
-                                            highlightColor:
-                                            Colors.transparent,
-                                            splashColor:
-                                            Colors.transparent,
-                                            onTap: () {},
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                  color: const Color(
-                                                      0XFF3FC041),
-                                                  border: Border.all(
-                                                      color: const Color(
-                                                          0XFF3FC041),
-                                                      width: 1),
-                                                  borderRadius:
-                                                  BorderRadius
-                                                      .circular(18)),
-                                              padding:
-                                              const EdgeInsets.all(
-                                                  8.0),
-                                              child: Text(
-                                                buildTranslate(
-                                                    "showMoreCrops")!,
-                                                softWrap: true,
-                                                textAlign:
-                                                TextAlign.center,
-                                                style: const TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 12,
-                                                    fontFamily:
-                                                    'poppins-regular'),
-                                              ),
-                                            ),
-                                          )),
-                                      Expanded(
-                                          flex: 2,
-                                          child: Align(
-                                            alignment:
-                                            Alignment.centerRight,
-                                            child: InkWell(
-                                              highlightColor:
-                                              Colors.transparent,
-                                              splashColor:
-                                              Colors.transparent,
-                                              onTap: () {
-                                                Navigator.of(context).push(
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                        const MyCropCultivationPage()));
-                                              },
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                    color: const Color(
-                                                        0XFF3FC041),
-                                                    border: Border.all(
-                                                        color: const Color(
-                                                            0XFF3FC041),
-                                                        width: 1),
-                                                    borderRadius:
-                                                    BorderRadius
-                                                        .circular(
-                                                        18)),
-                                                padding:
-                                                const EdgeInsets.all(
-                                                    8.0),
-                                                child: Text(
-                                                  buildTranslate(
-                                                      "addNewCultivations")!,
-                                                  softWrap: true,
-                                                  style: const TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 11,
-                                                    fontFamily:
-                                                    'poppins-regular',
+                                              )),
+                                          const VerticalDivider(width: 1.0),
+                                          Expanded(
+                                              child: Align(
+                                                alignment: Alignment.centerRight,
+                                                child: InkWell(
+                                                  highlightColor:
+                                                  Colors.transparent,
+                                                  splashColor: Colors.transparent,
+                                                  onTap: () {
+                                                    Navigator.of(context).push(
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              MyFarmerEditProfilePage(
+                                                                  dealerNumber : dealerNumber,
+                                                                  name: name,
+                                                                  address: address,
+                                                                  whatsappNumber: whatsappNumber,
+                                                                  geoLocationOwnedFarm: geoLocationOwnedFarm,
+                                                                  totalOwnedFarm : totalOwnedFarm,
+                                                                  totalLeaseFarm: totalLeaseFarm,
+                                                                  geoLocationLeaseFarm: geoLocationLeaseFarm,
+                                                                  pincode: pincode,
+                                                                  state: state,
+                                                                  district: district,
+                                                                  village: village,
+                                                                  bankName: bankName,
+                                                                  accountName: accountName,
+                                                                  accountNumber : accountNumber,
+                                                                  ifscCode: ifscCode,
+                                                                  panNumber: panNumber,
+                                                                  aadhaarNumber : aadhaarNumber)),
+                                                    );
+                                                  },
+                                                  child: Text(
+                                                    buildTranslate("editProfile")!,
+                                                    softWrap: true,
+                                                    style: const TextStyle(
+                                                      color: Color(0XFF008000),
+                                                      fontSize: 15,
+                                                      fontFamily:
+                                                      'poppins-semibold',
+                                                      decoration:
+                                                      TextDecoration.underline,
+                                                      decorationColor:
+                                                      Color(0XFF008000),
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                            ),
-                                          )),
-                                    ],
-                                  ),
-                                ) : Container(),
-                              ],
-                            ),
-                          ),
-                        );
-                    }),
+                                              )),
+                                        ],
+                                      ),
+                                    ),
+                                    firstCardVisibleValue == index ? Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 20.0,
+                                          right: 20.0,
+                                          top: 20.0,
+                                          bottom: 12.0),
+                                      child: Text(
+                                        buildTranslate("cropCultivations")!,
+                                        softWrap: true,
+                                        style: const TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 17,
+                                          fontFamily: 'poppins-semibold',
+                                          decorationColor: Color(0XFF008000),
+                                        ),
+                                      ),
+                                    ) : Container(),
+                                    firstCardVisibleValue == index  ? Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 25.0,
+                                          right: 15.0,
+                                          bottom: 12.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                        children: [
+                                          const Expanded(
+                                              child: Row(
+                                                children: [
+                                                  Text(
+                                                    "1:Maze",
+                                                    softWrap: true,
+                                                    style: TextStyle(
+                                                      color: Colors.grey,
+                                                      fontSize: 15,
+                                                      fontFamily:
+                                                      'poppins-semibold',
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 20,
+                                                  ),
+                                                  Text(
+                                                    "Stage: \nFlowering",
+                                                    softWrap: true,
+                                                    style: TextStyle(
+                                                      color: Colors.grey,
+                                                      fontSize: 15,
+                                                      fontFamily:
+                                                      'poppins-semibold',
+                                                    ),
+                                                  ),
+                                                ],
+                                              )),
+                                          const VerticalDivider(width: 1.0),
+                                          Expanded(
+                                              child: Align(
+                                                alignment: Alignment.centerRight,
+                                                child: InkWell(
+                                                  onTap: () {
+                                                    Navigator.of(context).push(
+                                                        MaterialPageRoute(
+                                                            builder: (context) =>
+                                                            const MyCropCultivationPage()));
+                                                  },
+                                                  child: Text(
+                                                    buildTranslate(
+                                                        "editCropData")!,
+                                                    softWrap: true,
+                                                    style: const TextStyle(
+                                                      color: Color(0XFF008000),
+                                                      fontSize: 15,
+                                                      fontFamily:
+                                                      'poppins-semibold',
+                                                    ),
+                                                  ),
+                                                ),
+                                              )),
+                                        ],
+                                      ),
+                                    ) : Container(),
+                                    firstCardVisibleValue == index  ? const Padding(
+                                      padding: EdgeInsets.only(
+                                        left: 15.0,
+                                        right: 15.0,
+                                      ),
+                                      child: Divider(
+                                        color: Colors.black,
+                                        thickness: 1,
+                                      ),
+                                    ) : Container(),
+                                    firstCardVisibleValue == index  ? Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 25.0,
+                                          right: 15.0,
+                                          bottom: 12.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                        children: [
+                                          const Expanded(
+                                              child: Row(
+                                                children: [
+                                                  Text(
+                                                    "2:Maze",
+                                                    softWrap: true,
+                                                    style: TextStyle(
+                                                      color: Colors.grey,
+                                                      fontSize: 15,
+                                                      fontFamily:
+                                                      'poppins-semibold',
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 20,
+                                                  ),
+                                                  Text(
+                                                    "Stage: \nFlowering",
+                                                    softWrap: true,
+                                                    style: TextStyle(
+                                                      color: Colors.grey,
+                                                      fontSize: 15,
+                                                      fontFamily:
+                                                      'poppins-semibold',
+                                                    ),
+                                                  ),
+                                                ],
+                                              )),
+                                          const VerticalDivider(width: 1.0),
+                                          Expanded(
+                                              child: Align(
+                                                alignment: Alignment.centerRight,
+                                                child: InkWell(
+                                                  onTap: () {
+                                                    Navigator.of(context).push(
+                                                        MaterialPageRoute(
+                                                            builder: (context) =>
+                                                            const MyCropCultivationPage()));
+                                                  },
+                                                  child: Text(
+                                                    buildTranslate(
+                                                        "editCropData")!,
+                                                    softWrap: true,
+                                                    style: const TextStyle(
+                                                      color: Color(0XFF008000),
+                                                      fontSize: 15,
+                                                      fontFamily:
+                                                      'poppins-semibold',
+                                                    ),
+                                                  ),
+                                                ),
+                                              )),
+                                        ],
+                                      ),
+                                    ) : Container(),
+                                    firstCardVisibleValue == index  ? const Padding(
+                                      padding: EdgeInsets.only(
+                                        left: 15.0,
+                                        right: 15.0,
+                                      ),
+                                      child: Divider(
+                                        color: Colors.black,
+                                        thickness: 1,
+                                      ),
+                                    ) : Container(),
+                                    firstCardVisibleValue == index  ? Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 25.0,
+                                          right: 15.0,
+                                          bottom: 12.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                        children: [
+                                          const Expanded(
+                                              child: Row(
+                                                children: [
+                                                  Text(
+                                                    "3:Maze",
+                                                    softWrap: true,
+                                                    style: TextStyle(
+                                                      color: Colors.grey,
+                                                      fontSize: 15,
+                                                      fontFamily:
+                                                      'poppins-semibold',
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 20,
+                                                  ),
+                                                  Text(
+                                                    "Stage: \nFlowering",
+                                                    softWrap: true,
+                                                    style: TextStyle(
+                                                      color: Colors.grey,
+                                                      fontSize: 15,
+                                                      fontFamily:
+                                                      'poppins-semibold',
+                                                    ),
+                                                  ),
+                                                ],
+                                              )),
+                                          const VerticalDivider(width: 1.0),
+                                          Expanded(
+                                              child: Align(
+                                                alignment: Alignment.centerRight,
+                                                child: InkWell(
+                                                  onTap: () {
+                                                    Navigator.of(context).push(
+                                                        MaterialPageRoute(
+                                                            builder: (context) =>
+                                                            const MyCropCultivationPage()));
+                                                  },
+                                                  child: Text(
+                                                    buildTranslate(
+                                                        "editCropData")!,
+                                                    softWrap: true,
+                                                    style: const TextStyle(
+                                                      color: Color(0XFF008000),
+                                                      fontSize: 15,
+                                                      fontFamily:
+                                                      'poppins-semibold',
+                                                    ),
+                                                  ),
+                                                ),
+                                              )),
+                                        ],
+                                      ),
+                                    ) : Container(),
+                                    // showCropDataFlag1
+                                    //     ? const SizedBox(
+                                    //         height: 10,
+                                    //       )
+                                    //     : Container(),
+                                    firstCardVisibleValue == index  ? Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 10.0,
+                                          right: 10.0,
+                                          top: 8.0,
+                                          bottom: 20.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                        children: [
+                                          Expanded(
+                                              flex: 2,
+                                              child: InkWell(
+                                                highlightColor:
+                                                Colors.transparent,
+                                                splashColor:
+                                                Colors.transparent,
+                                                onTap: () {},
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                      color: const Color(
+                                                          0XFF3FC041),
+                                                      border: Border.all(
+                                                          color: const Color(
+                                                              0XFF3FC041),
+                                                          width: 1),
+                                                      borderRadius:
+                                                      BorderRadius
+                                                          .circular(18)),
+                                                  padding:
+                                                  const EdgeInsets.all(
+                                                      8.0),
+                                                  child: Text(
+                                                    buildTranslate(
+                                                        "showMoreCrops")!,
+                                                    softWrap: true,
+                                                    textAlign:
+                                                    TextAlign.center,
+                                                    style: const TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 12,
+                                                        fontFamily:
+                                                        'poppins-regular'),
+                                                  ),
+                                                ),
+                                              )),
+                                          Expanded(
+                                              flex: 2,
+                                              child: Align(
+                                                alignment:
+                                                Alignment.centerRight,
+                                                child: InkWell(
+                                                  highlightColor:
+                                                  Colors.transparent,
+                                                  splashColor:
+                                                  Colors.transparent,
+                                                  onTap: () {
+                                                    Navigator.of(context).push(
+                                                        MaterialPageRoute(
+                                                            builder: (context) =>
+                                                            const MyCropCultivationPage()));
+                                                  },
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                        color: const Color(
+                                                            0XFF3FC041),
+                                                        border: Border.all(
+                                                            color: const Color(
+                                                                0XFF3FC041),
+                                                            width: 1),
+                                                        borderRadius:
+                                                        BorderRadius
+                                                            .circular(
+                                                            18)),
+                                                    padding:
+                                                    const EdgeInsets.all(
+                                                        8.0),
+                                                    child: Text(
+                                                      buildTranslate(
+                                                          "addNewCultivations")!,
+                                                      softWrap: true,
+                                                      style: const TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 11,
+                                                        fontFamily:
+                                                        'poppins-regular',
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              )),
+                                        ],
+                                      ),
+                                    ) : Container(),
+                                  ],
+                                ),
+                              ),
+                            );
+                        });
+                  } else {
+                    return const Center(child: Text('No data available'));
+                  }
+                }),
                 const SizedBox(
                   height: 30,
                 ),
@@ -1778,7 +1759,7 @@ class _MyBottomTwoPageState extends State<MyBottomTwoPage>
             )
                 : selectedTopData == 3
                 ? Column(
-              children: [
+                  children: [
                 Padding(
                   padding: const EdgeInsets.only(
                       top: 10.0, right: 20.0, left: 20.0),
@@ -2196,7 +2177,7 @@ class _MyBottomTwoPageState extends State<MyBottomTwoPage>
                   height: 20,
                 ),
               ],
-            )
+                  )
                 : selectedTopData == 4
                 ? Column(
               children: [
@@ -2449,6 +2430,63 @@ class _MyBottomTwoPageState extends State<MyBottomTwoPage>
       )
           : null,
     );
+  }
+
+  Future<void> _fetchFarmerNameData() async {
+    try {
+      String? number = await AppGlobal.getStringPreference('dealerNumber');
+      var num = number ?? "1";
+      var response = await Dio().get(FARMER_NAME+num);
+
+      if (response.statusCode == 200) {
+        dropdownItems =
+            response.data['data'].map<DropdownMenuItem<String>>((item) {
+              return DropdownMenuItem<String>(
+                value: item['name'],
+                child: Text(item['name']),
+              );
+            }).toList();
+      } else {
+        throw Exception('Failed to load farmers name');
+      }
+    } catch (e) {
+      print('Error fetching farmer name data: $e');
+    }
+  }
+
+  Future<void> _fetchVillageData() async {
+    try {
+      // Replace with your actual API endpoint
+      var response = await Dio().get(VILLAGES_NAMES);
+
+      if (response.statusCode == 200) {
+        if(mounted) {
+          setState(() {
+            _villageNameData = SelectVillagesNameData.fromJson(response.data);
+          });
+        }
+      } else {
+        throw Exception('Failed to load villages');
+      }
+    } catch (e) {
+      print('Error fetching _village name data: $e');
+    }
+  }
+
+  Future<void> _fetchCropData() async {
+    try {
+      var response = await Dio().get(CROPS_NAMES);
+
+      if (response.statusCode == 200) {
+        setState(() {
+          _cropData = SelectCropNamesData.fromJson(response.data);
+        });
+      } else {
+        throw Exception('Failed to load crops');
+      }
+    } catch (e) {
+      print('Error fetching crop data: $e');
+    }
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -2806,20 +2844,23 @@ class _MyBottomTwoPageState extends State<MyBottomTwoPage>
   //   });
   // }
 
-  Future<void> getDashboardApi() async {
-    // farmerDashboardList = (await FarmerDashboardController.fetchFarmerDashboard(context))!;
-    // farmerDashboardList = FarmerDashboardController.fetchFarmerDashboard(context);
-    final url = Uri.parse(FARMER_DASHBOARD);
-    final response = await http.get(url);
-    final body = response.body;
-    final json = jsonDecode(body);
-    if (mounted) {
-      setState(() {
-        farmerItem = json['data'];
-      });
-    }
-    print("Farmer Profile Details : ${farmerItem.toString()}");
-  }
+  // Future<void> getDashboardApi() async {
+  //   // farmerDashboardList = (await FarmerDashboardController.fetchFarmerDashboard(context))!;
+  //   // farmerDashboardList = FarmerDashboardController.fetchFarmerDashboard(context);
+  //   final url = Uri.parse(FARMER_DASHBOARD+"/"+dealerNumberData);
+  //   final response = await http.get(url);
+  //   final body = response.body;
+  //   final json = jsonDecode(body);
+  //   print("FRM Dashboard url : ${url}");
+  //   print("FRM Dashboard dealerNumber : ${dealerNumberData}");
+  //   print("FRM Dashboard json : ${json.toString()}");
+  //   if (mounted) {
+  //     setState(() {
+  //       farmerItem = json['data'];
+  //     });
+  //   }
+  //   print("Farmer Profile Details : ${farmerItem.toString()}");
+  // }
 
   _farmerRegistrationCall() async {
     if (nameController.text.trim().isNotEmpty &&
@@ -2962,4 +3003,437 @@ class bottomCategory {
     required this.icon,
     required this.id,
   });
+}
+
+class MyDrawer extends StatefulWidget {
+  const MyDrawer({super.key});
+
+  @override
+  State<MyDrawer> createState() => _MyDrawerState();
+}
+
+class _MyDrawerState extends State<MyDrawer> {
+  final List<String> sideMenu = ["Villages", "Types"];
+
+  final List<String> typeData = [
+    "Organic",
+    "InOrganic",
+  ];
+
+  int? selectedVillageIndex;
+  int? selectedTypeIndex;
+
+  String villageName = "", typeName = "";
+
+  int selectedMenuData = 0;
+
+  SelectVillagesNameData? _villageNameData;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _loadSelectedVillageIndex();
+    _loadSelectedTypeIndex();
+    _fetchVillageData();
+  }
+
+  Future<void> _fetchVillageData() async {
+    try {
+      // Replace with your actual API endpoint
+      var response = await Dio().get(VILLAGES_NAMES);
+
+      if (response.statusCode == 200) {
+        setState(() {
+          _villageNameData = SelectVillagesNameData.fromJson(response.data);
+        });
+      } else {
+        throw Exception('Failed to load villages');
+      }
+    } catch (e) {
+      print('Error fetching _village name data: $e');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+    ));
+    return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: 0,
+        backgroundColor: Colors.white,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
+      ),
+      // backgroundColor: Colors.white,
+      body: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Expanded(
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.25,
+              height: 800,
+              decoration: const BoxDecoration(color: Color(0xFFC7BDBD)),
+              child: ListView.builder(
+                itemCount: sideMenu.length,
+                scrollDirection: Axis.vertical,
+                itemBuilder: (context, index) {
+                  return InkWell(
+                      highlightColor: Colors.transparent,
+                      splashColor: Colors.transparent,
+                      onTap: () {
+                        setState(() {
+                          _onSelectedMenuDataTapped(index);
+                        });
+                      },
+                      child: Container(
+                        color: selectedMenuData == index
+                            ? Colors.white
+                            : const Color(0xFFC7BDBD),
+                        child: Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Text(
+                              sideMenu[index].toString(),
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontFamily: "poppins-regular",
+                                color: selectedMenuData == index
+                                    ? Colors.black
+                                    : Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ));
+                },
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                InkWell(
+                  highlightColor: Colors.transparent,
+                  splashColor: Colors.transparent,
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Icon(
+                      Icons.close,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 4,
+                  child: Container(
+                      width: MediaQuery.of(context).size.width * 0.70,
+                      decoration: const BoxDecoration(color: Colors.white),
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: selectedMenuData == 0
+                            ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            _villageNameData == null ||
+                                _villageNameData!.data == null
+                                ? const Center(
+                                child: Text('No data available'))
+                                : Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 8.0, right: 8.0),
+                              child: SizedBox(
+                                height: 50,
+                                child: ListView.builder(
+                                  physics:
+                                  const NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: _villageNameData!
+                                      .data!.length,
+                                  itemBuilder: (context, index) {
+                                    return index.isEven
+                                        ? CardWidget(
+                                        _villageNameData!
+                                            .data![index],
+                                        index)
+                                        : Container();
+                                  },
+                                ),
+                              ),
+                            ),
+                            _villageNameData == null ||
+                                _villageNameData!.data == null
+                                ? const Center(
+                                child: Text('No data available'))
+                                : Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 8.0, right: 8.0),
+                              child: SizedBox(
+                                height: 50,
+                                child: ListView.builder(
+                                  physics:
+                                  const NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: _villageNameData!
+                                      .data!.length,
+                                  itemBuilder: (context, index) {
+                                    return index.isOdd
+                                        ? CardWidget(
+                                        _villageNameData!
+                                            .data![index],
+                                        index)
+                                        : Container();
+                                  },
+                                ),
+                              ),
+                            )
+                          ],
+                        )
+                            : selectedMenuData == 1
+                            ? Column(
+                          crossAxisAlignment:
+                          CrossAxisAlignment.start,
+                          children: <Widget>[
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 8.0, right: 8.0),
+                              child: SizedBox(
+                                height: 50,
+                                child: ListView.builder(
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: typeData.length,
+                                  itemBuilder: (context, index) {
+                                    return CardTypeWidget(typeData[index], index);
+                                  },
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                            : Container(),
+                      )
+                  ),
+                ),
+                Container(
+                  color: Color(0xFFe7e7e7),
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        left: 10.0, right: 10.0, top: 15.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Align(
+                            alignment: FractionalOffset.bottomCenter,
+                            child: Container(
+                              width: MediaQuery.of(context).size.width,
+                              padding: const EdgeInsets.only(
+                                  left: 10.0, right: 10.0, bottom: 15.0),
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                  var route = ModalRoute.of(context);
+                                  if (route != null) {
+                                    Navigator.of(context).pushReplacement(MaterialPageRoute(
+                                        builder: (BuildContext context) => MyBottomTwoPage(
+                                          aapbarVisibility: true,
+                                          villageName : villageName,
+                                          typeName : typeName
+                                        )));
+                                  }
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.all(10),
+                                  textStyle: const TextStyle(fontSize: 15),
+                                  backgroundColor: const Color(0xFFffffff),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                    BorderRadius.circular(10), // <-- Radius
+                                  ),
+                                ),
+                                child: const Text(
+                                  'Apply',
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      fontFamily: 'poppins-medium',
+                                      color: Colors.black),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Align(
+                            alignment: FractionalOffset.bottomCenter,
+                            child: Container(
+                              width: MediaQuery.of(context).size.width,
+                              padding: const EdgeInsets.only(
+                                  left: 10.0, right: 10.0, bottom: 15.0),
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  // Navigator.push(
+                                  //   context,
+                                  //   MaterialPageRoute(builder: (context) => const MyHomePage()),
+                                  // );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.all(10),
+                                  textStyle: const TextStyle(fontSize: 15),
+                                  backgroundColor: const Color(0xFFffffff),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                    BorderRadius.circular(10), // <-- Radius
+                                  ),
+                                ),
+                                child: const Text(
+                                  'Save All',
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      fontFamily: 'poppins-medium',
+                                      color: Colors.black),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget CardWidget(String villageName, int index) {
+    return InkWell(
+      highlightColor: Colors.transparent,
+      splashColor: Colors.transparent,
+      onTap: () {
+        print("villageName : $villageName");
+        _onSelectedVillageDataTapped(index, villageName);
+      },
+      child: Card(
+        semanticContainer: true,
+        clipBehavior: Clip.antiAliasWithSaveLayer,
+        color: selectedVillageIndex == index ? Colors.green : Colors.white,
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(5),
+            )),
+        elevation: 1,
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(7.0),
+            child: Text(villageName,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontFamily: "poppins-regular",
+                  color: selectedVillageIndex == index
+                      ? Colors.white
+                      : Colors.black,
+                )),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget CardTypeWidget(String typeName, int index) {
+    return InkWell(
+      highlightColor: Colors.transparent,
+      splashColor: Colors.transparent,
+      onTap: () {
+        print("TypeName : $typeName");
+        _onSelectedTypeDataTapped(index, typeName);
+      },
+      child: Card(
+        semanticContainer: true,
+        clipBehavior: Clip.antiAliasWithSaveLayer,
+        color: selectedTypeIndex == index ? Colors.green : Colors.white,
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(5),
+            )),
+        elevation: 1,
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(7.0),
+            child: Text(typeName,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontFamily: "poppins-regular",
+                  color:
+                  selectedTypeIndex == index ? Colors.white : Colors.black,
+                )),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _loadSelectedVillageIndex() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      selectedVillageIndex = prefs.getInt('selectedVillageIndex') ?? 0;
+    });
+  }
+
+  void _loadSelectedTypeIndex() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      selectedTypeIndex = prefs.getInt('selectedTypeIndex') ?? 0;
+    });
+  }
+
+  Future<void> _onSelectedVillageDataTapped(int index, String village) async {
+    setState(() {
+      selectedVillageIndex = index;
+      villageName = village;
+    });
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt('selectedVillageIndex', index);
+    // print("Selected Village Page : $selectedVillageData");
+  }
+
+  Future<void> _onSelectedTypeDataTapped(int index, String type) async {
+    setState(() {
+      selectedTypeIndex = index;
+      typeName = type;
+    });
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt('selectedTypeIndex', index);
+    // print("Selected Type Page : $selectedTypeData");
+  }
+
+  void _onSelectedMenuDataTapped(int index) {
+    setState(() {
+      selectedMenuData = index;
+    });
+    // print("Selected Menu Page : $selectedMenuData");
+  }
 }

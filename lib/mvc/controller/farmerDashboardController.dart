@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../helper/AlertHelper.dart';
 import '../../helper/SharedPref.dart';
 import '../../utils/Constants.dart';
@@ -10,26 +11,49 @@ import '../model/FarmerRegistrationData.dart';
 
 class FarmerDashboardController{
 
-  static Future<FarmerDashboardData?> fetchFarmerDashboard(BuildContext context) async {
-    var headers = {
-      'Content-Type': 'application/json'
-    };
+  static Future<List<FarmerDashboard>> fetchFarmerDashboard(BuildContext context,
+      String? villageName,String? typeName) async {
 
-    var dio = Dio();
-    var response = await dio.get(
-      FARMER_DASHBOARD,
-      options: Options(
-        method: 'GET',
-        headers: headers,
-      ),
-    );
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String dealerNumberData = await prefs.getString(dealerNumber) ?? 'No Dealer Number';
 
-    if (response.statusCode == 200) {
-      print("Response : "+json.encode(response.data));
-      return json.decode(response.data);
-    }
-    else {
-      print("Error : "+response.statusMessage.toString());
+    final String baseUrl = "https://krishiyanback.vercel.app/api/appFarmer/data/$dealerNumberData";
+
+    try {
+      final Dio dio = Dio();
+      var response;
+      if(villageName !=null && typeName !=null) {
+        response = await dio.get(baseUrl, queryParameters: {
+          'village': villageName,
+          'typeOfCultivationPractice': typeName,
+        });
+        print("Farmer Response If: ${response}");
+      }
+      else if(villageName !=null && villageName.isNotEmpty){
+        response = await dio.get(baseUrl, queryParameters: {
+          'village': villageName,
+        });
+        print("Farmer Response Else If 1 : ${response}");
+      }
+      else if(typeName !=null && typeName.isNotEmpty){
+        response = await dio.get(baseUrl, queryParameters: {
+        'typeOfCultivationPractice': typeName,
+        });
+        print("Farmer Response Else If 1 : ${response}");
+      }
+      else{
+        response = await dio.get(baseUrl);
+      }
+
+      if (response.statusCode == 200) {
+        List jsonResponse = response.data['data'];
+        // print("Farmer Dashboard Response : ${jsonResponse}");
+        return jsonResponse.map((data) => FarmerDashboard.fromJson(data)).toList();
+      } else {
+        throw Exception('Failed to load farmers');
+      }
+    } catch (e) {
+      throw Exception('Failed to load farmers: $e');
     }
   }
 
@@ -149,4 +173,37 @@ class FarmerDashboardController{
     }
   }
 
+  static Future<List<FarmerDashboard>> fetchSearchFarmerDashboard(BuildContext context, String? whatsappNumber) async {
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String dealerNumberData = await prefs.getString(dealerNumber) ?? 'No Dealer Number';
+
+    final String baseUrl = "https://d1dv04h56lh39n.cloudfront.net/api/appFarmer/farmer/"
+        "search?dealerNumber=$dealerNumberData&whatsappNumber=$whatsappNumber";
+
+    try {
+      final Dio dio = Dio();
+      var response;
+      if(dealerNumberData !=null && whatsappNumber !=null) {
+        response = await dio.get(baseUrl, queryParameters: {
+          'dealerNumber': dealerNumberData,
+          'whatsappNumber': whatsappNumber,
+        });
+        print("Farmer Search Response : ${response}");
+      }
+      else{
+        response = await dio.get(baseUrl);
+      }
+
+      if (response.statusCode == 200) {
+        List jsonResponse = response.data['data'];
+        // print("Farmer Dashboard Response : ${jsonResponse}");
+        return jsonResponse.map((data) => FarmerDashboard.fromJson(data)).toList();
+      } else {
+        throw Exception('Failed to load farmers');
+      }
+    } catch (e) {
+      throw Exception('Failed to load farmers: $e');
+    }
+  }
 }

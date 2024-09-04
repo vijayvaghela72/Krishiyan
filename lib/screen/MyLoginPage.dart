@@ -21,7 +21,7 @@ class MyLoginPage extends StatefulWidget {
 
 class _MyLoginPageState extends State<MyLoginPage> {
 
-  TextEditingController usernameController = TextEditingController();
+  TextEditingController mobileNumberController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
   String? _usernameErrorText;
@@ -115,7 +115,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
                       borderRadius: BorderRadius.all(Radius.circular(10.0)),
                       borderSide: BorderSide(color: Colors.green, width: 0.5),
                     )),
-                controller: usernameController,
+                controller: mobileNumberController,
               ),
             ),
 
@@ -313,7 +313,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
     setState(() {
       _submitted = false;
     });
-    if ((usernameController!.text.isEmpty) ||
+    if ((mobileNumberController!.text.isEmpty) ||
         (passwordController!.text.isEmpty) ) {
       setState(() {
         _submitted = false;
@@ -326,20 +326,20 @@ class _MyLoginPageState extends State<MyLoginPage> {
   }
 
   _loginApiCall() async {
-    if (usernameController.text.trim().isNotEmpty && passwordController.text.trim().isNotEmpty) {
+    if (mobileNumberController.text.trim().isNotEmpty && passwordController.text.trim().isNotEmpty) {
       setState(() {
         _submitted = false;
       });
 
       var body = json.encode({
-        "contactNumber": usernameController.text.trim(),
+        "contactNumber": mobileNumberController.text.trim(),
         "password": passwordController.text.trim().toString()
       });
 
       Data? user = await LoginController.login(body, context: context);
 
       if (user != null) {
-        print("user number : " + usernameController.text.toString());
+        print("user number : " + mobileNumberController.text.toString());
         print("user token : " + user.token.toString());
 
         Future.delayed(const Duration(seconds: 1), () {

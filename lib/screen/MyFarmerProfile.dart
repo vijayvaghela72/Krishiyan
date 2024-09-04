@@ -33,9 +33,8 @@ class _MyFarmerProfilePageState extends State<MyFarmerProfilePage> {
   TextEditingController leasedFarmController = TextEditingController();
   TextEditingController goeLocationLeasedController = TextEditingController();
   TextEditingController pincodeController = TextEditingController();
-  // TextEditingController districtController = TextEditingController();
+  TextEditingController villageController = TextEditingController();
   TextEditingController addressController = TextEditingController();
-  // TextEditingController stateController = TextEditingController();
   TextEditingController bankNameController = TextEditingController();
   TextEditingController accountNameController = TextEditingController();
   TextEditingController accountNumberController = TextEditingController();
@@ -61,7 +60,6 @@ class _MyFarmerProfilePageState extends State<MyFarmerProfilePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    // itemsFuture = fetchItems(); // Start fetching items
   }
 
   @override
@@ -578,6 +576,56 @@ class _MyFarmerProfilePageState extends State<MyFarmerProfilePage> {
               height: 20,
             ),
 
+            // village
+            Padding(
+              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+              child: Text(
+                buildTranslate("village")!,
+                style: const TextStyle(
+                    fontSize: 15,
+                    color: Color(0xFF666666),
+                    fontFamily: 'poppins-semibold'),
+              ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+              child: TextFormField(
+                decoration: InputDecoration(
+                    alignLabelWithHint: true,
+                    fillColor: Colors.white,
+                    filled: true,
+                    border: const OutlineInputBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(10.0),
+                      ),
+                    ),
+                    enabledBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.white,
+                        width: 1.0,
+                      ),
+                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                        vertical: 10.0, horizontal: 10.0),
+                    hintText: buildTranslate("village")!,
+                    hintStyle: const TextStyle(color: Color(0xFFe7e7e7)),
+                    focusedBorder: const OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                      borderSide: BorderSide(color: Colors.white, width: 0.5),
+                    )),
+                validator: (value) =>
+                value!.isEmpty ? buildTranslate('enterVillage') : null,
+                controller: villageController,
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+
             // address
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
@@ -1080,6 +1128,7 @@ class _MyFarmerProfilePageState extends State<MyFarmerProfilePage> {
         pincodeController.text.trim().isNotEmpty &&
         _selectedStateName!.isNotEmpty &&
         _selectedDistrictName.toString().isNotEmpty &&
+        villageController.text.trim().isNotEmpty &&
         addressController.text.trim().isNotEmpty &&
         bankNameController.text.trim().isNotEmpty &&
         accountNameController.text.trim().isNotEmpty &&
@@ -1096,7 +1145,7 @@ class _MyFarmerProfilePageState extends State<MyFarmerProfilePage> {
         "totalLeaseFarm": int.parse(leasedFarmController.text.toString()),
         "geoLocationLeaseFarm": goeLocationLeasedController.text.toString(),
         "pincode": pincodeController.text.toString(),
-        "village": "test",
+        "village": villageController.text.toString(),
         "district": _selectedDistrictName.toString(),
         "state": _selectedStateName.toString(),
         "address": addressController.text.toString(),
@@ -1125,6 +1174,7 @@ class _MyFarmerProfilePageState extends State<MyFarmerProfilePage> {
           showAlertDialog(context);
         });
       } else {
+        AlertHelper.showToast("Api error", context);
         print("Api error");
       }
     } else {

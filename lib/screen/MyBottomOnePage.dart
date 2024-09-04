@@ -481,17 +481,17 @@ class _MyBottomOnePageState extends State<MyBottomOnePage>
                                               mainAxisAlignment: MainAxisAlignment.start,
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
-                                                Text(
-                                                  "5min Read",
-                                                  softWrap: true,
-                                                  style: TextStyle(
-                                                      color:
-                                                      Colors.black,
-                                                      fontSize: 13,
-                                                      fontFamily:
-                                                      'poppins-medium'),
-                                                ),
-                                                SizedBox(width: 10.0),
+                                                // Text(
+                                                //   "5min Read",
+                                                //   softWrap: true,
+                                                //   style: TextStyle(
+                                                //       color:
+                                                //       Colors.black,
+                                                //       fontSize: 13,
+                                                //       fontFamily:
+                                                //       'poppins-medium'),
+                                                // ),
+                                                // SizedBox(width: 10.0),
                                                 Text(
                                                   "17 hours ago",
                                                   softWrap: true,
