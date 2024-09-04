@@ -1,13 +1,16 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:krishiyan/screen/MyRegistrationPage.dart';
 
 import '../helper/AlertHelper.dart';
 import '../helper/SharedPref.dart';
+import '../mvc/controller/farmerDashboardController.dart';
 import '../mvc/controller/loginController.dart';
 import '../mvc/model/LoginData.dart';
+import '../utils/AppGlobal.dart';
 import 'MyForgotPasswordPage.dart';
 import 'MyHomePage.dart';
 import 'MyLoginPage.dart';
@@ -52,7 +55,7 @@ class _MyFarmerGroupRegistrationTwoPageState extends State<MyFarmerGroupRegistra
             const SizedBox(height: 30,),
             const Center(child: Text("Create New Account",
               style: TextStyle(color: Color(0xFF3dc33b), fontSize: 22,
-                fontFamily: 'poppins-medium'),)),
+                  fontFamily: 'poppins-medium'),)),
             const SizedBox(height: 30,),
 
             // name
@@ -75,7 +78,7 @@ class _MyFarmerGroupRegistrationTwoPageState extends State<MyFarmerGroupRegistra
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey, width: 1.0,),
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
                     ),
                     hintText: 'Name of the Promoter or CEO',
                     hintStyle: TextStyle(color: Color(0xFFe7e7e7)),
@@ -233,14 +236,13 @@ class _MyFarmerGroupRegistrationTwoPageState extends State<MyFarmerGroupRegistra
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: ElevatedButton(
                 onPressed: () {
-                  // showAlertDialog(context);
                   if(widget.name.isNotEmpty && widget.type.isNotEmpty && widget.contactNumber.isNotEmpty
-                  && userPasswordController.text.isNotEmpty
+                      && userPasswordController.text.isNotEmpty
                       && userConfirmPasswordController.text.isNotEmpty){
 
                     _registrationApiCall(widget.name,
-                      widget.type, widget.contactNumber, userPasswordController.text.toString(),
-                      widget.date, widget.email, nameofPromoterController.text.toString()
+                        widget.type, widget.contactNumber, userPasswordController.text.toString(),
+                        widget.date, widget.email, nameofPromoterController.text.toString()
                     );
                   }
                   else{
@@ -329,6 +331,34 @@ class _MyFarmerGroupRegistrationTwoPageState extends State<MyFarmerGroupRegistra
     );
   }
 
+  _registrationApiCall(String name, String type, String number, String password,
+      String date, String email, String nameOfPromoter) async {
+
+    var data = json.encode({
+      "typeOfOrganization": "Farmer groups",
+      "nameOfFpo": name,
+      "typeOfFpo": type,
+      "dateOfFpo": "${AppGlobal.convertToIsoFormat(date)}Z",
+      "organizationalEmail": email,
+      "contactNumber": number,
+      "promoterName": nameOfPromoter,
+      "password": password
+    });
+
+    var farmerRegistration = FarmerDashboardController.farmerGroupRegistration(data, context: context);
+
+    if (farmerRegistration.toString().isNotEmpty) {
+      Future.delayed(const Duration(seconds: 1), () {
+        print('farmer registered successfully');
+
+        showAlertDialog(context);
+      });
+    }
+    else {
+      print("Api error");
+    }
+  }
+
   showAlertDialog(BuildContext context) {
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
@@ -381,45 +411,4 @@ class _MyFarmerGroupRegistrationTwoPageState extends State<MyFarmerGroupRegistra
     );
   }
 
-  _registrationApiCall(String name, String type, String number, String password,
-      String date, String email, String nameOfPromoter) async {
-
-      var body = json.encode({
-        "typeOfOrganization": "Farmer Gup",
-        "nameOfFpo": name,
-        "typeOfFpo": type,
-        "dateOfFpo": date,
-        "organizationalEmail": email,
-        "contactNumber": number,
-        "promoterName": nameOfPromoter,
-        "password": password
-      });
-
-      Data? user = await LoginController.signup(body, context: context);
-
-      if (user != null) {
-        print("user token : " + user.token.toString());
-
-        Future.delayed(const Duration(seconds: 1), () {
-          print("Api success");
-
-          // AlertHelper.showToast("Registration successfully.",context);
-
-          showAlertDialog(context);
-
-          // Navigator.pushReplacement(
-          //   context,
-          //   MaterialPageRoute(
-          //       builder: (context) =>
-          //           MyHomePage(
-          //             selectedIndex: 0,
-          //           )),
-          // );
-        });
-      }
-      else {
-        print("Api error");
-        AlertHelper.showToast("Registration unsuccessful",context);
-      }
-  }
 }

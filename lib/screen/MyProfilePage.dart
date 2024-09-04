@@ -1,7 +1,11 @@
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../helper/SharedPref.dart';
 import '../localization/AppLocalizations.dart';
+import '../utils/AppGlobal.dart';
+import '../utils/Constants.dart';
 import 'MyBottomCenterEnquiryPage.dart';
 import 'MyBottomOnePage.dart';
 import 'MyBottomThreePage.dart';
@@ -15,7 +19,8 @@ import 'MyHomePage.dart';
 import 'MyLoginPage.dart';
 
 class MyProfilePage extends StatefulWidget {
-  const MyProfilePage({super.key});
+
+  const MyProfilePage({super.key,});
 
   @override
   State<MyProfilePage> createState() => _MyProfilePageState();
@@ -23,7 +28,7 @@ class MyProfilePage extends StatefulWidget {
 
 class _MyProfilePageState extends State<MyProfilePage> with TickerProviderStateMixin{
 
-  var _bottomNavIndex = 3; //default index of a first screen
+  var _bottomNavIndex; //default index of a first screen
 
   late AnimationController _fabAnimationController;
   late AnimationController _borderRadiusAnimationController;
@@ -36,7 +41,7 @@ class _MyProfilePageState extends State<MyProfilePage> with TickerProviderStateM
 
   late AnimationController _hideBottomBarAnimationController;
 
-  List<bottomCategory> iconList = [
+  List<bottomCategory> iconList1 = [
     bottomCategory(
         name: buildTranslate("home")!, id: "1", icon: 'assets/images/bottom1.png'),
     bottomCategory(
@@ -52,6 +57,19 @@ class _MyProfilePageState extends State<MyProfilePage> with TickerProviderStateM
         id: "4",
         icon: 'assets/images/bottom4.png'),
   ];
+
+  List<bottomCategory> iconList2 = [
+    bottomCategory(
+        name: buildTranslate("home")!,
+        id: "1", icon: 'assets/images/bottom1.png'),
+    bottomCategory(
+        name: buildTranslate("profile")!,
+        id: "2",
+        icon: 'assets/images/bottom4.png'),
+  ];
+
+  String name = "", email = "", contactNumber = "";
+  String typeOfOrganizationData = "";
 
   @override
   void initState() {
@@ -92,6 +110,17 @@ class _MyProfilePageState extends State<MyProfilePage> with TickerProviderStateM
       const Duration(seconds: 1),
           () => _borderRadiusAnimationController.forward(),
     );
+
+    getDetails();
+    getPrefValue();
+  }
+
+  @override
+  void dispose() {
+    _fabAnimationController.dispose(); // Dispose the controller
+    _borderRadiusAnimationController.dispose(); // Dispose the controller
+    _hideBottomBarAnimationController.dispose(); // Dispose the controller
+    super.dispose();
   }
 
   @override
@@ -116,9 +145,6 @@ class _MyProfilePageState extends State<MyProfilePage> with TickerProviderStateM
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            // const SizedBox(height: 10,),
-            // const Center(child: Text("Profile Page", style: TextStyle(color: Color(0xFF3dc33b), fontSize: 30,
-            //     fontFamily: 'poppins-regular'),)),
             Padding(
               padding: const EdgeInsets.only(
                   top: 40.0, bottom: 18.0, right: 18.0, left: 18.0),
@@ -136,16 +162,16 @@ class _MyProfilePageState extends State<MyProfilePage> with TickerProviderStateM
                     ),
                   ),
                   const SizedBox(width: 15,),
-                  const Column(
+                  Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("Daffa Raihan Putra Anton", softWrap: true,
-                        style: TextStyle(color: Colors.black, fontSize: 15, fontFamily: 'poppins-semibold'),),
-                      Text("example@gmail.com", softWrap: true,
-                        style: TextStyle(color: Color(0xFF888888), fontSize: 14, fontFamily: 'poppins-regular'),),
-                      Text("08xxxxxxxx", softWrap: true,
-                        style: TextStyle(color: Color(0xFF888888), fontSize: 14, fontFamily: 'poppins-regular'),),
+                      Text(name ?? "", softWrap: true,
+                        style: const TextStyle(color: Colors.black, fontSize: 15, fontFamily: 'poppins-semibold'),),
+                      Text(email ?? "", softWrap: true,
+                        style: const TextStyle(color: Color(0xFF888888), fontSize: 14, fontFamily: 'poppins-regular'),),
+                      Text(contactNumber ?? "", softWrap: true,
+                        style: const TextStyle(color: Color(0xFF888888), fontSize: 14, fontFamily: 'poppins-regular'),),
                     ],
                   ),
                 ],
@@ -280,13 +306,17 @@ class _MyProfilePageState extends State<MyProfilePage> with TickerProviderStateM
             InkWell(
               highlightColor: Colors.transparent,
               splashColor: Colors.transparent,
-              onTap: () {
-                Navigator.pop(context);
-                // Navigator.pop(context);
+              onTap: () async{
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                await prefs.clear(); // Clear user data
+
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => const MyLoginPage()),
+                      (Route<dynamic> route) => false,
+                );
+
                 // Navigator.pushReplacement(
-                //   context,
-                //   MaterialPageRoute(builder: (context) => const MyLoginPage()),
-                // );
+                //   context, MaterialPageRoute(builder: (context) => const MyLoginPage()),);
               },
               child: Padding(
                 padding: const EdgeInsets.only(
@@ -338,9 +368,62 @@ class _MyProfilePageState extends State<MyProfilePage> with TickerProviderStateM
         },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: AnimatedBottomNavigationBar.builder(
+      bottomNavigationBar:
+      // AnimatedBottomNavigationBar.builder(
+      //   height: 70,
+      //   itemCount: iconList1.length,
+      //   tabBuilder: (int index, bool isActive) {
+      //     final color = isActive
+      //         ? Colors.green
+      //         : Colors.grey;
+      //     return Column(
+      //       mainAxisSize: MainAxisSize.min,
+      //       mainAxisAlignment: MainAxisAlignment.center,
+      //       children: [
+      //         Image.asset(
+      //           iconList1[index].icon ?? "",
+      //           color: color,
+      //           width: 25, height: 25,
+      //         ),
+      //         const SizedBox(height: 5),
+      //         Text(
+      //           iconList1[index].name ?? "",
+      //           textAlign: TextAlign.center,
+      //           style: const TextStyle(
+      //               color: Color(0xFF666666),
+      //               fontSize: 13,
+      //               fontFamily: 'poppins-regular'),
+      //         ),
+      //       ],
+      //     );
+      //   },
+      //   // backgroundColor: Colors.white,
+      //   activeIndex: _bottomNavIndex,
+      //   // splashColor: Colors.green,
+      //   notchAndCornersAnimation: borderRadiusAnimation,
+      //   splashSpeedInMilliseconds: 300,
+      //   notchSmoothness: NotchSmoothness.defaultEdge,
+      //   gapLocation: GapLocation.center,
+      //   leftCornerRadius: 32,
+      //   rightCornerRadius: 32,
+      //   notchMargin: 7,
+      //   onTap: (index) {
+      //     setState(() {
+      //       _onItemTapped(index);
+      //     });
+      //   },
+      //   hideAnimationController: _hideBottomBarAnimationController,
+      //   shadow: const BoxShadow(
+      //     offset: Offset(0, 1),
+      //     blurRadius: 2,
+      //     spreadRadius: 0.2,
+      //     color: Colors.white,
+      //   ),
+      // )
+      typeOfOrganizationData == "Farmer groups" ?
+      AnimatedBottomNavigationBar.builder(
         height: 70,
-        itemCount: iconList.length,
+        itemCount: iconList1.length,
         tabBuilder: (int index, bool isActive) {
           final color = isActive
               ? Colors.green
@@ -350,13 +433,13 @@ class _MyProfilePageState extends State<MyProfilePage> with TickerProviderStateM
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(
-                iconList[index].icon ?? "",
+                iconList1[index].icon ?? "",
                 color: color,
                 width: 25, height: 25,
               ),
               const SizedBox(height: 5),
               Text(
-                iconList[index].name ?? "",
+                iconList1[index].name ?? "",
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                     color: Color(0xFF666666),
@@ -381,7 +464,57 @@ class _MyProfilePageState extends State<MyProfilePage> with TickerProviderStateM
             _onItemTapped(index);
           });
         },
-        // setState(() => _bottomNavIndex = index),
+        hideAnimationController: _hideBottomBarAnimationController,
+        shadow: const BoxShadow(
+          offset: Offset(0, 1),
+          blurRadius: 2,
+          spreadRadius: 0.2,
+          color: Colors.white,
+        ),
+      ) :
+      AnimatedBottomNavigationBar.builder(
+        height: 70,
+        itemCount: iconList2.length,
+        tabBuilder: (int index, bool isActive) {
+          final color = isActive
+              ? Colors.green
+              : Colors.grey;
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                iconList2[index].icon ?? "",
+                color: color,
+                width: 25, height: 25,
+              ),
+              const SizedBox(height: 5),
+              Text(
+                iconList2[index].name ?? "",
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                    color: Color(0xFF666666),
+                    fontSize: 13,
+                    fontFamily: 'poppins-regular'),
+              ),
+            ],
+          );
+        },
+        // backgroundColor: Colors.white,
+        activeIndex: _bottomNavIndex,
+        // splashColor: Colors.green,
+        notchAndCornersAnimation: borderRadiusAnimation,
+        splashSpeedInMilliseconds: 300,
+        notchSmoothness: NotchSmoothness.defaultEdge,
+        gapLocation: GapLocation.center,
+        leftCornerRadius: 32,
+        rightCornerRadius: 32,
+        notchMargin: 7,
+        onTap: (index) {
+          setState(() {
+            _onItemTapped(index);
+          });
+        },
         hideAnimationController: _hideBottomBarAnimationController,
         shadow: const BoxShadow(
           offset: Offset(0, 1),
@@ -395,71 +528,185 @@ class _MyProfilePageState extends State<MyProfilePage> with TickerProviderStateM
 
   void _onItemTapped(int index) {
 
-     if (index == 0) {
-       // Navigator.pop(context);
-       var route = ModalRoute.of(context);
-       if (route != null) {
-         Navigator
-             .of(context)
-             .pushReplacement(
-             MaterialPageRoute(builder: (BuildContext context) =>
-                 MyBottomOnePage(aapbarVisibility: true,)));
-       }
-     }
-     else if(index ==1) {
-       // Navigator.pop(context);
-       var route = ModalRoute.of(context);
-       if (route != null) {
-         Navigator
-             .of(context)
-             .pushReplacement(
-             MaterialPageRoute(builder: (BuildContext context) =>
-                 MyBottomTwoPage(aapbarVisibility: true,)));
-       }
-     }
-     else if(index ==2) {
-       // Navigator.pop(context);
-       var route = ModalRoute.of(context);
-       if (route != null) {
-         Navigator
-             .of(context)
-             .pushReplacement(
-             MaterialPageRoute(builder: (BuildContext context) =>
-                 MyBottomThreePage(aapbarVisibility: true,)));
-       }
-     }
-     else if(index == 3){
-       Navigator.of(context).push(
-         MaterialPageRoute(builder: (context) => const MyProfilePage()),
-       );
-     }
-     else if(index == 4){
-       var route = ModalRoute.of(context);
-       if (route != null) {
-         Navigator
-             .of(context)
-             .pushReplacement(
-             MaterialPageRoute(builder: (BuildContext context) =>
-                 MyBottomCenterEnquiryPage(aapbarVisibility: true,)));
-       }
-     }
+    print("Profile index : $index");
+
+    if (index == 0) {
+      Navigator.pop(context);
+      var route = ModalRoute.of(context);
+      if (route != null) {
+        Navigator
+            .of(context)
+            .pushReplacement(
+            MaterialPageRoute(builder: (BuildContext context) =>
+                MyBottomOnePage(aapbarVisibility: true,)));
+      }
+    }
+    else if(index ==1) {
+      // Navigator.pop(context);
+      var route = ModalRoute.of(context);
+      if (route != null) {
+        Navigator
+            .of(context)
+            .pushReplacement(
+            MaterialPageRoute(builder: (BuildContext context) =>
+                MyBottomTwoPage(aapbarVisibility: true,)));
+      }
+    }
+    else if(index ==2) {
+      // Navigator.pop(context);
+      var route = ModalRoute.of(context);
+      if (route != null) {
+        Navigator
+            .of(context)
+            .pushReplacement(
+            MaterialPageRoute(builder: (BuildContext context) =>
+                MyBottomThreePage(aapbarVisibility: true,)));
+      }
+    }
+    else if(index == 3){
+      // if (typeOfOrganization == "Farmer groups") {
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => MyProfilePage()),
+      );
+      // }
+    }
+    else if(index == 4){
+      // if (typeOfOrganization == "Farmer groups") {
+      var route = ModalRoute.of(context);
+      if (route != null) {
+        Navigator
+            .of(context)
+            .pushReplacement(
+            MaterialPageRoute(builder: (BuildContext context) =>
+                MyBottomCenterEnquiryPage(aapbarVisibility: true,)));
+      }
+      // }
+    }
 
     else {
-       setState(() {
-         _bottomNavIndex = index;
-       });
-       print("Profile : bottomNavIndex : $_bottomNavIndex");
+      setState(() {
+        _bottomNavIndex = index;
+      });
+      print("Profile : bottomNavIndex : $_bottomNavIndex");
     }
 
   }
+  // void _onItemTapped(int index) {
+  //
+  //   print("Profile index : $index");
+  //
+  //    if (index == 0) {
+  //      if (typeOfOrganization == "Farmer groups") {
+  //        // Navigator.pop(context);
+  //        var route = ModalRoute.of(context);
+  //        if (route != null) {
+  //          Navigator
+  //              .of(context)
+  //              .pushReplacement(
+  //              MaterialPageRoute(builder: (BuildContext context) =>
+  //                  MyBottomOnePage(aapbarVisibility: true,)));
+  //        }
+  //      } else{
+  //        Navigator.pop(context);
+  //        Navigator
+  //            .of(context)
+  //            .pushReplacement(
+  //            MaterialPageRoute(builder: (BuildContext context) =>
+  //                MyHomePage(selectedIndex: 0,)));
+  //      }
+  //    }
+  //    else if(index ==1) {
+  //      // Navigator.pop(context);
+  //      if (typeOfOrganization == "Farmer groups") {
+  //        var route = ModalRoute.of(context);
+  //        if (route != null) {
+  //          Navigator
+  //              .of(context)
+  //              .pushReplacement(
+  //              MaterialPageRoute(builder: (BuildContext context) =>
+  //                  MyBottomTwoPage(aapbarVisibility: true,)));
+  //        }
+  //      }
+  //    }
+  //    else if(index ==2) {
+  //      if (typeOfOrganization == "Farmer groups") {
+  //        // Navigator.pop(context);
+  //        var route = ModalRoute.of(context);
+  //        if (route != null) {
+  //          Navigator
+  //              .of(context)
+  //              .pushReplacement(
+  //              MaterialPageRoute(builder: (BuildContext context) =>
+  //                  MyBottomThreePage(aapbarVisibility: true,)));
+  //        }
+  //      }
+  //      else{
+  //        var route = ModalRoute.of(context);
+  //        if (route != null) {
+  //          Navigator
+  //              .of(context)
+  //              .pushReplacement(
+  //              MaterialPageRoute(builder: (BuildContext context) =>
+  //                  MyBottomCenterEnquiryPage(aapbarVisibility: true,)));
+  //        }
+  //      }
+  //    }
+  //    else if(index == 3){
+  //      if (typeOfOrganization == "Farmer groups") {
+  //        Navigator.of(context).push(
+  //          MaterialPageRoute(builder: (context) => MyProfilePage()),
+  //        );
+  //      }
+  //    }
+  //    else if(index == 4){
+  //      if (typeOfOrganization == "Farmer groups") {
+  //        var route = ModalRoute.of(context);
+  //        if (route != null) {
+  //          Navigator
+  //              .of(context)
+  //              .pushReplacement(
+  //              MaterialPageRoute(builder: (BuildContext context) =>
+  //                  MyBottomCenterEnquiryPage(aapbarVisibility: true,)));
+  //        }
+  //      }
+  //    }
+  //
+  //   else {
+  //      setState(() {
+  //        _bottomNavIndex = index;
+  //      });
+  //      print("Profile : bottomNavIndex : $_bottomNavIndex");
+  //   }
+  //
+  // }
 
-  @override
-  void dispose() {
-    // _fabAnimationController.dispose(); // you need this
-    // _borderRadiusAnimationController.dispose(); // you need this
-    // _hideBottomBarAnimationController.dispose(); // you need this
-    super.dispose();
+  Future<void> getDetails() async {
+    name = (await AppGlobal.getStringPreference('name'))!;
+    email = (await AppGlobal.getStringPreference('email'))!;
+    contactNumber = (await AppGlobal.getStringPreference('contactNumber'))!;
+
+    setState(() {
+      name = name;
+      email = email;
+      contactNumber = contactNumber;
+    });
   }
+
+  Future<void> getPrefValue() async {
+    typeOfOrganizationData = await SharedPref.readPreferenceValue(typeOfOrganization, PrefEnum.STRING);
+    print("TypeOfOrganizationData : $typeOfOrganizationData");
+    if(typeOfOrganizationData == "Farmer groups" ) {
+      _bottomNavIndex = 3;
+    }
+    else{
+      _bottomNavIndex = 1;
+    }
+    setState(() {
+      typeOfOrganizationData = typeOfOrganizationData;
+      _bottomNavIndex = _bottomNavIndex;
+    });
+  }
+
 }
 
 class bottomCategory {

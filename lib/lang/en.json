@@ -71,7 +71,7 @@
   "highExpYield": "High Exp Yield",
   "lowExpYield": "Low Exp Yield",
   "searchBy": "Search By",
-  "allFarmers(300)": "All Farmers(300)",
+  "allFarmers": "All Farmers",
   "showCropData": "Show Crop Data",
   "editProfile": "Edit Profile",
   "cropCultivations": "Crop Cultivations",
@@ -214,5 +214,6 @@
   "PANCardForFPO": "PAN Card for FPO",
   "panCard": "Pan Card",
   "GSTNumber": "GST Number",
-  "udyamAadhaar": "Udyam Aadhaar"
+  "udyamAadhaar": "Udyam Aadhaar",
+  "selectFarmer": "Select Farmer"
 }

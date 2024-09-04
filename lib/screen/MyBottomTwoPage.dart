@@ -1,13 +1,24 @@
+import 'dart:convert';
+
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
+import 'package:dio/dio.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
+import 'package:krishiyan/mvc/model/InsightData.dart';
+import 'package:krishiyan/screen/MyFarmerEditProfilePage.dart';
 import 'package:page_transition/page_transition.dart';
-
+import 'package:http/http.dart' as http;
+import '../helper/AlertHelper.dart';
+import '../helper/SharedPref.dart';
 import '../localization/AppLocalizations.dart';
+import '../mvc/controller/SearchByInsightController.dart';
+import '../mvc/controller/farmerDashboardController.dart';
+import '../mvc/model/SelectCropNamesData.dart';
+import '../mvc/model/SelectVillagesNameData.dart';
+import '../utils/AppGlobal.dart';
+import '../utils/Constants.dart';
 import 'MyBottomCenterEnquiryPage.dart';
 import 'MyBottomOnePage.dart';
 import 'MyBottomThreePage.dart';
@@ -16,6 +27,7 @@ import 'MyDrawer.dart';
 import 'MyFarmerProfile.dart';
 import 'MyProfilePage.dart';
 import 'MySelectLanguagePage.dart';
+import 'package:intl/intl.dart';
 
 class MyBottomTwoPage extends StatefulWidget {
   bool aapbarVisibility;
@@ -28,6 +40,7 @@ class MyBottomTwoPage extends StatefulWidget {
 
 class _MyBottomTwoPageState extends State<MyBottomTwoPage>
     with TickerProviderStateMixin {
+
   final List<String> topData = [
     buildTranslate("farmerDashboard")!,
     buildTranslate("farmerRegistration")!,
@@ -56,21 +69,8 @@ class _MyBottomTwoPageState extends State<MyBottomTwoPage>
         icon: 'assets/images/bottom4.png'),
   ];
 
-  TextEditingController? controller;
   int selectedTopData = 0;
-  TextEditingController? naneController;
   bool otpVisible = false;
-
-  final List<String> cropItems = [
-    buildTranslate("all")!,
-    buildTranslate("maize")!,
-    buildTranslate("paddy")!,
-  ];
-
-  final List<String> villageItems = [
-    buildTranslate("all")!,
-    buildTranslate('ganapathy')!,
-  ];
 
   List<cropsCategory> search_crops = [
     cropsCategory(
@@ -85,15 +85,17 @@ class _MyBottomTwoPageState extends State<MyBottomTwoPage>
         icon: 'assets/images/crops1.png'),
   ];
 
-  String? selectedCropItemValue, selectedVillageItemValue;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  bool showCropDataFlag1 = false;
-  bool showCropDataFlag2 = false;
+
   bool searchCropsFlag = false;
+  bool firstCardVisible = false;
+  int? firstCardVisibleValue;
+
   final List<String> items = [
     buildTranslate('organic')!,
     buildTranslate('inOrganic')!,
   ];
+
   String? selectedItemValue;
 
   final List<String> sortItems = [
@@ -103,13 +105,98 @@ class _MyBottomTwoPageState extends State<MyBottomTwoPage>
 
   String? selectedSortItemsValue;
 
+  var farmerDashboardList;
+  List<dynamic> farmerItem = [];
+
+  TextEditingController searchByNaneController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController whatsAppNumberController = TextEditingController();
+
+  TextEditingController varietyController = TextEditingController();
+  TextEditingController dateController = TextEditingController();
+  TextEditingController geoLocationController = TextEditingController();
+  TextEditingController areaInArcesController = TextEditingController();
+  TextEditingController geoLinkAreaController = TextEditingController();
+
+  String? _selectedCrop;
+  SelectCropNamesData? _cropData;
+
+  SelectVillagesNameData? _villageNameData;
+  String? _selectedVillageName;
+
+  String? _selectedFarmersName;
+  List<DropdownMenuItem<String>>? dropdownItems;
+  String number = "";
+
+  Future<InsightDetails?>? futureSearchInsightDetails;
+
   @override
   void initState() {
     super.initState();
+    getDashboardApi();
+    _fetchCropData();
+    _fetchFarmerNameData();
+    _fetchVillageData();
+  }
+
+  Future<void> _fetchFarmerNameData() async {
+    try {
+      String? number = await AppGlobal.getStringPreference('dealerNumber');
+      var num = number ?? "1";
+      var response = await Dio().get(FARMER_NAME+num);
+
+      if (response.statusCode == 200) {
+        dropdownItems =
+            response.data['data'].map<DropdownMenuItem<String>>((item) {
+              return DropdownMenuItem<String>(
+                value: item['name'],
+                child: Text(item['name']),
+              );
+            }).toList();
+      } else {
+        throw Exception('Failed to load farmers name');
+      }
+    } catch (e) {
+      print('Error fetching farmer name data: $e');
+    }
+  }
+
+  Future<void> _fetchVillageData() async {
+    try {
+      // Replace with your actual API endpoint
+      var response = await Dio().get(VILLAGES_NAMES);
+
+      if (response.statusCode == 200) {
+        setState(() {
+          _villageNameData = SelectVillagesNameData.fromJson(response.data);
+        });
+      } else {
+        throw Exception('Failed to load villages');
+      }
+    } catch (e) {
+      print('Error fetching _village name data: $e');
+    }
+  }
+
+  Future<void> _fetchCropData() async {
+    try {
+      var response = await Dio().get(CROPS_NAMES);
+
+      if (response.statusCode == 200) {
+        setState(() {
+          _cropData = SelectCropNamesData.fromJson(response.data);
+        });
+      } else {
+        throw Exception('Failed to load crops');
+      }
+    } catch (e) {
+      print('Error fetching crop data: $e');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
     ));
@@ -122,74 +209,43 @@ class _MyBottomTwoPageState extends State<MyBottomTwoPage>
       extendBodyBehindAppBar: false,
       appBar: widget.aapbarVisibility
           ? AppBar(
-              automaticallyImplyLeading: false,
-              title: InkWell(
-                highlightColor: Colors.transparent,
-                splashColor: Colors.transparent,
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                        builder: (context) => const MySelectLanguagePage()),
-                  );
-                },
+        automaticallyImplyLeading: false,
+        title: InkWell(
+          highlightColor: Colors.transparent,
+          splashColor: Colors.transparent,
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                  builder: (context) => const MySelectLanguagePage()),
+            );
+          },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Image.asset(
+                'assets/images/loginLogo.png',
+                width: 150,
+                height: 60,
+              ),
+              const Spacer(),
+              Padding(
+                padding: const EdgeInsets.only(right: 5.0, top: 12.0),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Image.asset(
-                      'assets/images/loginLogo.png',
-                      width: 150,
-                      height: 60,
+                      'assets/images/language.png',
+                      width: 35,
+                      height: 35,
                     ),
-                    const Spacer(),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 5.0, top: 12.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Image.asset(
-                            'assets/images/language.png',
-                            width: 35,
-                            height: 35,
-                          ),
-                          // const Text(
-                          //   "Select Language",
-                          //   style: TextStyle(color: Colors.black, fontFamily: 'poppins-semibold', fontSize: 15),
-                          // ),
-                          // const SizedBox(width: 10,),
-                          // Image.asset(
-                          //   'assets/images/appbar_down.png',
-                          //   // color: Colors.white,
-                          // ),
-                        ],
-                      ),
-                    ),
-                    // Padding(
-                    //   padding: const EdgeInsets.only(right: 5.0, top: 20.0),
-                    //   child: Row(
-                    //     mainAxisAlignment: MainAxisAlignment.end,
-                    //     children: [
-                    //       const Text(
-                    //         "Select Language",
-                    //         style: TextStyle(
-                    //             color: Colors.black,
-                    //             fontFamily: 'poppins-semibold',
-                    //             fontSize: 15),
-                    //       ),
-                    //       const SizedBox(
-                    //         width: 10,
-                    //       ),
-                    //       Image.asset(
-                    //         'assets/images/appbar_down.png',
-                    //         // color: Colors.white,
-                    //       ),
-                    //     ],
-                    //   ),
-                    // ),
                   ],
                 ),
               ),
-            )
+            ],
+          ),
+        ),
+      )
           : null,
       body: SingleChildScrollView(
         child: Column(
@@ -243,2475 +299,2177 @@ class _MyBottomTwoPageState extends State<MyBottomTwoPage>
             ),
             selectedTopData == 0
                 ? Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-                        child: Container(
-                          width: MediaQuery.of(context).size.width,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border.all(
-                                  color: const Color(0xFFd3d3d3), width: 1),
-                              borderRadius: BorderRadius.circular(12)),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  buildTranslate("searchBy")!,
-                                  softWrap: true,
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 15,
-                                      fontFamily: 'poppins-regular'),
-                                ),
-                              ),
-                              Flexible(
-                                  flex: 3,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(left: 20.0),
-                                    child: TextFormField(
-                                      decoration: InputDecoration(
-                                        alignLabelWithHint: true,
-                                        fillColor: Colors.white,
-                                        filled: true,
-                                        border: const OutlineInputBorder(
-                                          borderRadius: BorderRadius.all(
-                                            Radius.circular(5.0),
-                                          ),
-                                        ),
-                                        enabledBorder: const OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                            color: Color(0xFFd3d3d3),
-                                            width: 1.0,
-                                          ),
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(10.0)),
-                                        ),
-                                        hintText: buildTranslate('mobileNumberOrCrop'),
-                                        hintStyle: const TextStyle(color: Colors.black),
-                                      ),
-                                      validator: (value) => value!.isEmpty
-                                          ? 'Please, fill this field.'
-                                          : null,
-                                      controller: controller,
-                                    ),
-                                  )),
-                            ],
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(
+                            color: const Color(0xFFd3d3d3), width: 1),
+                        borderRadius: BorderRadius.circular(12)),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            buildTranslate("searchBy")!,
+                            softWrap: true,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 15,
+                                fontFamily: 'poppins-regular'),
                           ),
                         ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            left: 20.0, right: 20.0, top: 8.0, bottom: 8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              buildTranslate("allFarmers(300)")!,
-                              softWrap: true,
-                              style: const TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 17,
-                                  fontFamily: 'poppins-semibold'),
-                            ),
-                            const Spacer(),
-                            InkWell(
-                                highlightColor: Colors.transparent,
-                                splashColor: Colors.transparent,
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    PageTransition(
-                                      type: PageTransitionType.leftToRight,
-                                      child: const MyDrawer(),
-                                    ),
-                                  );
-                                },
-                                child: Image.asset('assets/images/filter.png')),
-                          ],
-                        ),
-                      ),
-
-                      // user card
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            top: 10.0, right: 20.0, left: 20.0),
-                        child: Container(
-                          decoration: const BoxDecoration(
-                              color: Color(0xFFe7e7e7),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(12))),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 10.0, right: 15.0, left: 15.0),
-                                child: Row(
-                                  children: <Widget>[
-                                    Container(
-                                      height: 50.0,
-                                      width: 50.0,
-                                      decoration: const BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          image: DecorationImage(
-                                              image: AssetImage(
-                                                  "assets/images/profile_image.png"),
-                                              fit: BoxFit.cover)),
-                                    ),
-                                    const SizedBox(
-                                      width: 15,
-                                    ),
-                                    const Flexible(
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            "Shaikh Hamid",
-                                            softWrap: true,
-                                            style: TextStyle(
-                                                color: Color(0xFF808080),
-                                                fontSize: 15,
-                                                fontFamily: 'poppins-semibold'),
-                                          ),
-                                          Text(
-                                            "Shelter Apartment Ahmadabad India",
-                                            softWrap: true,
-                                            style: TextStyle(
-                                                color: Color(0xFF959595),
-                                                fontSize: 11,
-                                                fontFamily: 'poppins-semibold'),
-                                          ),
-                                          Text(
-                                            "+91-9856325698",
-                                            softWrap: true,
-                                            style: TextStyle(
-                                                color: Color(0xFF959595),
-                                                fontSize: 11,
-                                                fontFamily: 'poppins-semibold'),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 20.0,
-                                    right: 20.0,
-                                    top: 8.0,
-                                    bottom: 12.0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Expanded(
-                                        child: InkWell(
-                                      highlightColor: Colors.transparent,
-                                      splashColor: Colors.transparent,
-                                      onTap: () {
-                                        setState(() {
-                                          showCropDataFlag1 = true;
-                                        });
-                                      },
-                                      child: Row(
-                                        children: [
-                                          Text(
-                                            buildTranslate("showCropData")!,
-                                            softWrap: true,
-                                            style: const TextStyle(
-                                              color: Color(0XFF008000),
-                                              fontSize: 15,
-                                              fontFamily: 'poppins-semibold',
-                                              decoration:
-                                                  TextDecoration.underline,
-                                              decorationColor:
-                                                  Color(0XFF008000),
-                                            ),
-                                          ),
-                                          Image.asset(
-                                              'assets/images/dropdown_arrow.png'),
-                                        ],
-                                      ),
-                                    )),
-                                    const VerticalDivider(width: 1.0),
-                                    Expanded(
-                                        child: Align(
-                                      alignment: Alignment.centerRight,
-                                      child: InkWell(
-                                        highlightColor: Colors.transparent,
-                                        splashColor: Colors.transparent,
-                                        onTap: () {
-                                          Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const MyFarmerProfilePage()),
-                                          );
-                                        },
-                                        child: Text(
-                                          buildTranslate("editProfile")!,
-                                          softWrap: true,
-                                          style: const TextStyle(
-                                            color: Color(0XFF008000),
-                                            fontSize: 15,
-                                            fontFamily: 'poppins-semibold',
-                                            decoration:
-                                                TextDecoration.underline,
-                                            decorationColor: Color(0XFF008000),
-                                          ),
-                                        ),
-                                      ),
-                                    )),
-                                  ],
-                                ),
-                              ),
-                              Visibility(
-                                visible: showCropDataFlag1,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 20.0,
-                                      right: 20.0,
-                                      top: 20.0,
-                                      bottom: 12.0),
-                                  child: Text(
-                                    buildTranslate("cropCultivations")!,
-                                    softWrap: true,
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 17,
-                                      fontFamily: 'poppins-semibold',
-                                      decorationColor: Color(0XFF008000),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Visibility(
-                                visible: showCropDataFlag1,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 25.0, right: 15.0, bottom: 12.0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Expanded(
-                                          child: Row(
-                                        children: [
-                                          Text(
-                                            "1:Maze",
-                                            softWrap: true,
-                                            style: TextStyle(
-                                              color: Colors.grey,
-                                              fontSize: 15,
-                                              fontFamily: 'poppins-semibold',
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 20,
-                                          ),
-                                          Text(
-                                            "Stage: \nFlowering",
-                                            softWrap: true,
-                                            style: TextStyle(
-                                              color: Colors.grey,
-                                              fontSize: 15,
-                                              fontFamily: 'poppins-semibold',
-                                            ),
-                                          ),
-                                        ],
-                                      )),
-                                      const VerticalDivider(width: 1.0),
-                                      Expanded(
-                                          child: Align(
-                                        alignment: Alignment.centerRight,
-                                        child: InkWell(
-                                          onTap: () {
-                                            Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        const MyCropCultivationPage()));
-                                          },
-                                          child: Text(
-                                            buildTranslate("editCropData")!,
-                                            softWrap: true,
-                                            style: const TextStyle(
-                                              color: Color(0XFF008000),
-                                              fontSize: 15,
-                                              fontFamily: 'poppins-semibold',
-                                            ),
-                                          ),
-                                        ),
-                                      )),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              Visibility(
-                                visible: showCropDataFlag1,
-                                child: const Padding(
-                                  padding: EdgeInsets.only(
-                                    left: 15.0,
-                                    right: 15.0,
-                                  ),
-                                  child: Divider(
-                                    color: Colors.black,
-                                    thickness: 1,
-                                  ),
-                                ),
-                              ),
-                              Visibility(
-                                visible: showCropDataFlag1,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 25.0, right: 15.0, bottom: 12.0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Expanded(
-                                          child: Row(
-                                        children: [
-                                          Text(
-                                            "2:Maze",
-                                            softWrap: true,
-                                            style: TextStyle(
-                                              color: Colors.grey,
-                                              fontSize: 15,
-                                              fontFamily: 'poppins-semibold',
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 20,
-                                          ),
-                                          Text(
-                                            "Stage: \nFlowering",
-                                            softWrap: true,
-                                            style: TextStyle(
-                                              color: Colors.grey,
-                                              fontSize: 15,
-                                              fontFamily: 'poppins-semibold',
-                                            ),
-                                          ),
-                                        ],
-                                      )),
-                                      const VerticalDivider(width: 1.0),
-                                      Expanded(
-                                          child: Align(
-                                        alignment: Alignment.centerRight,
-                                        child: InkWell(
-                                          onTap: () {
-                                            Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        const MyCropCultivationPage()));
-                                          },
-                                          child: Text(
-                                            buildTranslate("editCropData")!,
-                                            softWrap: true,
-                                            style: const TextStyle(
-                                              color: Color(0XFF008000),
-                                              fontSize: 15,
-                                              fontFamily: 'poppins-semibold',
-                                            ),
-                                          ),
-                                        ),
-                                      )),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              Visibility(
-                                visible: showCropDataFlag1,
-                                child: const Padding(
-                                  padding: EdgeInsets.only(
-                                    left: 15.0,
-                                    right: 15.0,
-                                  ),
-                                  child: Divider(
-                                    color: Colors.black,
-                                    thickness: 1,
-                                  ),
-                                ),
-                              ),
-                              Visibility(
-                                visible: showCropDataFlag1,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 25.0, right: 15.0, bottom: 12.0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Expanded(
-                                          child: Row(
-                                        children: [
-                                          Text(
-                                            "3:Maze",
-                                            softWrap: true,
-                                            style: TextStyle(
-                                              color: Colors.grey,
-                                              fontSize: 15,
-                                              fontFamily: 'poppins-semibold',
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 20,
-                                          ),
-                                          Text(
-                                            "Stage: \nFlowering",
-                                            softWrap: true,
-                                            style: TextStyle(
-                                              color: Colors.grey,
-                                              fontSize: 15,
-                                              fontFamily: 'poppins-semibold',
-                                            ),
-                                          ),
-                                        ],
-                                      )),
-                                      const VerticalDivider(width: 1.0),
-                                      Expanded(
-                                          child: Align(
-                                        alignment: Alignment.centerRight,
-                                        child: InkWell(
-                                          onTap: () {
-                                            Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        const MyCropCultivationPage()));
-                                          },
-                                          child: Text(
-                                            buildTranslate("editCropData")!,
-                                            softWrap: true,
-                                            style: const TextStyle(
-                                              color: Color(0XFF008000),
-                                              fontSize: 15,
-                                              fontFamily: 'poppins-semibold',
-                                            ),
-                                          ),
-                                        ),
-                                      )),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              showCropDataFlag1
-                                  ? const SizedBox(
-                                      height: 10,
-                                    )
-                                  : Container(),
-                              Visibility(
-                                visible: showCropDataFlag1,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 10.0,
-                                      right: 10.0,
-                                      top: 8.0,
-                                      bottom: 20.0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Expanded(
-                                          flex: 2,
-                                          child: InkWell(
-                                            highlightColor: Colors.transparent,
-                                            splashColor: Colors.transparent,
-                                            onTap: () {},
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                  color:
-                                                      const Color(0XFF3FC041),
-                                                  border: Border.all(
-                                                      color: const Color(
-                                                          0XFF3FC041),
-                                                      width: 1),
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          18)),
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Text(
-                                                buildTranslate(
-                                                    "showMoreCrops")!,
-                                                softWrap: true,
-                                                textAlign: TextAlign.center,
-                                                style: const TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 12,
-                                                    fontFamily:
-                                                        'poppins-regular'),
-                                              ),
-                                            ),
-                                          )),
-                                      Expanded(
-                                          flex: 2,
-                                          child: Align(
-                                            alignment: Alignment.centerRight,
-                                            child: InkWell(
-                                              highlightColor:
-                                                  Colors.transparent,
-                                              splashColor: Colors.transparent,
-                                              onTap: () {
-                                                Navigator.of(context).push(
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            const MyCropCultivationPage()));
-                                              },
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                    color:
-                                                        const Color(0XFF3FC041),
-                                                    border: Border.all(
-                                                        color: const Color(
-                                                            0XFF3FC041),
-                                                        width: 1),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            18)),
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: Text(
-                                                  buildTranslate(
-                                                      "addNewCultivations")!,
-                                                  softWrap: true,
-                                                  style: const TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 11,
-                                                    fontFamily:
-                                                        'poppins-regular',
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          )),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(
-                        height: 10,
-                      ),
-
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            top: 10.0, right: 20.0, left: 20.0),
-                        child: Container(
-                          decoration: const BoxDecoration(
-                              color: Color(0xFFe7e7e7),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(12))),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 10.0, right: 15.0, left: 15.0),
-                                child: Row(
-                                  children: <Widget>[
-                                    Container(
-                                      height: 50.0,
-                                      width: 50.0,
-                                      decoration: const BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          image: DecorationImage(
-                                              image: AssetImage(
-                                                  "assets/images/profile_image.png"),
-                                              fit: BoxFit.cover)),
-                                    ),
-                                    const SizedBox(
-                                      width: 15,
-                                    ),
-                                    const Flexible(
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            "Shaikh Hamid",
-                                            softWrap: true,
-                                            style: TextStyle(
-                                                color: Color(0xFF808080),
-                                                fontSize: 15,
-                                                fontFamily: 'poppins-semibold'),
-                                          ),
-                                          Text(
-                                            "Shelter Apartment Ahmadabad India",
-                                            softWrap: true,
-                                            style: TextStyle(
-                                                color: Color(0xFF959595),
-                                                fontSize: 11,
-                                                fontFamily: 'poppins-semibold'),
-                                          ),
-                                          Text(
-                                            "+91-9856325698",
-                                            softWrap: true,
-                                            style: TextStyle(
-                                                color: Color(0xFF959595),
-                                                fontSize: 11,
-                                                fontFamily: 'poppins-semibold'),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 20.0,
-                                    right: 20.0,
-                                    top: 8.0,
-                                    bottom: 12.0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Expanded(
-                                        child: InkWell(
-                                      highlightColor: Colors.transparent,
-                                      splashColor: Colors.transparent,
-                                      onTap: () {
-                                        setState(() {
-                                          showCropDataFlag2 = true;
-                                        });
-                                      },
-                                      child: Row(
-                                        children: [
-                                          Text(
-                                            buildTranslate("showCropData")!,
-                                            softWrap: true,
-                                            style: const TextStyle(
-                                              color: Color(0XFF008000),
-                                              fontSize: 15,
-                                              fontFamily: 'poppins-semibold',
-                                              decoration:
-                                                  TextDecoration.underline,
-                                              decorationColor:
-                                                  Color(0XFF008000),
-                                            ),
-                                          ),
-                                          Image.asset(
-                                              'assets/images/dropdown_arrow.png'),
-                                        ],
-                                      ),
-                                    )),
-                                    const VerticalDivider(width: 1.0),
-                                    Expanded(
-                                        child: Align(
-                                      alignment: Alignment.centerRight,
-                                      child: InkWell(
-                                        highlightColor: Colors.transparent,
-                                        splashColor: Colors.transparent,
-                                        onTap: () {
-                                          Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const MyFarmerProfilePage()),
-                                          );
-                                        },
-                                        child: Text(
-                                          buildTranslate("editProfile")!,
-                                          softWrap: true,
-                                          style: const TextStyle(
-                                            color: Color(0XFF008000),
-                                            fontSize: 15,
-                                            fontFamily: 'poppins-semibold',
-                                            decoration:
-                                                TextDecoration.underline,
-                                            decorationColor: Color(0XFF008000),
-                                          ),
-                                        ),
-                                      ),
-                                    )),
-                                  ],
-                                ),
-                              ),
-                              Visibility(
-                                visible: showCropDataFlag2,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 20.0,
-                                      right: 20.0,
-                                      top: 20.0,
-                                      bottom: 12.0),
-                                  child: Text(
-                                    buildTranslate("cropCultivations")!,
-                                    softWrap: true,
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 17,
-                                      fontFamily: 'poppins-semibold',
-                                      decorationColor: Color(0XFF008000),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Visibility(
-                                visible: showCropDataFlag2,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 25.0, right: 15.0, bottom: 12.0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Expanded(
-                                          child: Row(
-                                        children: [
-                                          Text(
-                                            "1:Maze",
-                                            softWrap: true,
-                                            style: TextStyle(
-                                              color: Colors.grey,
-                                              fontSize: 15,
-                                              fontFamily: 'poppins-semibold',
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 20,
-                                          ),
-                                          Text(
-                                            "Stage: \nFlowering",
-                                            softWrap: true,
-                                            style: TextStyle(
-                                              color: Colors.grey,
-                                              fontSize: 15,
-                                              fontFamily: 'poppins-semibold',
-                                            ),
-                                          ),
-                                        ],
-                                      )),
-                                      const VerticalDivider(width: 1.0),
-                                      Expanded(
-                                          child: Align(
-                                        alignment: Alignment.centerRight,
-                                        child: InkWell(
-                                          onTap: () {
-                                            Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        const MyCropCultivationPage()));
-                                          },
-                                          child: Text(
-                                            buildTranslate("editCropData")!,
-                                            softWrap: true,
-                                            style: const TextStyle(
-                                              color: Color(0XFF008000),
-                                              fontSize: 15,
-                                              fontFamily: 'poppins-semibold',
-                                            ),
-                                          ),
-                                        ),
-                                      )),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              Visibility(
-                                visible: showCropDataFlag2,
-                                child: const Padding(
-                                  padding: EdgeInsets.only(
-                                    left: 15.0,
-                                    right: 15.0,
-                                  ),
-                                  child: Divider(
-                                    color: Colors.black,
-                                    thickness: 1,
-                                  ),
-                                ),
-                              ),
-                              Visibility(
-                                visible: showCropDataFlag2,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 25.0, right: 15.0, bottom: 12.0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Expanded(
-                                          child: Row(
-                                        children: [
-                                          Text(
-                                            "2:Maze",
-                                            softWrap: true,
-                                            style: TextStyle(
-                                              color: Colors.grey,
-                                              fontSize: 15,
-                                              fontFamily: 'poppins-semibold',
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 20,
-                                          ),
-                                          Text(
-                                            "Stage: \nFlowering",
-                                            softWrap: true,
-                                            style: TextStyle(
-                                              color: Colors.grey,
-                                              fontSize: 15,
-                                              fontFamily: 'poppins-semibold',
-                                            ),
-                                          ),
-                                        ],
-                                      )),
-                                      const VerticalDivider(width: 1.0),
-                                      Expanded(
-                                          child: Align(
-                                        alignment: Alignment.centerRight,
-                                        child: InkWell(
-                                          onTap: () {
-                                            Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        const MyCropCultivationPage()));
-                                          },
-                                          child: Text(
-                                            buildTranslate("editCropData")!,
-                                            softWrap: true,
-                                            style: const TextStyle(
-                                              color: Color(0XFF008000),
-                                              fontSize: 15,
-                                              fontFamily: 'poppins-semibold',
-                                            ),
-                                          ),
-                                        ),
-                                      )),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              Visibility(
-                                visible: showCropDataFlag2,
-                                child: const Padding(
-                                  padding: EdgeInsets.only(
-                                    left: 15.0,
-                                    right: 15.0,
-                                  ),
-                                  child: Divider(
-                                    color: Colors.black,
-                                    thickness: 1,
-                                  ),
-                                ),
-                              ),
-                              Visibility(
-                                visible: showCropDataFlag2,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 25.0, right: 15.0, bottom: 12.0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Expanded(
-                                          child: Row(
-                                        children: [
-                                          Text(
-                                            "3:Maze",
-                                            softWrap: true,
-                                            style: TextStyle(
-                                              color: Colors.grey,
-                                              fontSize: 15,
-                                              fontFamily: 'poppins-semibold',
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 20,
-                                          ),
-                                          Text(
-                                            "Stage: \nFlowering",
-                                            softWrap: true,
-                                            style: TextStyle(
-                                              color: Colors.grey,
-                                              fontSize: 15,
-                                              fontFamily: 'poppins-semibold',
-                                            ),
-                                          ),
-                                        ],
-                                      )),
-                                      const VerticalDivider(width: 1.0),
-                                      Expanded(
-                                          child: Align(
-                                        alignment: Alignment.centerRight,
-                                        child: InkWell(
-                                          onTap: () {
-                                            Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        const MyCropCultivationPage()));
-                                          },
-                                          child: Text(
-                                            buildTranslate("editCropData")!,
-                                            softWrap: true,
-                                            style: const TextStyle(
-                                              color: Color(0XFF008000),
-                                              fontSize: 15,
-                                              fontFamily: 'poppins-semibold',
-                                            ),
-                                          ),
-                                        ),
-                                      )),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              showCropDataFlag2
-                                  ? const SizedBox(
-                                      height: 10,
-                                    )
-                                  : Container(),
-                              Visibility(
-                                visible: showCropDataFlag2,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 10.0,
-                                      right: 10.0,
-                                      top: 8.0,
-                                      bottom: 20.0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Expanded(
-                                          flex: 2,
-                                          child: InkWell(
-                                            highlightColor: Colors.transparent,
-                                            splashColor: Colors.transparent,
-                                            onTap: () {},
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                  color:
-                                                      const Color(0XFF3FC041),
-                                                  border: Border.all(
-                                                      color: const Color(
-                                                          0XFF3FC041),
-                                                      width: 1),
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          18)),
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Text(
-                                                buildTranslate(
-                                                    "showMoreCrops")!,
-                                                softWrap: true,
-                                                textAlign: TextAlign.center,
-                                                style: const TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 12,
-                                                    fontFamily:
-                                                        'poppins-regular'),
-                                              ),
-                                            ),
-                                          )),
-                                      Expanded(
-                                          flex: 2,
-                                          child: Align(
-                                            alignment: Alignment.centerRight,
-                                            child: InkWell(
-                                              highlightColor:
-                                                  Colors.transparent,
-                                              splashColor: Colors.transparent,
-                                              onTap: () {
-                                                Navigator.of(context).push(
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            const MyCropCultivationPage()));
-                                              },
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                    color:
-                                                        const Color(0XFF3FC041),
-                                                    border: Border.all(
-                                                        color: const Color(
-                                                            0XFF3FC041),
-                                                        width: 1),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            18)),
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: Text(
-                                                  buildTranslate(
-                                                      "addNewCultivations")!,
-                                                  softWrap: true,
-                                                  style: const TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 11,
-                                                    fontFamily:
-                                                        'poppins-regular',
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          )),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                    ],
-                  )
-                : selectedTopData == 1
-                    ? Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Center(
-                            child: Text(
-                              buildTranslate("farmerRegistration")!,
-                              softWrap: true,
-                              style: const TextStyle(
-                                  color: Color(0xFF3FC041),
-                                  fontSize: 20,
-                                  fontFamily: 'poppins-medium'),
-                            ),
-                          ),
-
-                          const SizedBox(
-                            height: 20,
-                          ),
-
-                          // name
-                          Padding(
-                            padding:
-                                const EdgeInsets.only(left: 25.0, right: 25.0),
-                            child: Text(
-                              buildTranslate("name")!,
-                              style: const TextStyle(
-                                  fontSize: 15,
-                                  color: Color(0xFF666666),
-                                  fontFamily: 'poppins-semibold'),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.only(left: 25.0, right: 25.0),
-                            child: TextFormField(
-                              decoration: InputDecoration(
+                        Flexible(
+                            flex: 3,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 20.0),
+                              child: TextFormField(
+                                decoration: InputDecoration(
                                   alignLabelWithHint: true,
                                   fillColor: Colors.white,
                                   filled: true,
                                   border: const OutlineInputBorder(
                                     borderRadius: BorderRadius.all(
-                                      Radius.circular(10.0),
+                                      Radius.circular(5.0),
                                     ),
                                   ),
                                   enabledBorder: const OutlineInputBorder(
                                     borderSide: BorderSide(
-                                      color: Colors.grey,
+                                      color: Color(0xFFd3d3d3),
                                       width: 1.0,
                                     ),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(8.0)),
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(10.0)),
                                   ),
-                                  hintText: buildTranslate("enterName")!,
-                                  hintStyle:
-                                      const TextStyle(color: Color(0xFFe7e7e7)),
-                                  focusedBorder: const OutlineInputBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(8.0)),
-                                    borderSide: BorderSide(
-                                        color: Colors.green, width: 0.5),
-                                  )),
-                              validator: (value) => value!.isEmpty
-                                  ? 'Please, fill this field.'
-                                  : null,
-                              controller: naneController,
-                            ),
-                          ),
-
-                          const SizedBox(
-                            height: 20,
-                          ),
-
-                          // whats app number
-                          Padding(
-                            padding:
-                                const EdgeInsets.only(left: 25.0, right: 25.0),
-                            child: Text(
-                              buildTranslate("whatsappNumber")!,
-                              style: const TextStyle(
-                                  fontSize: 15,
-                                  color: Color(0xFF666666),
-                                  fontFamily: 'poppins-semibold'),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.only(left: 25.0, right: 25.0),
-                            child: TextFormField(
-                              decoration: InputDecoration(
-                                enabled: true,
-                                alignLabelWithHint: true,
-                                fillColor: Colors.white,
-                                filled: true,
-                                border: const OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(10.0),
-                                  ),
+                                  hintText: buildTranslate(
+                                      'mobileNumberOrCrop'),
+                                  hintStyle: const TextStyle(
+                                      color: Colors.black),
                                 ),
-                                enabledBorder: const OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Colors.grey,
-                                    width: 1.0,
-                                  ),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10.0)),
-                                ),
-                                hintText: buildTranslate('enterMobileNumber')!,
-                                hintStyle:
-                                    const TextStyle(color: Color(0xFFe7e7e7)),
-                                focusedBorder: const OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10.0)),
-                                  borderSide: BorderSide(
-                                      color: Colors.green, width: 0.5),
-                                ),
-                                suffixIcon: Container(
-                                  margin: const EdgeInsets.all(5),
-                                  child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      minimumSize: const Size(80, 40),
-                                      foregroundColor: Colors.white,
-                                      textStyle: const TextStyle(fontSize: 18),
-                                      backgroundColor: const Color(0xFF3FC041),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(12.0),
-                                      ),
-                                    ),
-                                    child: Text(
-                                      buildTranslate("getOTP")!,
-                                      style: const TextStyle(
-                                          color: Colors.white,
-                                          fontFamily: "poppins-regular",
-                                          fontSize: 15.0),
-                                    ),
-                                    onPressed: () {
-                                      setState(() {
-                                        otpVisible = true;
-                                      });
-                                    },
-                                  ),
-                                ),
+                                validator: (value) => value!.isEmpty
+                                    ? 'Please, fill this field.'
+                                    : null,
+                                controller: searchByNaneController,
                               ),
-                              validator: (value) => value!.isEmpty
-                                  ? 'Please, fill this field.'
-                                  : null,
-                              controller: controller,
-                            ),
-                          ),
+                            )),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                      left: 20.0, right: 20.0, top: 8.0, bottom: 8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        buildTranslate("allFarmers")!,
+                        softWrap: true,
+                        style: const TextStyle(
+                            color: Colors.grey,
+                            fontSize: 17,
+                            fontFamily: 'poppins-semibold'),
+                      ),
+                      const Spacer(),
+                      InkWell(
+                          highlightColor: Colors.transparent,
+                          splashColor: Colors.transparent,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              PageTransition(
+                                type: PageTransitionType.leftToRight,
+                                child: const MyDrawer(),
+                              ),
+                            );
+                          },
+                          child: Image.asset('assets/images/filter.png')),
+                    ],
+                  ),
+                ),
+                ListView.builder(
+                    itemCount: farmerItem.length,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      print("farmerItem[index] : ${index}");
+                      final dealerNumber = farmerItem[index]['dealerNumber'];
+                      final name = farmerItem[index]['name'];
+                      final address = farmerItem[index]['address'];
+                      final whatsappNumber =
+                      farmerItem[index]['whatsappNumber'];
+                      final geoLocationOwnedFarm =
+                      farmerItem[index]['geoLocationOwnedFarm'];
+                      final totalOwnedFarm =
+                      farmerItem[index]['totalOwnedFarm'].toString();
+                      final totalLeaseFarm =
+                      farmerItem[index]['totalLeaseFarm'].toString();
+                      final geoLocationLeaseFarm =
+                      farmerItem[index]['geoLocationLeaseFarm'];
+                      final pincode = farmerItem[index]['pincode'];
+                      final state = farmerItem[index]['state'];
+                      final district = farmerItem[index]['district'];
+                      final bankName = farmerItem[index]['bankName'];
+                      final accountName =
+                      farmerItem[index]['accountName'];
+                      final accountNumber =
+                      farmerItem[index]['accountNumber'];
+                      final ifscCode = farmerItem[index]['ifscCode'];
+                      final panNumber = farmerItem[index]['pan'];
+                      final aadhaarNumber =
+                      farmerItem[index]['aadhaarNumber'];
 
-                          const SizedBox(
-                            height: 20,
-                          ),
-
-                          // verify otp
-                          otpVisible
-                              ? Padding(
+                      return
+                        // user card
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              top: 10.0, right: 20.0, left: 20.0),
+                          child: Container(
+                            decoration: const BoxDecoration(
+                                color: Color(0xFFe7e7e7),
+                                borderRadius:
+                                BorderRadius.all(Radius.circular(12))),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Padding(
                                   padding: const EdgeInsets.only(
-                                      left: 25.0, right: 25.0),
+                                      top: 10.0, right: 15.0, left: 15.0),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Container(
+                                        height: 50.0,
+                                        width: 50.0,
+                                        decoration: const BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            image: DecorationImage(
+                                                image: AssetImage(
+                                                    "assets/images/profile_image.png"),
+                                                fit: BoxFit.cover)),
+                                      ),
+                                      const SizedBox(
+                                        width: 15,
+                                      ),
+                                      Flexible(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              name ?? "",
+                                              softWrap: true,
+                                              style: const TextStyle(
+                                                  color: Color(0xFF808080),
+                                                  fontSize: 15,
+                                                  fontFamily:
+                                                  'poppins-semibold'),
+                                            ),
+                                            Text(
+                                              address ?? "",
+                                              softWrap: true,
+                                              style: const TextStyle(
+                                                  color: Color(0xFF959595),
+                                                  fontSize: 11,
+                                                  fontFamily:
+                                                  'poppins-semibold'),
+                                            ),
+                                            Text(
+                                              whatsappNumber ?? "",
+                                              softWrap: true,
+                                              style: const TextStyle(
+                                                  color: Color(0xFF959595),
+                                                  fontSize: 11,
+                                                  fontFamily:
+                                                  'poppins-semibold'),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 20.0,
+                                      right: 20.0,
+                                      top: 8.0,
+                                      bottom: 12.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      Expanded(
+                                          child: InkWell(
+                                            highlightColor: Colors.transparent,
+                                            splashColor: Colors.transparent,
+                                            onTap: () {
+                                              setState(() {
+                                                if (firstCardVisibleValue == index) {
+                                                  firstCardVisibleValue = null; // Deselect if tapped again
+                                                } else {
+                                                  firstCardVisibleValue = index; // Select the item
+                                                }
+                                              });
+                                            },
+                                            child: Row(
+                                              children: [
+                                                Text(
+                                                  buildTranslate(
+                                                      "showCropData")!,
+                                                  softWrap: true,
+                                                  style: const TextStyle(
+                                                    color: Color(0XFF008000),
+                                                    fontSize: 15,
+                                                    fontFamily:
+                                                    'poppins-semibold',
+                                                    decoration: TextDecoration
+                                                        .underline,
+                                                    decorationColor:
+                                                    Color(0XFF008000),
+                                                  ),
+                                                ),
+                                                Image.asset(
+                                                    'assets/images/dropdown_arrow.png'),
+                                              ],
+                                            ),
+                                          )),
+                                      const VerticalDivider(width: 1.0),
+                                      Expanded(
+                                          child: Align(
+                                            alignment: Alignment.centerRight,
+                                            child: InkWell(
+                                              highlightColor:
+                                              Colors.transparent,
+                                              splashColor: Colors.transparent,
+                                              onTap: () {
+                                                Navigator.of(context).push(
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          MyFarmerEditProfilePage(
+                                                              dealerNumber : dealerNumber,
+                                                              name: name,
+                                                              address: address,
+                                                              whatsappNumber: whatsappNumber,
+                                                              geoLocationOwnedFarm: geoLocationOwnedFarm,
+                                                              totalOwnedFarm : totalOwnedFarm,
+                                                              totalLeaseFarm: totalLeaseFarm,
+                                                              geoLocationLeaseFarm: geoLocationLeaseFarm,
+                                                              pincode: pincode,
+                                                              state: state,
+                                                              district: district,
+                                                              bankName: bankName,
+                                                              accountName: accountName,
+                                                              accountNumber : accountNumber,
+                                                              ifscCode: ifscCode,
+                                                              panNumber: panNumber,
+                                                              aadhaarNumber : aadhaarNumber)),
+                                                );
+                                              },
+                                              child: Text(
+                                                buildTranslate("editProfile")!,
+                                                softWrap: true,
+                                                style: const TextStyle(
+                                                  color: Color(0XFF008000),
+                                                  fontSize: 15,
+                                                  fontFamily:
+                                                  'poppins-semibold',
+                                                  decoration:
+                                                  TextDecoration.underline,
+                                                  decorationColor:
+                                                  Color(0XFF008000),
+                                                ),
+                                              ),
+                                            ),
+                                          )),
+                                    ],
+                                  ),
+                                ),
+                                firstCardVisibleValue == index ? Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 20.0,
+                                      right: 20.0,
+                                      top: 20.0,
+                                      bottom: 12.0),
                                   child: Text(
-                                    buildTranslate("verifyOtp")!,
+                                    buildTranslate("cropCultivations")!,
+                                    softWrap: true,
                                     style: const TextStyle(
-                                        fontSize: 15,
-                                        color: Color(0xFF666666),
-                                        fontFamily: 'poppins-semibold'),
+                                      color: Colors.black,
+                                      fontSize: 17,
+                                      fontFamily: 'poppins-semibold',
+                                      decorationColor: Color(0XFF008000),
+                                    ),
                                   ),
-                                )
-                              : Container(),
-                          otpVisible
-                              ? const SizedBox(
-                                  height: 20,
-                                )
-                              : Container(),
-                          otpVisible
-                              ? OtpTextField(
-                                  numberOfFields: 4,
-                                  borderColor: const Color(0xFF3dc33b),
-                                  //set to true to show as box or false to show as dash
-                                  showFieldAsBox: true,
-                                  filled: true,
-                                  fieldWidth: 60,
-                                  //runs when a code is typed in
-                                  onCodeChanged: (String code) {
-                                    //handle validation or checks here
-                                  },
-                                  //runs when every textfield is filled
-                                  onSubmit: (String verificationCode) {
-                                    // showDialog(
-                                    //     context: context,
-                                    //     builder: (context){
-                                    //       return AlertDialog(
-                                    //         title: Text("Verification Code"),
-                                    //         content: Text('Code entered is $verificationCode'),
-                                    //       );
-                                    //     }
-                                    // );
-                                  }, // end onSubmit
-                                )
-                              : Container(),
-
-                          const SizedBox(
-                            height: 25,
+                                ) : Container(),
+                                firstCardVisibleValue == index  ? Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 25.0,
+                                      right: 15.0,
+                                      bottom: 12.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      const Expanded(
+                                          child: Row(
+                                            children: [
+                                              Text(
+                                                "1:Maze",
+                                                softWrap: true,
+                                                style: TextStyle(
+                                                  color: Colors.grey,
+                                                  fontSize: 15,
+                                                  fontFamily:
+                                                  'poppins-semibold',
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                width: 20,
+                                              ),
+                                              Text(
+                                                "Stage: \nFlowering",
+                                                softWrap: true,
+                                                style: TextStyle(
+                                                  color: Colors.grey,
+                                                  fontSize: 15,
+                                                  fontFamily:
+                                                  'poppins-semibold',
+                                                ),
+                                              ),
+                                            ],
+                                          )),
+                                      const VerticalDivider(width: 1.0),
+                                      Expanded(
+                                          child: Align(
+                                            alignment: Alignment.centerRight,
+                                            child: InkWell(
+                                              onTap: () {
+                                                Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                        const MyCropCultivationPage()));
+                                              },
+                                              child: Text(
+                                                buildTranslate(
+                                                    "editCropData")!,
+                                                softWrap: true,
+                                                style: const TextStyle(
+                                                  color: Color(0XFF008000),
+                                                  fontSize: 15,
+                                                  fontFamily:
+                                                  'poppins-semibold',
+                                                ),
+                                              ),
+                                            ),
+                                          )),
+                                    ],
+                                  ),
+                                ) : Container(),
+                                firstCardVisibleValue == index  ? const Padding(
+                                  padding: EdgeInsets.only(
+                                    left: 15.0,
+                                    right: 15.0,
+                                  ),
+                                  child: Divider(
+                                    color: Colors.black,
+                                    thickness: 1,
+                                  ),
+                                ) : Container(),
+                                firstCardVisibleValue == index  ? Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 25.0,
+                                      right: 15.0,
+                                      bottom: 12.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      const Expanded(
+                                          child: Row(
+                                            children: [
+                                              Text(
+                                                "2:Maze",
+                                                softWrap: true,
+                                                style: TextStyle(
+                                                  color: Colors.grey,
+                                                  fontSize: 15,
+                                                  fontFamily:
+                                                  'poppins-semibold',
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                width: 20,
+                                              ),
+                                              Text(
+                                                "Stage: \nFlowering",
+                                                softWrap: true,
+                                                style: TextStyle(
+                                                  color: Colors.grey,
+                                                  fontSize: 15,
+                                                  fontFamily:
+                                                  'poppins-semibold',
+                                                ),
+                                              ),
+                                            ],
+                                          )),
+                                      const VerticalDivider(width: 1.0),
+                                      Expanded(
+                                          child: Align(
+                                            alignment: Alignment.centerRight,
+                                            child: InkWell(
+                                              onTap: () {
+                                                Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                        const MyCropCultivationPage()));
+                                              },
+                                              child: Text(
+                                                buildTranslate(
+                                                    "editCropData")!,
+                                                softWrap: true,
+                                                style: const TextStyle(
+                                                  color: Color(0XFF008000),
+                                                  fontSize: 15,
+                                                  fontFamily:
+                                                  'poppins-semibold',
+                                                ),
+                                              ),
+                                            ),
+                                          )),
+                                    ],
+                                  ),
+                                ) : Container(),
+                                firstCardVisibleValue == index  ? const Padding(
+                                  padding: EdgeInsets.only(
+                                    left: 15.0,
+                                    right: 15.0,
+                                  ),
+                                  child: Divider(
+                                    color: Colors.black,
+                                    thickness: 1,
+                                  ),
+                                ) : Container(),
+                                firstCardVisibleValue == index  ? Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 25.0,
+                                      right: 15.0,
+                                      bottom: 12.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      const Expanded(
+                                          child: Row(
+                                            children: [
+                                              Text(
+                                                "3:Maze",
+                                                softWrap: true,
+                                                style: TextStyle(
+                                                  color: Colors.grey,
+                                                  fontSize: 15,
+                                                  fontFamily:
+                                                  'poppins-semibold',
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                width: 20,
+                                              ),
+                                              Text(
+                                                "Stage: \nFlowering",
+                                                softWrap: true,
+                                                style: TextStyle(
+                                                  color: Colors.grey,
+                                                  fontSize: 15,
+                                                  fontFamily:
+                                                  'poppins-semibold',
+                                                ),
+                                              ),
+                                            ],
+                                          )),
+                                      const VerticalDivider(width: 1.0),
+                                      Expanded(
+                                          child: Align(
+                                            alignment: Alignment.centerRight,
+                                            child: InkWell(
+                                              onTap: () {
+                                                Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                        const MyCropCultivationPage()));
+                                              },
+                                              child: Text(
+                                                buildTranslate(
+                                                    "editCropData")!,
+                                                softWrap: true,
+                                                style: const TextStyle(
+                                                  color: Color(0XFF008000),
+                                                  fontSize: 15,
+                                                  fontFamily:
+                                                  'poppins-semibold',
+                                                ),
+                                              ),
+                                            ),
+                                          )),
+                                    ],
+                                  ),
+                                ) : Container(),
+                                // showCropDataFlag1
+                                //     ? const SizedBox(
+                                //         height: 10,
+                                //       )
+                                //     : Container(),
+                                firstCardVisibleValue == index  ? Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 10.0,
+                                      right: 10.0,
+                                      top: 8.0,
+                                      bottom: 20.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      Expanded(
+                                          flex: 2,
+                                          child: InkWell(
+                                            highlightColor:
+                                            Colors.transparent,
+                                            splashColor:
+                                            Colors.transparent,
+                                            onTap: () {},
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                  color: const Color(
+                                                      0XFF3FC041),
+                                                  border: Border.all(
+                                                      color: const Color(
+                                                          0XFF3FC041),
+                                                      width: 1),
+                                                  borderRadius:
+                                                  BorderRadius
+                                                      .circular(18)),
+                                              padding:
+                                              const EdgeInsets.all(
+                                                  8.0),
+                                              child: Text(
+                                                buildTranslate(
+                                                    "showMoreCrops")!,
+                                                softWrap: true,
+                                                textAlign:
+                                                TextAlign.center,
+                                                style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 12,
+                                                    fontFamily:
+                                                    'poppins-regular'),
+                                              ),
+                                            ),
+                                          )),
+                                      Expanded(
+                                          flex: 2,
+                                          child: Align(
+                                            alignment:
+                                            Alignment.centerRight,
+                                            child: InkWell(
+                                              highlightColor:
+                                              Colors.transparent,
+                                              splashColor:
+                                              Colors.transparent,
+                                              onTap: () {
+                                                Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                        const MyCropCultivationPage()));
+                                              },
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                    color: const Color(
+                                                        0XFF3FC041),
+                                                    border: Border.all(
+                                                        color: const Color(
+                                                            0XFF3FC041),
+                                                        width: 1),
+                                                    borderRadius:
+                                                    BorderRadius
+                                                        .circular(
+                                                        18)),
+                                                padding:
+                                                const EdgeInsets.all(
+                                                    8.0),
+                                                child: Text(
+                                                  buildTranslate(
+                                                      "addNewCultivations")!,
+                                                  softWrap: true,
+                                                  style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 11,
+                                                    fontFamily:
+                                                    'poppins-regular',
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          )),
+                                    ],
+                                  ),
+                                ) : Container(),
+                              ],
+                            ),
                           ),
+                        );
+                    }),
+                const SizedBox(
+                  height: 30,
+                ),
+              ],
+            )
+                : selectedTopData == 1
+                ? Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Text(
+                    buildTranslate("farmerRegistration")!,
+                    softWrap: true,
+                    style: const TextStyle(
+                        color: Color(0xFF3FC041),
+                        fontSize: 20,
+                        fontFamily: 'poppins-medium'),
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
 
-                          Container(
-                              width: MediaQuery.of(context).size.width,
-                              padding: const EdgeInsets.only(
-                                  left: 25.0, right: 25.0),
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) =>
-                                          const MyFarmerProfilePage()));
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.all(12),
-                                  textStyle: const TextStyle(fontSize: 18),
-                                  backgroundColor: const Color(0xFF3FC041),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.circular(12), // <-- Radius
-                                  ),
-                                ),
-                                child: Text(
-                                  buildTranslate('SUBMIT')!,
-                                  style: const TextStyle(
-                                      fontSize: 18,
-                                      fontFamily: 'poppins-medium'),
-                                ),
-                              )),
-                        ],
-                      )
-                    : selectedTopData == 2
-                        ? Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                // name
+                Padding(
+                  padding:
+                  const EdgeInsets.only(left: 25.0, right: 25.0),
+                  child: Text(
+                    buildTranslate("name")!,
+                    style: const TextStyle(
+                        fontSize: 15,
+                        color: Color(0xFF666666),
+                        fontFamily: 'poppins-semibold'),
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Padding(
+                  padding:
+                  const EdgeInsets.only(left: 25.0, right: 25.0),
+                  child: TextFormField(
+                    decoration: InputDecoration(
+                        alignLabelWithHint: true,
+                        fillColor: Colors.white,
+                        filled: true,
+                        border: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10.0),
+                          ),
+                        ),
+                        enabledBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.grey,
+                            width: 1.0,
+                          ),
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(8.0)),
+                        ),
+                        hintText: buildTranslate("enterName")!,
+                        hintStyle:
+                        const TextStyle(color: Color(0xFFe7e7e7)),
+                        focusedBorder: const OutlineInputBorder(
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(8.0)),
+                          borderSide: BorderSide(
+                              color: Colors.green, width: 0.5),
+                        )),
+                    validator: (value) => value!.isEmpty
+                        ? 'Please, fill this field.'
+                        : null,
+                    controller: nameController,
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+
+                // whats app number
+                Padding(
+                  padding:
+                  const EdgeInsets.only(left: 25.0, right: 25.0),
+                  child: Text(
+                    buildTranslate("whatsappNumber")!,
+                    style: const TextStyle(
+                        fontSize: 15,
+                        color: Color(0xFF666666),
+                        fontFamily: 'poppins-semibold'),
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Padding(
+                  padding:
+                  const EdgeInsets.only(left: 25.0, right: 25.0),
+                  child: TextFormField(
+                    maxLength: 10,
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.allow(
+                          RegExp('[0-9]')),
+                      //To remove first '0'
+                      FilteringTextInputFormatter.deny(
+                          RegExp(r'^0+')),
+                      //To remove first '94' or your country code
+                      FilteringTextInputFormatter.deny(
+                          RegExp(r'^94+')),
+                    ],
+                    keyboardType: TextInputType.phone,
+                    decoration: InputDecoration(
+                      enabled: true,
+                      alignLabelWithHint: true,
+                      fillColor: Colors.white,
+                      border: const OutlineInputBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10.0),
+                        ),
+                      ),
+                      enabledBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.grey,
+                          width: 1.0,
+                        ),
+                        borderRadius:
+                        BorderRadius.all(Radius.circular(10.0)),
+                      ),
+                      hintText: buildTranslate("mobileNumber"),
+                      hintStyle:
+                      const TextStyle(color: Color(0xFFe7e7e7)),
+                      focusedBorder: const OutlineInputBorder(
+                        borderRadius:
+                        BorderRadius.all(Radius.circular(10.0)),
+                        borderSide: BorderSide(
+                            color: Colors.green, width: 0.5),
+                      ),
+                      suffixIcon: Container(
+                        margin: const EdgeInsets.all(8),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: const Size(80, 35),
+                            foregroundColor: Colors.white,
+                            textStyle: const TextStyle(fontSize: 18),
+                            backgroundColor: const Color(0xFF3FC041),
+                            shape: RoundedRectangleBorder(
+                              borderRadius:
+                              BorderRadius.circular(12.0),
+                            ),
+                          ),
+                          child: Text(buildTranslate("getOtp")!),
+                          onPressed: () {
+                            setState(() {
+                              otpVisible = true;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                    validator: (value) => value!.isEmpty
+                        ? 'Please, fill this field.'
+                        : null,
+                    controller: whatsAppNumberController,
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+
+                // verify otp
+                otpVisible
+                    ? Padding(
+                  padding: const EdgeInsets.only(
+                      left: 25.0, right: 25.0),
+                  child: Text(
+                    buildTranslate("verifyOtp")!,
+                    style: const TextStyle(
+                        fontSize: 15,
+                        color: Color(0xFF666666),
+                        fontFamily: 'poppins-semibold'),
+                  ),
+                )
+                    : Container(),
+                otpVisible
+                    ? const SizedBox(
+                  height: 20,
+                )
+                    : Container(),
+                otpVisible
+                    ? OtpTextField(
+                  numberOfFields: 4,
+                  borderColor: const Color(0xFF3dc33b),
+                  //set to true to show as box or false to show as dash
+                  showFieldAsBox: true,
+                  filled: true,
+                  fieldWidth: 60,
+                  //runs when a code is typed in
+                  onCodeChanged: (String code) {
+                    //handle validation or checks here
+                  },
+                  //runs when every textfield is filled
+                  onSubmit: (String verificationCode) {
+                    // showDialog(
+                    //     context: context,
+                    //     builder: (context){
+                    //       return AlertDialog(
+                    //         title: Text("Verification Code"),
+                    //         content: Text('Code entered is $verificationCode'),
+                    //       );
+                    //     }
+                    // );
+                  }, // end onSubmit
+                )
+                    : Container(),
+
+                const SizedBox(
+                  height: 25,
+                ),
+
+                Container(
+                    width: MediaQuery.of(context).size.width,
+                    padding: const EdgeInsets.only(
+                        left: 25.0, right: 25.0),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        _farmerRegistrationCall();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.all(12),
+                        textStyle: const TextStyle(fontSize: 18),
+                        backgroundColor: const Color(0xFF3FC041),
+                        shape: RoundedRectangleBorder(
+                          borderRadius:
+                          BorderRadius.circular(12), // <-- Radius
+                        ),
+                      ),
+                      child: Text(
+                        buildTranslate('SUBMIT')!,
+                        style: const TextStyle(
+                            fontSize: 18,
+                            fontFamily: 'poppins-medium'),
+                      ),
+                    )),
+              ],
+            )
+                : selectedTopData == 2
+                ? Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Text(
+                    buildTranslate("cropCultivation")!,
+                    softWrap: true,
+                    style: const TextStyle(
+                        color: Color(0xFF3FC041),
+                        fontSize: 20,
+                        fontFamily: 'poppins-medium'),
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+
+                // select farmer
+                Padding(
+                  padding: const EdgeInsets.only(
+                      left: 25.0, right: 25.0),
+                  child: Text(
+                    buildTranslate("selectFarmer")!,
+                    style: const TextStyle(
+                        fontSize: 15,
+                        color: Color(0xFF666666),
+                        fontFamily: 'poppins-semibold'),
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                      left: 25.0, right: 25.0),
+                  child: Container(
+                      color: Colors.white,
+                      child: DropdownButtonFormField2<String>(
+                        dropdownStyleData:
+                        const DropdownStyleData(
+                            maxHeight: 200),
+                        hint: const Text('Select a farmer'),
+                        decoration: InputDecoration(
+                          contentPadding:
+                          const EdgeInsets.symmetric(
+                              vertical: 16),
+                          filled: true,
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                            borderRadius:
+                            BorderRadius.circular(8),
+                            borderSide: const BorderSide(
+                              color: Colors.black,
+                              width: 1.0,
+                            ),
+                          ),
+                          // Add more decoration..
+                        ),
+                        buttonStyleData: const ButtonStyleData(
+                          padding: EdgeInsets.only(right: 8),
+                        ),
+                        iconStyleData: const IconStyleData(
+                          icon: Icon(
+                            Icons.arrow_drop_down,
+                            color: Colors.black45,
+                          ),
+                          iconSize: 24,
+                        ),
+                        menuItemStyleData:
+                        const MenuItemStyleData(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 16),
+                        ),
+                        value: _selectedFarmersName,
+                        items: dropdownItems,
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _selectedFarmersName = newValue;
+                          });
+                        },
+                      )),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+
+                // crops
+                Padding(
+                  padding: const EdgeInsets.only(
+                      left: 25.0, right: 25.0),
+                  child: Text(
+                    buildTranslate("selectCrops")!,
+                    style: const TextStyle(
+                        fontSize: 15,
+                        color: Color(0xFF666666),
+                        fontFamily: 'poppins-semibold'),
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                      left: 25.0, right: 25.0),
+                  child: _cropData == null ||
+                      _cropData!.data == null
+                      ? const Center(
+                      child: Text('No data available'))
+                      : DropdownButtonFormField2<String>(
+                    dropdownStyleData:
+                    DropdownStyleData(maxHeight: 200),
+                    hint: const Text('Select a Crop'),
+                    decoration: InputDecoration(
+                      contentPadding:
+                      const EdgeInsets.symmetric(
+                          vertical: 16),
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderRadius:
+                        BorderRadius.circular(8),
+                        borderSide: const BorderSide(
+                          color: Colors.black,
+                          width: 1.0,
+                        ),
+                      ),
+                      // Add more decoration..
+                    ),
+                    buttonStyleData: const ButtonStyleData(
+                      padding: EdgeInsets.only(right: 8),
+                    ),
+                    iconStyleData: const IconStyleData(
+                      icon: Icon(
+                        Icons.arrow_drop_down,
+                        color: Colors.black45,
+                      ),
+                      iconSize: 24,
+                    ),
+                    menuItemStyleData:
+                    const MenuItemStyleData(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 16),
+                    ),
+                    value: _selectedCrop,
+                    items:
+                    _cropData!.data!.map((String crop) {
+                      return DropdownMenuItem<String>(
+                        value: crop,
+                        child: Text(crop,
+                            style: const TextStyle(
+                                fontSize: 15,
+                                color: Colors.black,
+                                fontFamily:
+                                'poppins-regular')),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedCrop = newValue;
+                      });
+                    },
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+
+                // varity
+                Padding(
+                  padding: const EdgeInsets.only(
+                      left: 25.0, right: 25.0),
+                  child: Text(
+                    buildTranslate("variety")!,
+                    style: const TextStyle(
+                        fontSize: 15,
+                        color: Color(0xFF666666),
+                        fontFamily: 'poppins-semibold'),
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                      left: 25.0, right: 25.0),
+                  child: TextFormField(
+                    decoration: InputDecoration(
+                        alignLabelWithHint: true,
+                        fillColor: Colors.white,
+                        filled: true,
+                        border: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10.0),
+                          ),
+                        ),
+                        enabledBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.grey,
+                            width: 1.0,
+                          ),
+                          borderRadius: BorderRadius.all(
+                              Radius.circular(8.0)),
+                        ),
+                        hintText: buildTranslate("enterVariety")!,
+                        hintStyle: const TextStyle(
+                            color: Color(0xFFe7e7e7)),
+                        focusedBorder: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                              Radius.circular(8.0)),
+                          borderSide: BorderSide(
+                              color: Colors.green, width: 0.5),
+                        )),
+                    validator: (value) => value!.isEmpty
+                        ? 'Please, fill this field.'
+                        : null,
+                    controller: varietyController,
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+
+                // date
+                Padding(
+                  padding: const EdgeInsets.only(
+                      left: 25.0, right: 25.0),
+                  child: Text(
+                    buildTranslate("dateOfSowing")!,
+                    style: const TextStyle(
+                        fontSize: 15,
+                        color: Color(0xFF666666),
+                        fontFamily: 'poppins-semibold'),
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                      left: 25.0, right: 25.0),
+                  child: TextFormField(
+                    decoration: InputDecoration(
+                        alignLabelWithHint: true,
+                        filled: true,
+                        fillColor: Colors.white,
+                        suffixIcon: IconButton(
+                          icon: const Icon(Icons.calendar_today),
+                          onPressed: () {
+                            _selectDate(context);
+                          }, // Open date picker on icon press
+                        ),
+                        border: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10.0),
+                          ),
+                        ),
+                        enabledBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.grey,
+                            width: 1.0,
+                          ),
+                          borderRadius: BorderRadius.all(
+                              Radius.circular(8.0)),
+                        ),
+                        hintText: 'dd/mm/yyyy',
+                        hintStyle: const TextStyle(
+                            color: Color(0xFFe7e7e7)),
+                        focusedBorder: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                              Radius.circular(8.0)),
+                          borderSide: BorderSide(
+                              color: Colors.green, width: 0.5),
+                        )),
+                    validator: (value) => value!.isEmpty
+                        ? 'Please, fill this field.'
+                        : null,
+                    controller: dateController,
+                    readOnly: true,
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+
+                // goe location
+                Padding(
+                  padding: const EdgeInsets.only(
+                      left: 25.0, right: 25.0),
+                  child: Text(
+                    buildTranslate("geoLocation")!,
+                    style: const TextStyle(
+                        fontSize: 15,
+                        color: Color(0xFF666666),
+                        fontFamily: 'poppins-semibold'),
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                      left: 25.0, right: 25.0),
+                  child: TextFormField(
+                    decoration: const InputDecoration(
+                        alignLabelWithHint: true,
+                        fillColor: Colors.white,
+                        filled: true,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10.0),
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.grey,
+                            width: 1.0,
+                          ),
+                          borderRadius: BorderRadius.all(
+                              Radius.circular(8.0)),
+                        ),
+                        hintText: '----',
+                        hintStyle:
+                        TextStyle(color: Color(0xFFe7e7e7)),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                              Radius.circular(8.0)),
+                          borderSide: BorderSide(
+                              color: Colors.green, width: 0.5),
+                        )),
+                    validator: (value) => value!.isEmpty
+                        ? 'Please, fill this field.'
+                        : null,
+                    controller: geoLocationController,
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+
+                // type of cultivation practice
+                Padding(
+                  padding: const EdgeInsets.only(
+                      left: 25.0, right: 25.0),
+                  child: Text(
+                    buildTranslate("typeofCultivationPractice")!,
+                    style: const TextStyle(
+                        fontSize: 15,
+                        color: Color(0xFF666666),
+                        fontFamily: 'poppins-semibold'),
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                      left: 25.0, right: 25.0),
+                  child: Container(
+                    color: Colors.white,
+                    child: DropdownButtonFormField2<String>(
+                      isExpanded: true,
+                      decoration: InputDecoration(
+                        contentPadding:
+                        const EdgeInsets.symmetric(
+                            vertical: 16),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: const BorderSide(
+                            color: Colors.grey,
+                            width: 1.0,
+                          ),
+                        ),
+                        // Add more decoration..
+                      ),
+                      hint: const Text(
+                        '--',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      items: items
+                          .map((item) => DropdownMenuItem<String>(
+                        value: item,
+                        child: Text(
+                          item,
+                          style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey),
+                        ),
+                      ))
+                          .toList(),
+                      validator: (value) {
+                        if (value == null) {
+                          return 'Please select type of Entity.';
+                        }
+                        return null;
+                      },
+                      onChanged: (value) {
+                        selectedItemValue = value.toString();
+                        //Do something when selected item is changed.
+                      },
+                      onSaved: (value) {
+                        selectedItemValue = value.toString();
+                      },
+                      buttonStyleData: const ButtonStyleData(
+                        padding: EdgeInsets.only(right: 8),
+                      ),
+                      iconStyleData: const IconStyleData(
+                        icon: Icon(
+                          Icons.arrow_drop_down,
+                          color: Colors.black45,
+                        ),
+                        iconSize: 24,
+                      ),
+                      menuItemStyleData: const MenuItemStyleData(
+                        padding:
+                        EdgeInsets.symmetric(horizontal: 16),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+
+                // area in arcs
+                Padding(
+                  padding: const EdgeInsets.only(
+                      left: 25.0, right: 25.0),
+                  child: Text(
+                    buildTranslate("areaInAcres")!,
+                    style: const TextStyle(
+                        fontSize: 15,
+                        color: Color(0xFF666666),
+                        fontFamily: 'poppins-semibold'),
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                      left: 25.0, right: 25.0),
+                  child: TextFormField(
+                    decoration: const InputDecoration(
+                        alignLabelWithHint: true,
+                        fillColor: Colors.white,
+                        filled: true,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10.0),
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.grey,
+                            width: 1.0,
+                          ),
+                          borderRadius: BorderRadius.all(
+                              Radius.circular(8.0)),
+                        ),
+                        hintText: 'Enter area in acres',
+                        hintStyle:
+                        TextStyle(color: Color(0xFFe7e7e7)),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                              Radius.circular(8.0)),
+                          borderSide: BorderSide(
+                              color: Colors.green, width: 0.5),
+                        )),
+                    validator: (value) => value!.isEmpty
+                        ? 'Please, fill this field.'
+                        : null,
+                    controller: areaInArcesController,
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+
+                // geo link in area
+                Padding(
+                  padding: const EdgeInsets.only(
+                      left: 25.0, right: 25.0),
+                  child: Text(
+                    buildTranslate("geoLinkAreaOnMap")!,
+                    style: const TextStyle(
+                        fontSize: 15,
+                        color: Color(0xFF666666),
+                        fontFamily: 'poppins-semibold'),
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                      left: 25.0, right: 25.0),
+                  child: TextFormField(
+                    decoration: const InputDecoration(
+                        alignLabelWithHint: true,
+                        fillColor: Colors.white,
+                        filled: true,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10.0),
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.grey,
+                            width: 1.0,
+                          ),
+                          borderRadius: BorderRadius.all(
+                              Radius.circular(8.0)),
+                        ),
+                        hintText: '----',
+                        hintStyle:
+                        TextStyle(color: Color(0xFFe7e7e7)),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                              Radius.circular(8.0)),
+                          borderSide: BorderSide(
+                              color: Colors.green, width: 0.5),
+                        )),
+                    validator: (value) => value!.isEmpty
+                        ? 'Please, fill this field.'
+                        : null,
+                    controller: geoLinkAreaController,
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+
+                // SizedBox(
+                //   height: 40,
+                //   child: Padding(
+                //       padding: const EdgeInsets.only(left: 25.0),
+                //       child: ElevatedButton.icon(
+                //         icon: const Icon(
+                //           Icons.add,
+                //           color: Colors.white,
+                //           size: 25.0,
+                //         ),
+                //         label: Text(buildTranslate("addCrop")!),
+                //         onPressed: () {},
+                //         style: ElevatedButton.styleFrom(
+                //           foregroundColor: Colors.white,
+                //           backgroundColor:
+                //               const Color(0xFF3FC041),
+                //           shape: RoundedRectangleBorder(
+                //             borderRadius:
+                //                 BorderRadius.circular(10.0),
+                //           ),
+                //         ),
+                //       )),
+                // ),
+                // const SizedBox(
+                //   height: 20,
+                // ),
+
+                Container(
+                    width: MediaQuery.of(context).size.width,
+                    padding: const EdgeInsets.only(
+                        left: 25.0, right: 25.0),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        _cropCultivationRegisterApiCall();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.all(12),
+                        textStyle: const TextStyle(fontSize: 18),
+                        backgroundColor: const Color(0xFF3FC041),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              12), // <-- Radius
+                        ),
+                      ),
+                      child: Text(
+                        buildTranslate('SUBMIT')!,
+                        style: const TextStyle(
+                            fontSize: 18,
+                            fontFamily: 'poppins-medium'),
+                      ),
+                    )),
+                const SizedBox(
+                  height: 40,
+                ),
+              ],
+            )
+                : selectedTopData == 3
+                ? Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(
+                      top: 10.0, right: 20.0, left: 20.0),
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(
+                            Radius.circular(18))),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        children: [
+                          // select crops
+                          Text(
+                            buildTranslate(
+                                "searchByCrops/Villages")!,
+                            softWrap: true,
+                            style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 15,
+                                fontFamily:
+                                'poppins-semibold'),
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Row(
+                            mainAxisAlignment:
+                            MainAxisAlignment.start,
                             children: [
-                              Center(
-                                child: Text(
-                                  buildTranslate("cropCultivation")!,
-                                  softWrap: true,
-                                  style: const TextStyle(
-                                      color: Color(0xFF3FC041),
-                                      fontSize: 20,
-                                      fontFamily: 'poppins-medium'),
-                                ),
-                              ),
-
-                              const SizedBox(
-                                height: 20,
-                              ),
-
-                              // crops
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 25.0, right: 25.0),
-                                child: Text(
-                                  buildTranslate("crops")!,
-                                  style: const TextStyle(
-                                      fontSize: 15,
-                                      color: Color(0xFF666666),
-                                      fontFamily: 'poppins-semibold'),
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 25.0, right: 25.0),
-                                child: TextFormField(
-                                  decoration: InputDecoration(
-                                      alignLabelWithHint: true,
-                                      fillColor: Colors.white,
-                                      filled: true,
-                                      border: const OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(10.0),
-                                        ),
-                                      ),
-                                      enabledBorder: const OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: Colors.grey,
-                                          width: 1.0,
-                                        ),
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(8.0)),
-                                      ),
-                                      hintText:
-                                          buildTranslate("enterCropsName")!,
-                                      hintStyle: const TextStyle(
-                                          color: Color(0xFFe7e7e7)),
-                                      focusedBorder: const OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(8.0)),
-                                        borderSide: BorderSide(
-                                            color: Colors.green, width: 0.5),
-                                      )),
-                                  validator: (value) => value!.isEmpty
-                                      ? 'Please, fill this field.'
-                                      : null,
-                                  controller: naneController,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-
-                              // varity
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 25.0, right: 25.0),
-                                child: Text(
-                                  buildTranslate("variety")!,
-                                  style: const TextStyle(
-                                      fontSize: 15,
-                                      color: Color(0xFF666666),
-                                      fontFamily: 'poppins-semibold'),
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 25.0, right: 25.0),
-                                child: TextFormField(
-                                  decoration: InputDecoration(
-                                      alignLabelWithHint: true,
-                                      fillColor: Colors.white,
-                                      filled: true,
-                                      border: const OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(10.0),
-                                        ),
-                                      ),
-                                      enabledBorder: const OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: Colors.grey,
-                                          width: 1.0,
-                                        ),
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(8.0)),
-                                      ),
-                                      hintText: buildTranslate("enterVariety")!,
-                                      hintStyle: const TextStyle(
-                                          color: Color(0xFFe7e7e7)),
-                                      focusedBorder: const OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(8.0)),
-                                        borderSide: BorderSide(
-                                            color: Colors.green, width: 0.5),
-                                      )),
-                                  validator: (value) => value!.isEmpty
-                                      ? 'Please, fill this field.'
-                                      : null,
-                                  controller: naneController,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-
-                              // date
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 25.0, right: 25.0),
-                                child: Text(
-                                  buildTranslate("dateOfSowing")!,
-                                  style: const TextStyle(
-                                      fontSize: 15,
-                                      color: Color(0xFF666666),
-                                      fontFamily: 'poppins-semibold'),
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 25.0, right: 25.0),
-                                child: TextFormField(
-                                  decoration: const InputDecoration(
-                                      alignLabelWithHint: true,
-                                      filled: true,
-                                      fillColor: Colors.white,
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(10.0),
-                                        ),
-                                      ),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: Colors.grey,
-                                          width: 1.0,
-                                        ),
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(8.0)),
-                                      ),
-                                      hintText: 'dd/mm/yyyy',
-                                      hintStyle:
-                                          TextStyle(color: Color(0xFFe7e7e7)),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(8.0)),
-                                        borderSide: BorderSide(
-                                            color: Colors.green, width: 0.5),
-                                      )),
-                                  validator: (value) => value!.isEmpty
-                                      ? 'Please, fill this field.'
-                                      : null,
-                                  controller: naneController,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-
-                              // goe location
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 25.0, right: 25.0),
-                                child: Text(
-                                  buildTranslate("geoLocation")!,
-                                  style: const TextStyle(
-                                      fontSize: 15,
-                                      color: Color(0xFF666666),
-                                      fontFamily: 'poppins-semibold'),
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 25.0, right: 25.0),
-                                child: TextFormField(
-                                  decoration: const InputDecoration(
-                                      alignLabelWithHint: true,
-                                      fillColor: Colors.white,
-                                      filled: true,
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(10.0),
-                                        ),
-                                      ),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: Colors.grey,
-                                          width: 1.0,
-                                        ),
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(8.0)),
-                                      ),
-                                      hintText: '----',
-                                      hintStyle:
-                                          TextStyle(color: Color(0xFFe7e7e7)),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(8.0)),
-                                        borderSide: BorderSide(
-                                            color: Colors.green, width: 0.5),
-                                      )),
-                                  validator: (value) => value!.isEmpty
-                                      ? 'Please, fill this field.'
-                                      : null,
-                                  controller: naneController,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-
-                              // type of cultivation practice
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 25.0, right: 25.0),
-                                child: Text(
-                                  buildTranslate("typeofCultivationPractice")!,
-                                  style: const TextStyle(
-                                      fontSize: 15,
-                                      color: Color(0xFF666666),
-                                      fontFamily: 'poppins-semibold'),
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 25.0, right: 25.0),
+                              Expanded(
                                 child: Container(
                                   color: Colors.white,
-                                  child: DropdownButtonFormField2<String>(
-                                    isExpanded: true,
-                                    decoration: InputDecoration(
+                                  alignment:
+                                  Alignment.bottomCenter,
+                                  child:
+                                  DropdownButtonFormField2<
+                                      String>(
+                                    dropdownStyleData:
+                                    const DropdownStyleData(
+                                        maxHeight: 200),
+                                    hint: const Text(
+                                        'Select a Crop'),
+                                    decoration:
+                                    InputDecoration(
                                       contentPadding:
-                                          const EdgeInsets.symmetric(
-                                              vertical: 16),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                        borderSide: const BorderSide(
-                                          color: Colors.grey,
+                                      const EdgeInsets
+                                          .symmetric(
+                                          vertical: 10),
+                                      filled: true,
+                                      fillColor: Colors.white,
+                                      border:
+                                      OutlineInputBorder(
+                                        borderRadius:
+                                        BorderRadius
+                                            .circular(8),
+                                        borderSide:
+                                        const BorderSide(
+                                          color: Colors.black,
                                           width: 1.0,
                                         ),
                                       ),
                                       // Add more decoration..
                                     ),
-                                    hint: const Text(
-                                      '--',
-                                      style: TextStyle(fontSize: 14),
+                                    buttonStyleData:
+                                    const ButtonStyleData(
+                                      padding:
+                                      EdgeInsets.only(
+                                          right: 8),
                                     ),
-                                    items: items
-                                        .map((item) => DropdownMenuItem<String>(
-                                              value: item,
-                                              child: Text(
-                                                item,
-                                                style: const TextStyle(
-                                                    fontSize: 14,
-                                                    color: Colors.grey),
-                                              ),
-                                            ))
-                                        .toList(),
-                                    validator: (value) {
-                                      if (value == null) {
-                                        return 'Please select type of Entity.';
-                                      }
-                                      return null;
-                                    },
-                                    onChanged: (value) {
-                                      //Do something when selected item is changed.
-                                    },
-                                    onSaved: (value) {
-                                      selectedItemValue = value.toString();
-                                    },
-                                    buttonStyleData: const ButtonStyleData(
-                                      padding: EdgeInsets.only(right: 8),
-                                    ),
-                                    iconStyleData: const IconStyleData(
+                                    iconStyleData:
+                                    const IconStyleData(
                                       icon: Icon(
                                         Icons.arrow_drop_down,
                                         color: Colors.black45,
                                       ),
                                       iconSize: 24,
                                     ),
-                                    menuItemStyleData: const MenuItemStyleData(
-                                      padding:
-                                          EdgeInsets.symmetric(horizontal: 16),
+                                    menuItemStyleData:
+                                    const MenuItemStyleData(
+                                      padding: EdgeInsets
+                                          .symmetric(
+                                          horizontal: 16),
                                     ),
+                                    value: _selectedCrop,
+                                    items: _cropData!.data!
+                                        .map((String crop) {
+                                      return DropdownMenuItem<
+                                          String>(
+                                        value: crop,
+                                        child: Text(crop,
+                                            style: const TextStyle(
+                                                fontSize: 13,
+                                                color: Colors
+                                                    .black,
+                                                fontFamily:
+                                                'poppins-regular')),
+                                      );
+                                    }).toList(),
+                                    onChanged:
+                                        (String? newValue) {
+                                      setState(() {
+                                        _selectedCrop =
+                                            newValue;
+                                      });
+                                    },
                                   ),
                                 ),
                               ),
-                              const SizedBox(
-                                height: 20,
+                              const VerticalDivider(
+                                width: 10,
                               ),
-
-                              // area in arcs
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 25.0, right: 25.0),
-                                child: Text(
-                                  buildTranslate("areaInAcres")!,
-                                  style: const TextStyle(
-                                      fontSize: 15,
-                                      color: Color(0xFF666666),
-                                      fontFamily: 'poppins-semibold'),
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 25.0, right: 25.0),
-                                child: TextFormField(
-                                  decoration: const InputDecoration(
-                                      alignLabelWithHint: true,
-                                      fillColor: Colors.white,
-                                      filled: true,
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(10.0),
-                                        ),
-                                      ),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: Colors.grey,
-                                          width: 1.0,
-                                        ),
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(8.0)),
-                                      ),
-                                      hintText: 'Enter area in acres',
-                                      hintStyle:
-                                          TextStyle(color: Color(0xFFe7e7e7)),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(8.0)),
-                                        borderSide: BorderSide(
-                                            color: Colors.green, width: 0.5),
-                                      )),
-                                  validator: (value) => value!.isEmpty
-                                      ? 'Please, fill this field.'
-                                      : null,
-                                  controller: naneController,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-
-                              // geo link in area
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 25.0, right: 25.0),
-                                child: Text(
-                                  buildTranslate("geoLinkAreaOnMap")!,
-                                  style: const TextStyle(
-                                      fontSize: 15,
-                                      color: Color(0xFF666666),
-                                      fontFamily: 'poppins-semibold'),
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 25.0, right: 25.0),
-                                child: TextFormField(
-                                  decoration: const InputDecoration(
-                                      alignLabelWithHint: true,
-                                      fillColor: Colors.white,
-                                      filled: true,
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(10.0),
-                                        ),
-                                      ),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: Colors.grey,
-                                          width: 1.0,
-                                        ),
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(8.0)),
-                                      ),
-                                      hintText: '----',
-                                      hintStyle:
-                                          TextStyle(color: Color(0xFFe7e7e7)),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(8.0)),
-                                        borderSide: BorderSide(
-                                            color: Colors.green, width: 0.5),
-                                      )),
-                                  validator: (value) => value!.isEmpty
-                                      ? 'Please, fill this field.'
-                                      : null,
-                                  controller: naneController,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-
-                              SizedBox(
-                                height: 40,
-                                child: Padding(
-                                    padding: const EdgeInsets.only(left: 25.0),
-                                    child: ElevatedButton.icon(
-                                      icon: const Icon(
-                                        Icons.add,
-                                        color: Colors.white,
-                                        size: 25.0,
-                                      ),
-                                      label: Text(buildTranslate("addCrop")!),
-                                      onPressed: () {},
-                                      style: ElevatedButton.styleFrom(
-                                        foregroundColor: Colors.white,
-                                        backgroundColor:
-                                            const Color(0xFF3FC041),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10.0),
-                                        ),
-                                      ),
-                                    )
-                                    // ElevatedButton(
-                                    //   onPressed: () {
-                                    //
-                                    //   },
-                                    //   style: ElevatedButton.styleFrom(
-                                    //     foregroundColor: Colors.white,
-                                    //     padding: const EdgeInsets.all(22),
-                                    //     textStyle: const TextStyle(fontSize: 18),
-                                    //     backgroundColor: const Color(0xFF3FC041),
-                                    //     shape: RoundedRectangleBorder(
-                                    //       borderRadius: BorderRadius.circular(12), // <-- Radius
-                                    //     ),
-                                    //   ),
-                                    //   child: const Text('Add Crop', style: TextStyle(fontSize: 18,
-                                    //       fontFamily: 'poppins-medium'),),
-                                    // ),
-                                    ),
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-
                               Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  padding: const EdgeInsets.only(
-                                      left: 25.0, right: 25.0),
-                                  child: ElevatedButton(
-                                    onPressed: () {},
-                                    style: ElevatedButton.styleFrom(
-                                      foregroundColor: Colors.white,
-                                      padding: const EdgeInsets.all(12),
-                                      textStyle: const TextStyle(fontSize: 18),
-                                      backgroundColor: const Color(0xFF3FC041),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(
-                                            12), // <-- Radius
-                                      ),
-                                    ),
-                                    child: Text(
-                                      buildTranslate('SUBMIT')!,
-                                      style: const TextStyle(
-                                          fontSize: 18,
-                                          fontFamily: 'poppins-medium'),
-                                    ),
-                                  )),
-                              const SizedBox(
+                                width: 80,
                                 height: 40,
+                                decoration: const BoxDecoration(
+                                    color: Colors.green,
+                                    borderRadius:
+                                    BorderRadius.only(
+                                        topRight: Radius
+                                            .circular(10),
+                                        bottomRight:
+                                        Radius
+                                            .circular(
+                                            10))),
+                                child: Center(
+                                  child: Text(
+                                    buildTranslate("crops")!,
+                                    textAlign:
+                                    TextAlign.center,
+                                    softWrap: true,
+                                    style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 13,
+                                        fontFamily:
+                                        'poppins-regular'),
+                                  ),
+                                ),
                               ),
                             ],
-                          )
-                        : selectedTopData == 3
-                            ? Column(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 10.0, right: 20.0, left: 20.0),
-                                    child: Container(
-                                      width: MediaQuery.of(context).size.width,
-                                      decoration: const BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(18))),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(20.0),
-                                        child: Column(
-                                          children: [
-                                            // select crops
-                                            Text(
-                                              buildTranslate(
-                                                  "searchByCrops/Villages")!,
-                                              softWrap: true,
-                                              style: const TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 15,
-                                                  fontFamily:
-                                                      'poppins-semibold'),
-                                            ),
-                                            const SizedBox(
-                                              height: 20,
-                                            ),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              children: [
-                                                Expanded(
-                                                  child: Container(
-                                                    color: Colors.white,
-                                                    alignment:
-                                                        Alignment.bottomCenter,
-                                                    child:
-                                                        DropdownButtonFormField2<
-                                                            String>(
-                                                      isExpanded: true,
-                                                      decoration:
-                                                          InputDecoration(
-                                                        contentPadding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                vertical: 10),
-                                                        border:
-                                                            OutlineInputBorder(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(8),
-                                                        ),
-                                                        // Add more decoration..
-                                                      ),
-                                                      hint: Text(
-                                                        buildTranslate(
-                                                            "selectCrops")!,
-                                                        style: TextStyle(
-                                                            fontSize: 14),
-                                                      ),
-                                                      items: cropItems
-                                                          .map((item) =>
-                                                              DropdownMenuItem<
-                                                                  String>(
-                                                                value: item,
-                                                                child: Text(
-                                                                  item,
-                                                                  style:
-                                                                      const TextStyle(
-                                                                    fontSize:
-                                                                        14,
-                                                                  ),
-                                                                ),
-                                                              ))
-                                                          .toList(),
-                                                      validator: (value) {
-                                                        if (value == null) {
-                                                          return 'Please select type of Entity.';
-                                                        }
-                                                        return null;
-                                                      },
-                                                      onChanged: (value) {
-                                                        //Do something when selected item is changed.
-                                                      },
-                                                      onSaved: (value) {
-                                                        selectedCropItemValue =
-                                                            value.toString();
-                                                      },
-                                                      buttonStyleData:
-                                                          const ButtonStyleData(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                right: 8),
-                                                      ),
-                                                      iconStyleData:
-                                                          const IconStyleData(
-                                                        icon: Icon(
-                                                          Icons.arrow_drop_down,
-                                                          color: Colors.black45,
-                                                        ),
-                                                        iconSize: 24,
-                                                      ),
-                                                      menuItemStyleData:
-                                                          const MenuItemStyleData(
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                                horizontal: 16),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                                const VerticalDivider(
-                                                  width: 10,
-                                                ),
-                                                Container(
-                                                  width: 80,
-                                                  height: 40,
-                                                  decoration: const BoxDecoration(
-                                                      color: Colors.green,
-                                                      borderRadius:
-                                                          BorderRadius.only(
-                                                              topRight: Radius
-                                                                  .circular(10),
-                                                              bottomRight:
-                                                                  Radius
-                                                                      .circular(
-                                                                          10))),
-                                                  child: Center(
-                                                    child: Text(
-                                                      buildTranslate("crops")!,
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      softWrap: true,
-                                                      style: const TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 13,
-                                                          fontFamily:
-                                                              'poppins-regular'),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
+                          ),
 
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
+                          const SizedBox(
+                            height: 10,
+                          ),
 
-                                            // select villages
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              children: [
-                                                Expanded(
-                                                  child: Container(
-                                                    color: Colors.white,
-                                                    alignment:
-                                                        Alignment.bottomCenter,
-                                                    child:
-                                                        DropdownButtonFormField2<
-                                                            String>(
-                                                      isExpanded: true,
-                                                      decoration:
-                                                          InputDecoration(
-                                                        contentPadding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                vertical: 10),
-                                                        border:
-                                                            OutlineInputBorder(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(8),
-                                                        ),
-                                                        // Add more decoration..
-                                                      ),
-                                                      hint: Text(
-                                                        buildTranslate(
-                                                            'selectVillages')!,
-                                                        style: const TextStyle(
-                                                            fontSize: 14),
-                                                      ),
-                                                      items: villageItems
-                                                          .map((item) =>
-                                                              DropdownMenuItem<
-                                                                  String>(
-                                                                value: item,
-                                                                child: Text(
-                                                                  item,
-                                                                  style:
-                                                                      const TextStyle(
-                                                                    fontSize:
-                                                                        14,
-                                                                  ),
-                                                                ),
-                                                              ))
-                                                          .toList(),
-                                                      validator: (value) {
-                                                        if (value == null) {
-                                                          return 'Please select type of Entity.';
-                                                        }
-                                                        return null;
-                                                      },
-                                                      onChanged: (value) {
-                                                        //Do something when selected item is changed.
-                                                      },
-                                                      onSaved: (value) {
-                                                        selectedVillageItemValue =
-                                                            value.toString();
-                                                      },
-                                                      buttonStyleData:
-                                                          const ButtonStyleData(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                right: 8),
-                                                      ),
-                                                      iconStyleData:
-                                                          const IconStyleData(
-                                                        icon: Icon(
-                                                          Icons.arrow_drop_down,
-                                                          color: Colors.black45,
-                                                        ),
-                                                        iconSize: 24,
-                                                      ),
-                                                      menuItemStyleData:
-                                                          const MenuItemStyleData(
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                                horizontal: 16),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                                const VerticalDivider(
-                                                  width: 10,
-                                                ),
-                                                Container(
-                                                  width: 80,
-                                                  height: 40,
-                                                  decoration: const BoxDecoration(
-                                                      color: Colors.green,
-                                                      borderRadius:
-                                                          BorderRadius.only(
-                                                              topRight: Radius
-                                                                  .circular(10),
-                                                              bottomRight:
-                                                                  Radius
-                                                                      .circular(
-                                                                          10))),
-                                                  child: Center(
-                                                    child: Text(
-                                                      buildTranslate(
-                                                          "villages")!,
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      softWrap: true,
-                                                      style: const TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 13,
-                                                          fontFamily:
-                                                              'poppins-regular'),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-
-                                            const SizedBox(
-                                              height: 20,
-                                            ),
-
-                                            Container(
-                                                width: MediaQuery.of(context)
-                                                    .size
-                                                    .width,
-                                                child: ElevatedButton(
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      searchCropsFlag = true;
-                                                    });
-                                                  },
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                    foregroundColor:
-                                                        Colors.white,
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            12),
-                                                    textStyle: const TextStyle(
-                                                        fontSize: 18),
-                                                    backgroundColor:
-                                                        const Color(0xFF3FC041),
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10), // <-- Radius
-                                                    ),
-                                                  ),
-                                                  child: Text(
-                                                    buildTranslate('SEARCH')!,
-                                                    style: const TextStyle(
-                                                        fontSize: 18,
-                                                        fontFamily:
-                                                            'poppins-medium'),
-                                                  ),
-                                                )),
-                                          ],
+                          // select villages
+                          Row(
+                            mainAxisAlignment:
+                            MainAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Container(
+                                  color: Colors.white,
+                                  alignment:
+                                  Alignment.bottomCenter,
+                                  child:
+                                  DropdownButtonFormField2<
+                                      String>(
+                                    dropdownStyleData:
+                                    const DropdownStyleData(
+                                        maxHeight: 200),
+                                    hint: const Text(
+                                        'Select villages'),
+                                    decoration:
+                                    InputDecoration(
+                                      contentPadding:
+                                      const EdgeInsets
+                                          .symmetric(
+                                          vertical: 10),
+                                      filled: true,
+                                      fillColor: Colors.white,
+                                      border:
+                                      OutlineInputBorder(
+                                        borderRadius:
+                                        BorderRadius
+                                            .circular(8),
+                                        borderSide:
+                                        const BorderSide(
+                                          color: Colors.black,
+                                          width: 1.0,
                                         ),
                                       ),
+                                      // Add more decoration..
                                     ),
-                                  ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  Visibility(
-                                    visible: searchCropsFlag,
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 10.0, right: 20.0, left: 20.0),
-                                      child: Container(
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        decoration: const BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(18))),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(10.0),
-                                          child: Column(
-                                            children: [
-                                              listWidget(),
-                                              const SizedBox(
-                                                height: 10,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
+                                    buttonStyleData:
+                                    const ButtonStyleData(
+                                      padding:
+                                      EdgeInsets.only(
+                                          right: 8),
                                     ),
+                                    iconStyleData:
+                                    const IconStyleData(
+                                      icon: Icon(
+                                        Icons.arrow_drop_down,
+                                        color: Colors.black45,
+                                      ),
+                                      iconSize: 24,
+                                    ),
+                                    menuItemStyleData:
+                                    const MenuItemStyleData(
+                                      padding: EdgeInsets
+                                          .symmetric(
+                                          horizontal: 16),
+                                    ),
+                                    value:
+                                    _selectedVillageName,
+                                    items: _villageNameData!
+                                        .data!
+                                        .map((String crop) {
+                                      return DropdownMenuItem<
+                                          String>(
+                                        value: crop,
+                                        child: Text(crop,
+                                            style: const TextStyle(
+                                                fontSize: 13,
+                                                color: Colors
+                                                    .black,
+                                                fontFamily:
+                                                'poppins-regular')),
+                                      );
+                                    }).toList(),
+                                    onChanged:
+                                        (String? newValue) {
+                                      setState(() {
+                                        _selectedVillageName =
+                                            newValue;
+                                      });
+                                    },
                                   ),
-                                  const SizedBox(
-                                    height: 20,
+                                  //     DropdownButtonFormField2<
+                                  //         String>(
+                                  //   isExpanded: true,
+                                  //   decoration:
+                                  //       InputDecoration(
+                                  //     contentPadding:
+                                  //         const EdgeInsets
+                                  //             .symmetric(
+                                  //             vertical: 10),
+                                  //     border:
+                                  //         OutlineInputBorder(
+                                  //       borderRadius:
+                                  //           BorderRadius
+                                  //               .circular(8),
+                                  //     ),
+                                  //     // Add more decoration..
+                                  //   ),
+                                  //   hint: Text(
+                                  //     buildTranslate(
+                                  //         'selectVillages')!,
+                                  //     style: const TextStyle(
+                                  //         fontSize: 14),
+                                  //   ),
+                                  //   items: villageItems
+                                  //       .map((item) =>
+                                  //           DropdownMenuItem<
+                                  //               String>(
+                                  //             value: item,
+                                  //             child: Text(
+                                  //               item,
+                                  //               style:
+                                  //                   const TextStyle(
+                                  //                 fontSize:
+                                  //                     14,
+                                  //               ),
+                                  //             ),
+                                  //           ))
+                                  //       .toList(),
+                                  //   validator: (value) {
+                                  //     if (value == null) {
+                                  //       return 'Please select type of Entity.';
+                                  //     }
+                                  //     return null;
+                                  //   },
+                                  //   onChanged: (value) {
+                                  //     //Do something when selected item is changed.
+                                  //   },
+                                  //   onSaved: (value) {
+                                  //     selectedVillageItemValue =
+                                  //         value.toString();
+                                  //   },
+                                  //   buttonStyleData:
+                                  //       const ButtonStyleData(
+                                  //     padding:
+                                  //         EdgeInsets.only(
+                                  //             right: 8),
+                                  //   ),
+                                  //   iconStyleData:
+                                  //       const IconStyleData(
+                                  //     icon: Icon(
+                                  //       Icons.arrow_drop_down,
+                                  //       color: Colors.black45,
+                                  //     ),
+                                  //     iconSize: 24,
+                                  //   ),
+                                  //   menuItemStyleData:
+                                  //       const MenuItemStyleData(
+                                  //     padding: EdgeInsets
+                                  //         .symmetric(
+                                  //             horizontal: 16),
+                                  //   ),
+                                  // ),
+                                ),
+                              ),
+                              const VerticalDivider(
+                                width: 10,
+                              ),
+                              Container(
+                                width: 80,
+                                height: 40,
+                                decoration: const BoxDecoration(
+                                    color: Colors.green,
+                                    borderRadius:
+                                    BorderRadius.only(
+                                        topRight: Radius
+                                            .circular(10),
+                                        bottomRight:
+                                        Radius
+                                            .circular(
+                                            10))),
+                                child: Center(
+                                  child: Text(
+                                    buildTranslate(
+                                        "villages")!,
+                                    textAlign:
+                                    TextAlign.center,
+                                    softWrap: true,
+                                    style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 13,
+                                        fontFamily:
+                                        'poppins-regular'),
                                   ),
-                                ],
-                              )
-                            : selectedTopData == 4
-                                ? Column(
-                                    children: [
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 20.0),
-                                        child: Row(
-                                          children: [
-                                            InkWell(
-                                              highlightColor:
-                                                  Colors.transparent,
-                                              splashColor: Colors.transparent,
-                                              onTap: () {
-                                                setState(() {
-                                                  selectedTopData = 3;
-                                                });
-                                              },
-                                              child: const Icon(
-                                                Icons.arrow_back,
-                                                color: Colors.black,
-                                                size: 25.0,
-                                              ),
-                                            ),
-                                            const SizedBox(
-                                              width: 10,
-                                            ),
-                                            Text(
-                                              buildTranslate("goBack")!,
-                                              style: const TextStyle(
-                                                  color: Colors.black,
-                                                  fontFamily: 'poppins-medium',
-                                                  fontSize: 17),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 25.0, right: 20.0, top: 20.0),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Container(
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                                color: const Color(0xFF73C187),
-                                              ),
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(12.0),
-                                                child: Text(
-                                                  buildTranslate(
-                                                      "Farmers(300)")!,
-                                                  softWrap: true,
-                                                  style: const TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize: 14,
-                                                      fontFamily:
-                                                          'poppins-semibold'),
-                                                ),
-                                              ),
-                                            ),
-                                            const Spacer(),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  right: 8.0),
-                                              child: Container(
-                                                width: 150,
-                                                height: 40,
-                                                color: Colors.white,
-                                                child: DropdownButtonFormField2<
-                                                    String>(
-                                                  isExpanded: true,
-                                                  decoration: InputDecoration(
-                                                    contentPadding:
-                                                        const EdgeInsets
-                                                            .symmetric(
-                                                            vertical: 5),
-                                                    border: OutlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              8),
-                                                      borderSide:
-                                                          const BorderSide(
-                                                        color: Colors.grey,
-                                                        width: 1.0,
-                                                      ),
-                                                    ),
-                                                    // Add more decoration..
-                                                  ),
-                                                  hint: Text(
-                                                    buildTranslate('sortBy')!,
-                                                    style: const TextStyle(
-                                                        fontSize: 10),
-                                                  ),
-                                                  items: sortItems
-                                                      .map((item) =>
-                                                          DropdownMenuItem<
-                                                              String>(
-                                                            value: item,
-                                                            child: Text(
-                                                              item,
-                                                              style: const TextStyle(
-                                                                  fontSize: 10,
-                                                                  color: Colors
-                                                                      .grey),
-                                                            ),
-                                                          ))
-                                                      .toList(),
-                                                  onChanged: (value) {
-                                                    //Do something when selected item is changed.
-                                                  },
-                                                  onSaved: (value) {
-                                                    selectedSortItemsValue =
-                                                        value.toString();
-                                                  },
-                                                  // customButton: Align(
-                                                  //     alignment: Alignment.centerRight,
-                                                  //     child: Image.asset('assets/images/sortBy.png', height: 20, width: 20,)),
-                                                  buttonStyleData:
-                                                      const ButtonStyleData(
-                                                    padding: EdgeInsets.only(
-                                                        right: 10),
-                                                  ),
-                                                  iconStyleData:
-                                                      const IconStyleData(
-                                                    icon: ImageIcon(AssetImage(
-                                                        'assets/images/sortBy.png')),
-                                                    iconSize: 20,
-                                                    iconEnabledColor:
-                                                        Colors.black,
-                                                  ),
-                                                  // iconStyleData: IconStyleData(
-                                                  //   openMenuIcon: Image.asset('assets/images/sortBy.png', height: 20, width: 20,),
-                                                  //   // icon: Icon(
-                                                  //   //   Icons.arrow_drop_down,
-                                                  //   //   color: Colors.black45,
-                                                  //   // ),
-                                                  //   iconSize: 0,
-                                                  // ),
-                                                  menuItemStyleData:
-                                                      const MenuItemStyleData(
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal: 16),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            // InkWell(
-                                            //     onTap: () {
-                                            //       // Navigator.of(context).push(
-                                            //       //   MaterialPageRoute(builder: (context) => MyDrawer()),
-                                            //       // );
-                                            //     },
-                                            //     child: Container(
-                                            //       decoration: BoxDecoration(
-                                            //         borderRadius: BorderRadius.circular(5),
-                                            //         color: Colors.white,
-                                            //         border: Border.all(
-                                            //             color: Colors.grey,
-                                            //             width: 1,
-                                            //         ),
-                                            //       ),
-                                            //       child: Padding(
-                                            //         padding: const EdgeInsets.all(8.0),
-                                            //         child: Row(
-                                            //           children: [
-                                            //             const Text("sort by", style: TextStyle(fontSize: 17.0,
-                                            //             fontFamily: "poppins-regular", color: Color(0xFF666666)),),
-                                            //             Image.asset('assets/images/sortBy.png', height: 20, width: 20,),
-                                            //           ],
-                                            //         ),
-                                            //       ),
-                                            //     )),
-                                          ],
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        height: 35,
-                                      ),
-                                      // buildTable(context)
-                                      _buildHeaderTable(),
-                                      buildTable(context)
-                                    ],
-                                  )
-                                : Container(),
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(
+                            height: 20,
+                          ),
+
+                          Container(
+                              width: MediaQuery.of(context)
+                                  .size
+                                  .width,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    searchCropsFlag = true;
+                                  });
+                                },
+                                style:
+                                ElevatedButton.styleFrom(
+                                  foregroundColor:
+                                  Colors.white,
+                                  padding:
+                                  const EdgeInsets.all(
+                                      12),
+                                  textStyle: const TextStyle(
+                                      fontSize: 18),
+                                  backgroundColor:
+                                  const Color(0xFF3FC041),
+                                  shape:
+                                  RoundedRectangleBorder(
+                                    borderRadius:
+                                    BorderRadius.circular(
+                                        10), // <-- Radius
+                                  ),
+                                ),
+                                child: Text(
+                                  buildTranslate('SEARCH')!,
+                                  style: const TextStyle(
+                                      fontSize: 18,
+                                      fontFamily:
+                                      'poppins-medium'),
+                                ),
+                              )),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Visibility(
+                  visible: searchCropsFlag,
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        top: 10.0, right: 20.0, left: 20.0),
+                    child: Container(
+                      width:
+                      MediaQuery.of(context).size.width,
+                      decoration: const BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(
+                              Radius.circular(18))),
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Column(
+                          children: [
+                            listWidget(),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+              ],
+            )
+                : selectedTopData == 4
+                ? Column(
+              children: [
+                Padding(
+                  padding:
+                  const EdgeInsets.only(left: 20.0),
+                  child: Row(
+                    children: [
+                      InkWell(
+                        highlightColor:
+                        Colors.transparent,
+                        splashColor: Colors.transparent,
+                        onTap: () {
+                          setState(() {
+                            selectedTopData = 3;
+                          });
+                        },
+                        child: const Icon(
+                          Icons.arrow_back,
+                          color: Colors.black,
+                          size: 25.0,
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        buildTranslate("goBack")!,
+                        style: const TextStyle(
+                            color: Colors.black,
+                            fontFamily: 'poppins-medium',
+                            fontSize: 17),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                      left: 25.0, right: 20.0, top: 20.0),
+                  child: Row(
+                    mainAxisAlignment:
+                    MainAxisAlignment.start,
+                    crossAxisAlignment:
+                    CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius:
+                          BorderRadius.circular(8),
+                          color: const Color(0xFF73C187),
+                        ),
+                        child: Padding(
+                          padding:
+                          const EdgeInsets.all(12.0),
+                          child: Text(
+                            buildTranslate(
+                                "Farmers(300)")!,
+                            softWrap: true,
+                            style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 14,
+                                fontFamily:
+                                'poppins-semibold'),
+                          ),
+                        ),
+                      ),
+                      const Spacer(),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            right: 8.0),
+                        child: Container(
+                          width: 150,
+                          height: 40,
+                          color: Colors.white,
+                          child: DropdownButtonFormField2<
+                              String>(
+                            isExpanded: true,
+                            decoration: InputDecoration(
+                              contentPadding:
+                              const EdgeInsets
+                                  .symmetric(
+                                  vertical: 5),
+                              border: OutlineInputBorder(
+                                borderRadius:
+                                BorderRadius.circular(
+                                    8),
+                                borderSide:
+                                const BorderSide(
+                                  color: Colors.grey,
+                                  width: 1.0,
+                                ),
+                              ),
+                              // Add more decoration..
+                            ),
+                            hint: Text(
+                              buildTranslate('sortBy')!,
+                              style: const TextStyle(
+                                  fontSize: 10),
+                            ),
+                            items: sortItems
+                                .map((item) =>
+                                DropdownMenuItem<
+                                    String>(
+                                  value: item,
+                                  child: Text(
+                                    item,
+                                    style: const TextStyle(
+                                        fontSize: 10,
+                                        color: Colors
+                                            .grey),
+                                  ),
+                                ))
+                                .toList(),
+                            onChanged: (value) {
+                              //Do something when selected item is changed.
+                            },
+                            onSaved: (value) {
+                              selectedSortItemsValue =
+                                  value.toString();
+                            },
+                            // customButton: Align(
+                            //     alignment: Alignment.centerRight,
+                            //     child: Image.asset('assets/images/sortBy.png', height: 20, width: 20,)),
+                            buttonStyleData:
+                            const ButtonStyleData(
+                              padding: EdgeInsets.only(
+                                  right: 10),
+                            ),
+                            iconStyleData:
+                            const IconStyleData(
+                              icon: ImageIcon(AssetImage(
+                                  'assets/images/sortBy.png')),
+                              iconSize: 20,
+                              iconEnabledColor:
+                              Colors.black,
+                            ),
+                            // iconStyleData: IconStyleData(
+                            //   openMenuIcon: Image.asset('assets/images/sortBy.png', height: 20, width: 20,),
+                            //   // icon: Icon(
+                            //   //   Icons.arrow_drop_down,
+                            //   //   color: Colors.black45,
+                            //   // ),
+                            //   iconSize: 0,
+                            // ),
+                            menuItemStyleData:
+                            const MenuItemStyleData(
+                              padding:
+                              EdgeInsets.symmetric(
+                                  horizontal: 16),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 35,
+                ),
+                // buildTable(context)
+                _buildHeaderTable(),
+                buildTable(context)
+              ],
+            )
+                : Container(),
           ],
         ),
       ),
       floatingActionButton: widget.aapbarVisibility
           ? FloatingActionButton(
-              backgroundColor: Colors.white.withAlpha(0),
-              // add this line.
-              elevation: 0,
-              // also important, removes the shadow
-              heroTag: "floatingActionBtn",
-              shape: const RoundedRectangleBorder(
-                // <= Change BeveledRectangleBorder to RoundedRectangularBorder
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(30.0),
-                  topRight: Radius.circular(30.0),
-                  bottomLeft: Radius.circular(30.0),
-                  bottomRight: Radius.circular(30.0),
-                ),
-              ),
-              child: InkWell(
-                highlightColor: Colors.transparent,
-                splashColor: Colors.transparent,
-                onTap: () {
-                  setState(() {
-                    _onItemTapped(4);
-                  });
-                },
-                child: Image.asset(
-                  'assets/images/bottomCenter.png',
-                  // color: Colors.white,
-                ),
-              ),
-              onPressed: () {},
-            )
+        backgroundColor: Colors.white.withAlpha(0),
+        // add this line.
+        elevation: 0,
+        // also important, removes the shadow
+        heroTag: "floatingActionBtn",
+        shape: const RoundedRectangleBorder(
+          // <= Change BeveledRectangleBorder to RoundedRectangularBorder
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(30.0),
+            topRight: Radius.circular(30.0),
+            bottomLeft: Radius.circular(30.0),
+            bottomRight: Radius.circular(30.0),
+          ),
+        ),
+        child: InkWell(
+          highlightColor: Colors.transparent,
+          splashColor: Colors.transparent,
+          onTap: () {
+            setState(() {
+              // typeOfOrganization == "Farmer groups" ?  _onItemTapped(4) : _onItemTapped(2);
+              _onItemTapped(4);
+            });
+          },
+          child: Image.asset(
+            'assets/images/bottomCenter.png',
+            // color: Colors.white,
+          ),
+        ),
+        onPressed: () {},
+      )
           : null,
       floatingActionButtonLocation: widget.aapbarVisibility
           ? FloatingActionButtonLocation.centerDocked
           : null,
       bottomNavigationBar: widget.aapbarVisibility
           ? AnimatedBottomNavigationBar.builder(
-              height: 70,
-              itemCount: iconList.length,
-              tabBuilder: (int index, bool isActive) {
-                final color = isActive ? Colors.green : Colors.grey;
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(
-                      iconList[index].icon ?? "",
-                      color: color,
-                      width: 30,
-                      height: 30,
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      iconList[index].name ?? "",
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                          color: Color(0xFF666666),
-                          fontSize: 13,
-                          fontFamily: 'poppins-regular'),
-                    ),
-                  ],
-                );
-              },
-              // backgroundColor: Colors.white,
-              activeIndex: _bottomNavIndex,
-              // splashColor: Colors.green,
-              splashSpeedInMilliseconds: 300,
-              notchSmoothness: NotchSmoothness.defaultEdge,
-              gapLocation: GapLocation.center,
-              leftCornerRadius: 32,
-              rightCornerRadius: 32,
-              notchMargin: 7,
-              onTap: (index) {
-                setState(() {
-                  _onItemTapped(index);
-                });
-              },
-              // setState(() => _bottomNavIndex = index),
-            )
+        height: 70,
+        itemCount: iconList.length,
+        tabBuilder: (int index, bool isActive) {
+          final color = isActive ? Colors.green : Colors.grey;
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                iconList[index].icon ?? "",
+                color: color,
+                width: 30,
+                height: 30,
+              ),
+              const SizedBox(height: 5),
+              Text(
+                iconList[index].name ?? "",
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                    color: Color(0xFF666666),
+                    fontSize: 13,
+                    fontFamily: 'poppins-regular'),
+              ),
+            ],
+          );
+        },
+        // backgroundColor: Colors.white,
+        activeIndex: _bottomNavIndex,
+        // splashColor: Colors.green,
+        splashSpeedInMilliseconds: 300,
+        notchSmoothness: NotchSmoothness.defaultEdge,
+        gapLocation: GapLocation.center,
+        leftCornerRadius: 32,
+        rightCornerRadius: 32,
+        notchMargin: 7,
+        onTap: (index) {
+          setState(() {
+            _onItemTapped(index);
+          });
+        },
+      )
           : null,
-      // drawer: MyDrawer(),
     );
   }
 
-  void _onItemTapped(int index) {
-    // if (index != 3) {
-    //   setState(() {
-    //     _bottomNavIndex = index;
-    //   });
-    //   print("BottomTwoPage : $_bottomNavIndex");
-    //   if (_bottomNavIndex == 0) {
-    //     // Navigator.pop(context);
-    //     var route = ModalRoute.of(context);
-    //     if (route != null) {
-    //       Navigator.of(context).pushReplacement(MaterialPageRoute(
-    //           builder: (BuildContext context) => MyBottomOnePage(
-    //                 aapbarVisibility: true,
-    //               )));
-    //     }
-    //   } else if (_bottomNavIndex == 1) {
-    //     // Navigator.pop(context);
-    //     var route = ModalRoute.of(context);
-    //     if (route != null) {
-    //       Navigator.of(context).pushReplacement(MaterialPageRoute(
-    //           builder: (BuildContext context) => MyBottomTwoPage(
-    //                 aapbarVisibility: true,
-    //               )));
-    //     }
-    //   } else if (_bottomNavIndex == 2) {
-    //     // Navigator.pop(context);
-    //     var route = ModalRoute.of(context);
-    //     if (route != null) {
-    //       Navigator.of(context).pushReplacement(MaterialPageRoute(
-    //           builder: (BuildContext context) => MyBottomThreePage(
-    //                 aapbarVisibility: true,
-    //               )));
-    //     }
-    //   }
-    // }
-    // else if(index == 3){
-    //   Navigator.of(context).push(
-    //     MaterialPageRoute(builder: (context) => const MyProfilePage()),
-    //   );
-    // }
-    // else{
-    //   var route = ModalRoute.of(context);
-    //   if (route != null) {
-    //     Navigator
-    //         .of(context)
-    //         .pushReplacement(
-    //         MaterialPageRoute(builder: (BuildContext context) =>
-    //             MyBottomCenterEnquiryPage(aapbarVisibility: true,)));
-    //   }
-    // }
+  Future<void> _selectDate(BuildContext context) async {
+    // Show the date picker dialog
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(), // Default date is the current date
+      firstDate: DateTime(2000), // Earliest selectable date
+      lastDate: DateTime(2101), // Latest selectable date
+      helpText: 'Select a date', // Optional help text
+    );
+    if (pickedDate != null) {
+      setState(() {
+        // Format the selected date and display it in the TextFormField
+        dateController.text = DateFormat('dd-MM-yyyy').format(pickedDate);
+      });
+    }
+  }
+
+  Future<void> _onItemTapped(int index) async {
+    // String typeOfOrganizationData = await SharedPref.readPreferenceValue(typeOfOrganization, PrefEnum.STRING);
 
     if (index == 0) {
       // Navigator.pop(context);
@@ -2719,8 +2477,8 @@ class _MyBottomTwoPageState extends State<MyBottomTwoPage>
       if (route != null) {
         Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (BuildContext context) => MyBottomOnePage(
-                  aapbarVisibility: true,
-                )));
+              aapbarVisibility: true,
+            )));
       }
     } else if (index == 1) {
       // Navigator.pop(context);
@@ -2728,31 +2486,35 @@ class _MyBottomTwoPageState extends State<MyBottomTwoPage>
       if (route != null) {
         Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (BuildContext context) => MyBottomTwoPage(
-                  aapbarVisibility: true,
-                )));
+              aapbarVisibility: true,
+            )));
       }
-    } else if (index == 2) {
+    }
+    else if (index == 2) {
       // Navigator.pop(context);
       var route = ModalRoute.of(context);
       if (route != null) {
         Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (BuildContext context) => MyBottomThreePage(
-                  aapbarVisibility: true,
-                )));
+              aapbarVisibility: true,
+            )));
       }
-    } else if (index == 3) {
+    }
+    else if (index == 3) {
       Navigator.of(context).push(
         MaterialPageRoute(builder: (context) => const MyProfilePage()),
       );
-    } else if (index == 4) {
+    }
+    else if (index == 4) {
       var route = ModalRoute.of(context);
       if (route != null) {
         Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (BuildContext context) => MyBottomCenterEnquiryPage(
-                  aapbarVisibility: true,
-                )));
+              aapbarVisibility: true,
+            )));
       }
-    } else {
+    }
+    else {
       setState(() {
         _bottomNavIndex = index;
       });
@@ -2822,10 +2584,10 @@ class _MyBottomTwoPageState extends State<MyBottomTwoPage>
                   ),
                   index == 0
                       ? Image.asset(
-                          "assets/images/right_arrow.png",
-                          width: 25,
-                          height: 25,
-                        )
+                    "assets/images/right_arrow.png",
+                    width: 25,
+                    height: 25,
+                  )
                       : Container(),
                 ],
               ),
@@ -2834,7 +2596,7 @@ class _MyBottomTwoPageState extends State<MyBottomTwoPage>
         );
       },
       gridDelegate:
-          const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+      const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
     );
   }
 
@@ -2984,41 +2746,6 @@ class _MyBottomTwoPageState extends State<MyBottomTwoPage>
               ]),
             ]),
       ),
-      // DataTable(
-      //   decoration: BoxDecoration(
-      //       border: Border.all(
-      //         width: 1,
-      //         color: Colors.black,
-      //       )
-      //   ),
-      //   columns: const <DataColumn>[
-      //     DataColumn(label: Text("Name", textAlign: TextAlign.center)),
-      //     DataColumn(label: VerticalDivider()),
-      //     DataColumn(label: Text("Mobile \nNumber", textAlign: TextAlign.center)),
-      //     DataColumn(label: VerticalDivider()),
-      //     DataColumn(label: Text("Expected \nYield(in Qut)", textAlign: TextAlign.center)),
-      //   ],
-      //   rows: const <DataRow>[
-      //     DataRow(
-      //       cells: <DataCell>[
-      //         DataCell(Text('Soccer')),
-      //         DataCell(VerticalDivider()),
-      //         DataCell(Text("11")),
-      //         DataCell(VerticalDivider()),
-      //         DataCell(Text("11")),
-      //       ],
-      //     ),
-      //     DataRow(
-      //       cells: <DataCell>[
-      //         DataCell(Text('Soccer')),
-      //         DataCell(VerticalDivider()),
-      //         DataCell(Text("11")),
-      //         DataCell(VerticalDivider()),
-      //         DataCell(Text("11")),
-      //       ],
-      //     ),
-      //   ],
-      // ),
     );
   }
 
@@ -3068,6 +2795,148 @@ class _MyBottomTwoPageState extends State<MyBottomTwoPage>
         ),
       ),
     );
+  }
+
+  // Future<void> getSearchInsightDetails() async {
+  //   number = (await AppGlobal.getStringPreference('contactNumber'))!;
+  //   futureSearchInsightDetails =
+  //       SearchByInsightController.searchByInsightDetails(context, number);
+  //   setState(() {
+  //     futureSearchInsightDetails = futureSearchInsightDetails;
+  //   });
+  // }
+
+  Future<void> getDashboardApi() async {
+    // farmerDashboardList = (await FarmerDashboardController.fetchFarmerDashboard(context))!;
+    // farmerDashboardList = FarmerDashboardController.fetchFarmerDashboard(context);
+    final url = Uri.parse(FARMER_DASHBOARD);
+    final response = await http.get(url);
+    final body = response.body;
+    final json = jsonDecode(body);
+    if (mounted) {
+      setState(() {
+        farmerItem = json['data'];
+      });
+    }
+    print("Farmer Profile Details : ${farmerItem.toString()}");
+  }
+
+  _farmerRegistrationCall() async {
+    if (nameController.text.trim().isNotEmpty &&
+        whatsAppNumberController.text.trim().isNotEmpty) {
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => MyFarmerProfilePage(
+              farmerName: nameController.text.toString(),
+              farmerWhatsappNumber: whatsAppNumberController.text.toString())));
+    } else {
+      AlertHelper.showToast("Please enter details.", context);
+    }
+  }
+
+  showAlertDialog(BuildContext context) {
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      backgroundColor: Colors.white,
+      title: Column(
+        children: [
+          InkWell(
+            highlightColor: Colors.transparent,
+            splashColor: Colors.transparent,
+            onTap: () {
+              Navigator.of(context).pop();
+            },
+            child: const Align(
+              alignment: Alignment.topRight,
+              child: Icon(
+                Icons.close,
+                color: Colors.black,
+                size: 20.0,
+              ),
+            ),
+          ),
+          Center(
+              child: Image.asset(
+                'assets/images/check_green.png',
+                width: 100,
+                height: 100,
+              )),
+          Text(
+            buildTranslate("SuccessfullyUpdate")!,
+            softWrap: true,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+                fontFamily: "poppins-semibold",
+                fontSize: 15.0,
+                color: Colors.grey),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Text(
+            buildTranslate("thankYou")!,
+            softWrap: true,
+            style: const TextStyle(
+                fontFamily: "poppins-semibold",
+                fontSize: 20.0,
+                color: Colors.black),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+        ],
+      ),
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  _cropCultivationRegisterApiCall() async {
+    if (_selectedFarmersName!.isNotEmpty &&
+        _selectedCrop!.isNotEmpty &&
+        varietyController.text.trim().isNotEmpty &&
+        dateController.text.trim().isNotEmpty &&
+        geoLocationController.text.trim().isNotEmpty &&
+        selectedItemValue.toString().isNotEmpty &&
+        areaInArcesController.text.trim().isNotEmpty &&
+        geoLinkAreaController.text.trim().isNotEmpty) {
+      String? number = await AppGlobal.getStringPreference('dealerNumber');
+
+      var body = json.encode({
+        "dealerNumber": number ?? "1",
+        "fid": "F123856",
+        "farmerName": _selectedFarmersName.toString(),
+        "crops": _selectedCrop.toString(),
+        "variety": varietyController.text.toString(),
+        "dateOfSowing": dateController.text.toString(),
+        "geolocation": geoLocationController.text.toString(),
+        "typeOfCultivationPractice": selectedItemValue.toString(),
+        "areaInAcres": areaInArcesController.text.toString(),
+        "geoLinkAreaOnMap": geoLinkAreaController.text.toString()
+      });
+
+      var farmerRegistration =
+      FarmerDashboardController.cropCultivationRegister(body,
+          context: context);
+
+      if (farmerRegistration.toString().isNotEmpty) {
+        Future.delayed(const Duration(seconds: 1), () {
+          print('crop cultivation registered successfully');
+
+          showAlertDialog(context);
+        });
+      } else {
+        AlertHelper.showToast("Api error", context);
+        print("Api error");
+      }
+    } else {
+      AlertHelper.showToast("Please enter details.", context);
+    }
   }
 }
 

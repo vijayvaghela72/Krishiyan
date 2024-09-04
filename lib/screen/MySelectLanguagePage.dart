@@ -83,11 +83,17 @@ class _MySelectLanguagePageState extends State<MySelectLanguagePage> {
                       MyLocalizations.load(const Locale('hi', ''));
                       localLang = "hi";
                       print("localLang change 1 :  $localLang");
-                    } else if(selectedIndex == 1){
+                    }
+                    else if(selectedIndex == 1){
                       MyLocalizations.load(const Locale('en', ''));
                       localLang = "en";
                       print("localLang change 2 :  $localLang");
                     }
+                    // else if(selectedIndex == 2){
+                    //   MyLocalizations.load(const Locale('marathi', ''));
+                    //   localLang = "marathi";
+                    //   print("localLang change 3 :  $localLang");
+                    // }
                     Navigator.of(context).pop(true);
                   });
                 },
@@ -169,7 +175,7 @@ class _MySelectLanguagePageState extends State<MySelectLanguagePage> {
                                   setState(() {
                                     selectedIndex = index ;
                                   });
-                                  },
+                                },
                                 child: selectedIndex == index ? Icon(
                                   Icons.check,
                                   color: selectedIndex == index ? Colors.white : null,

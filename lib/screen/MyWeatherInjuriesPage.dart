@@ -85,11 +85,11 @@ class _MyWeatherInjuriesPageState extends State<MyWeatherInjuriesPage>
 
     Future.delayed(
       const Duration(seconds: 1),
-      () => _fabAnimationController.forward(),
+          () => _fabAnimationController.forward(),
     );
     Future.delayed(
       const Duration(seconds: 1),
-      () => _borderRadiusAnimationController.forward(),
+          () => _borderRadiusAnimationController.forward(),
     );
   }
 
@@ -106,52 +106,52 @@ class _MyWeatherInjuriesPageState extends State<MyWeatherInjuriesPage>
       extendBodyBehindAppBar: false,
       appBar: widget.aapbarVisibility
           ? AppBar(
-              automaticallyImplyLeading: false,
-              title: InkWell(
-                highlightColor: Colors.transparent,
-                splashColor: Colors.transparent,
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                        builder: (context) => const MySelectLanguagePage()),
-                  );
-                },
+        automaticallyImplyLeading: false,
+        title: InkWell(
+          highlightColor: Colors.transparent,
+          splashColor: Colors.transparent,
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                  builder: (context) => const MySelectLanguagePage()),
+            );
+          },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Image.asset(
+                'assets/images/loginLogo.png',
+                width: 150,
+                height: 60,
+              ),
+              const Spacer(),
+              Padding(
+                padding: const EdgeInsets.only(right: 5.0, top: 12.0),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Image.asset(
-                      'assets/images/loginLogo.png',
-                      width: 150,
-                      height: 60,
+                      'assets/images/language.png',
+                      width: 35,
+                      height: 35,
                     ),
-                    const Spacer(),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 5.0, top: 12.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Image.asset(
-                            'assets/images/language.png',
-                            width: 35,
-                            height: 35,
-                          ),
-                          // const Text(
-                          //   "Select Language",
-                          //   style: TextStyle(color: Colors.black, fontFamily: 'poppins-semibold', fontSize: 15),
-                          // ),
-                          // const SizedBox(width: 10,),
-                          // Image.asset(
-                          //   'assets/images/appbar_down.png',
-                          //   // color: Colors.white,
-                          // ),
-                        ],
-                      ),
-                    ),
+                    // const Text(
+                    //   "Select Language",
+                    //   style: TextStyle(color: Colors.black, fontFamily: 'poppins-semibold', fontSize: 15),
+                    // ),
+                    // const SizedBox(width: 10,),
+                    // Image.asset(
+                    //   'assets/images/appbar_down.png',
+                    //   // color: Colors.white,
+                    // ),
                   ],
                 ),
               ),
-            )
+            ],
+          ),
+        ),
+      )
           : null,
       body: SingleChildScrollView(
         child: Column(
@@ -211,96 +211,96 @@ class _MyWeatherInjuriesPageState extends State<MyWeatherInjuriesPage>
       ),
       floatingActionButton: widget.aapbarVisibility
           ? FloatingActionButton(
-              backgroundColor: Colors.white.withAlpha(0),
-              // add this line.
-              elevation: 0,
-              // also important, removes the shadow
-              heroTag: "floatingActionBtn",
-              shape: const RoundedRectangleBorder(
-                // <= Change BeveledRectangleBorder to RoundedRectangularBorder
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(30.0),
-                  topRight: Radius.circular(30.0),
-                  bottomLeft: Radius.circular(30.0),
-                  bottomRight: Radius.circular(30.0),
-                ),
-              ),
-              child: InkWell(
-                highlightColor: Colors.transparent,
-                splashColor: Colors.transparent,
-                onTap: () {
-                  setState(() {
-                    _onItemTapped(4);
-                  });
-                },
-                child: Image.asset(
-                  'assets/images/bottomCenter.png',
-                  // color: Colors.white,
-                ),
-              ),
-              onPressed: () {
-                _fabAnimationController.reset();
-                _borderRadiusAnimationController.reset();
-                _borderRadiusAnimationController.forward();
-                _fabAnimationController.forward();
-              },
-            )
+        backgroundColor: Colors.white.withAlpha(0),
+        // add this line.
+        elevation: 0,
+        // also important, removes the shadow
+        heroTag: "floatingActionBtn",
+        shape: const RoundedRectangleBorder(
+          // <= Change BeveledRectangleBorder to RoundedRectangularBorder
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(30.0),
+            topRight: Radius.circular(30.0),
+            bottomLeft: Radius.circular(30.0),
+            bottomRight: Radius.circular(30.0),
+          ),
+        ),
+        child: InkWell(
+          highlightColor: Colors.transparent,
+          splashColor: Colors.transparent,
+          onTap: () {
+            setState(() {
+              _onItemTapped(4);
+            });
+          },
+          child: Image.asset(
+            'assets/images/bottomCenter.png',
+            // color: Colors.white,
+          ),
+        ),
+        onPressed: () {
+          _fabAnimationController.reset();
+          _borderRadiusAnimationController.reset();
+          _borderRadiusAnimationController.forward();
+          _fabAnimationController.forward();
+        },
+      )
           : null,
       floatingActionButtonLocation: widget.aapbarVisibility
           ? FloatingActionButtonLocation.centerDocked
           : null,
       bottomNavigationBar: widget.aapbarVisibility
           ? AnimatedBottomNavigationBar.builder(
-              height: 70,
-              itemCount: iconList.length,
-              tabBuilder: (int index, bool isActive) {
-                final color = isActive ? Colors.green : Colors.grey;
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(
-                      iconList[index].icon ?? "",
-                      color: color,
-                      width: 25,
-                      height: 25,
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      iconList[index].name ?? "",
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                          color: Color(0xFF666666),
-                          fontSize: 13,
-                          fontFamily: 'poppins-regular'),
-                    ),
-                  ],
-                );
-              },
-              // backgroundColor: Colors.white,
-              activeIndex: _bottomNavIndex,
-              // splashColor: Colors.green,
-              notchAndCornersAnimation: borderRadiusAnimation,
-              splashSpeedInMilliseconds: 300,
-              notchSmoothness: NotchSmoothness.defaultEdge,
-              gapLocation: GapLocation.center,
-              leftCornerRadius: 32,
-              rightCornerRadius: 32,
-              notchMargin: 7,
-              onTap: (index) {
-                setState(() {
-                  _onItemTapped(index);
-                });
-              },
-              // setState(() => _bottomNavIndex = index),
-              hideAnimationController: _hideBottomBarAnimationController,
-              shadow: const BoxShadow(
-                offset: Offset(0, 1),
-                blurRadius: 2,
-                spreadRadius: 0.2,
-                color: Colors.white,
+        height: 70,
+        itemCount: iconList.length,
+        tabBuilder: (int index, bool isActive) {
+          final color = isActive ? Colors.green : Colors.grey;
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                iconList[index].icon ?? "",
+                color: color,
+                width: 25,
+                height: 25,
               ),
-            )
+              const SizedBox(height: 5),
+              Text(
+                iconList[index].name ?? "",
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                    color: Color(0xFF666666),
+                    fontSize: 13,
+                    fontFamily: 'poppins-regular'),
+              ),
+            ],
+          );
+        },
+        // backgroundColor: Colors.white,
+        activeIndex: _bottomNavIndex,
+        // splashColor: Colors.green,
+        notchAndCornersAnimation: borderRadiusAnimation,
+        splashSpeedInMilliseconds: 300,
+        notchSmoothness: NotchSmoothness.defaultEdge,
+        gapLocation: GapLocation.center,
+        leftCornerRadius: 32,
+        rightCornerRadius: 32,
+        notchMargin: 7,
+        onTap: (index) {
+          setState(() {
+            _onItemTapped(index);
+          });
+        },
+        // setState(() => _bottomNavIndex = index),
+        hideAnimationController: _hideBottomBarAnimationController,
+        shadow: const BoxShadow(
+          offset: Offset(0, 1),
+          blurRadius: 2,
+          spreadRadius: 0.2,
+          color: Colors.white,
+        ),
+      )
           : null,
     );
   }
@@ -416,8 +416,8 @@ class _MyWeatherInjuriesPageState extends State<MyWeatherInjuriesPage>
       if (route != null) {
         Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (BuildContext context) => MyBottomOnePage(
-                  aapbarVisibility: true,
-                )));
+              aapbarVisibility: true,
+            )));
       }
     } else if (index == 1) {
       // Navigator.pop(context);
@@ -425,8 +425,8 @@ class _MyWeatherInjuriesPageState extends State<MyWeatherInjuriesPage>
       if (route != null) {
         Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (BuildContext context) => MyBottomTwoPage(
-                  aapbarVisibility: true,
-                )));
+              aapbarVisibility: true,
+            )));
       }
     } else if (index == 2) {
       // Navigator.pop(context);
@@ -434,8 +434,8 @@ class _MyWeatherInjuriesPageState extends State<MyWeatherInjuriesPage>
       if (route != null) {
         Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (BuildContext context) => MyBottomThreePage(
-                  aapbarVisibility: true,
-                )));
+              aapbarVisibility: true,
+            )));
       }
     } else if (index == 3) {
       Navigator.of(context).push(
@@ -446,8 +446,8 @@ class _MyWeatherInjuriesPageState extends State<MyWeatherInjuriesPage>
       if (route != null) {
         Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (BuildContext context) => MyBottomCenterEnquiryPage(
-                  aapbarVisibility: true,
-                )));
+              aapbarVisibility: true,
+            )));
       }
     } else {
       setState(() {

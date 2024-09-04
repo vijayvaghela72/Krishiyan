@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 class MyDetailNewsPage extends StatefulWidget {
 
-  const MyDetailNewsPage({super.key});
+  String? title, description, imageLink;
+
+  MyDetailNewsPage({super.key, required this.title, required this.description, required this.imageLink});
 
   @override
   State<MyDetailNewsPage> createState() => _MyDetailNewsPageState();
@@ -33,11 +35,14 @@ class _MyDetailNewsPageState extends State<MyDetailNewsPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             const SizedBox(height: 10,),
-            SizedBox(
-              width: MediaQuery.sizeOf(context).width,
-              height: 150.0,
-              child: Image.asset('assets/images/home_banner.png',
-                repeat: ImageRepeat.noRepeat,),
+            Padding(
+              padding: const EdgeInsets.only(left: 30.0, right: 30.0),
+              child: SizedBox(
+                width: MediaQuery.sizeOf(context).width,
+                height: 150.0,
+                child: Image.asset('assets/images/home_banner.png',
+                  repeat: ImageRepeat.noRepeat,),
+              ),
             ),
             // Center(child: Text("Detail News", style: TextStyle(color: Color(0xFF3dc33b), fontSize: 30,
             //     fontFamily: 'poppins-medium'),)),
@@ -64,10 +69,10 @@ class _MyDetailNewsPageState extends State<MyDetailNewsPage> {
 
             const SizedBox(height: 20,),
 
-            const Padding(
+            Padding(
               padding: EdgeInsets.only(left: 40.0, right: 35.0),
               child: Flexible(
-                child: Text("Lorem ipsum dolor sit amet data consectetur adipisicin", softWrap: true,
+                child: Text(widget.title ?? "", softWrap: true,
                   style: TextStyle(color: Colors.black, fontSize: 20,
                       fontFamily: 'poppins-semibold'),),
               ),
@@ -75,10 +80,10 @@ class _MyDetailNewsPageState extends State<MyDetailNewsPage> {
 
             const SizedBox(height: 10,),
 
-            const Padding(
+            Padding(
               padding: EdgeInsets.only(left: 40.0, right: 35.0),
               child: Flexible(
-                child: Text("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.",
+                child: Text(widget.description ?? "",
                   softWrap: true,
                   textAlign: TextAlign.justify,
                   style: TextStyle(color: Colors.grey, fontSize: 20,

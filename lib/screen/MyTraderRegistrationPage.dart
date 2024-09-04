@@ -8,6 +8,7 @@ import 'package:krishiyan/localization/AppLocalizations.dart';
 import 'package:krishiyan/screen/MyRegistrationPage.dart';
 
 import '../helper/AlertHelper.dart';
+import '../mvc/controller/farmerDashboardController.dart';
 import '../mvc/controller/loginController.dart';
 import '../mvc/model/LoginData.dart';
 import 'MyLoginPage.dart';
@@ -59,7 +60,7 @@ class _MyTraderRegistrationPageState extends State<MyTraderRegistrationPage> {
             const SizedBox(height: 30,),
             Center(child: Text(buildTranslate("createAccount")!,
               style: const TextStyle(color: Color(0xFF3dc33b), fontSize: 22,
-                fontFamily: 'poppins-medium'),)),
+                  fontFamily: 'poppins-medium'),)),
             const SizedBox(height: 30,),
 
             // name
@@ -82,7 +83,7 @@ class _MyTraderRegistrationPageState extends State<MyTraderRegistrationPage> {
                     ),
                     enabledBorder: const OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey, width: 1.0,),
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
                     ),
                     hintText: buildTranslate("enterName"),
                     hintStyle: const TextStyle(color: Color(0xFFe7e7e7)),
@@ -95,7 +96,6 @@ class _MyTraderRegistrationPageState extends State<MyTraderRegistrationPage> {
                 controller: nameOfEntityController,
               ),
             ),
-
             const SizedBox(height: 20,),
 
             // type
@@ -123,84 +123,83 @@ class _MyTraderRegistrationPageState extends State<MyTraderRegistrationPage> {
                   buildTranslate("selectTypeEntity")!,
                   style: const TextStyle(color: Color(0xFFe7e7e7)),
                 ),
-                  items: items.map((item) {
-                    return DropdownMenuItem(
-                      value: item,
-                      //disable default onTap to avoid closing menu when selecting an item
-                      enabled: false,
-                      child: StatefulBuilder(
-                        builder: (context, menuSetState) {
-                          final isSelected = selectedItems.contains(item);
-                          return InkWell(
-                            onTap: () {
-                              isSelected ? selectedItems.remove(item) : selectedItems.add(item);
-                              //This rebuilds the StatefulWidget to update the button's text
-                              setState(() {});
-                              //This rebuilds the dropdownMenu Widget to update the check mark
-                              menuSetState(() {});
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                              height: double.infinity,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  if (isSelected)
-                                    const Icon(Icons.check_box_outlined)
-                                  else
-                                    const Icon(Icons.check_box_outline_blank),
-                                  const SizedBox(width: 16),
-                                  Expanded(
-                                    child: Text(
-                                      softWrap: true,
-                                      textAlign: TextAlign.start,
-                                      item,
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                      ),
+                items: items.map((item) {
+                  return DropdownMenuItem(
+                    value: item,
+                    //disable default onTap to avoid closing menu when selecting an item
+                    enabled: false,
+                    child: StatefulBuilder(
+                      builder: (context, menuSetState) {
+                        final isSelected = selectedItems.contains(item);
+                        return InkWell(
+                          onTap: () {
+                            isSelected ? selectedItems.remove(item) : selectedItems.add(item);
+                            //This rebuilds the StatefulWidget to update the button's text
+                            setState(() {});
+                            //This rebuilds the dropdownMenu Widget to update the check mark
+                            menuSetState(() {});
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                            height: double.infinity,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (isSelected)
+                                  const Icon(Icons.check_box_outlined)
+                                else
+                                  const Icon(Icons.check_box_outline_blank),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: Text(
+                                    softWrap: true,
+                                    textAlign: TextAlign.start,
+                                    item,
+                                    style: const TextStyle(
+                                      fontSize: 14,
                                     ),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                          );
-                        },
-                      ),
-                    );
-                  }).toList(),
-                  //Use last selected item as the current value so if we've limited menu height, it scroll to last item.
-                  value: selectedItems.isEmpty ? null : selectedItems.last,
-                  onChanged: (value) {},
-                  selectedItemBuilder: (context) {
-                    return items.map(
-                          (item) {
-                        return Container(
-                          alignment: AlignmentDirectional.centerStart,
-                          child: Text(
-                            selectedItems.join(', '),
-                            style: const TextStyle(
-                              fontSize: 14,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            maxLines: 1,
                           ),
                         );
                       },
-                    ).toList();
-                  },
-                  buttonStyleData: const ButtonStyleData(
-                    padding: EdgeInsets.only(left: 16, right: 8),
-                    height: 40,
-                    width: 140,
-                  ),
-                  menuItemStyleData: const MenuItemStyleData(
-                    height: 40,
-                    padding: EdgeInsets.zero,
-                  ),
+                    ),
+                  );
+                }).toList(),
+                //Use last selected item as the current value so if we've limited menu height, it scroll to last item.
+                value: selectedItems.isEmpty ? null : selectedItems.last,
+                onChanged: (value) {},
+                selectedItemBuilder: (context) {
+                  return items.map(
+                        (item) {
+                      return Container(
+                        alignment: AlignmentDirectional.centerStart,
+                        child: Text(
+                          selectedItems.join(', '),
+                          style: const TextStyle(
+                            fontSize: 14,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          maxLines: 1,
+                        ),
+                      );
+                    },
+                  ).toList();
+                },
+                buttonStyleData: const ButtonStyleData(
+                  padding: EdgeInsets.only(left: 16, right: 8),
+                  height: 40,
+                  width: 140,
                 ),
+                menuItemStyleData: const MenuItemStyleData(
+                  height: 40,
+                  padding: EdgeInsets.zero,
+                ),
+              ),
             ),
-
             const SizedBox(height: 20,),
 
             // mobile number
@@ -255,9 +254,9 @@ class _MyTraderRegistrationPageState extends State<MyTraderRegistrationPage> {
                       ),
                       child: Text(buildTranslate("getOtp")!),
                       onPressed: () {
-                       setState(() {
-                         otpVisible = true;
-                       });
+                        setState(() {
+                          otpVisible = true;
+                        });
                       },
                     ),
                   ),
@@ -276,12 +275,10 @@ class _MyTraderRegistrationPageState extends State<MyTraderRegistrationPage> {
                 padding: const EdgeInsets.only(left: 25.0, right: 25.0),
                 child: Text(buildTranslate("verifyOtp")!,
                   style: const TextStyle(fontSize: 15,
-                    color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
+                      color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
               ),
             ),
-
             otpVisible ? const SizedBox(height: 15,) : Container(),
-
             Visibility(
               visible: otpVisible,
               child: OtpTextField(
@@ -309,7 +306,6 @@ class _MyTraderRegistrationPageState extends State<MyTraderRegistrationPage> {
                 }, // end onSubmit
               ),
             ),
-
             const SizedBox(height: 15,),
 
             // password
@@ -360,7 +356,6 @@ class _MyTraderRegistrationPageState extends State<MyTraderRegistrationPage> {
                 ),
               ),
             ),
-
             const SizedBox(height: 20,),
 
             // confirm password
@@ -411,8 +406,8 @@ class _MyTraderRegistrationPageState extends State<MyTraderRegistrationPage> {
                 ),
               ),
             ),
-
             const SizedBox(height: 20,),
+
             Padding(
               padding: const EdgeInsets.only(left: 12.0, right: 12.0),
               child: Row(
@@ -460,7 +455,8 @@ class _MyTraderRegistrationPageState extends State<MyTraderRegistrationPage> {
                       && userPasswordController.text.isNotEmpty){
 
                     _registrationApiCall(nameOfEntityController.text,
-                        selectedItems, mobileNumberController.text, userPasswordController.text.toString(),
+                      selectedItems.toString(),
+                      mobileNumberController.text.toString(), userPasswordController.text.toString(),
                     );
                   }
                   else{
@@ -601,13 +597,12 @@ class _MyTraderRegistrationPageState extends State<MyTraderRegistrationPage> {
     );
   }
 
-  _registrationApiCall(String name, List<String> selectedItems,
-      String number, String password,) async {
+  _registrationApiCall(String name, String type, String number, String password,) async {
 
-    var body = json.encode({
+    var data = json.encode({
       "typeOfOrganization": "Trader",
       "nameOfFpo": name,
-      "typeOfFpo": selectedItems,
+      "typeOfFpo": type,
       "dateOfFpo": "",
       "organizationalEmail": "",
       "contactNumber": number,
@@ -615,31 +610,17 @@ class _MyTraderRegistrationPageState extends State<MyTraderRegistrationPage> {
       "password": password
     });
 
-    Data? user = await LoginController.signup(body, context: context);
+    var farmerRegistration = FarmerDashboardController.farmerGroupRegistration(data, context: context);
 
-    if (user != null) {
-      print("user token : " + user.token.toString());
-
+    if (farmerRegistration.toString().isNotEmpty) {
       Future.delayed(const Duration(seconds: 1), () {
-        print("Api success");
-
-        // AlertHelper.showToast("Registration successfully.",context);
+        print('farmer trader registered successfully');
 
         showAlertDialog(context);
-
-        // Navigator.pushReplacement(
-        //   context,
-        //   MaterialPageRoute(
-        //       builder: (context) =>
-        //           MyHomePage(
-        //             selectedIndex: 0,
-        //           )),
-        // );
       });
     }
     else {
       print("Api error");
-      AlertHelper.showToast("Registration unsuccessful",context);
     }
   }
 

@@ -8,6 +8,7 @@ import 'package:krishiyan/screen/MyRegistrationPage.dart';
 
 import '../helper/AlertHelper.dart';
 import '../localization/AppLocalizations.dart';
+import '../mvc/controller/farmerDashboardController.dart';
 import '../mvc/controller/loginController.dart';
 import '../mvc/model/LoginData.dart';
 import 'MyLoginPage.dart';
@@ -52,7 +53,7 @@ class _MyOtherRegistrationPageState extends State<MyOtherRegistrationPage> {
             const SizedBox(height: 30,),
             Center(child: Text(buildTranslate("createAccount")!,
               style: const TextStyle(color: Color(0xFF3dc33b), fontSize: 22,
-                fontFamily: 'poppins-medium'),)),
+                  fontFamily: 'poppins-medium'),)),
             const SizedBox(height: 30,),
 
             // nameOfEntity
@@ -75,7 +76,7 @@ class _MyOtherRegistrationPageState extends State<MyOtherRegistrationPage> {
                     ),
                     enabledBorder: const OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey, width: 1.0,),
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
                     ),
                     hintText: buildTranslate("enterName"),
                     hintStyle: const TextStyle(color: Color(0xFFe7e7e7)),
@@ -88,7 +89,6 @@ class _MyOtherRegistrationPageState extends State<MyOtherRegistrationPage> {
                 controller: nameOfEntityController,
               ),
             ),
-
             const SizedBox(height: 20,),
 
             // typeOfEntity
@@ -124,7 +124,6 @@ class _MyOtherRegistrationPageState extends State<MyOtherRegistrationPage> {
                 controller: typeOfEntityController,
               ),
             ),
-
             const SizedBox(height: 20,),
 
             // mobile number
@@ -137,6 +136,15 @@ class _MyOtherRegistrationPageState extends State<MyOtherRegistrationPage> {
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: TextFormField(
+                maxLength: 10,
+                inputFormatters: <TextInputFormatter>[
+                  FilteringTextInputFormatter.allow(RegExp('[0-9]')),
+                  //To remove first '0'
+                  FilteringTextInputFormatter.deny(RegExp(r'^0+')),
+                  //To remove first '94' or your country code
+                  FilteringTextInputFormatter.deny(RegExp(r'^94+')),
+                ],
+                keyboardType: TextInputType.phone,
                 decoration: InputDecoration(
                   enabled: true,
                   alignLabelWithHint: true,
@@ -168,11 +176,11 @@ class _MyOtherRegistrationPageState extends State<MyOtherRegistrationPage> {
                           borderRadius: BorderRadius.circular(12.0),
                         ),
                       ),
-                      child: Text(buildTranslate("getOTP")!),
+                      child: Text(buildTranslate("getOtp")!),
                       onPressed: () {
-                       setState(() {
-                         otpVisible = true;
-                       });
+                        setState(() {
+                          otpVisible = true;
+                        });
                       },
                     ),
                   ),
@@ -193,9 +201,7 @@ class _MyOtherRegistrationPageState extends State<MyOtherRegistrationPage> {
                     color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
               ),
             ),
-
             otpVisible ? const SizedBox(height: 15,) : Container(),
-
             Visibility(
               visible: otpVisible,
               child: OtpTextField(
@@ -223,7 +229,6 @@ class _MyOtherRegistrationPageState extends State<MyOtherRegistrationPage> {
                 }, // end onSubmit
               ),
             ),
-
             const SizedBox(height: 15,),
 
             // password
@@ -274,7 +279,6 @@ class _MyOtherRegistrationPageState extends State<MyOtherRegistrationPage> {
                 ),
               ),
             ),
-
             const SizedBox(height: 20,),
 
             // confirm password
@@ -325,7 +329,6 @@ class _MyOtherRegistrationPageState extends State<MyOtherRegistrationPage> {
                 ),
               ),
             ),
-
             const SizedBox(height: 20,),
 
             Padding(
@@ -360,7 +363,6 @@ class _MyOtherRegistrationPageState extends State<MyOtherRegistrationPage> {
                 ],
               ),
             ),
-
             const SizedBox(height: 15,),
 
             Container(
@@ -392,7 +394,7 @@ class _MyOtherRegistrationPageState extends State<MyOtherRegistrationPage> {
                   ),
                 ),
                 child: Text(buildTranslate("signup")!, style: const
-                        TextStyle(fontSize: 17, fontFamily: 'poppins-medium'),),
+                TextStyle(fontSize: 17, fontFamily: 'poppins-medium'),),
               ),
             ),
             const SizedBox(height: 20,),
@@ -465,13 +467,12 @@ class _MyOtherRegistrationPageState extends State<MyOtherRegistrationPage> {
 
   }
 
-  _registrationApiCall(String name, String typeOfEntity,
-      String number, String password,) async {
+  _registrationApiCall(String name, String type, String number, String password,) async {
 
-    var body = json.encode({
+    var data = json.encode({
       "typeOfOrganization": "Others",
       "nameOfFpo": name,
-      "typeOfFpo": typeOfEntity,
+      "typeOfFpo": type,
       "dateOfFpo": "",
       "organizationalEmail": "",
       "contactNumber": number,
@@ -479,31 +480,17 @@ class _MyOtherRegistrationPageState extends State<MyOtherRegistrationPage> {
       "password": password
     });
 
-    Data? user = await LoginController.signup(body, context: context);
+    var farmerRegistration = FarmerDashboardController.farmerGroupRegistration(data, context: context);
 
-    if (user != null) {
-      print("user token : " + user.token.toString());
-
+    if (farmerRegistration.toString().isNotEmpty) {
       Future.delayed(const Duration(seconds: 1), () {
-        print("Api success");
-
-        // AlertHelper.showToast("Registration successfully.",context);
+        print('farmer other registered successfully');
 
         showAlertDialog(context);
-
-        // Navigator.pushReplacement(
-        //   context,
-        //   MaterialPageRoute(
-        //       builder: (context) =>
-        //           MyHomePage(
-        //             selectedIndex: 0,
-        //           )),
-        // );
       });
     }
     else {
       print("Api error");
-      AlertHelper.showToast("Registration unsuccessful",context);
     }
   }
 
@@ -520,7 +507,6 @@ class _MyOtherRegistrationPageState extends State<MyOtherRegistrationPage> {
               Navigator.of(context).pop();
               Navigator.of(context).pop();
               Navigator.of(context).pop();
-              // Navigator.of(context).popUntil((route) => route.isFirst);
               Navigator.of(context).pushReplacement(MaterialPageRoute(
                   builder: (BuildContext context) => const MyLoginPage()));
             },

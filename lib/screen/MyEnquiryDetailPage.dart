@@ -1,12 +1,14 @@
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
-import 'MyHomePage.dart';
+import 'package:krishiyan/mvc/model/GetAllEnquiryData.dart';
+import 'package:intl/intl.dart';
 
 class MyEnquiryDetailPage extends StatefulWidget {
-  const MyEnquiryDetailPage({super.key});
+
+  EnquiryData commodity;
+
+  MyEnquiryDetailPage({super.key, required this.commodity});
 
   @override
   State<MyEnquiryDetailPage> createState() => _MyEnquiryDetailPageState();
@@ -67,7 +69,7 @@ class _MyEnquiryDetailPageState extends State<MyEnquiryDetailPage>
             // user card
             Padding(
               padding:
-                  const EdgeInsets.only(top: 10.0, right: 10.0, left: 10.0),
+              const EdgeInsets.only(top: 10.0, right: 10.0, left: 10.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -81,7 +83,7 @@ class _MyEnquiryDetailPageState extends State<MyEnquiryDetailPage>
                           borderRadius: BorderRadius.all(Radius.circular(12)),
                           image: DecorationImage(
                               image:
-                                  AssetImage("assets/images/enquiryBG.png"),
+                              AssetImage("assets/images/enquiryBG.png"),
                               fit: BoxFit.cover)),
                     ),
                   ),
@@ -90,13 +92,13 @@ class _MyEnquiryDetailPageState extends State<MyEnquiryDetailPage>
                     height: 10.0,
                   ),
 
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.only(left: 20.0),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 1,
                           child: Text(
                             "Name :",
@@ -110,9 +112,9 @@ class _MyEnquiryDetailPageState extends State<MyEnquiryDetailPage>
                         Expanded(
                           flex: 2,
                           child: Text(
-                            "Ankit",
+                            widget.commodity.uid ?? "",
                             softWrap: true,
-                            style: TextStyle(
+                            style: const TextStyle(
                                 color: Color(0xFF808080),
                                 fontSize: 15,
                                 fontFamily: 'poppins-semibold'),
@@ -126,13 +128,13 @@ class _MyEnquiryDetailPageState extends State<MyEnquiryDetailPage>
                     height: 10.0,
                   ),
 
-                  const Padding(
-                    padding: EdgeInsets.only(left: 20.0),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20.0),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 1,
                           child: Text(
                             "Purpose :",
@@ -146,9 +148,9 @@ class _MyEnquiryDetailPageState extends State<MyEnquiryDetailPage>
                         Expanded(
                           flex: 2,
                           child: Text(
-                            "To sell",
+                            widget.commodity.operation ?? "",
                             softWrap: true,
-                            style: TextStyle(
+                            style: const TextStyle(
                                 color: Color(0xFF808080),
                                 fontSize: 15,
                                 fontFamily: 'poppins-semibold'),
@@ -157,18 +159,17 @@ class _MyEnquiryDetailPageState extends State<MyEnquiryDetailPage>
                       ],
                     ),
                   ),
-
                   const SizedBox(
                     height: 10.0,
                   ),
 
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.only(left: 20.0),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 1,
                           child: Text(
                             "Rs :",
@@ -182,9 +183,9 @@ class _MyEnquiryDetailPageState extends State<MyEnquiryDetailPage>
                         Expanded(
                           flex: 2,
                           child: Text(
-                            "25000/-",
+                            widget.commodity.price.toString() ?? "",
                             softWrap: true,
-                            style: TextStyle(
+                            style: const TextStyle(
                                 color: Color(0xFF008000),
                                 fontSize: 15,
                                 fontFamily: 'poppins-semibold'),
@@ -193,18 +194,17 @@ class _MyEnquiryDetailPageState extends State<MyEnquiryDetailPage>
                       ],
                     ),
                   ),
-
                   const SizedBox(
                     height: 10.0,
                   ),
 
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.only(left: 20.0),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 1,
                           child: Text(
                             "Quantity :",
@@ -218,9 +218,9 @@ class _MyEnquiryDetailPageState extends State<MyEnquiryDetailPage>
                         Expanded(
                           flex: 2,
                           child: Text(
-                            "10 Metric Ton (MT)",
+                            widget.commodity.quantity.toString(),
                             softWrap: true,
-                            style: TextStyle(
+                            style: const TextStyle(
                                 color: Color(0xFF808080),
                                 fontSize: 15,
                                 fontFamily: 'poppins-semibold'),
@@ -229,18 +229,17 @@ class _MyEnquiryDetailPageState extends State<MyEnquiryDetailPage>
                       ],
                     ),
                   ),
-
                   const SizedBox(
                     height: 10.0,
                   ),
 
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.only(left: 20.0),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 1,
                           child: Text(
                             "Moisture :",
@@ -254,9 +253,9 @@ class _MyEnquiryDetailPageState extends State<MyEnquiryDetailPage>
                         Expanded(
                           flex: 2,
                           child: Text(
-                            "25.45%",
+                            widget.commodity.moisture.toString(),
                             softWrap: true,
-                            style: TextStyle(
+                            style: const TextStyle(
                                 color: Color(0xFF808080),
                                 fontSize: 15,
                                 fontFamily: 'poppins-semibold'),
@@ -265,18 +264,17 @@ class _MyEnquiryDetailPageState extends State<MyEnquiryDetailPage>
                       ],
                     ),
                   ),
-
                   const SizedBox(
                     height: 10.0,
                   ),
 
-                  const Padding(
-                    padding: EdgeInsets.only(left: 20.0),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20.0),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 1,
                           child: Text(
                             "Grade :",
@@ -290,9 +288,9 @@ class _MyEnquiryDetailPageState extends State<MyEnquiryDetailPage>
                         Expanded(
                           flex: 2,
                           child: Text(
-                            "A",
+                            widget.commodity.localGradeSpecification ?? "",
                             softWrap: true,
-                            style: TextStyle(
+                            style: const TextStyle(
                                 color: Color(0xFF808080),
                                 fontSize: 15,
                                 fontFamily: 'poppins-semibold'),
@@ -301,18 +299,17 @@ class _MyEnquiryDetailPageState extends State<MyEnquiryDetailPage>
                       ],
                     ),
                   ),
-
                   const SizedBox(
                     height: 10.0,
                   ),
 
-                  const Padding(
-                    padding: EdgeInsets.only(left: 20.0),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20.0),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 1,
                           child: Text(
                             "Size :",
@@ -326,9 +323,9 @@ class _MyEnquiryDetailPageState extends State<MyEnquiryDetailPage>
                         Expanded(
                           flex: 2,
                           child: Text(
-                            "4045",
+                            widget.commodity.size.toString(),
                             softWrap: true,
-                            style: TextStyle(
+                            style: const TextStyle(
                                 color: Color(0xFF808080),
                                 fontSize: 15,
                                 fontFamily: 'poppins-semibold'),
@@ -337,18 +334,17 @@ class _MyEnquiryDetailPageState extends State<MyEnquiryDetailPage>
                       ],
                     ),
                   ),
-
                   const SizedBox(
                     height: 10.0,
                   ),
 
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.only(left: 20.0),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 1,
                           child: Text(
                             "Count :",
@@ -362,9 +358,9 @@ class _MyEnquiryDetailPageState extends State<MyEnquiryDetailPage>
                         Expanded(
                           flex: 2,
                           child: Text(
-                            "35",
+                            widget.commodity.count.toString(),
                             softWrap: true,
-                            style: TextStyle(
+                            style: const TextStyle(
                                 color: Color(0xFF808080),
                                 fontSize: 15,
                                 fontFamily: 'poppins-semibold'),
@@ -373,18 +369,17 @@ class _MyEnquiryDetailPageState extends State<MyEnquiryDetailPage>
                       ],
                     ),
                   ),
-
                   const SizedBox(
                     height: 10.0,
                   ),
 
-                  const Padding(
-                    padding: EdgeInsets.only(left: 20.0),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20.0),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 1,
                           child: Text(
                             "Targeted \nPrice :",
@@ -398,9 +393,9 @@ class _MyEnquiryDetailPageState extends State<MyEnquiryDetailPage>
                         Expanded(
                           flex: 2,
                           child: Text(
-                            "25000",
+                            widget.commodity.price.toString() ?? "",
                             softWrap: true,
-                            style: TextStyle(
+                            style: const TextStyle(
                                 color: Color(0xFF808080),
                                 fontSize: 15,
                                 fontFamily: 'poppins-semibold'),
@@ -409,18 +404,17 @@ class _MyEnquiryDetailPageState extends State<MyEnquiryDetailPage>
                       ],
                     ),
                   ),
-
                   const SizedBox(
                     height: 10.0,
                   ),
 
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.only(left: 20.0),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 1,
                           child: Text(
                             "Expected \Purchase Date :",
@@ -434,9 +428,9 @@ class _MyEnquiryDetailPageState extends State<MyEnquiryDetailPage>
                         Expanded(
                           flex: 2,
                           child: Text(
-                            "25/07/2024",
+                            convertDate(widget.commodity.date ?? ""),
                             softWrap: true,
-                            style: TextStyle(
+                            style: const TextStyle(
                                 color: Color(0xFF808080),
                                 fontSize: 15,
                                 fontFamily: 'poppins-semibold'),
@@ -449,7 +443,6 @@ class _MyEnquiryDetailPageState extends State<MyEnquiryDetailPage>
                   const SizedBox(
                     height: 10.0,
                   ),
-
                   Padding(
                     padding: const EdgeInsets.only(
                         left: 10.0, right: 10.0, top: 10.0),
@@ -597,7 +590,6 @@ class _MyEnquiryDetailPageState extends State<MyEnquiryDetailPage>
                       ),
                     ),
                   ),
-
                   const SizedBox(
                     height: 20,
                   ),
@@ -608,11 +600,21 @@ class _MyEnquiryDetailPageState extends State<MyEnquiryDetailPage>
             const SizedBox(
               height: 10,
             ),
-
           ],
         ),
       ),
       // drawer: MyDrawer(),
     );
   }
+}
+
+
+String convertDate(String dateString) {
+  // Parse the date string into a DateTime object
+  DateTime dateTime = DateTime.parse(dateString);
+
+  // Format the DateTime object into "dd-MM-yyyy"
+  String formattedDate = DateFormat('dd-MM-yyyy').format(dateTime);
+
+  return formattedDate;
 }

@@ -45,13 +45,13 @@ class _MyWelcomePageState extends State<MyWelcomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            const SizedBox(height: 120,),
+            // const SizedBox(height: 40,),
             Expanded(
                 child: topWidget()
             ),
-            Expanded(
-                child: bottomWidget()
-            ),
+            // Expanded(
+            //     child: bottomWidget()
+            // ),
           ],
         ),
       ),
@@ -65,7 +65,7 @@ class _MyWelcomePageState extends State<MyWelcomePage> {
       children: [
         Center(child: Text(buildTranslate("welcomeTo")!,
           style: const TextStyle(color: Color(0xFF3dc33b), fontSize: 30,
-            fontFamily: 'arvo'),)),
+              fontFamily: 'arvo'),)),
         const SizedBox(height: 35,),
         Center(child: Image.asset('assets/images/welcome-logo.png')),
         const SizedBox(height: 35,),
@@ -77,15 +77,11 @@ class _MyWelcomePageState extends State<MyWelcomePage> {
               checkLogin = await SharedPref.readPreferenceValue(isLogin, PrefEnum.BOOL);
 
               if(!checkLogin) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const MyLoginPage()),
-                );
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const MyLoginPage()),);
               }
-              else{
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => MyHomePage(selectedIndex: 0,)),
+              else {
+                Navigator.push(context, MaterialPageRoute(builder:
+                    (context) => MyHomePage(selectedIndex: 0,)),
                 );
               }
             },

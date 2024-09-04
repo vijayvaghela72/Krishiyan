@@ -1,5 +1,9 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
+import '../mvc/model/SelectVillagesNameData.dart';
+import '../utils/Constants.dart';
 
 class MyDrawer extends StatefulWidget {
   const MyDrawer({super.key});
@@ -9,34 +13,43 @@ class MyDrawer extends StatefulWidget {
 }
 
 class _MyDrawerState extends State<MyDrawer> {
-  final List<String> sideMenu = ["Villages", "Types", "Stages"];
-
-  final List<String> villageData = [
-    "Ahmadabad",
-    "Shrirampur",
-    "Berdapur",
-    "Surat",
-    "Pune"
-  ];
+  final List<String> sideMenu = ["Villages", "Types"];
 
   final List<String> typeData = [
     "Organic",
     "InOrganic",
   ];
 
-  final List<String> stagesData = [
-    "Seed Germination",
-    "Harvesting",
-    "Flowering",
-    "Cab Development",
-    "Vegitative"
-  ];
-
   int selectedVillageData = 0;
   int selectedTypeData = 0;
-  int selectedStageData = 0;
 
   int selectedMenuData = 0;
+
+  SelectVillagesNameData? _villageNameData;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _fetchVillageData();
+  }
+
+  Future<void> _fetchVillageData() async {
+    try {
+      // Replace with your actual API endpoint
+      var response = await Dio().get(VILLAGES_NAMES);
+
+      if (response.statusCode == 200) {
+        setState(() {
+          _villageNameData = SelectVillagesNameData.fromJson(response.data);
+        });
+      } else {
+        throw Exception('Failed to load villages');
+      }
+    } catch (e) {
+      print('Error fetching _village name data: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,17 +57,10 @@ class _MyDrawerState extends State<MyDrawer> {
       statusBarColor: Colors.transparent,
     ));
     return Scaffold(
-      // appBar: AppBar(
-      //   automaticallyImplyLeading: false,
-      //   backgroundColor: Colors.white,
-      //   title: const Text(
-      //     "",
-      //     style: TextStyle(color: Colors.white, fontFamily: 'poppins-semibold', fontSize: 20),
-      //   ),
-      // ),
       appBar: AppBar(
         toolbarHeight: 0,
-        backgroundColor: Colors.white, systemOverlayStyle: SystemUiOverlayStyle.dark,
+        backgroundColor: Colors.white,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
       ),
       // backgroundColor: Colors.white,
       body: Row(
@@ -105,8 +111,8 @@ class _MyDrawerState extends State<MyDrawer> {
           Expanded(
             flex: 2,
             child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 InkWell(
                   highlightColor: Colors.transparent,
@@ -124,248 +130,220 @@ class _MyDrawerState extends State<MyDrawer> {
                 ),
                 Expanded(
                   flex: 4,
-                    child:  Container(
-                        width: MediaQuery.of(context).size.width * 0.70,
-                        decoration: const BoxDecoration(color: Colors.white),
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child:
-
-                          selectedMenuData == 0 ?
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              const SizedBox(height: 20,),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                                child: SizedBox(
-                                  height: 50,
-                                  child: ListView.builder(
-                                    physics: NeverScrollableScrollPhysics(),
-                                    shrinkWrap: true,
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: villageData.length,
-                                    itemBuilder: (context, index) {
-                                      return index.isEven ? CardWidget(villageData[index], index) : Container();
-                                    },
-                                  ),
+                  child: Container(
+                      width: MediaQuery.of(context).size.width * 0.70,
+                      decoration: const BoxDecoration(color: Colors.white),
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: selectedMenuData == 0
+                            ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            _villageNameData == null ||
+                                _villageNameData!.data == null
+                                ? const Center(
+                                child: Text('No data available'))
+                                : Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 8.0, right: 8.0),
+                              child: SizedBox(
+                                height: 50,
+                                child: ListView.builder(
+                                  physics:
+                                  const NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: _villageNameData!
+                                      .data!.length,
+                                  itemBuilder: (context, index) {
+                                    return index.isEven
+                                        ? CardWidget(
+                                        _villageNameData!
+                                            .data![index],
+                                        index)
+                                        : Container();
+                                  },
                                 ),
                               ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                                child: SizedBox(
-                                  height: 50,
-                                  child: ListView.builder(
-                                    physics: NeverScrollableScrollPhysics(),
-                                    shrinkWrap: true,
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: villageData.length,
-                                    itemBuilder: (context, index) {
-                                      return index.isOdd ? CardWidget(villageData[index], index) : Container();
-                                    },
-                                  ),
-                                ),
-                              )
-                            ],
-                          ) :
-                          selectedMenuData == 1 ?
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              const SizedBox(height: 20,),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                                child: SizedBox(
-                                  height: 50,
-                                  child: ListView.builder(
-                                    physics: NeverScrollableScrollPhysics(),
-                                    shrinkWrap: true,
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: typeData.length,
-                                    itemBuilder: (context, index) {
-                                      return CardTypeWidget(typeData[index], index);
-                                    },
-                                  ),
+                            ),
+                            _villageNameData == null ||
+                                _villageNameData!.data == null
+                                ? const Center(
+                                child: Text('No data available'))
+                                : Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 8.0, right: 8.0),
+                              child: SizedBox(
+                                height: 50,
+                                child: ListView.builder(
+                                  physics:
+                                  const NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: _villageNameData!
+                                      .data!.length,
+                                  itemBuilder: (context, index) {
+                                    return index.isOdd
+                                        ? CardWidget(
+                                        _villageNameData!
+                                            .data![index],
+                                        index)
+                                        : Container();
+                                  },
                                 ),
                               ),
-                              // Padding(
-                              //   padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                              //   child: SizedBox(
-                              //     height: 50,
-                              //     child: ListView.builder(
-                              //       physics: NeverScrollableScrollPhysics(),
-                              //       shrinkWrap: true,
-                              //       scrollDirection: Axis.horizontal,
-                              //       itemCount: typeData.length,
-                              //       itemBuilder: (context, index) {
-                              //         return index.isEven ? CardTypeWidget(typeData[index], index) : Container();
-                              //       },
-                              //     ),
-                              //   ),
-                              // ),
-                              // Padding(
-                              //   padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                              //   child: SizedBox(
-                              //     height: 50,
-                              //     child: ListView.builder(
-                              //       physics: NeverScrollableScrollPhysics(),
-                              //       shrinkWrap: true,
-                              //       scrollDirection: Axis.horizontal,
-                              //       itemCount: typeData.length,
-                              //       itemBuilder: (context, index) {
-                              //         return index.isOdd ? CardTypeWidget(typeData[index], index) : Container();
-                              //       },
-                              //     ),
-                              //   ),
-                              // )
-                            ],
-                          )
-                              :
-                          selectedMenuData == 2 ?
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              const SizedBox(height: 20,),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                                child: SizedBox(
-                                  height: 50,
-                                  child: ListView.builder(
-                                    physics: NeverScrollableScrollPhysics(),
-                                    shrinkWrap: true,
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: stagesData.length,
-                                    itemBuilder: (context, index) {
-                                      return index.isEven ? CardStageWidget(stagesData[index], index) : Container();
-                                    },
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                                child: SizedBox(
-                                  height: 50,
-                                  child: ListView.builder(
-                                    physics: NeverScrollableScrollPhysics(),
-                                    shrinkWrap: true,
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: stagesData.length,
-                                    itemBuilder: (context, index) {
-                                      return index.isOdd ? CardStageWidget(stagesData[index], index) : Container();
-                                    },
-                                  ),
-                                ),
-                              )
-                            ],
-                          ) :
-                          Container(),
+                            )
+                          ],
                         )
-                      // child: GridView.builder(
-                      //   padding: EdgeInsets.zero,
-                      //   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      //       crossAxisCount: 2, crossAxisSpacing: 10, mainAxisSpacing: 10),
-                      //   itemCount: villageData.length,
-                      //   itemBuilder: (context, index) {
-                      //     return InkWell(
-                      //       onTap: () {
-                      //         setState(() {
-                      //           _onSelectedVillageDataTapped(index);
-                      //         });
-                      //       },
-                      //       child: Card(
-                      //         semanticContainer: true,
-                      //         clipBehavior: Clip.antiAliasWithSaveLayer,
-                      //         color: selectedVillageData == index
-                      //             ? Colors.green
-                      //             : Colors.white,
-                      //         shape: const RoundedRectangleBorder(
-                      //             borderRadius: BorderRadius.all(Radius.circular(10),)),
-                      //         margin: const EdgeInsets.all(20),
-                      //         elevation: 2,
-                      //         child : Center(
-                      //           child: Text(
-                      //               villageData[index].toString(),
-                      //               style: TextStyle(
-                      //                 fontSize: 15,
-                      //                 fontWeight: FontWeight.w600,
-                      //                 color: selectedVillageData == index
-                      //                     ? Colors.white
-                      //                     : Colors.black,
-                      //               )),
-                      //         ),
-                      //       ),
-                      //     );
-                      //   },
-                      // ),
-                    ),
+                            : selectedMenuData == 1
+                            ? Column(
+                          crossAxisAlignment:
+                          CrossAxisAlignment.start,
+                          children: <Widget>[
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 8.0, right: 8.0),
+                              child: SizedBox(
+                                height: 50,
+                                child: ListView.builder(
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: typeData.length,
+                                  itemBuilder: (context, index) {
+                                    return CardTypeWidget(typeData[index], index);
+                                  },
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                            : Container(),
+                      )
+                    // child: GridView.builder(
+                    //   padding: EdgeInsets.zero,
+                    //   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    //       crossAxisCount: 2, crossAxisSpacing: 10, mainAxisSpacing: 10),
+                    //   itemCount: villageData.length,
+                    //   itemBuilder: (context, index) {
+                    //     return InkWell(
+                    //       onTap: () {
+                    //         setState(() {
+                    //           _onSelectedVillageDataTapped(index);
+                    //         });
+                    //       },
+                    //       child: Card(
+                    //         semanticContainer: true,
+                    //         clipBehavior: Clip.antiAliasWithSaveLayer,
+                    //         color: selectedVillageData == index
+                    //             ? Colors.green
+                    //             : Colors.white,
+                    //         shape: const RoundedRectangleBorder(
+                    //             borderRadius: BorderRadius.all(Radius.circular(10),)),
+                    //         margin: const EdgeInsets.all(20),
+                    //         elevation: 2,
+                    //         child : Center(
+                    //           child: Text(
+                    //               villageData[index].toString(),
+                    //               style: TextStyle(
+                    //                 fontSize: 15,
+                    //                 fontWeight: FontWeight.w600,
+                    //                 color: selectedVillageData == index
+                    //                     ? Colors.white
+                    //                     : Colors.black,
+                    //               )),
+                    //         ),
+                    //       ),
+                    //     );
+                    //   },
+                    // ),
+                  ),
                 ),
-                Container(color: Color(0xFFe7e7e7),
-                  child:
-                  Padding(
+                Container(
+                  color: Color(0xFFe7e7e7),
+                  child: Padding(
                     padding: const EdgeInsets.only(
-                        left: 10.0,
-                        right: 10.0, top: 15.0),
+                        left: 10.0, right: 10.0, top: 15.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
-                            child:
-                            Align(
-                              alignment: FractionalOffset.bottomCenter,
-                              child: Container(
-                                width: MediaQuery.of(context).size.width,
-                                padding: const EdgeInsets.only(left: 10.0, right: 10.0, bottom: 15.0),
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    // Navigator.push(
-                                    //   context,
-                                    //   MaterialPageRoute(builder: (context) => const MyHomePage()),
-                                    // );
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.all(10),
-                                    textStyle: const TextStyle(fontSize: 15),
-                                    backgroundColor: const Color(0xFFffffff),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10), // <-- Radius
-                                    ),
+                          child: Align(
+                            alignment: FractionalOffset.bottomCenter,
+                            child: Container(
+                              width: MediaQuery.of(context).size.width,
+                              padding: const EdgeInsets.only(
+                                  left: 10.0, right: 10.0, bottom: 15.0),
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  // Navigator.push(
+                                  //   context,
+                                  //   MaterialPageRoute(builder: (context) => const MyHomePage()),
+                                  // );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.all(10),
+                                  textStyle: const TextStyle(fontSize: 15),
+                                  backgroundColor: const Color(0xFFffffff),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                    BorderRadius.circular(10), // <-- Radius
                                   ),
-                                  child: const Text('Apply', style:
-                                  TextStyle(fontSize: 12, fontFamily: 'poppins-medium', color: Colors.black),),
+                                ),
+                                child: const Text(
+                                  'Apply',
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      fontFamily: 'poppins-medium',
+                                      color: Colors.black),
                                 ),
                               ),
                             ),
+                          ),
                         ),
                         Expanded(
-                            child:
-                            Align(
-                              alignment: FractionalOffset.bottomCenter,
-                              child: Container(
-                                width: MediaQuery.of(context).size.width,
-                                padding: const EdgeInsets.only(left: 10.0, right: 10.0, bottom: 15.0),
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    // Navigator.push(
-                                    //   context,
-                                    //   MaterialPageRoute(builder: (context) => const MyHomePage()),
-                                    // );
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.all(10),
-                                    textStyle: const TextStyle(fontSize: 15),
-                                    backgroundColor: const Color(0xFFffffff),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10), // <-- Radius
-                                    ),
+                          child: Align(
+                            alignment: FractionalOffset.bottomCenter,
+                            child: Container(
+                              width: MediaQuery.of(context).size.width,
+                              padding: const EdgeInsets.only(
+                                  left: 10.0, right: 10.0, bottom: 15.0),
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  // Navigator.push(
+                                  //   context,
+                                  //   MaterialPageRoute(builder: (context) => const MyHomePage()),
+                                  // );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.all(10),
+                                  textStyle: const TextStyle(fontSize: 15),
+                                  backgroundColor: const Color(0xFFffffff),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                    BorderRadius.circular(10), // <-- Radius
                                   ),
-                                  child: const Text('Save All(5)', style:
-                                  TextStyle(fontSize: 12, fontFamily: 'poppins-medium', color: Colors.black),),
+                                ),
+                                child: const Text(
+                                  'Save All(5)',
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      fontFamily: 'poppins-medium',
+                                      color: Colors.black),
                                 ),
                               ),
-                            ),),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -378,19 +356,18 @@ class _MyDrawerState extends State<MyDrawer> {
     );
   }
 
-  Widget CardWidget(String data, int index){
+  Widget CardWidget(String villageName, int index) {
     return InkWell(
       highlightColor: Colors.transparent,
       splashColor: Colors.transparent,
       onTap: () {
+        print("villageName : $villageName");
         _onSelectedVillageDataTapped(index);
       },
       child: Card(
         semanticContainer: true,
         clipBehavior: Clip.antiAliasWithSaveLayer,
-        color: selectedVillageData == index
-            ? Colors.green
-            : Colors.white,
+        color: selectedVillageData == index ? Colors.green : Colors.white,
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(
               Radius.circular(5),
@@ -399,7 +376,7 @@ class _MyDrawerState extends State<MyDrawer> {
         child: Center(
           child: Padding(
             padding: const EdgeInsets.all(7.0),
-            child: Text(data,
+            child: Text(villageName,
                 style: TextStyle(
                   fontSize: 13,
                   fontFamily: "poppins-regular",
@@ -413,42 +390,7 @@ class _MyDrawerState extends State<MyDrawer> {
     );
   }
 
-  Widget CardStageWidget(String data, int index){
-    return InkWell(
-      highlightColor: Colors.transparent,
-      splashColor: Colors.transparent,
-      onTap: () {
-        _onSelectedStageDataTapped(index);
-      },
-      child: Card(
-        semanticContainer: true,
-        clipBehavior: Clip.antiAliasWithSaveLayer,
-        color: selectedStageData == index
-            ? Colors.green
-            : Colors.white,
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(
-              Radius.circular(5),
-            )),
-        elevation: 1,
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(7.0),
-            child: Text(data,
-                style: TextStyle(
-                  fontSize: 13,
-                  fontFamily: "poppins-regular",
-                  color: selectedStageData == index
-                      ? Colors.white
-                      : Colors.black,
-                )),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget CardTypeWidget(String data, int index){
+  Widget CardTypeWidget(String data, int index) {
     return InkWell(
       highlightColor: Colors.transparent,
       splashColor: Colors.transparent,
@@ -458,9 +400,7 @@ class _MyDrawerState extends State<MyDrawer> {
       child: Card(
         semanticContainer: true,
         clipBehavior: Clip.antiAliasWithSaveLayer,
-        color: selectedTypeData == index
-            ? Colors.green
-            : Colors.white,
+        color: selectedTypeData == index ? Colors.green : Colors.white,
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(
               Radius.circular(5),
@@ -473,9 +413,8 @@ class _MyDrawerState extends State<MyDrawer> {
                 style: TextStyle(
                   fontSize: 13,
                   fontFamily: "poppins-regular",
-                  color: selectedTypeData == index
-                      ? Colors.white
-                      : Colors.black,
+                  color:
+                  selectedTypeData == index ? Colors.white : Colors.black,
                 )),
           ),
         ),
@@ -488,13 +427,6 @@ class _MyDrawerState extends State<MyDrawer> {
       selectedVillageData = index;
     });
     print("Selected Village Page : $selectedVillageData");
-  }
-
-  void _onSelectedStageDataTapped(int index) {
-    setState(() {
-      selectedStageData = index;
-    });
-    print("Selected Stage Page : $selectedStageData");
   }
 
   void _onSelectedTypeDataTapped(int index) {

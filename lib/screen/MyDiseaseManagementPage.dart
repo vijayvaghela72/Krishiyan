@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import '../mvc/model/CropLibraryData.dart';
 import 'MyBottomCenterEnquiryPage.dart';
 import 'MyBottomOnePage.dart';
 import 'MyBottomThreePage.dart';
@@ -18,8 +19,9 @@ import 'MySelectLanguagePage.dart';
 
 class MyDiseaseManagementPage extends StatefulWidget {
   bool aapbarVisibility;
+  Future<List<CropLibraryData>?> cropData;
 
-  MyDiseaseManagementPage({super.key, required this.aapbarVisibility});
+  MyDiseaseManagementPage({super.key, required this.aapbarVisibility, required this.cropData});
 
   @override
   State<MyDiseaseManagementPage> createState() => _MyDiseaseManagementPageState();
@@ -45,35 +47,35 @@ class _MyDiseaseManagementPageState extends State<MyDiseaseManagementPage>
     bottomCategory(name: "Profile", id: "4", icon: 'assets/images/bottom4.png'),
   ];
 
-  List<Entity> ORG_Entity = [
-    Entity(
-      name: "Downy mildew / Crazy top",
-      id: "1",
-      image: "assets/images/disease1.png",
-      description: "100% relative humidity. The optimum temperature is"
-          " 21-23˚C during the night. Light drizzling accompanied by cool weather is highly favorable."
-    ),
-    Entity(
-      name: "Leaf Blight",
-      id: "2",
-        image: "assets/images/disease2.png",
-        description:"    Applied in furrow at differnet stages Neem oil coated "
-            "urea (NOCU) recommended for highly yield.return and nitrogen use efficiency in kharif maize."
-    ),
-    Entity(
-      name: "Charcoal rot",
-      id: "3",
-        image: "assets/images/disease3.png",
-      description: "Dry and hot weather during and after flowering favours the disease. "
-          "Soil temperature 30 - 42°C, low soil moisture and low soil pH (5.4 - 6.0)."
-    ),
-    Entity(
-      name: "Corn rust",
-      id: "4",
-        image: "assets/images/disease4.png",
-      description: "Cool, warm and moist weather (15 - 25 °C)"
-    ),
-  ];
+  // List<Entity> ORG_Entity = [
+  //   Entity(
+  //     name: "Downy mildew / Crazy top",
+  //     id: "1",
+  //     image: "assets/images/disease1.png",
+  //     description: "100% relative humidity. The optimum temperature is"
+  //         " 21-23˚C during the night. Light drizzling accompanied by cool weather is highly favorable."
+  //   ),
+  //   Entity(
+  //     name: "Leaf Blight",
+  //     id: "2",
+  //       image: "assets/images/disease2.png",
+  //       description:"    Applied in furrow at differnet stages Neem oil coated "
+  //           "urea (NOCU) recommended for highly yield.return and nitrogen use efficiency in kharif maize."
+  //   ),
+  //   Entity(
+  //     name: "Charcoal rot",
+  //     id: "3",
+  //       image: "assets/images/disease3.png",
+  //     description: "Dry and hot weather during and after flowering favours the disease. "
+  //         "Soil temperature 30 - 42°C, low soil moisture and low soil pH (5.4 - 6.0)."
+  //   ),
+  //   Entity(
+  //     name: "Corn rust",
+  //     id: "4",
+  //       image: "assets/images/disease4.png",
+  //     description: "Cool, warm and moist weather (15 - 25 °C)"
+  //   ),
+  // ];
 
   @override
   void initState() {
@@ -108,11 +110,11 @@ class _MyDiseaseManagementPageState extends State<MyDiseaseManagementPage>
 
     Future.delayed(
       const Duration(seconds: 1),
-      () => _fabAnimationController.forward(),
+          () => _fabAnimationController.forward(),
     );
     Future.delayed(
       const Duration(seconds: 1),
-      () => _borderRadiusAnimationController.forward(),
+          () => _borderRadiusAnimationController.forward(),
     );
   }
 
@@ -129,52 +131,52 @@ class _MyDiseaseManagementPageState extends State<MyDiseaseManagementPage>
       extendBodyBehindAppBar: false,
       appBar: widget.aapbarVisibility
           ? AppBar(
-              automaticallyImplyLeading: false,
-              title: InkWell(
-                highlightColor: Colors.transparent,
-                splashColor: Colors.transparent,
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                        builder: (context) => const MySelectLanguagePage()),
-                  );
-                },
+        automaticallyImplyLeading: false,
+        title: InkWell(
+          highlightColor: Colors.transparent,
+          splashColor: Colors.transparent,
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                  builder: (context) => const MySelectLanguagePage()),
+            );
+          },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Image.asset(
+                'assets/images/loginLogo.png',
+                width: 150,
+                height: 60,
+              ),
+              const Spacer(),
+              Padding(
+                padding: const EdgeInsets.only(right: 5.0, top: 12.0),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Image.asset(
-                      'assets/images/loginLogo.png',
-                      width: 150,
-                      height: 60,
+                      'assets/images/language.png',
+                      width: 35,
+                      height: 35,
                     ),
-                    const Spacer(),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 5.0, top: 12.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Image.asset(
-                            'assets/images/language.png',
-                            width: 35,
-                            height: 35,
-                          ),
-                          // const Text(
-                          //   "Select Language",
-                          //   style: TextStyle(color: Colors.black, fontFamily: 'poppins-semibold', fontSize: 15),
-                          // ),
-                          // const SizedBox(width: 10,),
-                          // Image.asset(
-                          //   'assets/images/appbar_down.png',
-                          //   // color: Colors.white,
-                          // ),
-                        ],
-                      ),
-                    ),
+                    // const Text(
+                    //   "Select Language",
+                    //   style: TextStyle(color: Colors.black, fontFamily: 'poppins-semibold', fontSize: 15),
+                    // ),
+                    // const SizedBox(width: 10,),
+                    // Image.asset(
+                    //   'assets/images/appbar_down.png',
+                    //   // color: Colors.white,
+                    // ),
                   ],
                 ),
               ),
-            )
+            ],
+          ),
+        ),
+      )
           : null,
       body: SingleChildScrollView(
         child: Column(
@@ -234,241 +236,404 @@ class _MyDiseaseManagementPageState extends State<MyDiseaseManagementPage>
       ),
       floatingActionButton: widget.aapbarVisibility
           ? FloatingActionButton(
-              backgroundColor: Colors.white.withAlpha(0),
-              // add this line.
-              elevation: 0,
-              // also important, removes the shadow
-              heroTag: "floatingActionBtn",
-              shape: const RoundedRectangleBorder(
-                // <= Change BeveledRectangleBorder to RoundedRectangularBorder
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(30.0),
-                  topRight: Radius.circular(30.0),
-                  bottomLeft: Radius.circular(30.0),
-                  bottomRight: Radius.circular(30.0),
-                ),
-              ),
-              child: InkWell(
-                highlightColor: Colors.transparent,
-                splashColor: Colors.transparent,
-                onTap: () {
-                  setState(() {
-                    _onItemTapped(4);
-                  });
-                },
-                child: Image.asset(
-                  'assets/images/bottomCenter.png',
-                  // color: Colors.white,
-                ),
-              ),
-              onPressed: () {
-                _fabAnimationController.reset();
-                _borderRadiusAnimationController.reset();
-                _borderRadiusAnimationController.forward();
-                _fabAnimationController.forward();
-              },
-            )
+        backgroundColor: Colors.white.withAlpha(0),
+        // add this line.
+        elevation: 0,
+        // also important, removes the shadow
+        heroTag: "floatingActionBtn",
+        shape: const RoundedRectangleBorder(
+          // <= Change BeveledRectangleBorder to RoundedRectangularBorder
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(30.0),
+            topRight: Radius.circular(30.0),
+            bottomLeft: Radius.circular(30.0),
+            bottomRight: Radius.circular(30.0),
+          ),
+        ),
+        child: InkWell(
+          highlightColor: Colors.transparent,
+          splashColor: Colors.transparent,
+          onTap: () {
+            setState(() {
+              _onItemTapped(4);
+            });
+          },
+          child: Image.asset(
+            'assets/images/bottomCenter.png',
+            // color: Colors.white,
+          ),
+        ),
+        onPressed: () {
+          _fabAnimationController.reset();
+          _borderRadiusAnimationController.reset();
+          _borderRadiusAnimationController.forward();
+          _fabAnimationController.forward();
+        },
+      )
           : null,
       floatingActionButtonLocation: widget.aapbarVisibility
           ? FloatingActionButtonLocation.centerDocked
           : null,
       bottomNavigationBar: widget.aapbarVisibility
           ? AnimatedBottomNavigationBar.builder(
-              height: 70,
-              itemCount: iconList.length,
-              tabBuilder: (int index, bool isActive) {
-                final color = isActive ? Colors.green : Colors.grey;
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(
-                      iconList[index].icon ?? "",
-                      color: color,
-                      width: 25,
-                      height: 25,
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      iconList[index].name ?? "",
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                          color: Color(0xFF666666),
-                          fontSize: 13,
-                          fontFamily: 'poppins-regular'),
-                    ),
-                  ],
-                );
-              },
-              // backgroundColor: Colors.white,
-              activeIndex: _bottomNavIndex,
-              // splashColor: Colors.green,
-              notchAndCornersAnimation: borderRadiusAnimation,
-              splashSpeedInMilliseconds: 300,
-              notchSmoothness: NotchSmoothness.defaultEdge,
-              gapLocation: GapLocation.center,
-              leftCornerRadius: 32,
-              rightCornerRadius: 32,
-              notchMargin: 7,
-              onTap: (index) {
-                setState(() {
-                  _onItemTapped(index);
-                });
-              },
-              // setState(() => _bottomNavIndex = index),
-              hideAnimationController: _hideBottomBarAnimationController,
-              shadow: const BoxShadow(
-                offset: Offset(0, 1),
-                blurRadius: 2,
-                spreadRadius: 0.2,
-                color: Colors.white,
+        height: 70,
+        itemCount: iconList.length,
+        tabBuilder: (int index, bool isActive) {
+          final color = isActive ? Colors.green : Colors.grey;
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                iconList[index].icon ?? "",
+                color: color,
+                width: 25,
+                height: 25,
               ),
-            )
+              const SizedBox(height: 5),
+              Text(
+                iconList[index].name ?? "",
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                    color: Color(0xFF666666),
+                    fontSize: 13,
+                    fontFamily: 'poppins-regular'),
+              ),
+            ],
+          );
+        },
+        // backgroundColor: Colors.white,
+        activeIndex: _bottomNavIndex,
+        // splashColor: Colors.green,
+        notchAndCornersAnimation: borderRadiusAnimation,
+        splashSpeedInMilliseconds: 300,
+        notchSmoothness: NotchSmoothness.defaultEdge,
+        gapLocation: GapLocation.center,
+        leftCornerRadius: 32,
+        rightCornerRadius: 32,
+        notchMargin: 7,
+        onTap: (index) {
+          setState(() {
+            _onItemTapped(index);
+          });
+        },
+        // setState(() => _bottomNavIndex = index),
+        hideAnimationController: _hideBottomBarAnimationController,
+        shadow: const BoxShadow(
+          offset: Offset(0, 1),
+          blurRadius: 2,
+          spreadRadius: 0.2,
+          color: Colors.white,
+        ),
+      )
           : null,
     );
   }
 
   Widget listWidget() {
-    return Padding(
-      padding: const EdgeInsets.only(left: 12.0, right: 12.0),
-      child: ListView.builder(
-        shrinkWrap: true,
-        scrollDirection: Axis.vertical,
-        physics: const NeverScrollableScrollPhysics(),
-        itemCount: ORG_Entity.length,
-        itemBuilder: (_, index) {
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(color: const Color(0xFFd3d3d3), width: 1),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Color(0xFFd3d3d3),
-                    )
-                  ],
-                  borderRadius: BorderRadius.circular(15)),
-              child: InkWell(
-                highlightColor: Colors.transparent,
-                splashColor: Colors.transparent,
-                onTap: () {},
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Container(
-                        padding: const EdgeInsets.all(8.0),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15)),
-                        child: Image.asset(ORG_Entity[index].image ?? "",
-                          width: MediaQuery.of(context).size.width,
-                          fit: BoxFit.cover,)),
-                    Flexible(
-                      child: Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: Center(
-                          child: Text(
-                            textAlign: TextAlign.center,
-                            ORG_Entity[index].name ?? "",
-                            softWrap: true,
-                            style: const TextStyle(
-                                color: Color(0xFF111111),
-                                fontSize: 14,
-                                fontFamily: 'poppins-semibold'),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Flexible(
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 5.0),
-                        child: Center(
-                          child: Text(
-                            textAlign: TextAlign.justify,
-                            ORG_Entity[index].description ?? "",
-                            softWrap: true,
-                            style: const TextStyle(
-                                color: Color(0xFF808080),
-                                fontSize: 11,
-                                fontFamily: 'poppins-semibold'),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Container(
-                        width: MediaQuery.of(context).size.width,
-                        padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 5.0, bottom: 5.0),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  showSymptomsAlertDialog(context);
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  foregroundColor: Colors.white,
-                                  minimumSize: Size.zero,
-                                  textStyle: const TextStyle(fontSize: 14),
-                                  padding: const EdgeInsets.all(5),
-                                  backgroundColor: const Color(0xFF278115),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(17),
+    return
+      FutureBuilder<List<CropLibraryData>?>(
+        future: widget.cropData,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return ListView.builder(
+                itemCount: snapshot.data!.length,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemBuilder: (context, parentIndex) {
+                  return
+                    ListView.builder(
+                      shrinkWrap: true,
+                      scrollDirection: Axis.vertical,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: snapshot.data![parentIndex].diseaseManagement!.length,
+                      itemBuilder: (_, index) {
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(color: const Color(0xFFd3d3d3), width: 1),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Color(0xFFd3d3d3),
+                                  )
+                                ],
+                                borderRadius: BorderRadius.circular(15)),
+                            child: InkWell(
+                              highlightColor: Colors.transparent,
+                              splashColor: Colors.transparent,
+                              onTap: () {},
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  Container(
+                                      padding: const EdgeInsets.all(8.0),
+                                      decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(15)),
+                                      child: Image.asset(snapshot.data![parentIndex].diseaseManagement![index].images![0] ?? "",
+                                        width: MediaQuery.of(context).size.width,
+                                        fit: BoxFit.cover,)),
+                                  Flexible(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(5.0),
+                                      child: Center(
+                                        child: Text(
+                                          textAlign: TextAlign.center,
+                                          snapshot.data![parentIndex].diseaseManagement![index].name ?? "",
+                                          softWrap: true,
+                                          style: const TextStyle(
+                                              color: Color(0xFF111111),
+                                              fontSize: 14,
+                                              fontFamily: 'poppins-semibold'),
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                ),
-                                child: const Text(
-                                  'SYMPTOMS',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontFamily: 'poppins-regular'),
-                                ),
+                                  Flexible(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 5.0),
+                                      child: Center(
+                                        child: Text(
+                                          textAlign: TextAlign.justify,
+                                          snapshot.data![parentIndex].diseaseManagement![index].solutions ?? "",
+                                          softWrap: true,
+                                          style: const TextStyle(
+                                              color: Color(0xFF808080),
+                                              fontSize: 11,
+                                              fontFamily: 'poppins-semibold'),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 5.0, bottom: 5.0),
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            child: ElevatedButton(
+                                              onPressed: () {
+                                                showSymptomsAlertDialog(context);
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                foregroundColor: Colors.white,
+                                                minimumSize: Size.zero,
+                                                textStyle: const TextStyle(fontSize: 14),
+                                                padding: const EdgeInsets.all(5),
+                                                backgroundColor: const Color(0xFF278115),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(17),
+                                                ),
+                                              ),
+                                              child: const Text(
+                                                'SYMPTOMS',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontFamily: 'poppins-regular'),
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 10,),
+                                          Expanded(
+                                            child: ElevatedButton(
+                                              onPressed: () {
+                                                showSolutionAlertDialog(context);
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                foregroundColor: Colors.white,
+                                                minimumSize: Size.zero,
+                                                textStyle: const TextStyle(fontSize: 14),
+                                                padding: const EdgeInsets.all(5),
+                                                backgroundColor: const Color(0xFF3FC041),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(17),
+                                                ),
+                                              ),
+                                              child: const Text(
+                                                'SOLUTION',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontFamily: 'poppins-regular'),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      )),
+                                  const SizedBox(height: 10,)
+                                ],
                               ),
                             ),
-                            const SizedBox(width: 10,),
-                            Expanded(
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  showSolutionAlertDialog(context);
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  foregroundColor: Colors.white,
-                                  minimumSize: Size.zero,
-                                  textStyle: const TextStyle(fontSize: 14),
-                                  padding: const EdgeInsets.all(5),
-                                  backgroundColor: const Color(0xFF3FC041),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(17),
-                                  ),
-                                ),
-                                child: const Text(
-                                  'SOLUTION',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontFamily: 'poppins-regular'),
-                                ),
-                              ),
-                            ),
-                          ],
-                        )),
-                    const SizedBox(height: 10,)
-                  ],
-                ),
-              ),
-            ),
-          );
+                          ),
+                        );
+                      },
+                    );
+                });
+            // Padding(
+            //   padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+            //   child: Container(
+            //     decoration: BoxDecoration(
+            //         color: Colors.white,
+            //         border: Border.all(color: const Color(0xFFd3d3d3), width: 1),
+            //         boxShadow: const [BoxShadow(color: Color(0xFFd3d3d3),)],
+            //         borderRadius: BorderRadius.circular(15)),
+            //     child: InkWell(
+            //       highlightColor: Colors.transparent,
+            //       splashColor: Colors.transparent,
+            //       onTap: () {
+            //
+            //       },
+            //       child: Column(
+            //         mainAxisAlignment: MainAxisAlignment.start,
+            //         crossAxisAlignment: CrossAxisAlignment.start,
+            //         mainAxisSize: MainAxisSize.min,
+            //         children: <Widget>[
+            //           Container(
+            //               width: MediaQuery.of(context).size.width,
+            //               padding: const EdgeInsets.only(
+            //                   left: 15.0, right: 15.0, top: 20.0),
+            //               child: ElevatedButton(
+            //                 onPressed: () {},
+            //                 style: ElevatedButton.styleFrom(
+            //                   foregroundColor: Colors.white,
+            //                   padding: const EdgeInsets.all(12),
+            //                   textStyle: const TextStyle(fontSize: 18),
+            //                   backgroundColor: const Color(0xFF1E8E27),
+            //                   shape: RoundedRectangleBorder(
+            //                     borderRadius: BorderRadius.circular(10),
+            //                   ),
+            //                 ),
+            //                 child: Row(
+            //                   mainAxisAlignment: MainAxisAlignment.center,
+            //                   crossAxisAlignment: CrossAxisAlignment.center,
+            //                   children: [
+            //                     Image.asset("assets/images/clock.png", width: 20, height: 20,),
+            //                     const SizedBox(width: 10,),
+            //                     Text(
+            //                       snapshot.data![0].irrigation![0].age ?? "",
+            //                       style: const TextStyle(
+            //                           fontSize: 14,
+            //                           fontFamily: 'poppins-medium'),
+            //                     ),
+            //                   ],
+            //                 ),
+            //               )),
+            //
+            //           const SizedBox(height: 10,),
+            //
+            //           Flexible(
+            //             child: Padding(
+            //               padding: const EdgeInsets.only(top: 20.0, left: 10.0, right: 10.0),
+            //               child: Center(
+            //                 child: Text(
+            //                   snapshot.data![0].irrigation![0].criticalStage ?? "",
+            //                   textAlign: TextAlign.center,
+            //                   softWrap: true,
+            //                   style: const TextStyle(
+            //                     // color: Color(0xFF666666),
+            //                       color: Colors.black,
+            //                       fontSize: 14,
+            //                       fontFamily: 'poppins-semibold'),
+            //                 ),
+            //               ),
+            //             ),
+            //           ),
+            //
+            //           const SizedBox(height: 10,),
+            //
+            //           Container(
+            //               width: MediaQuery.of(context).size.width,
+            //               padding: const EdgeInsets.only(
+            //                   left: 15.0, right: 15.0, top: 20.0),
+            //               child: ElevatedButton(
+            //                 onPressed: () {},
+            //                 style: ElevatedButton.styleFrom(
+            //                   foregroundColor: Colors.white,
+            //                   padding: const EdgeInsets.all(12),
+            //                   textStyle: const TextStyle(fontSize: 18),
+            //                   backgroundColor: const Color(0xFF1E8E27),
+            //                   shape: RoundedRectangleBorder(
+            //                     borderRadius: BorderRadius.circular(10),
+            //                   ),
+            //                 ),
+            //                 child: Column(
+            //                   children: [
+            //                     const Align(
+            //                       alignment: Alignment.topLeft,
+            //                       child: Text(
+            //                         'Methodology',
+            //                         textAlign: TextAlign.start,
+            //                         style: TextStyle(
+            //                             fontSize: 17,
+            //                             fontFamily: 'poppins-regular'),
+            //                       ),
+            //                     ),
+            //                     const SizedBox(height: 10,),
+            //                     Align(
+            //                       alignment: Alignment.topLeft,
+            //                       child: Text(
+            //                         snapshot.data![0].irrigation![0].methodology ?? "",
+            //                         textAlign: TextAlign.start,
+            //                         style: const TextStyle(
+            //                             fontSize: 11,
+            //                             fontFamily: 'poppins-medium'),
+            //                       ),
+            //                     ),
+            //                   ],
+            //                 ),
+            //               )),
+            //
+            //           const SizedBox(height: 20.0,),
+            //           const Flexible(
+            //             child: Padding(
+            //               padding: EdgeInsets.only(top: 10.0, right: 15.0, left: 15.0),
+            //               child: Text(
+            //                 "Operations:",
+            //                 softWrap: true,
+            //                 style: TextStyle(
+            //                   // color: Color(0xFF666666),
+            //                     color: Colors.black,
+            //                     fontSize: 15,
+            //                     fontFamily: 'poppins-semibold'),
+            //               ),
+            //             ),
+            //           ),
+            //
+            //           const SizedBox(height: 10.0,),
+            //           Flexible(
+            //             child: Padding(
+            //               padding: const EdgeInsets.only(top: 10.0, right: 15.0, left: 15.0),
+            //               child: Text(snapshot.data![0].irrigation![0].operations ?? "",
+            //                 textAlign: TextAlign.justify,
+            //                 softWrap: true,
+            //                 style: const TextStyle(
+            //                   // color: Color(0xFF666666),
+            //                     color: Colors.black,
+            //                     fontSize: 13,
+            //                     fontFamily: 'poppins-regular'),
+            //               ),
+            //             ),
+            //           ),
+            //           const SizedBox(
+            //             height: 20,
+            //           ),
+            //         ],
+            //       ),
+            //     ),
+            //   ),
+            // );
+          } else if (snapshot.hasError) {
+            return Text('${snapshot.error}');
+          }
+
+          // By default, show a loading spinner.
+          return const CircularProgressIndicator();
         },
-        // gridDelegate:
-        //     const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 1),
-        // gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        //   crossAxisCount: 1,
-        //   childAspectRatio: MediaQuery.of(context).size.width /
-        //       (MediaQuery.of(context).size.height / 2),
-        // ),
-      ),
-    );
+      );
   }
 
   showSolutionAlertDialog(BuildContext context) {
@@ -619,8 +784,8 @@ class _MyDiseaseManagementPageState extends State<MyDiseaseManagementPage>
       if (route != null) {
         Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (BuildContext context) => MyBottomOnePage(
-                  aapbarVisibility: true,
-                )));
+              aapbarVisibility: true,
+            )));
       }
     } else if (index == 1) {
       // Navigator.pop(context);
@@ -628,8 +793,8 @@ class _MyDiseaseManagementPageState extends State<MyDiseaseManagementPage>
       if (route != null) {
         Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (BuildContext context) => MyBottomTwoPage(
-                  aapbarVisibility: true,
-                )));
+              aapbarVisibility: true,
+            )));
       }
     } else if (index == 2) {
       // Navigator.pop(context);
@@ -637,8 +802,8 @@ class _MyDiseaseManagementPageState extends State<MyDiseaseManagementPage>
       if (route != null) {
         Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (BuildContext context) => MyBottomThreePage(
-                  aapbarVisibility: true,
-                )));
+              aapbarVisibility: true,
+            )));
       }
     } else if (index == 3) {
       Navigator.of(context).push(
@@ -649,8 +814,8 @@ class _MyDiseaseManagementPageState extends State<MyDiseaseManagementPage>
       if (route != null) {
         Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (BuildContext context) => MyBottomCenterEnquiryPage(
-                  aapbarVisibility: true,
-                )));
+              aapbarVisibility: true,
+            )));
       }
     } else {
       setState(() {

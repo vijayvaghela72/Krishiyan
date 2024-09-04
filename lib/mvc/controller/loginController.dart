@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,9 +8,8 @@ import '../model/APIResponse.dart';
 import '../model/LoginData.dart';
 
 class LoginController {
-
-  static Future<Data?> login(dynamic data,{required BuildContext context}) async {
-
+  static Future<Data?> login(dynamic data,
+      {required BuildContext context}) async {
     var headers = {
       'name': 'Content-Type',
       'value': 'application/json',
@@ -30,54 +28,18 @@ class LoginController {
     );
 
     if (response.statusCode == 200) {
-      print("Response : "+json.encode(response.data));
+      print("Login Response : " + json.encode(response.data));
 
       APIResponse? apiResponse = APIResponse.fromJson(response.data);
       if (apiResponse.success!) {
         return apiResponse.data!;
       }
       if (apiResponse.message != "") {
-        AlertHelper.showToast(apiResponse.message!,context);
+        AlertHelper.showToast(apiResponse.message!, context);
       }
       return null;
-    }
-    else {
-      print("Error : "+response.statusMessage.toString());
-    }
-  }
-
-  static Future<Data?> signup(dynamic data,{required BuildContext context}) async {
-
-    var headers = {
-      'name': 'Content-Type',
-      'value': 'application/json',
-      'Content-Type': 'application/json'
-    };
-
-    var dio = Dio();
-    var response = await dio.request(
-      SINGUP,
-      options: Options(
-        method: 'POST',
-        headers: headers,
-      ),
-      data: data,
-    );
-
-    if (response.statusCode == 201) {
-      print("Response : "+json.encode(response.data));
-
-      APIResponse? apiResponse = APIResponse.fromJson(response.data);
-      if (apiResponse.success!) {
-        return apiResponse.data!;
-      }
-      if (apiResponse.message != "") {
-        AlertHelper.showToast(apiResponse.message!,context);
-      }
-      return null;
-    }
-    else {
-      print("Error : "+response.statusMessage.toString());
+    } else {
+      print("Error : " + response.statusMessage.toString());
     }
   }
 }

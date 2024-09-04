@@ -18,7 +18,7 @@ import 'MySelectLanguagePage.dart';
 
 class MyProSawingPracticesPage extends StatefulWidget {
   bool aapbarVisibility;
-  Future<List<CropLibraryData>> cropData;
+  Future<List<CropLibraryData>?> cropData;
 
   MyProSawingPracticesPage({super.key, required this.aapbarVisibility, required this.cropData});
 
@@ -83,11 +83,11 @@ class _MyProSawingPracticesPageState extends State<MyProSawingPracticesPage>
 
     Future.delayed(
       const Duration(seconds: 1),
-      () => _fabAnimationController.forward(),
+          () => _fabAnimationController.forward(),
     );
     Future.delayed(
       const Duration(seconds: 1),
-      () => _borderRadiusAnimationController.forward(),
+          () => _borderRadiusAnimationController.forward(),
     );
   }
 
@@ -102,43 +102,43 @@ class _MyProSawingPracticesPageState extends State<MyProSawingPracticesPage>
       backgroundColor: Colors.white,
       appBar: widget.aapbarVisibility
           ? AppBar(
-              automaticallyImplyLeading: false,
-              title: InkWell(
-                highlightColor: Colors.transparent,
-                splashColor: Colors.transparent,
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                        builder: (context) => const MySelectLanguagePage()),
-                  );
-                },
+        automaticallyImplyLeading: false,
+        title: InkWell(
+          highlightColor: Colors.transparent,
+          splashColor: Colors.transparent,
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                  builder: (context) => const MySelectLanguagePage()),
+            );
+          },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Image.asset(
+                'assets/images/loginLogo.png',
+                width: 150,
+                height: 60,
+              ),
+              const Spacer(),
+              Padding(
+                padding: const EdgeInsets.only(right: 5.0, top: 12.0),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Image.asset(
-                      'assets/images/loginLogo.png',
-                      width: 150,
-                      height: 60,
-                    ),
-                    const Spacer(),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 5.0, top: 12.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Image.asset(
-                            'assets/images/language.png',
-                            width: 35,
-                            height: 35,
-                          ),
-                        ],
-                      ),
+                      'assets/images/language.png',
+                      width: 35,
+                      height: 35,
                     ),
                   ],
                 ),
               ),
-            )
+            ],
+          ),
+        ),
+      )
           : null,
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
@@ -197,7 +197,7 @@ class _MyProSawingPracticesPageState extends State<MyProSawingPracticesPage>
             ),
 
             //1st
-            FutureBuilder<List<CropLibraryData>>(
+            FutureBuilder<List<CropLibraryData>?>(
               future: widget.cropData,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
@@ -282,106 +282,106 @@ class _MyProSawingPracticesPageState extends State<MyProSawingPracticesPage>
                                       child: Padding(
                                         padding: const EdgeInsets.only(left: 5.0, right: 5.0, bottom: 20.0),
                                         child: Container(
-                                                width: MediaQuery.of(context)
-                                                    .size
-                                                    .width,
-                                                decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    border: Border.all(
-                                                        color: const Color(
-                                                            0xFFd3d3d3),
-                                                        width: 1),
-                                                    boxShadow: const [
-                                                      BoxShadow(
-                                                        color: Color(0xFFd3d3d3),
-                                                      )
-                                                    ],
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            15)),
-                                                child: Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  mainAxisSize: MainAxisSize.min,
-                                                  children: <Widget>[
-                                                    Flexible(
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets.only(
-                                                                top: 20.0,
-                                                                right: 10.0,
-                                                                left: 10.0),
-                                                        child: Text(
-                                                          snapshot
-                                                                  .data![index]
-                                                                  .presowingPractices!
-                                                                  .landPreparation ??
-                                                              "",
-                                                          softWrap: true,
-                                                          style: const TextStyle(
-                                                              // color: Color(0xFF666666),
-                                                              color: Colors.black,
-                                                              fontSize: 11,
-                                                              fontFamily:
-                                                                  'poppins-regular'),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    // SizedBox(
-                                                    //   height: 10.0,
-                                                    // ),
-                                                    // Flexible(
-                                                    //   child: Padding(
-                                                    //     padding: EdgeInsets.only(right: 10.0, left: 10.0),
-                                                    //     child: Text(
-                                                    //       "2. 4-5 deep plaughing is recommended before sowing.",
-                                                    //       softWrap: true,
-                                                    //       style: TextStyle(
-                                                    //         // color: Color(0xFF666666),
-                                                    //           color: Colors.black,
-                                                    //           fontSize: 11,
-                                                    //           fontFamily: 'poppins-regular'),
-                                                    //     ),
-                                                    //   ),
-                                                    // ),
-                                                    // Flexible(
-                                                    //   child: Padding(
-                                                    //     padding: EdgeInsets.only(
-                                                    //         top: 10.0, right: 10.0, left: 10.0),
-                                                    //     child: Text(
-                                                    //       "3. Apply Farmyard Manure @ 6-7 q/acre 1 day Prior to Showing",
-                                                    //       softWrap: true,
-                                                    //       style: TextStyle(
-                                                    //         // color: Color(0xFF666666),
-                                                    //           color: Colors.black,
-                                                    //           fontSize: 11,
-                                                    //           fontFamily: 'poppins-regular'),
-                                                    //     ),
-                                                    //   ),
-                                                    // ),
-                                                    // Flexible(
-                                                    //   child: Padding(
-                                                    //     padding: EdgeInsets.only(
-                                                    //         top: 10.0, right: 10.0, left: 10.0),
-                                                    //     child: Text(
-                                                    //       "4. Apply NPK- 50-25-20 in ratio and zinc 10kg/acre",
-                                                    //       softWrap: true,
-                                                    //       style: TextStyle(
-                                                    //         // color: Color(0xFF666666),
-                                                    //           color: Colors.black,
-                                                    //           fontSize: 11,
-                                                    //           fontFamily: 'poppins-regular'),
-                                                    //     ),
-                                                    //   ),
-                                                    // ),
-                                                    SizedBox(
-                                                      height: 20.0,
-                                                    ),
-                                                  ],
+                                          width: MediaQuery.of(context)
+                                              .size
+                                              .width,
+                                          decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              border: Border.all(
+                                                  color: const Color(
+                                                      0xFFd3d3d3),
+                                                  width: 1),
+                                              boxShadow: const [
+                                                BoxShadow(
+                                                  color: Color(0xFFd3d3d3),
+                                                )
+                                              ],
+                                              borderRadius:
+                                              BorderRadius.circular(
+                                                  15)),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: <Widget>[
+                                              Flexible(
+                                                child: Padding(
+                                                  padding:
+                                                  const EdgeInsets.only(
+                                                      top: 20.0,
+                                                      right: 10.0,
+                                                      left: 10.0),
+                                                  child: Text(
+                                                    snapshot
+                                                        .data![index]
+                                                        .presowingPractices!
+                                                        .landPreparation ??
+                                                        "",
+                                                    softWrap: true,
+                                                    style: const TextStyle(
+                                                      // color: Color(0xFF666666),
+                                                        color: Colors.black,
+                                                        fontSize: 11,
+                                                        fontFamily:
+                                                        'poppins-regular'),
+                                                  ),
                                                 ),
                                               ),
+                                              // SizedBox(
+                                              //   height: 10.0,
+                                              // ),
+                                              // Flexible(
+                                              //   child: Padding(
+                                              //     padding: EdgeInsets.only(right: 10.0, left: 10.0),
+                                              //     child: Text(
+                                              //       "2. 4-5 deep plaughing is recommended before sowing.",
+                                              //       softWrap: true,
+                                              //       style: TextStyle(
+                                              //         // color: Color(0xFF666666),
+                                              //           color: Colors.black,
+                                              //           fontSize: 11,
+                                              //           fontFamily: 'poppins-regular'),
+                                              //     ),
+                                              //   ),
+                                              // ),
+                                              // Flexible(
+                                              //   child: Padding(
+                                              //     padding: EdgeInsets.only(
+                                              //         top: 10.0, right: 10.0, left: 10.0),
+                                              //     child: Text(
+                                              //       "3. Apply Farmyard Manure @ 6-7 q/acre 1 day Prior to Showing",
+                                              //       softWrap: true,
+                                              //       style: TextStyle(
+                                              //         // color: Color(0xFF666666),
+                                              //           color: Colors.black,
+                                              //           fontSize: 11,
+                                              //           fontFamily: 'poppins-regular'),
+                                              //     ),
+                                              //   ),
+                                              // ),
+                                              // Flexible(
+                                              //   child: Padding(
+                                              //     padding: EdgeInsets.only(
+                                              //         top: 10.0, right: 10.0, left: 10.0),
+                                              //     child: Text(
+                                              //       "4. Apply NPK- 50-25-20 in ratio and zinc 10kg/acre",
+                                              //       softWrap: true,
+                                              //       style: TextStyle(
+                                              //         // color: Color(0xFF666666),
+                                              //           color: Colors.black,
+                                              //           fontSize: 11,
+                                              //           fontFamily: 'poppins-regular'),
+                                              //     ),
+                                              //   ),
+                                              // ),
+                                              SizedBox(
+                                                height: 20.0,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
                                       )),
                                 );
                               }),
@@ -402,7 +402,7 @@ class _MyProSawingPracticesPageState extends State<MyProSawingPracticesPage>
             ),
 
             //2nd
-            FutureBuilder<List<CropLibraryData>>(
+            FutureBuilder<List<CropLibraryData>?>(
               future: widget.cropData,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
@@ -597,7 +597,7 @@ class _MyProSawingPracticesPageState extends State<MyProSawingPracticesPage>
             ),
 
             //3rd
-            FutureBuilder<List<CropLibraryData>>(
+            FutureBuilder<List<CropLibraryData>?>(
               future: widget.cropData,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
@@ -748,7 +748,7 @@ class _MyProSawingPracticesPageState extends State<MyProSawingPracticesPage>
             ),
 
             //4th
-            FutureBuilder<List<CropLibraryData>>(
+            FutureBuilder<List<CropLibraryData>?>(
               future: widget.cropData,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
@@ -860,8 +860,8 @@ class _MyProSawingPracticesPageState extends State<MyProSawingPracticesPage>
                                                   padding: const EdgeInsets.only(
                                                       top: 20.0, right: 10.0, left: 10.0),
                                                   child: Text(
-                                                      snapshot.data![index].presowingPractices!.
-                                                      soilConditions ?? "",
+                                                    snapshot.data![index].presowingPractices!.
+                                                    soilConditions ?? "",
                                                     softWrap: true,
                                                     style: const TextStyle(
                                                       // color: Color(0xFF666666),
@@ -996,8 +996,8 @@ class _MyProSawingPracticesPageState extends State<MyProSawingPracticesPage>
       if (route != null) {
         Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (BuildContext context) => MyBottomOnePage(
-                  aapbarVisibility: true,
-                )));
+              aapbarVisibility: true,
+            )));
       }
     } else if (index == 1) {
       // Navigator.pop(context);
@@ -1005,8 +1005,8 @@ class _MyProSawingPracticesPageState extends State<MyProSawingPracticesPage>
       if (route != null) {
         Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (BuildContext context) => MyBottomTwoPage(
-                  aapbarVisibility: true,
-                )));
+              aapbarVisibility: true,
+            )));
       }
     } else if (index == 2) {
       // Navigator.pop(context);
@@ -1014,8 +1014,8 @@ class _MyProSawingPracticesPageState extends State<MyProSawingPracticesPage>
       if (route != null) {
         Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (BuildContext context) => MyBottomThreePage(
-                  aapbarVisibility: true,
-                )));
+              aapbarVisibility: true,
+            )));
       }
     } else if (index == 3) {
       Navigator.of(context).push(
@@ -1026,8 +1026,8 @@ class _MyProSawingPracticesPageState extends State<MyProSawingPracticesPage>
       if (route != null) {
         Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (BuildContext context) => MyBottomCenterEnquiryPage(
-                  aapbarVisibility: true,
-                )));
+              aapbarVisibility: true,
+            )));
       }
     } else {
       setState(() {

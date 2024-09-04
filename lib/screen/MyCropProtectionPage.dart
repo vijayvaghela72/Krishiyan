@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../mvc/model/CropLibraryData.dart';
 import 'MyBottomCenterEnquiryPage.dart';
 import 'MyBottomOnePage.dart';
 import 'MyBottomThreePage.dart';
@@ -22,8 +23,9 @@ import 'MyWeedManagementPage.dart';
 
 class MyCropProtectionPage extends StatefulWidget {
   bool aapbarVisibility;
+  Future<List<CropLibraryData>?> cropData;
 
-  MyCropProtectionPage({super.key, required this.aapbarVisibility});
+  MyCropProtectionPage({super.key, required this.aapbarVisibility , required this.cropData});
 
   @override
   State<MyCropProtectionPage> createState() => _MyCropProtectionPageState();
@@ -123,11 +125,11 @@ class _MyCropProtectionPageState extends State<MyCropProtectionPage>
 
     Future.delayed(
       const Duration(seconds: 1),
-      () => _fabAnimationController.forward(),
+          () => _fabAnimationController.forward(),
     );
     Future.delayed(
       const Duration(seconds: 1),
-      () => _borderRadiusAnimationController.forward(),
+          () => _borderRadiusAnimationController.forward(),
     );
   }
 
@@ -143,74 +145,74 @@ class _MyCropProtectionPageState extends State<MyCropProtectionPage>
       extendBodyBehindAppBar: false,
       appBar: widget.aapbarVisibility
           ? AppBar(
-              automaticallyImplyLeading: false,
-              title: InkWell(
-                highlightColor: Colors.transparent,
-                splashColor: Colors.transparent,
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                        builder: (context) => const MySelectLanguagePage()),
-                  );
-                },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+        automaticallyImplyLeading: false,
+        title: InkWell(
+          highlightColor: Colors.transparent,
+          splashColor: Colors.transparent,
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                  builder: (context) => const MySelectLanguagePage()),
+            );
+          },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Image.asset(
+                'assets/images/loginLogo.png',
+                width: 150,
+                height: 60,
+              ),
+              const Spacer(),
+              Padding(
+                padding: const EdgeInsets.only(right: 5.0, top: 12.0),
+                child:
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Image.asset(
-                      'assets/images/loginLogo.png',
-                      width: 150,
-                      height: 60,
+                      'assets/images/language.png',
+                      width: 35, height: 35,
                     ),
-                    const Spacer(),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 5.0, top: 12.0),
-                      child:
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Image.asset(
-                            'assets/images/language.png',
-                            width: 35, height: 35,
-                          ),
-                          // const Text(
-                          //   "Select Language",
-                          //   style: TextStyle(color: Colors.black, fontFamily: 'poppins-semibold', fontSize: 15),
-                          // ),
-                          // const SizedBox(width: 10,),
-                          // Image.asset(
-                          //   'assets/images/appbar_down.png',
-                          //   // color: Colors.white,
-                          // ),
-                        ],
-                      ),
-                    ),
-                    // Padding(
-                    //   padding: const EdgeInsets.only(right: 5.0, top: 20.0),
-                    //   child: Row(
-                    //     mainAxisAlignment: MainAxisAlignment.end,
-                    //     children: [
-                    //       const Text(
-                    //         "Select Language",
-                    //         style: TextStyle(
-                    //             color: Colors.black,
-                    //             fontFamily: 'poppins-semibold',
-                    //             fontSize: 15),
-                    //       ),
-                    //       const SizedBox(
-                    //         width: 10,
-                    //       ),
-                    //       Image.asset(
-                    //         'assets/images/appbar_down.png',
-                    //         // color: Colors.white,
-                    //       ),
-                    //     ],
-                    //   ),
+                    // const Text(
+                    //   "Select Language",
+                    //   style: TextStyle(color: Colors.black, fontFamily: 'poppins-semibold', fontSize: 15),
+                    // ),
+                    // const SizedBox(width: 10,),
+                    // Image.asset(
+                    //   'assets/images/appbar_down.png',
+                    //   // color: Colors.white,
                     // ),
                   ],
                 ),
               ),
-            )
+              // Padding(
+              //   padding: const EdgeInsets.only(right: 5.0, top: 20.0),
+              //   child: Row(
+              //     mainAxisAlignment: MainAxisAlignment.end,
+              //     children: [
+              //       const Text(
+              //         "Select Language",
+              //         style: TextStyle(
+              //             color: Colors.black,
+              //             fontFamily: 'poppins-semibold',
+              //             fontSize: 15),
+              //       ),
+              //       const SizedBox(
+              //         width: 10,
+              //       ),
+              //       Image.asset(
+              //         'assets/images/appbar_down.png',
+              //         // color: Colors.white,
+              //       ),
+              //     ],
+              //   ),
+              // ),
+            ],
+          ),
+        ),
+      )
           : null,
       body: SingleChildScrollView(
         child: Column(
@@ -269,40 +271,40 @@ class _MyCropProtectionPageState extends State<MyCropProtectionPage>
       ),
       floatingActionButton: widget.aapbarVisibility
           ? FloatingActionButton(
-              backgroundColor: Colors.white.withAlpha(0),
-              // add this line.
-              elevation: 0,
-              // also important, removes the shadow
-              heroTag: "floatingActionBtn",
-              shape: const RoundedRectangleBorder(
-                // <= Change BeveledRectangleBorder to RoundedRectangularBorder
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(30.0),
-                  topRight: Radius.circular(30.0),
-                  bottomLeft: Radius.circular(30.0),
-                  bottomRight: Radius.circular(30.0),
-                ),
-              ),
-              child: InkWell(
-                highlightColor: Colors.transparent,
-                splashColor: Colors.transparent,
-                onTap: () {
-                  setState(() {
-                    _onItemTapped(4);
-                  });
-                },
-                child: Image.asset(
-                  'assets/images/bottomCenter.png',
-                  // color: Colors.white,
-                ),
-              ),
-              onPressed: () {
-                _fabAnimationController.reset();
-                _borderRadiusAnimationController.reset();
-                _borderRadiusAnimationController.forward();
-                _fabAnimationController.forward();
-              },
-            )
+        backgroundColor: Colors.white.withAlpha(0),
+        // add this line.
+        elevation: 0,
+        // also important, removes the shadow
+        heroTag: "floatingActionBtn",
+        shape: const RoundedRectangleBorder(
+          // <= Change BeveledRectangleBorder to RoundedRectangularBorder
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(30.0),
+            topRight: Radius.circular(30.0),
+            bottomLeft: Radius.circular(30.0),
+            bottomRight: Radius.circular(30.0),
+          ),
+        ),
+        child: InkWell(
+          highlightColor: Colors.transparent,
+          splashColor: Colors.transparent,
+          onTap: () {
+            setState(() {
+              _onItemTapped(4);
+            });
+          },
+          child: Image.asset(
+            'assets/images/bottomCenter.png',
+            // color: Colors.white,
+          ),
+        ),
+        onPressed: () {
+          _fabAnimationController.reset();
+          _borderRadiusAnimationController.reset();
+          _borderRadiusAnimationController.forward();
+          _fabAnimationController.forward();
+        },
+      )
           : null,
       floatingActionButtonLocation: widget.aapbarVisibility
           ? FloatingActionButtonLocation.centerDocked
@@ -482,73 +484,78 @@ class _MyCropProtectionPageState extends State<MyCropProtectionPage>
         itemBuilder: (_, index) {
           return
             Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              height: 100,
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(
-                      color: const Color(0xFFd3d3d3), width: 1),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Color(0xFFd3d3d3),
-                    )
-                  ],
-                  borderRadius: BorderRadius.circular(15)),
-              child: InkWell(
-                highlightColor: Colors.transparent,
-                splashColor: Colors.transparent,
-                onTap: () {
-                  if(ORG_Entity[index].name == "Pest \nManagement"){
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => MyPestManagementPage(aapbarVisibility: true,)),
-                    );
-                  }
-                  else if(ORG_Entity[index].name == "Disease \nManagement"){
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => MyDiseaseManagementPage(aapbarVisibility: true,)),
-                    );
-                  }
-                  else if(ORG_Entity[index].name == "Deficiency \nSymptoms"){
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => MyDeficiencyManagementPage(aapbarVisibility: true,)),
-                    );
-                  }
-                  else if(ORG_Entity[index].name == "Weed \nManagement"){
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => MyWeedManagementPage(aapbarVisibility: true,)),
-                    );
-                  }
-                  else if(ORG_Entity[index].name == "Weather \nInjuries"){
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => MyWeatherInjuriesPage(aapbarVisibility: true,)),
-                    );
-                  }
-                },
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Flexible(
-                      child: Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: Text(
-                          textAlign: TextAlign.center,
-                          ORG_Entity[index].name ?? "",
-                          maxLines: 3,
-                          softWrap: true,
-                          style: const TextStyle(
-                              color: Color(0xFF666666),
-                              fontSize: 14,
-                              fontFamily: 'poppins-regular'),
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                height: 100,
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(
+                        color: const Color(0xFFd3d3d3), width: 1),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Color(0xFFd3d3d3),
+                      )
+                    ],
+                    borderRadius: BorderRadius.circular(15)),
+                child: InkWell(
+                  highlightColor: Colors.transparent,
+                  splashColor: Colors.transparent,
+                  onTap: () {
+                    if(ORG_Entity[index].name == "Pest \nManagement"){
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) =>
+                            MyPestManagementPage(aapbarVisibility: true,
+                                cropData : widget.cropData)),
+                      );
+                    }
+                    else if(ORG_Entity[index].name == "Disease \nManagement"){
+                      // Navigator.of(context).push(
+                      //   MaterialPageRoute(builder: (context) =>
+                      //       MyDiseaseManagementPage(aapbarVisibility: true, cropData : widget.cropData)),
+                      // );
+                    }
+                    else if(ORG_Entity[index].name == "Deficiency \nSymptoms"){
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) =>
+                            MyDeficiencyManagementPage(aapbarVisibility: true, cropData : widget.cropData)),
+                      );
+                    }
+                    else if(ORG_Entity[index].name == "Weed \nManagement"){
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) =>
+                            MyWeedManagementPage(aapbarVisibility: true, cropData : widget.cropData)),
+                      );
+                    }
+                    else if(ORG_Entity[index].name == "Weather \nInjuries"){
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => MyWeatherInjuriesPage(aapbarVisibility: true,)),
+                      );
+                    }
+                  },
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Flexible(
+                        child: Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: Text(
+                            textAlign: TextAlign.center,
+                            ORG_Entity[index].name ?? "",
+                            maxLines: 3,
+                            softWrap: true,
+                            style: const TextStyle(
+                                color: Color(0xFF666666),
+                                fontSize: 14,
+                                fontFamily: 'poppins-regular'),
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-          );
+            );
         },
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,

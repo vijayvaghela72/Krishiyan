@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:krishiyan/localization/AppLocalizations.dart';
 import 'package:krishiyan/screen/MyRegistrationPage.dart';
-
+import 'package:intl/intl.dart';
 import '../helper/AlertHelper.dart';
 import 'MyFarmerGroupRegistrationTwoPage.dart';
 
@@ -53,7 +53,7 @@ class _MyFarmerGroupRegistrationOnePageState extends State<MyFarmerGroupRegistra
             const SizedBox(height: 30,),
             const Center(child: Text("Create New Account",
               style: TextStyle(color: Color(0xFF3dc33b), fontSize: 22.0,
-                fontFamily: 'poppins-medium'),)),
+                  fontFamily: 'poppins-medium'),)),
             const SizedBox(height: 30,),
 
             // name
@@ -61,7 +61,7 @@ class _MyFarmerGroupRegistrationOnePageState extends State<MyFarmerGroupRegistra
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: Text(buildTranslate("nameOfOrganization")!,
                 style: const TextStyle(fontSize: 15,
-                  color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
+                    color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
             ),
             const SizedBox(height: 10,),
             Padding(
@@ -77,7 +77,7 @@ class _MyFarmerGroupRegistrationOnePageState extends State<MyFarmerGroupRegistra
                     ),
                     enabledBorder: const OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey, width: 1.0,),
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
                     ),
                     hintText: buildTranslate("enterOrganization"),
                     hintStyle: const TextStyle(color: Color(0xFFe7e7e7)),
@@ -98,7 +98,7 @@ class _MyFarmerGroupRegistrationOnePageState extends State<MyFarmerGroupRegistra
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: Text(buildTranslate("typeOfOrganization")!,
                 style: const TextStyle(fontSize: 15,
-                  color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
+                    color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
             ),
             const SizedBox(height: 10,),
             Padding(
@@ -178,20 +178,27 @@ class _MyFarmerGroupRegistrationOnePageState extends State<MyFarmerGroupRegistra
               child: TextFormField(
                 keyboardType: TextInputType.text,
                 controller: dateOfOrganizationController,
-                decoration: const InputDecoration(
+                readOnly: true,
+                decoration: InputDecoration(
                   hintText: 'dd/mm/yyyy',
-                  hintStyle: TextStyle(color: Color(0xFFe7e7e7)),
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.calendar_today),
+                    onPressed: () {
+                      _selectDate(context);
+                    }, // Open date picker on icon press
+                  ),
+                  hintStyle: const TextStyle(color: Color(0xFFe7e7e7)),
                   fillColor: Colors.white,
                   filled: true,
-                  border: OutlineInputBorder(
+                  border: const OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(10.0),
                     ),
                   ),
-                  enabledBorder: OutlineInputBorder(
+                  enabledBorder: const OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.grey, width: 1.0,),
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
                   ),
-                  focusedBorder: OutlineInputBorder(
+                  focusedBorder: const OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
                     borderSide: BorderSide(color: Colors.green, width: 0.5),
                   ),
@@ -344,24 +351,24 @@ class _MyFarmerGroupRegistrationOnePageState extends State<MyFarmerGroupRegistra
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: ElevatedButton(
                 onPressed: () {
-                 if(nameOfOrganizationController.text.trim().isNotEmpty &&
-                     selectedFPOItemValue.trim().isNotEmpty
+                  if(nameOfOrganizationController.text.trim().isNotEmpty &&
+                      selectedFPOItemValue.trim().isNotEmpty
                       && contactNumberController.text.trim().isNotEmpty) {
-                   Navigator.push(
-                     context,
-                     MaterialPageRoute(builder: (context) =>
-                         MyFarmerGroupRegistrationTwoPage(
-                           name: nameOfOrganizationController.text,
-                           type: selectedFPOItemValue,
-                           date: dateOfOrganizationController.text,
-                           email: organizationMailIDController.text,
-                           contactNumber: contactNumberController.text,
-                         )),
-                   );
-                 }
-                 else{
-                   AlertHelper.showToast("Please enter credentials.",context);
-                 }
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) =>
+                          MyFarmerGroupRegistrationTwoPage(
+                            name: nameOfOrganizationController.text,
+                            type: selectedFPOItemValue,
+                            date: dateOfOrganizationController.text,
+                            email: organizationMailIDController.text,
+                            contactNumber: contactNumberController.text,
+                          )),
+                    );
+                  }
+                  else{
+                    AlertHelper.showToast("Please enter credentials.",context);
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
@@ -445,4 +452,22 @@ class _MyFarmerGroupRegistrationOnePageState extends State<MyFarmerGroupRegistra
       ),
     );
   }
+
+  Future<void> _selectDate(BuildContext context) async {
+    // Show the date picker dialog
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(), // Default date is the current date
+      firstDate: DateTime(2000), // Earliest selectable date
+      lastDate: DateTime(2101), // Latest selectable date
+      helpText: 'Select a date', // Optional help text
+    );
+    if (pickedDate != null) {
+      setState(() {
+        // Format the selected date and display it in the TextFormField
+        dateOfOrganizationController.text = DateFormat('dd-MM-yyyy').format(pickedDate);
+      });
+    }
+  }
+
 }

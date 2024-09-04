@@ -14,28 +14,48 @@ import '../mvc/model/PincodeToStateData.dart';
 import '../utils/Constants.dart';
 import 'package:http/http.dart' as http;
 
-class MyFarmerProfilePage extends StatefulWidget {
+class MyFarmerEditProfilePage extends StatefulWidget {
+  String? name,
+      address,
+      whatsappNumber,
+      geoLocationOwnedFarm,
+      totalOwnedFarm,
+      totalLeaseFarm,
+      geoLocationLeaseFarm,
+      pincode,
+      state,
+      district, bankName, accountName, accountNumber, ifscCode, panNumber, aadhaarNumber, dealerNumber;
 
   String? farmerName, farmerWhatsappNumber;
 
-  MyFarmerProfilePage(
+  MyFarmerEditProfilePage(
       {super.key,
-        this.farmerName,
-        this.farmerWhatsappNumber});
+      this.name,
+      this.address,
+      this.whatsappNumber,
+      this.geoLocationOwnedFarm,
+      this.totalOwnedFarm,
+      this.totalLeaseFarm,
+      this.geoLocationLeaseFarm,
+      this.pincode,
+      this.state,
+      this.district,
+      this.farmerName,
+      this.farmerWhatsappNumber, this.bankName, this.accountName, this.dealerNumber,
+        this.accountNumber, this.ifscCode, this.panNumber, this.aadhaarNumber});
 
   @override
-  State<MyFarmerProfilePage> createState() => _MyFarmerProfilePageState();
+  State<MyFarmerEditProfilePage> createState() => _MyFarmerEditProfilePageState();
 }
 
-class _MyFarmerProfilePageState extends State<MyFarmerProfilePage> {
+class _MyFarmerEditProfilePageState extends State<MyFarmerEditProfilePage> {
+
   TextEditingController ownedAreaController = TextEditingController();
   TextEditingController goeLocationController = TextEditingController();
   TextEditingController leasedFarmController = TextEditingController();
   TextEditingController goeLocationLeasedController = TextEditingController();
   TextEditingController pincodeController = TextEditingController();
-  // TextEditingController districtController = TextEditingController();
   TextEditingController addressController = TextEditingController();
-  // TextEditingController stateController = TextEditingController();
   TextEditingController bankNameController = TextEditingController();
   TextEditingController accountNameController = TextEditingController();
   TextEditingController accountNumberController = TextEditingController();
@@ -62,6 +82,18 @@ class _MyFarmerProfilePageState extends State<MyFarmerProfilePage> {
     // TODO: implement initState
     super.initState();
     // itemsFuture = fetchItems(); // Start fetching items
+    ownedAreaController.text = widget.totalOwnedFarm ?? "";
+    goeLocationController.text = widget.geoLocationOwnedFarm ?? "";
+    leasedFarmController.text = widget.totalLeaseFarm ?? "";
+    goeLocationLeasedController.text = widget.geoLocationLeaseFarm ?? "";
+    // pincodeController.text = widget.pincode ?? "";
+    addressController.text = widget.address ?? "";
+    bankNameController.text = widget.bankName ?? "";
+    accountNameController.text = widget.accountName ?? "";
+    accountNumberController.text = widget.accountNumber ?? "";
+    ifsCodeController.text = widget.ifscCode ?? "";
+    panNumberController.text = widget.panNumber ?? "";
+    aadharNumberController.text = widget.aadhaarNumber ?? "";
   }
 
   @override
@@ -150,7 +182,7 @@ class _MyFarmerProfilePageState extends State<MyFarmerProfilePage> {
                       borderSide: BorderSide(color: Colors.white, width: 0.5),
                     )),
                 validator: (value) =>
-                value!.isEmpty ? 'Please, fill this field.' : null,
+                    value!.isEmpty ? 'Please, fill this field.' : null,
                 controller: ownedAreaController,
               ),
             ),
@@ -194,13 +226,13 @@ class _MyFarmerProfilePageState extends State<MyFarmerProfilePage> {
                     hintText: '----',
                     hintStyle: TextStyle(color: Color(0xFFe7e7e7)),
                     contentPadding:
-                    EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                        EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(8.0)),
                       borderSide: BorderSide(color: Colors.white, width: 0.5),
                     )),
                 validator: (value) =>
-                value!.isEmpty ? 'Please, fill this field.' : null,
+                    value!.isEmpty ? 'Please, fill this field.' : null,
                 controller: goeLocationController,
               ),
             ),
@@ -251,7 +283,7 @@ class _MyFarmerProfilePageState extends State<MyFarmerProfilePage> {
                       borderSide: BorderSide(color: Colors.white, width: 0.5),
                     )),
                 validator: (value) =>
-                value!.isEmpty ? 'Please, fill this field.' : null,
+                    value!.isEmpty ? 'Please, fill this field.' : null,
                 controller: leasedFarmController,
               ),
             ),
@@ -293,7 +325,7 @@ class _MyFarmerProfilePageState extends State<MyFarmerProfilePage> {
                       borderRadius: BorderRadius.all(Radius.circular(8.0)),
                     ),
                     contentPadding:
-                    EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                        EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                     hintText: '----',
                     hintStyle: TextStyle(color: Color(0xFFe7e7e7)),
                     focusedBorder: OutlineInputBorder(
@@ -301,7 +333,7 @@ class _MyFarmerProfilePageState extends State<MyFarmerProfilePage> {
                       borderSide: BorderSide(color: Colors.white, width: 0.5),
                     )),
                 validator: (value) =>
-                value!.isEmpty ? 'Please, fill this field.' : null,
+                    value!.isEmpty ? 'Please, fill this field.' : null,
                 controller: goeLocationLeasedController,
               ),
             ),
@@ -344,7 +376,7 @@ class _MyFarmerProfilePageState extends State<MyFarmerProfilePage> {
                       borderRadius: BorderRadius.all(Radius.circular(8.0)),
                     ),
                     contentPadding:
-                    EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                        EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                     hintText: '----',
                     hintStyle: TextStyle(color: Color(0xFFe7e7e7)),
                     focusedBorder: OutlineInputBorder(
@@ -352,7 +384,7 @@ class _MyFarmerProfilePageState extends State<MyFarmerProfilePage> {
                       borderSide: BorderSide(color: Colors.white, width: 0.5),
                     )),
                 validator: (value) =>
-                value!.isEmpty ? 'Please, fill this field.' : null,
+                    value!.isEmpty ? 'Please, fill this field.' : null,
                 controller: pincodeController,
                 onChanged: _onTextChanged,
               ),
@@ -423,9 +455,6 @@ class _MyFarmerProfilePageState extends State<MyFarmerProfilePage> {
                         print("else");
                         // Handle case where newValue is not in items
                       }
-                      // setState(() {
-                      //   _selectedStateName = newValue;
-                      // });
                     },
                   )),
             ),
@@ -620,7 +649,7 @@ class _MyFarmerProfilePageState extends State<MyFarmerProfilePage> {
                       borderSide: BorderSide(color: Colors.white, width: 0.5),
                     )),
                 validator: (value) =>
-                value!.isEmpty ? buildTranslate('enterAddress') : null,
+                    value!.isEmpty ? buildTranslate('enterAddress') : null,
                 controller: addressController,
               ),
             ),
@@ -661,13 +690,13 @@ class _MyFarmerProfilePageState extends State<MyFarmerProfilePage> {
                   ),
                   items: items
                       .map((item) => DropdownMenuItem<String>(
-                    value: item,
-                    child: Text(
-                      item,
-                      style: const TextStyle(
-                          fontSize: 14, color: Colors.grey),
-                    ),
-                  ))
+                            value: item,
+                            child: Text(
+                              item,
+                              style: const TextStyle(
+                                  fontSize: 14, color: Colors.grey),
+                            ),
+                          ))
                       .toList(),
                   validator: (value) {
                     if (value == null) {
@@ -778,7 +807,7 @@ class _MyFarmerProfilePageState extends State<MyFarmerProfilePage> {
                       borderSide: BorderSide(color: Colors.white, width: 0.5),
                     )),
                 validator: (value) =>
-                value!.isEmpty ? buildTranslate('enterBankName')! : null,
+                    value!.isEmpty ? buildTranslate('enterBankName')! : null,
                 controller: bankNameController,
               ),
             ),
@@ -828,7 +857,7 @@ class _MyFarmerProfilePageState extends State<MyFarmerProfilePage> {
                       borderSide: BorderSide(color: Colors.white, width: 0.5),
                     )),
                 validator: (value) =>
-                value!.isEmpty ? buildTranslate('enterAccountName')! : null,
+                    value!.isEmpty ? buildTranslate('enterAccountName')! : null,
                 controller: accountNameController,
               ),
             ),
@@ -978,7 +1007,7 @@ class _MyFarmerProfilePageState extends State<MyFarmerProfilePage> {
                       borderSide: BorderSide(color: Colors.white, width: 0.5),
                     )),
                 validator: (value) =>
-                value!.isEmpty ? buildTranslate('enterPanNumber') : null,
+                    value!.isEmpty ? buildTranslate('enterPanNumber') : null,
                 controller: panNumberController,
               ),
             ),
@@ -1028,7 +1057,7 @@ class _MyFarmerProfilePageState extends State<MyFarmerProfilePage> {
                       borderSide: BorderSide(color: Colors.white, width: 0.5),
                     )),
                 validator: (value) =>
-                value!.isEmpty ? 'Enter Aadhaar Code' : null,
+                    value!.isEmpty ? 'Enter Aadhaar Code' : null,
                 controller: aadharNumberController,
               ),
             ),
@@ -1087,8 +1116,9 @@ class _MyFarmerProfilePageState extends State<MyFarmerProfilePage> {
         ifsCodeController.text.trim().isNotEmpty &&
         panNumberController.text.trim().isNotEmpty &&
         aadharNumberController.text.trim().isNotEmpty) {
+
       var body = json.encode({
-        "dealerNumber": "1",
+        "dealerNumber": widget.dealerNumber,
         "name": widget.farmerName,
         "whatsappNumber": widget.farmerWhatsappNumber,
         "totalOwnedFarm": int.parse(ownedAreaController.text.toString()),
@@ -1110,8 +1140,8 @@ class _MyFarmerProfilePageState extends State<MyFarmerProfilePage> {
       });
 
       FRMRegistrationData? user =
-      await FarmerDashboardController.farmerRegistration(body,
-          context: context);
+          await FarmerDashboardController.farmerRegistration(body,
+              context: context);
 
       if (user != null) {
         Future.delayed(const Duration(seconds: 1), () {
@@ -1125,6 +1155,7 @@ class _MyFarmerProfilePageState extends State<MyFarmerProfilePage> {
           showAlertDialog(context);
         });
       } else {
+        AlertHelper.showToast("Api error", context);
         print("Api error");
       }
     } else {
@@ -1142,7 +1173,6 @@ class _MyFarmerProfilePageState extends State<MyFarmerProfilePage> {
       );
 
       if (response.statusCode == 200) {
-        // Handle successful response
         print('_onTextChanged API call successful: ${response.data}');
 
         if (response.data['PostOffice'].isNotEmpty) {
@@ -1160,6 +1190,21 @@ class _MyFarmerProfilePageState extends State<MyFarmerProfilePage> {
             ),
           ];
         }
+
+        // dropdownStateItems = response.data['PostOffice'].map<DropdownMenuItem<String>>((item) {
+        //   return DropdownMenuItem<String>(
+        //     value: item[0]['State'],
+        //     child: Text(item[0]['State']),
+        //   );
+        // }).toList();
+
+        // dropdownDistrictItems =
+        //     response.data['PostOffice'].map<DropdownMenuItem<String>>((item) {
+        //   return DropdownMenuItem<String>(
+        //     value: item['District'],
+        //     child: Text(item['District']),
+        //   );
+        // }).toList();
 
         setState(() {
           dropdownStateItems = dropdownStateItems;
@@ -1186,7 +1231,7 @@ class _MyFarmerProfilePageState extends State<MyFarmerProfilePage> {
     if (response.statusCode == 200) {
       List data = jsonDecode(response.data);
       List<PostOffice> items =
-      data.map((item) => PostOffice.fromJson(item)).toList();
+          data.map((item) => PostOffice.fromJson(item)).toList();
       return items;
     } else {
       throw Exception('Failed to load items');
@@ -1217,10 +1262,10 @@ class _MyFarmerProfilePageState extends State<MyFarmerProfilePage> {
           ),
           Center(
               child: Image.asset(
-                'assets/images/check_green.png',
-                width: 100,
-                height: 100,
-              )),
+            'assets/images/check_green.png',
+            width: 100,
+            height: 100,
+          )),
           Text(
             buildTranslate("SuccessfullyUpdate")!,
             softWrap: true,

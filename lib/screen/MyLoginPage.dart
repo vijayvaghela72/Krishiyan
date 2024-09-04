@@ -21,8 +21,8 @@ class MyLoginPage extends StatefulWidget {
 
 class _MyLoginPageState extends State<MyLoginPage> {
 
-  TextEditingController? usernameController = TextEditingController();
-  TextEditingController? passwordController = TextEditingController();
+  TextEditingController usernameController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
   String? _usernameErrorText;
   String? _passwordErrorText;
@@ -32,36 +32,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
   bool _submitted = false;
 
   @override
-  Widget build(BuildContext context) // bool _usernameValidate() {
-  //   if (_usernameController!.value.text.isEmpty) {
-  //     _usernameErrorText = 'Can\'t be empty';
-  //     return false;
-  //   } else if (_usernameController!.value.text.length < 4) {
-  //     _usernameErrorText = 'Too short';
-  //     return false;
-  //   } else {
-  //     _usernameErrorText = null;
-  //     return true;
-  //   }
-  // }
-  //
-  // bool _passwordValidate() {
-  //   if (_passwordController!.value.text.isEmpty) {
-  //     _passwordErrorText = 'Can\'t be empty';
-  //     return false;
-  //   } else if (_passwordController!.value.text.length < 4) {
-  //     _passwordErrorText = 'Too short';
-  //     return false;
-  //   } else {
-  //     _passwordErrorText = null;
-  //     return true;
-  //   }
-  // }
-  //
-  // bool _validate() {
-  //   setState(() {});
-  //   return (_usernameValidate() && _passwordValidate()) ? true : false;
-  // }
+  Widget build(BuildContext context)
   {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
@@ -85,11 +56,11 @@ class _MyLoginPageState extends State<MyLoginPage> {
             Center(
                 child: Text(
                   buildTranslate("signIn")!,
-              style: const TextStyle(
-                  color: Color(0xFF3dc33b),
-                  fontSize: 25,
-                  fontFamily: 'poppins-medium'),
-            )),
+                  style: const TextStyle(
+                      color: Color(0xFF3dc33b),
+                      fontSize: 25,
+                      fontFamily: 'poppins-medium'),
+                )),
             const SizedBox(
               height: 30,
             ),
@@ -153,7 +124,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
             ),
 
             // password
-             Padding(
+            Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: Text(
                 buildTranslate("password")!,
@@ -272,7 +243,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
                   ),
                 ),
                 child: Text(
-                    buildTranslate("login")!,
+                  buildTranslate("login")!,
                   style: const TextStyle(fontSize: 15, fontFamily: 'poppins-regular'),
                 ),
               ),
@@ -355,29 +326,41 @@ class _MyLoginPageState extends State<MyLoginPage> {
   }
 
   _loginApiCall() async {
-    if (usernameController!.text.trim().isNotEmpty && passwordController!.text.trim().isNotEmpty) {
+    if (usernameController.text.trim().isNotEmpty && passwordController.text.trim().isNotEmpty) {
       setState(() {
         _submitted = false;
       });
 
       var body = json.encode({
-        "contactNumber": usernameController!.text.trim(),
-        "password": passwordController!.text.trim().toString()
+        "contactNumber": usernameController.text.trim(),
+        "password": passwordController.text.trim().toString()
       });
 
       Data? user = await LoginController.login(body, context: context);
 
       if (user != null) {
+        print("user number : " + usernameController.text.toString());
         print("user token : " + user.token.toString());
 
         Future.delayed(const Duration(seconds: 1), () {
           setState(() {
             _submitted = true;
           });
-          print("Api success");
+          // print("Login Api success");
 
           AlertHelper.showToast("Login successfully.",context);
+
           SharedPref.savePreferenceValue(isLogin, true);
+
+          SharedPref.savePreferenceValue(name, user.fpoOrganization!.nameOfFpo ?? "");
+          SharedPref.savePreferenceValue(email, user.fpoOrganization!.organizationalEmail ?? "");
+          SharedPref.savePreferenceValue(contactNumber, user.fpoOrganization!.contactNumber ?? "");
+          SharedPref.savePreferenceValue(id, user.fpoOrganization!.sId ?? "");
+          SharedPref.savePreferenceValue(token, user.token ?? "");
+
+          SharedPref.savePreferenceValue(typeOfOrganization, user.fpoOrganization!.typeOfOrganization ?? "");
+
+          print("Login Api Contact : ${user.fpoOrganization!.contactNumber}");
 
           Navigator.pushReplacement(
             context,
@@ -387,6 +370,21 @@ class _MyLoginPageState extends State<MyLoginPage> {
                       selectedIndex: 0,
                     )),
           );
+          //   if(user.fpoOrganization!.typeOfOrganization == "Farmer groups") {
+          //     Navigator.pushReplacement(
+          //       context,
+          //       MaterialPageRoute(
+          //           builder: (context) =>
+          //               MyHomePage(
+          //                 selectedIndex: 0,
+          //               )),
+          //     );
+          //   }
+          //   else{
+          //     Navigator.push(context, MaterialPageRoute(builder:
+          //         (context) => MyOtherHomePage(selectedIndex: 0,)),
+          //     );
+          //   }
         });
       }
       else {
@@ -401,10 +399,5 @@ class _MyLoginPageState extends State<MyLoginPage> {
       AlertHelper.showToast("Please enter credentials.",context);
     }
   }
-
-  // void showInSnackBarData(String value) {
-  //   var snackBar = SnackBar(content: Text(value));
-  //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  // }
 
 }

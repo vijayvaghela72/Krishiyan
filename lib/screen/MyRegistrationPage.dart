@@ -44,12 +44,12 @@ class _MyRegistrationPageState extends State<MyRegistrationPage> {
             ),
             Center(
                 child: Text(
-              buildTranslate("selectYourOrganization")!,
-              style: const TextStyle(
-                  color: Color(0xFF666666),
-                  fontSize: 17,
-                  fontFamily: 'poppins-semibold'),
-            )),
+                  buildTranslate("selectYourOrganization")!,
+                  style: const TextStyle(
+                      color: Color(0xFF666666),
+                      fontSize: 17,
+                      fontFamily: 'poppins-semibold'),
+                )),
             listWidget(),
             const SizedBox(
               height: 20,
@@ -79,7 +79,7 @@ class _MyRegistrationPageState extends State<MyRegistrationPage> {
                     )
                   ],
                   border:
-                      Border.all(color: const Color(0xFFd3d3d3), width: 1.5),
+                  Border.all(color: const Color(0xFFd3d3d3), width: 1.5),
                   borderRadius: BorderRadius.circular(22)),
               child: InkWell(
                 highlightColor: Colors.transparent,
@@ -90,35 +90,35 @@ class _MyRegistrationPageState extends State<MyRegistrationPage> {
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                              const MyFarmerGroupRegistrationOnePage()),
+                          const MyFarmerGroupRegistrationOnePage()),
                     );
                   } else if (ORG_CATEGORIES[index].id == "2") {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                              const MyTraderRegistrationPage()),
+                          const MyTraderRegistrationPage()),
                     );
                   } else if (ORG_CATEGORIES[index].id == "3") {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                              const MyManufactureRegistrationPage()),
+                          const MyManufactureRegistrationPage()),
                     );
                   } else if (ORG_CATEGORIES[index].id == "4") {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                              const MyTraderRegistrationPage()),
+                          const MyTraderRegistrationPage()),
                     );
                   } else if (ORG_CATEGORIES[index].id == "5") {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                              const MyOtherRegistrationPage()),
+                          const MyOtherRegistrationPage()),
                     );
                   }
                 },
@@ -146,7 +146,7 @@ class _MyRegistrationPageState extends State<MyRegistrationPage> {
           );
         },
         gridDelegate:
-            const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+        const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
       ),
     );
   }

@@ -74,7 +74,7 @@ class _MyVeritiesPageState extends State<MyVeritiesPage>
         name: "Name of variety/Hybrid: ADV-756 (ADV 0990296) Hybrid",
         productCondition: "Product Condition: 30-35 qtl/acre",
         area:
-            "Area of adoption: Karnataka, Maharashtra, Andra Pradesh, Tamilnadu, Telangana, Rajasthan,"
+        "Area of adoption: Karnataka, Maharashtra, Andra Pradesh, Tamilnadu, Telangana, Rajasthan,"
             " Gujarat, MP and Chhattisgarh",
         cropCycle: "Crop Cycle: 1. Suitable for irrigated and rainfed "
             "areas 2.Suitable for rabi season under irrigated",
@@ -82,7 +82,7 @@ class _MyVeritiesPageState extends State<MyVeritiesPage>
     Verities(
         id: "4",
         name:
-            "Name of variety/Hybrid: Gujarat An and White Maize Hybrid-2 (GAWMH-2)",
+        "Name of variety/Hybrid: Gujarat An and White Maize Hybrid-2 (GAWMH-2)",
         productCondition: "Product Condition: 15-18 qtl/acre",
         area: "Area of adoption: Gujarat",
         cropCycle: "Crop Cycle: Suitable for Kharif season",
@@ -92,13 +92,13 @@ class _MyVeritiesPageState extends State<MyVeritiesPage>
         name: "Name of variety/Hybrid: HTMH 5108 Hybrid",
         productCondition: "Product Condition: 35 qtl/acre",
         area:
-            "Area of adoption: Karnataka, Maharashtra, Andhra Pradesh, Tamilnadu and Telangana",
+        "Area of adoption: Karnataka, Maharashtra, Andhra Pradesh, Tamilnadu and Telangana",
         cropCycle: "Crop Cycle: Suitable for rainfed and irrigated areas",
         spaciality: "Resistant to lodging"),
     Verities(
         id: "6",
         name:
-            "Name of variety/Hybrid: Gujarat Anand Yellow Maize Hybrid 3 (GAYMH 3)",
+        "Name of variety/Hybrid: Gujarat Anand Yellow Maize Hybrid 3 (GAYMH 3)",
         productCondition: "Product Condition: 25-28 qtl/acre",
         area: "Area of adoption: Middle Gujarat",
         cropCycle: "Crop Cycle: Suitable for rabi season",
@@ -147,11 +147,11 @@ class _MyVeritiesPageState extends State<MyVeritiesPage>
 
     Future.delayed(
       const Duration(seconds: 1),
-      () => _fabAnimationController.forward(),
+          () => _fabAnimationController.forward(),
     );
     Future.delayed(
       const Duration(seconds: 1),
-      () => _borderRadiusAnimationController.forward(),
+          () => _borderRadiusAnimationController.forward(),
     );
   }
 
@@ -167,43 +167,43 @@ class _MyVeritiesPageState extends State<MyVeritiesPage>
       extendBodyBehindAppBar: false,
       appBar: widget.aapbarVisibility
           ? AppBar(
-              automaticallyImplyLeading: false,
-              title: InkWell(
-                highlightColor: Colors.transparent,
-                splashColor: Colors.transparent,
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                        builder: (context) => const MySelectLanguagePage()),
-                  );
-                },
+        automaticallyImplyLeading: false,
+        title: InkWell(
+          highlightColor: Colors.transparent,
+          splashColor: Colors.transparent,
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                  builder: (context) => const MySelectLanguagePage()),
+            );
+          },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Image.asset(
+                'assets/images/loginLogo.png',
+                width: 150,
+                height: 60,
+              ),
+              const Spacer(),
+              Padding(
+                padding: const EdgeInsets.only(right: 5.0, top: 12.0),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Image.asset(
-                      'assets/images/loginLogo.png',
-                      width: 150,
-                      height: 60,
-                    ),
-                    const Spacer(),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 5.0, top: 12.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Image.asset(
-                            'assets/images/language.png',
-                            width: 35,
-                            height: 35,
-                          ),
-                        ],
-                      ),
+                      'assets/images/language.png',
+                      width: 35,
+                      height: 35,
                     ),
                   ],
                 ),
               ),
-            )
+            ],
+          ),
+        ),
+      )
           : null,
       body: SingleChildScrollView(
         child: Column(
@@ -285,7 +285,7 @@ class _MyVeritiesPageState extends State<MyVeritiesPage>
                               ORG_Verities[index].name ?? "",
                               softWrap: true,
                               style: const TextStyle(
-                                  // color: Color(0xFF666666),
+                                // color: Color(0xFF666666),
                                   color: Colors.black,
                                   fontSize: 14,
                                   fontFamily: 'poppins-semibold'),
@@ -303,7 +303,7 @@ class _MyVeritiesPageState extends State<MyVeritiesPage>
                               ORG_Verities[index].productCondition ?? "",
                               softWrap: true,
                               style: const TextStyle(
-                                  // color: Color(0xFF666666),
+                                // color: Color(0xFF666666),
                                   color: Colors.black,
                                   fontSize: 10,
                                   fontFamily: 'poppins-semibold'),
@@ -318,7 +318,7 @@ class _MyVeritiesPageState extends State<MyVeritiesPage>
                               ORG_Verities[index].area ?? "",
                               softWrap: true,
                               style: const TextStyle(
-                                  // color: Color(0xFF666666),
+                                // color: Color(0xFF666666),
                                   color: Colors.black,
                                   fontSize: 10,
                                   fontFamily: 'poppins-semibold'),
@@ -333,7 +333,7 @@ class _MyVeritiesPageState extends State<MyVeritiesPage>
                               ORG_Verities[index].cropCycle ?? "",
                               softWrap: true,
                               style: const TextStyle(
-                                  // color: Color(0xFF666666),
+                                // color: Color(0xFF666666),
                                   color: Colors.black,
                                   fontSize: 10,
                                   fontFamily: 'poppins-semibold'),
@@ -396,96 +396,96 @@ class _MyVeritiesPageState extends State<MyVeritiesPage>
       ),
       floatingActionButton: widget.aapbarVisibility
           ? FloatingActionButton(
-              backgroundColor: Colors.white.withAlpha(0),
-              // add this line.
-              elevation: 0,
-              // also important, removes the shadow
-              heroTag: "floatingActionBtn",
-              shape: const RoundedRectangleBorder(
-                // <= Change BeveledRectangleBorder to RoundedRectangularBorder
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(30.0),
-                  topRight: Radius.circular(30.0),
-                  bottomLeft: Radius.circular(30.0),
-                  bottomRight: Radius.circular(30.0),
-                ),
-              ),
-              child: InkWell(
-                highlightColor: Colors.transparent,
-                splashColor: Colors.transparent,
-                onTap: () {
-                  setState(() {
-                    _onItemTapped(4);
-                  });
-                },
-                child: Image.asset(
-                  'assets/images/bottomCenter.png',
-                  // color: Colors.white,
-                ),
-              ),
-              onPressed: () {
-                _fabAnimationController.reset();
-                _borderRadiusAnimationController.reset();
-                _borderRadiusAnimationController.forward();
-                _fabAnimationController.forward();
-              },
-            )
+        backgroundColor: Colors.white.withAlpha(0),
+        // add this line.
+        elevation: 0,
+        // also important, removes the shadow
+        heroTag: "floatingActionBtn",
+        shape: const RoundedRectangleBorder(
+          // <= Change BeveledRectangleBorder to RoundedRectangularBorder
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(30.0),
+            topRight: Radius.circular(30.0),
+            bottomLeft: Radius.circular(30.0),
+            bottomRight: Radius.circular(30.0),
+          ),
+        ),
+        child: InkWell(
+          highlightColor: Colors.transparent,
+          splashColor: Colors.transparent,
+          onTap: () {
+            setState(() {
+              _onItemTapped(4);
+            });
+          },
+          child: Image.asset(
+            'assets/images/bottomCenter.png',
+            // color: Colors.white,
+          ),
+        ),
+        onPressed: () {
+          _fabAnimationController.reset();
+          _borderRadiusAnimationController.reset();
+          _borderRadiusAnimationController.forward();
+          _fabAnimationController.forward();
+        },
+      )
           : null,
       floatingActionButtonLocation: widget.aapbarVisibility
           ? FloatingActionButtonLocation.centerDocked
           : null,
       bottomNavigationBar: widget.aapbarVisibility
           ? AnimatedBottomNavigationBar.builder(
-              height: 70,
-              itemCount: iconList.length,
-              tabBuilder: (int index, bool isActive) {
-                final color = isActive ? Colors.green : Colors.grey;
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(
-                      iconList[index].icon ?? "",
-                      color: color,
-                      width: 25,
-                      height: 25,
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      iconList[index].name ?? "",
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                          color: Color(0xFF666666),
-                          fontSize: 13,
-                          fontFamily: 'poppins-regular'),
-                    ),
-                  ],
-                );
-              },
-              // backgroundColor: Colors.white,
-              activeIndex: _bottomNavIndex,
-              // splashColor: Colors.green,
-              notchAndCornersAnimation: borderRadiusAnimation,
-              splashSpeedInMilliseconds: 300,
-              notchSmoothness: NotchSmoothness.defaultEdge,
-              gapLocation: GapLocation.center,
-              leftCornerRadius: 32,
-              rightCornerRadius: 32,
-              notchMargin: 7,
-              onTap: (index) {
-                setState(() {
-                  _onItemTapped(index);
-                });
-              },
-              // setState(() => _bottomNavIndex = index),
-              hideAnimationController: _hideBottomBarAnimationController,
-              shadow: const BoxShadow(
-                offset: Offset(0, 1),
-                blurRadius: 2,
-                spreadRadius: 0.2,
-                color: Colors.white,
+        height: 70,
+        itemCount: iconList.length,
+        tabBuilder: (int index, bool isActive) {
+          final color = isActive ? Colors.green : Colors.grey;
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                iconList[index].icon ?? "",
+                color: color,
+                width: 25,
+                height: 25,
               ),
-            )
+              const SizedBox(height: 5),
+              Text(
+                iconList[index].name ?? "",
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                    color: Color(0xFF666666),
+                    fontSize: 13,
+                    fontFamily: 'poppins-regular'),
+              ),
+            ],
+          );
+        },
+        // backgroundColor: Colors.white,
+        activeIndex: _bottomNavIndex,
+        // splashColor: Colors.green,
+        notchAndCornersAnimation: borderRadiusAnimation,
+        splashSpeedInMilliseconds: 300,
+        notchSmoothness: NotchSmoothness.defaultEdge,
+        gapLocation: GapLocation.center,
+        leftCornerRadius: 32,
+        rightCornerRadius: 32,
+        notchMargin: 7,
+        onTap: (index) {
+          setState(() {
+            _onItemTapped(index);
+          });
+        },
+        // setState(() => _bottomNavIndex = index),
+        hideAnimationController: _hideBottomBarAnimationController,
+        shadow: const BoxShadow(
+          offset: Offset(0, 1),
+          blurRadius: 2,
+          spreadRadius: 0.2,
+          color: Colors.white,
+        ),
+      )
           : null,
     );
   }
@@ -497,8 +497,8 @@ class _MyVeritiesPageState extends State<MyVeritiesPage>
       if (route != null) {
         Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (BuildContext context) => MyBottomOnePage(
-                  aapbarVisibility: true,
-                )));
+              aapbarVisibility: true,
+            )));
       }
     } else if (index == 1) {
       // Navigator.pop(context);
@@ -506,8 +506,8 @@ class _MyVeritiesPageState extends State<MyVeritiesPage>
       if (route != null) {
         Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (BuildContext context) => MyBottomTwoPage(
-                  aapbarVisibility: true,
-                )));
+              aapbarVisibility: true,
+            )));
       }
     } else if (index == 2) {
       // Navigator.pop(context);
@@ -515,8 +515,8 @@ class _MyVeritiesPageState extends State<MyVeritiesPage>
       if (route != null) {
         Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (BuildContext context) => MyBottomThreePage(
-                  aapbarVisibility: true,
-                )));
+              aapbarVisibility: true,
+            )));
       }
     } else if (index == 3) {
       Navigator.of(context).push(
@@ -527,8 +527,8 @@ class _MyVeritiesPageState extends State<MyVeritiesPage>
       if (route != null) {
         Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (BuildContext context) => MyBottomCenterEnquiryPage(
-                  aapbarVisibility: true,
-                )));
+              aapbarVisibility: true,
+            )));
       }
     } else {
       setState(() {
