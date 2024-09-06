@@ -10,6 +10,8 @@ const String id = 'id';
 const String dealerNumber = 'dealerNumber';
 const String farmerName = 'farmerName';
 const String typeOfOrganization = 'typeOfOrganization';
+const String dateOfOrganization = 'dateOfOrganization';
+const String typeOfOrg = 'typeOfOrg';
 const String token = 'token';
 
 const String prefKeyToken = 'prefToken';
@@ -23,6 +25,9 @@ const String FARMER_NAME = "${baseUrl}api/appFarmer/names/";
 const String CROP_LIST = "${baseUrl}api/crop";
 // const String FARMER_DASHBOARD = "${baseUrl}api/appFarmer";
 const String FARMER_DASHBOARD = "https://krishiyanback.vercel.app/api/appFarmer/data";
+
+const String FRM_PROFILE_DETAILS = "https://krishiyanback.vercel.app/api/fpoOrganization/contact/";
+const String FRM_UPDATE_PROFILE_DETAILS = "https://krishiyanback.vercel.app/api/fpoOrganization/contact/";
 
 const String PROFILE_DETAILS = "${baseUrl}api/fpoOrganization/";
 const String UPDATE_PROFILE_DETAILS = "${baseUrl}api/fpoOrganization";

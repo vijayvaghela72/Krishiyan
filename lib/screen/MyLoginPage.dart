@@ -313,8 +313,8 @@ class _MyLoginPageState extends State<MyLoginPage> {
     setState(() {
       _submitted = false;
     });
-    if ((mobileNumberController!.text.isEmpty) ||
-        (passwordController!.text.isEmpty) ) {
+    if ((mobileNumberController.text.isEmpty) ||
+        (passwordController.text.isEmpty) ) {
       setState(() {
         _submitted = false;
       });

@@ -15,7 +15,7 @@ class FarmerDashboardController{
       String? villageName,String? typeName) async {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String dealerNumberData = await prefs.getString(dealerNumber) ?? 'No Dealer Number';
+    String dealerNumberData = await prefs.getString(dealerNumber) ?? '1';
 
     final String baseUrl = "https://krishiyanback.vercel.app/api/appFarmer/data/$dealerNumberData";
 
@@ -176,7 +176,7 @@ class FarmerDashboardController{
   static Future<List<FarmerDashboard>> fetchSearchFarmerDashboard(BuildContext context, String? whatsappNumber) async {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String dealerNumberData = await prefs.getString(dealerNumber) ?? 'No Dealer Number';
+    String dealerNumberData = await prefs.getString(dealerNumber) ?? '1';
 
     final String baseUrl = "https://d1dv04h56lh39n.cloudfront.net/api/appFarmer/farmer/"
         "search?dealerNumber=$dealerNumberData&whatsappNumber=$whatsappNumber";

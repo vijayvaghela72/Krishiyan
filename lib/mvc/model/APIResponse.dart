@@ -5,6 +5,7 @@ import 'FarmersNameData.dart';
 import 'GetAddressDetails.dart';
 import 'GetAllEnquiryData.dart';
 import 'GetBankDetails.dart';
+import 'GetFRMProfileData.dart';
 import 'GetOtherDetails.dart';
 import 'GetProfileData.dart';
 import 'InsightData.dart';
@@ -23,13 +24,14 @@ class APIResponse {
   FarmerDashboardData? farmerDashboardData;
   OtherData? otherData;
   GetProfileDetails? profileData;
+  GetFRMProfileDetails? frmProfileData;
   InsightDetails? insightDetails;
   BankData? bankData;
   Address? addressData;
 
   APIResponse({this.data, this.message, this.success, this.token, this.buyCommodityData, this.farmerData,
     this.farmerDashboardData, this.otherData, this.bankData, this.addressData,
-    this.frmRegistrationData, this.postOfficeData, this.profileData, this.insightDetails});
+    this.frmRegistrationData, this.postOfficeData, this.profileData, this.frmProfileData, this.insightDetails});
 
   factory APIResponse.fromJson(Map<String, dynamic> json) {
     return APIResponse(
@@ -43,6 +45,7 @@ class APIResponse {
       postOfficeData: json['data'] != null ? PostOffice.fromJson(json['data']) : null,
       addressData: json['data'] != null ? Address.fromJson(json['data']) : null,
       profileData: json['data'] != null ? GetProfileDetails.fromJson(json['data']) : null,
+      frmProfileData: json['data'] != null ? GetFRMProfileDetails.fromJson(json['data']) : null,
       insightDetails: json['data'] != null ? InsightDetails.fromJson(json['data']) : null,
       message: json['message'] ?? "",
       success: json['success'] ?? false,
@@ -84,6 +87,9 @@ class APIResponse {
     }
     if (this.profileData != null) {
       data['data'] = this.profileData!.toJson();
+    }
+    if (this.frmProfileData != null) {
+      data['data'] = this.frmProfileData!.toJson();
     }
     if (this.insightDetails != null) {
       data['data'] = this.insightDetails!.toJson();

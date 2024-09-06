@@ -117,7 +117,9 @@ class _MyBottomTwoPageState extends State<MyBottomTwoPage>
   TextEditingController geoLinkAreaController = TextEditingController();
 
   String? _selectedCrop;
-  SelectCropNamesData? _cropData;
+  // SelectCropNamesData? _cropData;
+
+  List<String> crops = [];
 
   SelectVillagesNameData? _villageNameData;
   String? _selectedVillageName;
@@ -135,25 +137,29 @@ class _MyBottomTwoPageState extends State<MyBottomTwoPage>
   @override
   void initState() {
     super.initState();
-    _fetchCropData();
+    futureFarmerProfiles = FarmerDashboardController.fetchFarmerDashboard(context, widget.villageName, widget.typeName);
+    fetchCrops();
     _fetchFarmerNameData();
     _fetchVillageData();
-    futureFarmerProfiles = FarmerDashboardController.fetchFarmerDashboard(context, widget.villageName, widget.typeName);
   }
 
   // onTextChanged function to call the API
   void _onSearchTextChanged(String text) {
-    setState(() {
-      _searchText = text;
-    });
-
+    if(mounted) {
+      setState(() {
+        _searchText = text;
+      });
+    }
     if (_searchText.isNotEmpty) {
       // _fetchData(_searchText);
       futureFarmerProfiles = FarmerDashboardController.fetchSearchFarmerDashboard(context, _searchText);
     } else {
-      setState(() {
-        futureFarmerProfiles = FarmerDashboardController.fetchFarmerDashboard(context, widget.villageName, widget.typeName);
-      });
+      if(mounted) {
+        setState(() {
+          futureFarmerProfiles = FarmerDashboardController.fetchFarmerDashboard(
+              context, widget.villageName, widget.typeName);
+        });
+      }
     }
   }
 
@@ -385,24 +391,24 @@ class _MyBottomTwoPageState extends State<MyBottomTwoPage>
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemBuilder: (context, index) {
-                          final dealerNumber = farmers[index].dealerNumber ?? "";
-                          final name = farmers[index].name ?? "";
-                          final address = farmers[index].address ?? "";
-                          final whatsappNumber = farmers[index].whatsappNumber ?? "";
-                          final geoLocationOwnedFarm = farmers[index].geoLocationOwnedFarm ?? "";
-                          final totalOwnedFarm = farmers[index].totalOwnedFarm.toString();
-                          final totalLeaseFarm = farmers[index].totalLeaseFarm.toString();
-                          final geoLocationLeaseFarm = farmers[index].geoLocationLeaseFarm ?? "";
-                          final pincode = farmers[index].pincode ??"";
-                          final state = farmers[index].state ?? "";
-                          final village = farmers[index].village ?? "";
-                          final district = farmers[index].district ?? "";
-                          final bankName = farmers[index].bankName ?? "";
-                          final accountName = farmers[index].accountName ?? "";
-                          final accountNumber = farmers[index].accountNumber ?? "";
-                          final ifscCode = farmers[index].ifscCode ?? "";
-                          final panNumber = farmers[index].pan ?? "";
-                          final aadhaarNumber = farmers[index].aadhaarNumber ?? "";
+                          final dealerNo = farmers[index].dealerNumber ?? "";
+                          final Name = farmers[index].name ?? "";
+                          final Address = farmers[index].address ?? "";
+                          final WhatsappNumber = farmers[index].whatsappNumber ?? "";
+                          final GeoLocationOwnedFarm = farmers[index].geoLocationOwnedFarm ?? "";
+                          final TotalOwnedFarm = farmers[index].totalOwnedFarm.toString();
+                          final TotalLeaseFarm = farmers[index].totalLeaseFarm.toString();
+                          final GeoLocationLeaseFarm = farmers[index].geoLocationLeaseFarm ?? "";
+                          final Pincode = farmers[index].pincode ??"";
+                          final State = farmers[index].state ?? "";
+                          final Village = farmers[index].village ?? "";
+                          final District = farmers[index].district ?? "";
+                          final BankName = farmers[index].bankName ?? "";
+                          final AccountName = farmers[index].accountName ?? "";
+                          final AccountNumber = farmers[index].accountNumber ?? "";
+                          final IfscCode = farmers[index].ifscCode ?? "";
+                          final PanNumber = farmers[index].pan ?? "";
+                          final AadhaarNumber = farmers[index].aadhaarNumber ?? "";
 
                           return
                             // user card
@@ -444,7 +450,7 @@ class _MyBottomTwoPageState extends State<MyBottomTwoPage>
                                               CrossAxisAlignment.start,
                                               children: [
                                                 Text(
-                                                  name ?? "",
+                                                  Name ?? "",
                                                   softWrap: true,
                                                   style: const TextStyle(
                                                       color: Color(0xFF808080),
@@ -453,7 +459,7 @@ class _MyBottomTwoPageState extends State<MyBottomTwoPage>
                                                       'poppins-semibold'),
                                                 ),
                                                 Text(
-                                                  address ?? "",
+                                                  Address ?? "",
                                                   softWrap: true,
                                                   style: const TextStyle(
                                                       color: Color(0xFF959595),
@@ -462,7 +468,7 @@ class _MyBottomTwoPageState extends State<MyBottomTwoPage>
                                                       'poppins-semibold'),
                                                 ),
                                                 Text(
-                                                  whatsappNumber ?? "",
+                                                  WhatsappNumber ?? "",
                                                   softWrap: true,
                                                   style: const TextStyle(
                                                       color: Color(0xFF959595),
@@ -532,28 +538,31 @@ class _MyBottomTwoPageState extends State<MyBottomTwoPage>
                                                   Colors.transparent,
                                                   splashColor: Colors.transparent,
                                                   onTap: () {
+                                                    print("Name : $Name");
+                                                    print("WhatsappNumber : $WhatsappNumber");
+                                                    print("dealerNo : $dealerNo");
                                                     Navigator.of(context).push(
                                                       MaterialPageRoute(
                                                           builder: (context) =>
                                                               MyFarmerEditProfilePage(
-                                                                  dealerNumber : dealerNumber,
-                                                                  name: name,
-                                                                  address: address,
-                                                                  whatsappNumber: whatsappNumber,
-                                                                  geoLocationOwnedFarm: geoLocationOwnedFarm,
-                                                                  totalOwnedFarm : totalOwnedFarm,
-                                                                  totalLeaseFarm: totalLeaseFarm,
-                                                                  geoLocationLeaseFarm: geoLocationLeaseFarm,
-                                                                  pincode: pincode,
-                                                                  state: state,
-                                                                  district: district,
-                                                                  village: village,
-                                                                  bankName: bankName,
-                                                                  accountName: accountName,
-                                                                  accountNumber : accountNumber,
-                                                                  ifscCode: ifscCode,
-                                                                  panNumber: panNumber,
-                                                                  aadhaarNumber : aadhaarNumber)),
+                                                                  dealerNumber : dealerNo,
+                                                                  name: Name,
+                                                                  whatsappNumber: WhatsappNumber,
+                                                                  address: Address,
+                                                                  geoLocationOwnedFarm: GeoLocationOwnedFarm,
+                                                                  totalOwnedFarm : TotalOwnedFarm,
+                                                                  totalLeaseFarm: TotalLeaseFarm,
+                                                                  geoLocationLeaseFarm: GeoLocationLeaseFarm,
+                                                                  pincode: Pincode,
+                                                                  state: State,
+                                                                  district: District,
+                                                                  village: Village,
+                                                                  bankName: BankName,
+                                                                  accountName: AccountName,
+                                                                  accountNumber : AccountNumber,
+                                                                  ifscCode: IfscCode,
+                                                                  panNumber: PanNumber,
+                                                                  aadhaarNumber : AadhaarNumber)),
                                                     );
                                                   },
                                                   child: Text(
@@ -1271,8 +1280,7 @@ class _MyBottomTwoPageState extends State<MyBottomTwoPage>
                 Padding(
                   padding: const EdgeInsets.only(
                       left: 25.0, right: 25.0),
-                  child: _cropData == null ||
-                      _cropData!.data == null
+                  child: crops.isEmpty
                       ? const Center(
                       child: Text('No data available'))
                       : DropdownButtonFormField2<String>(
@@ -1312,7 +1320,7 @@ class _MyBottomTwoPageState extends State<MyBottomTwoPage>
                     ),
                     value: _selectedCrop,
                     items:
-                    _cropData!.data!.map((String crop) {
+                    crops.map((String crop) {
                       return DropdownMenuItem<String>(
                         value: crop,
                         child: Text(crop,
@@ -1846,7 +1854,7 @@ class _MyBottomTwoPageState extends State<MyBottomTwoPage>
                                           horizontal: 16),
                                     ),
                                     value: _selectedCrop,
-                                    items: _cropData!.data!
+                                    items: crops
                                         .map((String crop) {
                                       return DropdownMenuItem<
                                           String>(
@@ -2473,21 +2481,41 @@ class _MyBottomTwoPageState extends State<MyBottomTwoPage>
     }
   }
 
-  Future<void> _fetchCropData() async {
+  Future<void> fetchCrops() async {
     try {
-      var response = await Dio().get(CROPS_NAMES);
+      final response = await Dio().get("https://d1dv04h56lh39n.cloudfront.net/api/crops"); // Replace with your actual API URL
 
       if (response.statusCode == 200) {
-        setState(() {
-          _cropData = SelectCropNamesData.fromJson(response.data);
-        });
+        if(mounted) {
+          setState(() {
+            crops = List<String>.from(response.data['data']);
+          });
+        }
       } else {
-        throw Exception('Failed to load crops');
+        print('Failed to retrieve crops');
       }
     } catch (e) {
-      print('Error fetching crop data: $e');
+      print('Error: $e');
     }
   }
+
+  // Future<void> _fetchCropData() async {
+  //   try {
+  //     var response = await Dio().get(CROPS_NAMES);
+  //
+  //     if (response.statusCode == 200) {
+  //       if (mounted) {
+  //         setState(() {
+  //           _cropData = SelectCropNamesData.fromJson(response.data);
+  //         });
+  //       }
+  //     } else {
+  //       throw Exception('Failed to load crops');
+  //     }
+  //   } catch (e) {
+  //     print('My BottomTwoPage : Error fetching crop data: $e');
+  //   }
+  // }
 
   Future<void> _selectDate(BuildContext context) async {
     // Show the date picker dialog

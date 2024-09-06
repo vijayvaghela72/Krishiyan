@@ -1,13 +1,12 @@
 import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:krishiyan/localization/AppLocalizations.dart';
+import 'package:krishiyan/mvc/model/GetFRMProfileData.dart';
 import 'package:krishiyan/screen/MyProfilePage.dart';
-
 import '../helper/AlertHelper.dart';
 import '../mvc/controller/accountSettingController.dart';
 import '../mvc/model/GetProfileData.dart';
@@ -23,6 +22,7 @@ class MyEditProfilePage extends StatefulWidget {
 }
 
 class _MyEditProfilePageState extends State<MyEditProfilePage> {
+
   TextFormField? nameOfOrganizationController;
   TextEditingController dateOfOrganizationController = TextEditingController();
   TextFormField? registrationNumberController;
@@ -32,20 +32,16 @@ class _MyEditProfilePageState extends State<MyEditProfilePage> {
   TextFormField? nameOfPromoterController;
   TextFormField? yourDesignationController;
 
-  TextEditingController editNameOfOrganizationController =
-  TextEditingController();
-  TextEditingController editDateOfOrganizationController =
-  TextEditingController();
-  TextEditingController editRegistrationNumberController =
-  TextEditingController();
+  TextEditingController editNameOfOrganizationController = TextEditingController();
+  TextEditingController editDateOfOrganizationController = TextEditingController();
+  TextEditingController editRegistrationNumberController = TextEditingController();
   TextEditingController editCbboNameController = TextEditingController();
-  TextEditingController editOfficeContactNumberController =
-  TextEditingController();
+  TextEditingController editOfficeContactNumberController = TextEditingController();
   TextEditingController editEmailIdController = TextEditingController();
   TextEditingController editNameOfPromoterController = TextEditingController();
   TextEditingController editYourDesignationController = TextEditingController();
 
-  String id = "";
+  String id = "", contactNumber = "", dateOfOrganizationValue = "", typeOfOrg = "";
 
   final List<String> fpoItems = [
     buildTranslate('farmerProducerOrganization')!,
@@ -58,7 +54,7 @@ class _MyEditProfilePageState extends State<MyEditProfilePage> {
   String? selectedFPOItemValue;
   bool otpVisible = false;
 
-  Future<GetProfileDetails?>? futureProfileDetails;
+  Future<GetFRMProfileDetails?>? futureProfileDetails;
 
   String? nameOfOrganization;
   String? dateOfOrganization;
@@ -68,7 +64,7 @@ class _MyEditProfilePageState extends State<MyEditProfilePage> {
   String? emailId;
   String? nameOfPromoter;
   String? yourDesignation;
-
+  DateTime? selectedDate;
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -155,7 +151,7 @@ class _MyEditProfilePageState extends State<MyEditProfilePage> {
             const SizedBox(
               height: 10,
             ),
-            FutureBuilder<GetProfileDetails?>(
+            FutureBuilder<GetFRMProfileDetails?>(
               future: futureProfileDetails,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -166,7 +162,6 @@ class _MyEditProfilePageState extends State<MyEditProfilePage> {
                     // If the future returns data, but it's empty
                     return const Center(child: Text("No data found"));
                   } else {
-                    // If the future returns data, and it's non-empty
                     return Form(
                       key: _formKey,
                       child: Column(
@@ -249,6 +244,7 @@ class _MyEditProfilePageState extends State<MyEditProfilePage> {
                             child: Container(
                               color: Colors.white,
                               child: DropdownButtonFormField2<String>(
+                                value: selectedFPOItemValue,
                                 isExpanded: true,
                                 decoration: InputDecoration(
                                   contentPadding:
@@ -332,18 +328,23 @@ class _MyEditProfilePageState extends State<MyEditProfilePage> {
                               controller: dateOfOrganizationController,
                               keyboardType: TextInputType.text,
                               onSaved: (value) => dateOfOrganization = value,
+                              // initialValue:
+                              // dateOfOrganizationController == null
+                              //     ? AppGlobal.convertToCustomDateFormat(snapshot.data!.dateOfFpo.toString())
+                              //     : null,
                               // initialValue: AppGlobal.convertToCustomDateFormat(snapshot.data!.dateOfFpo.toString()),
                               decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.symmetric(
                                     vertical: 10.0, horizontal: 10.0),
-                                hintText: 'dd/mm/yyyy',
+                                hintText: 'dd/MM/yyyy',
                                 hintStyle: const TextStyle(color: Colors.grey),
                                 fillColor: Colors.white,
                                 filled: true,
                                 suffixIcon: IconButton(
                                   icon: const Icon(Icons.calendar_today),
                                   onPressed: () {
-                                    _selectDate(context);
+                                    print("OnPressed : $dateOfOrganizationValue");
+                                    _selectDate(context, dateOfOrganizationValue.toString());
                                   }, // Open date picker on icon press
                                 ),
                                 border: const OutlineInputBorder(
@@ -390,6 +391,10 @@ class _MyEditProfilePageState extends State<MyEditProfilePage> {
                             child: TextFormField(
                               keyboardType: TextInputType.text,
                               onSaved: (value) => registrationNumber = value,
+                              initialValue:
+                              registrationNumberController == null
+                                  ? snapshot.data!.registrationNumber.toString()
+                                  : null,
                               decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.symmetric(
                                     vertical: 10.0, horizontal: 10.0),
@@ -440,6 +445,10 @@ class _MyEditProfilePageState extends State<MyEditProfilePage> {
                             child: TextFormField(
                               keyboardType: TextInputType.text,
                               onSaved: (value) => cbboName = value,
+                              initialValue:
+                              cbboNameController == null
+                                  ? snapshot.data!.cBBOName.toString()
+                                  : null,
                               decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.symmetric(
                                     vertical: 10.0, horizontal: 10.0),
@@ -718,7 +727,7 @@ class _MyEditProfilePageState extends State<MyEditProfilePage> {
                               keyboardType: TextInputType.text,
                               onSaved: (value) => yourDesignation = value,
                               initialValue: yourDesignationController == null
-                                  ? snapshot.data!.typeOfOrganization.toString()
+                                  ? snapshot.data!.yourDesignation.toString()
                                   : null,
                               decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.symmetric(
@@ -941,11 +950,11 @@ class _MyEditProfilePageState extends State<MyEditProfilePage> {
                           decoration: InputDecoration(
                             contentPadding: const EdgeInsets.symmetric(
                                 vertical: 10.0, horizontal: 10.0),
-                            hintText: 'dd/mm/yyyy',
+                            hintText: 'dd/MM/yyyy',
                             suffixIcon: IconButton(
                               icon: const Icon(Icons.calendar_today),
                               onPressed: () {
-                                _selectDate(context);
+                                _selectDate(context, dateOfOrganization ?? "");
                               }, // Open date picker on icon press
                             ),
                             hintStyle: const TextStyle(color: Colors.grey),
@@ -1332,41 +1341,32 @@ class _MyEditProfilePageState extends State<MyEditProfilePage> {
                         alignment: FractionalOffset.bottomCenter,
                         child: Container(
                           width: MediaQuery.of(context).size.width,
-                          padding:
-                          const EdgeInsets.only(left: 25.0, right: 25.0),
+                          padding: const EdgeInsets.only(left: 25.0, right: 25.0),
                           child: ElevatedButton(
                             onPressed: () {
                               if (editNameOfOrganizationController.text.toString().isNotEmpty &&
                                   selectedFPOItemValue.toString().isNotEmpty &&
-                                  editDateOfOrganizationController.text
-                                      .toString()
-                                      .isNotEmpty &&
-                                  editRegistrationNumberController.text
-                                      .toString()
-                                      .isNotEmpty &&
-                                  editOfficeContactNumberController.text
-                                      .toString()
-                                      .isNotEmpty &&
-                                  editEmailIdController.text
-                                      .toString()
-                                      .isNotEmpty &&
-                                  editNameOfPromoterController.text
-                                      .toString()
-                                      .isNotEmpty) {
+                                  editDateOfOrganizationController.text.toString().isNotEmpty &&
+                                  editRegistrationNumberController.text.toString().isNotEmpty &&
+                                  editOfficeContactNumberController.text.toString().isNotEmpty &&
+                                  editEmailIdController.text.toString().isNotEmpty &&
+                                  editNameOfPromoterController.text.toString().isNotEmpty &&
+                                  editCbboNameController.text.toString().isNotEmpty &&
+                                  editYourDesignationController.text.toString().isNotEmpty) {
+
                                 _updateProfileDetailsApiCall(
-                                  editNameOfOrganizationController.text
-                                      .toString(),
+                                  editNameOfOrganizationController.text.toString(),
                                   selectedFPOItemValue.toString(),
-                                  editDateOfOrganizationController.text
-                                      .toString(),
-                                  editRegistrationNumberController.text
-                                      .toString(),
-                                  editOfficeContactNumberController.text
-                                      .toString(),
+                                  editDateOfOrganizationController.text.toString(),
+                                  editRegistrationNumberController.text.toString(),
+                                  editOfficeContactNumberController.text.toString(),
                                   editEmailIdController.text.toString(),
                                   editNameOfPromoterController.text.toString(),
+                                    editCbboNameController.text.toString(),
+                                    editYourDesignationController.text.toString()
                                 );
-                              } else {
+                              }
+                              else {
                                 AlertHelper.showToast(
                                     "Please enter credentials.", context);
                               }
@@ -1403,28 +1403,32 @@ class _MyEditProfilePageState extends State<MyEditProfilePage> {
     );
   }
 
-  Future<void> _selectDate(BuildContext context) async {
+  Future<void> _selectDate(BuildContext context, String date) async {
     // Show the date picker dialog
+    if(date.isNotEmpty) {
+      selectedDate = DateTime.parse(date).toLocal();
+      print("selectedDate : $selectedDate");
+    }
     final DateTime? pickedDate = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(), // Default date is the current date
+      initialDate: selectedDate !=null ? selectedDate : DateTime.now(), // Default date is the current date
       firstDate: DateTime(2000), // Earliest selectable date
       lastDate: DateTime(2101), // Latest selectable date
       helpText: 'Select a date', // Optional help text
     );
     if (pickedDate != null) {
+      print("pickedDate : $pickedDate");
       setState(() {
         // Format the selected date and display it in the TextFormField
-        dateOfOrganizationController.text =
-            DateFormat('dd-MM-yyyy').format(pickedDate);
+        dateOfOrganizationController.text = DateFormat('dd-MM-yyyy').format(pickedDate);
+        dateOfOrganizationValue = "${pickedDate}Z";
       });
     }
   }
 
   void _getValue() {
     if (_formKey.currentState!.validate()) {
-      _formKey.currentState!
-          .save(); // This triggers onSaved for each TextFormField
+      _formKey.currentState!.save(); // This triggers onSaved for each TextFormField
 
       if (nameOfOrganization != null &&
           selectedFPOItemValue != null &&
@@ -1432,7 +1436,8 @@ class _MyEditProfilePageState extends State<MyEditProfilePage> {
           registrationNumber != null &&
           officeContactNumber != null &&
           emailId != null &&
-          nameOfPromoter != null) {
+          nameOfPromoter != null && cbboName !=null && yourDesignation !=null) {
+
         _updateProfileDetailsApiCall(
             nameOfOrganization.toString(),
             selectedFPOItemValue.toString(),
@@ -1440,8 +1445,9 @@ class _MyEditProfilePageState extends State<MyEditProfilePage> {
             registrationNumber.toString(),
             officeContactNumber.toString(),
             emailId.toString(),
-            nameOfPromoter.toString());
-      } else {
+            nameOfPromoter.toString(), cbboName.toString(), yourDesignation.toString());
+      }
+      else {
         AlertHelper.showToast("Please enter data.", context);
       }
     }
@@ -1454,30 +1460,33 @@ class _MyEditProfilePageState extends State<MyEditProfilePage> {
       String registrationNumber,
       String officeNumber,
       String emailID,
-      String promoterName) async {
+      String promoterName, String cbboName, String designation) async {
+
     if (nameOfOrganization.isNotEmpty &&
         typeOfOrganization.isNotEmpty &&
         dateOfOrganization.toString().isNotEmpty &&
         registrationNumber.isNotEmpty &&
         officeNumber.isNotEmpty &&
         emailID.isNotEmpty &&
-        promoterName.isNotEmpty) {
+        promoterName.isNotEmpty && cbboName.isNotEmpty && designation.isNotEmpty) {
+
       var headers = {'Content-Type': 'application/json'};
+
       var data = json.encode({
-        "_id": id,
-        "typeOfOrganization": typeOfOrganization,
-        "nameOfFpo": nameOfOrganization,
-        "typeOfFpo": "Updated Type",
-        "dateOfFpo": "${AppGlobal.convertToIsoFormat(dateOrganization)}Z",
-        "organizationalEmail": emailID,
-        "contactNumber": officeNumber,
-        "promoterName": promoterName,
-        "password": "UpdatedPassword123"
+      "nameOfFpo": nameOfOrganization,
+      "typeOfFpo": typeOfOrganization,
+      "dateOfFpo": dateOfOrganization,
+      "organizationalEmail": emailID,
+      "contactNumber": officeNumber,
+      "yourDesignation": designation,
+      "promoterName": promoterName,
+      "RegistrationNumber": registrationNumber,
+      "CBBOName": cbboName
       });
 
       var dio = Dio();
       var response = await dio.request(
-        UPDATE_PROFILE_DETAILS,
+        FRM_UPDATE_PROFILE_DETAILS+contactNumber,
         options: Options(
           method: 'PUT',
           headers: headers,
@@ -1565,11 +1574,20 @@ class _MyEditProfilePageState extends State<MyEditProfilePage> {
   }
 
   Future<void> getProfileDetails() async {
-    id = (await AppGlobal.getStringPreference('id'))!;
-    futureProfileDetails =
-        AccountSettingController.fetchEditProfileDetails(context, id);
+    // id = (await AppGlobal.getStringPreference('id'))!;
+    contactNumber = (await AppGlobal.getStringPreference('contactNumber'))!;
+    futureProfileDetails = AccountSettingController.fetchFRMEditProfileDetails(context, contactNumber);
     setState(() {
       futureProfileDetails = futureProfileDetails;
+    });
+    Future.delayed(Duration(seconds: 2), () async {
+      dateOfOrganizationValue = (await AppGlobal.getStringPreference('dateOfOrganization'))!;
+      typeOfOrg = (await AppGlobal.getStringPreference('typeOfOrg'))!;
+      setState(() {
+      dateOfOrganizationValue = dateOfOrganizationValue;
+      selectedFPOItemValue = typeOfOrg;
+      });
+      dateOfOrganizationController.text = AppGlobal.convertToCustomDateFormat(dateOfOrganizationValue);
     });
   }
 }

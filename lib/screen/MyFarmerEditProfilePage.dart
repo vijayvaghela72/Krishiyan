@@ -1126,7 +1126,7 @@ class _MyFarmerEditProfilePageState extends State<MyFarmerEditProfilePage> {
                 padding: const EdgeInsets.only(left: 25.0, right: 25.0),
                 child: ElevatedButton(
                   onPressed: () {
-                    _farmerRegistrationApiCall();
+                    _farmerEditRegistrationApiCall();
                   },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
@@ -1154,14 +1154,15 @@ class _MyFarmerEditProfilePageState extends State<MyFarmerEditProfilePage> {
     );
   }
 
-  _farmerRegistrationApiCall() async {
+  _farmerEditRegistrationApiCall() async {
     if (ownedAreaController.text.trim().isNotEmpty &&
         goeLocationController.text.trim().isNotEmpty &&
         leasedFarmController.text.trim().isNotEmpty &&
         goeLocationLeasedController.text.trim().isNotEmpty &&
         pincodeController.text.trim().isNotEmpty &&
-        _selectedStateName!.isNotEmpty &&
+        _selectedStateName.toString().isNotEmpty &&
         _selectedDistrictName.toString().isNotEmpty &&
+        villageController.text.trim().isNotEmpty &&
         addressController.text.trim().isNotEmpty &&
         bankNameController.text.trim().isNotEmpty &&
         accountNameController.text.trim().isNotEmpty &&
@@ -1170,16 +1171,18 @@ class _MyFarmerEditProfilePageState extends State<MyFarmerEditProfilePage> {
         panNumberController.text.trim().isNotEmpty &&
         aadharNumberController.text.trim().isNotEmpty) {
 
-      var body = json.encode({
-        "dealerNumber": widget.dealerNumber,
-        "name": widget.farmerName,
-        "whatsappNumber": widget.farmerWhatsappNumber,
+      var headers = {
+        'Content-Type': 'application/json'
+      };
+
+      var data = json.encode({
+        "name": widget.name,
         "totalOwnedFarm": int.parse(ownedAreaController.text.toString()),
         "geoLocationOwnedFarm": goeLocationController.text.toString(),
         "totalLeaseFarm": int.parse(leasedFarmController.text.toString()),
         "geoLocationLeaseFarm": goeLocationLeasedController.text.toString(),
         "pincode": pincodeController.text.toString(),
-        "village": "test",
+        "village": villageController.text.toString(),
         "district": _selectedDistrictName.toString(),
         "state": _selectedStateName.toString(),
         "address": addressController.text.toString(),
@@ -1192,27 +1195,26 @@ class _MyFarmerEditProfilePageState extends State<MyFarmerEditProfilePage> {
         "aadhaarNumber": aadharNumberController.text.toString()
       });
 
-      FRMRegistrationData? user =
-          await FarmerDashboardController.farmerRegistration(body,
-              context: context);
+      var dio = Dio();
+      var response = await dio.request(
+        'https://krishiyanback.vercel.app/api/appFarmer/farmer/whatsapp/${widget.whatsappNumber}',
+        options: Options(
+          method: 'PUT',
+          headers: headers,
+        ),
+        data: data,
+      );
 
-      if (user != null) {
-        Future.delayed(const Duration(seconds: 1), () {
-          print('Farmer registered successfully');
+      if (response.statusCode == 200) {
+        print("Edit Profile Details updated : " + json.encode(response.data));
 
-          if (user.farmer != null) {
-            SharedPref.savePreferenceValue(
-                dealerNumber, user.farmer!.dealerNumber);
-            SharedPref.savePreferenceValue(farmerName, user.farmer!.name);
-          }
-          showAlertDialog(context);
-        });
+        showAlertDialog(context);
       } else {
-        AlertHelper.showToast("Api error", context);
-        print("Api error");
+        AlertHelper.showToast(response.statusMessage, context);
+        print("Edit Profile Details Error : "+response.statusMessage.toString());
       }
     } else {
-      AlertHelper.showToast("Please enter details.", context);
+      AlertHelper.showToast("Please enter credentials.", context);
     }
   }
 

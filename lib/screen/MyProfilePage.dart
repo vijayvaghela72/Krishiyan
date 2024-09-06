@@ -28,7 +28,7 @@ class MyProfilePage extends StatefulWidget {
 
 class _MyProfilePageState extends State<MyProfilePage> with TickerProviderStateMixin{
 
-  var _bottomNavIndex; //default index of a first screen
+  var _bottomNavIndex = 3; //default index of a first screen
 
   late AnimationController _fabAnimationController;
   late AnimationController _borderRadiusAnimationController;
