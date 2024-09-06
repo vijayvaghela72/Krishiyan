@@ -31,7 +31,7 @@ class _MyEnquiryDashboardPageState extends State<MyEnquiryDashboardPage>
   void initState() {
     super.initState();
     _selectedCrop = widget.selectedCrop;
-    futureEnquiryData = EnquiryDashboardController.getEnquiryDetailsByID();
+    futureEnquiryData = EnquiryDashboardController.getEnquiryDetailsByCommodity(_selectedCrop.toString());
     _fetchCropData();
   }
 
@@ -184,15 +184,10 @@ class _MyEnquiryDashboardPageState extends State<MyEnquiryDashboardPage>
                 padding: const EdgeInsets.only(left: 25.0, right: 25.0),
                 child: ElevatedButton(
                   onPressed: () {
-                    // if (_selectedCrop!.isNotEmpty) {
-                    //   setState(() {
-                    //     showData = true;
-                    //   });
-                    // } else {
-                    //   setState(() {
-                    //     showData = false;
-                    //   });
-                    // }
+                    futureEnquiryData = EnquiryDashboardController.getEnquiryDetailsByCommodity(_selectedCrop.toString());
+                    setState(() {
+                      futureEnquiryData = futureEnquiryData;
+                    });
                   },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
@@ -220,7 +215,7 @@ class _MyEnquiryDashboardPageState extends State<MyEnquiryDashboardPage>
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
+                  return Center(child: Text('No Data Available'));
                 } else if (snapshot.hasData) {
                   final List<EnquiryData> commodities = snapshot.data!;
                   return ListView.builder(

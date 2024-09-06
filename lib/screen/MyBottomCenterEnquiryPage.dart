@@ -176,7 +176,7 @@ class _MyBottomCenterEnquiryPageState extends State<MyBottomCenterEnquiryPage>
 
   Future<void> getPrefValue() async {
     typeOfOrganizationData = await SharedPref.readPreferenceValue(typeOfOrganization, PrefEnum.STRING);
-    print("TypeOfOrganizationData : $typeOfOrganizationData");
+    print("BottomCenterEnquiry TypeOfOrganizationData : $typeOfOrganizationData");
     setState(() {
       typeOfOrganizationData = typeOfOrganizationData;
     });
@@ -445,7 +445,7 @@ class _MyBottomCenterEnquiryPageState extends State<MyBottomCenterEnquiryPage>
                       const EdgeInsets.only(left: 30.0, right: 30.0),
                       child: ElevatedButton(
                         onPressed: () {
-                          if (_selectedCrop!.isNotEmpty) {
+                          if (_selectedCrop !=null && _selectedCrop!.isNotEmpty) {
                             Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => MyEnquiryDashboardPage(selectedCrop : _selectedCrop)));
                           }

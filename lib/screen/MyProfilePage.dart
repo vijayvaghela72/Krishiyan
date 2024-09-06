@@ -12,6 +12,7 @@ import 'MyBottomThreePage.dart';
 import 'MyBottomTwoPage.dart';
 import 'MyEditAddressPage.dart';
 import 'MyEditBankDetailPage.dart';
+import 'MyEditOtherProfilePage.dart';
 import 'MyOtherDetailPage.dart';
 import 'MyEditProfilePage.dart';
 import 'MyForgotPasswordPage.dart';
@@ -190,8 +191,12 @@ class _MyProfilePageState extends State<MyProfilePage> with TickerProviderStateM
               highlightColor: Colors.transparent,
               splashColor: Colors.transparent,
               onTap: () {
+                typeOfOrganizationData == "Farmer groups" ?
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (context) => const MyEditProfilePage()),
+                ) :
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => const MyEditOtherProfilePage()),
                 );
               },
               child: Padding(
@@ -694,7 +699,7 @@ class _MyProfilePageState extends State<MyProfilePage> with TickerProviderStateM
 
   Future<void> getPrefValue() async {
     typeOfOrganizationData = await SharedPref.readPreferenceValue(typeOfOrganization, PrefEnum.STRING);
-    print("TypeOfOrganizationData : $typeOfOrganizationData");
+    print("Profile TypeOfOrganizationData : $typeOfOrganizationData");
     if(typeOfOrganizationData == "Farmer groups" ) {
       _bottomNavIndex = 3;
     }

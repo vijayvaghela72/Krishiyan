@@ -11,6 +11,7 @@ import '../localization/AppLocalizations.dart';
 import '../mvc/controller/farmerDashboardController.dart';
 import '../mvc/model/FarmerRegistrationData.dart';
 import '../mvc/model/PincodeToStateData.dart';
+import '../utils/AppGlobal.dart';
 import '../utils/Constants.dart';
 import 'package:http/http.dart' as http;
 
@@ -28,6 +29,7 @@ class MyFarmerProfilePage extends StatefulWidget {
 }
 
 class _MyFarmerProfilePageState extends State<MyFarmerProfilePage> {
+
   TextEditingController ownedAreaController = TextEditingController();
   TextEditingController goeLocationController = TextEditingController();
   TextEditingController leasedFarmController = TextEditingController();
@@ -1122,22 +1124,13 @@ class _MyFarmerProfilePageState extends State<MyFarmerProfilePage> {
 
   _farmerRegistrationApiCall() async {
     if (ownedAreaController.text.trim().isNotEmpty &&
-        goeLocationController.text.trim().isNotEmpty &&
-        leasedFarmController.text.trim().isNotEmpty &&
-        goeLocationLeasedController.text.trim().isNotEmpty &&
         pincodeController.text.trim().isNotEmpty &&
-        _selectedStateName!.isNotEmpty &&
-        _selectedDistrictName.toString().isNotEmpty &&
-        villageController.text.trim().isNotEmpty &&
-        addressController.text.trim().isNotEmpty &&
-        bankNameController.text.trim().isNotEmpty &&
-        accountNameController.text.trim().isNotEmpty &&
-        accountNumberController.text.trim().isNotEmpty &&
-        ifsCodeController.text.trim().isNotEmpty &&
-        panNumberController.text.trim().isNotEmpty &&
-        aadharNumberController.text.trim().isNotEmpty) {
+        villageController.text.trim().isNotEmpty && selectedItemValue.toString().isNotEmpty) {
+
+      String? number = await AppGlobal.getStringPreference('dealerNumber');
+
       var body = json.encode({
-        "dealerNumber": "1",
+        "dealerNumber": number ?? "1",
         "name": widget.farmerName,
         "whatsappNumber": widget.farmerWhatsappNumber,
         "totalOwnedFarm": int.parse(ownedAreaController.text.toString()),

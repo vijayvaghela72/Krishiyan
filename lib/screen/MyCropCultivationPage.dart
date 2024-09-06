@@ -24,7 +24,7 @@ class _MyCropCultivationPageState extends State<MyCropCultivationPage> with Tick
   TextEditingController dateOfSowingController = TextEditingController();
   TextEditingController geoLocationController = TextEditingController();
   TextEditingController areaInArcsController = TextEditingController();
-  TextEditingController geoLinkAreaController = TextEditingController();
+  // TextEditingController geoLinkAreaController = TextEditingController();
 
   final List<String> items = [
     buildTranslate('organic')!,
@@ -482,59 +482,59 @@ class _MyCropCultivationPageState extends State<MyCropCultivationPage> with Tick
               height: 20,
             ),
 
-            // geo link in area
-            Padding(
-              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-              child: Text(
-                buildTranslate("geoLinkAreaOnMap")!,
-                style: const TextStyle(
-                    fontSize: 15,
-                    color: Color(0xFF666666),
-                    fontFamily: 'poppins-semibold'),
-              ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(
-                  left: 25.0, right: 25.0),
-              child: TextFormField(
-                decoration: const InputDecoration(
-                    alignLabelWithHint: true,
-                    fillColor: Colors.white,
-                    filled: true,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10.0),
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.grey,
-                        width: 1.0,
-                      ),
-                      borderRadius: BorderRadius.all(
-                          Radius.circular(8.0)),
-                    ),
-                    hintText: '----',
-                    hintStyle:
-                    TextStyle(color: Color(0xFFe7e7e7)),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
-                          Radius.circular(8.0)),
-                      borderSide: BorderSide(
-                          color: Colors.green, width: 0.5),
-                    )),
-                validator: (value) => value!.isEmpty
-                    ? 'Please, fill this field.'
-                    : null,
-                controller: geoLinkAreaController,
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
+            // // geo link in area
+            // Padding(
+            //   padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+            //   child: Text(
+            //     buildTranslate("geoLinkAreaOnMap")!,
+            //     style: const TextStyle(
+            //         fontSize: 15,
+            //         color: Color(0xFF666666),
+            //         fontFamily: 'poppins-semibold'),
+            //   ),
+            // ),
+            // const SizedBox(
+            //   height: 10,
+            // ),
+            // Padding(
+            //   padding: const EdgeInsets.only(
+            //       left: 25.0, right: 25.0),
+            //   child: TextFormField(
+            //     decoration: const InputDecoration(
+            //         alignLabelWithHint: true,
+            //         fillColor: Colors.white,
+            //         filled: true,
+            //         border: OutlineInputBorder(
+            //           borderRadius: BorderRadius.all(
+            //             Radius.circular(10.0),
+            //           ),
+            //         ),
+            //         enabledBorder: OutlineInputBorder(
+            //           borderSide: BorderSide(
+            //             color: Colors.grey,
+            //             width: 1.0,
+            //           ),
+            //           borderRadius: BorderRadius.all(
+            //               Radius.circular(8.0)),
+            //         ),
+            //         hintText: '----',
+            //         hintStyle:
+            //         TextStyle(color: Color(0xFFe7e7e7)),
+            //         focusedBorder: OutlineInputBorder(
+            //           borderRadius: BorderRadius.all(
+            //               Radius.circular(8.0)),
+            //           borderSide: BorderSide(
+            //               color: Colors.green, width: 0.5),
+            //         )),
+            //     validator: (value) => value!.isEmpty
+            //         ? 'Please, fill this field.'
+            //         : null,
+            //     controller: geoLinkAreaController,
+            //   ),
+            // ),
+            // const SizedBox(
+            //   height: 20,
+            // ),
 
             // SizedBox(
             //   height: 35,

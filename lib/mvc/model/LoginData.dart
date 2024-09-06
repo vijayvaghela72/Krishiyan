@@ -46,6 +46,7 @@ class Data {
 }
 
 class FpoOrganization {
+  String? sId;
   String? typeOfOrganization;
   String? nameOfFpo;
   String? typeOfFpo;
@@ -54,11 +55,14 @@ class FpoOrganization {
   String? contactNumber;
   String? promoterName;
   String? password;
-  String? sId;
   int? iV;
+  String? cBBOName;
+  String? registrationNumber;
+  String? yourDesignation;
 
   FpoOrganization(
-      {this.typeOfOrganization,
+      {this.sId,
+        this.typeOfOrganization,
         this.nameOfFpo,
         this.typeOfFpo,
         this.dateOfFpo,
@@ -66,10 +70,13 @@ class FpoOrganization {
         this.contactNumber,
         this.promoterName,
         this.password,
-        this.sId,
-        this.iV});
+        this.iV,
+        this.cBBOName,
+        this.registrationNumber,
+        this.yourDesignation});
 
   FpoOrganization.fromJson(Map<String, dynamic> json) {
+    sId = json['_id'];
     typeOfOrganization = json['typeOfOrganization'];
     nameOfFpo = json['nameOfFpo'];
     typeOfFpo = json['typeOfFpo'];
@@ -78,12 +85,15 @@ class FpoOrganization {
     contactNumber = json['contactNumber'];
     promoterName = json['promoterName'];
     password = json['password'];
-    sId = json['_id'];
     iV = json['__v'];
+    cBBOName = json['CBBOName'];
+    registrationNumber = json['RegistrationNumber'];
+    yourDesignation = json['yourDesignation'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['_id'] = this.sId;
     data['typeOfOrganization'] = this.typeOfOrganization;
     data['nameOfFpo'] = this.nameOfFpo;
     data['typeOfFpo'] = this.typeOfFpo;
@@ -92,8 +102,10 @@ class FpoOrganization {
     data['contactNumber'] = this.contactNumber;
     data['promoterName'] = this.promoterName;
     data['password'] = this.password;
-    data['_id'] = this.sId;
     data['__v'] = this.iV;
+    data['CBBOName'] = this.cBBOName;
+    data['RegistrationNumber'] = this.registrationNumber;
+    data['yourDesignation'] = this.yourDesignation;
     return data;
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dots_indicator/dots_indicator.dart';
@@ -7,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:krishiyan/utils/AppGlobal.dart';
 import 'package:krishiyan/utils/Constants.dart';
 import '../helper/SharedPref.dart';
 import '../localization/AppLocalizations.dart';
@@ -29,8 +32,7 @@ class MyBottomOnePage extends StatefulWidget {
   State<MyBottomOnePage> createState() => _MyBottomOnePageState();
 }
 
-class _MyBottomOnePageState extends State<MyBottomOnePage>
-    with TickerProviderStateMixin {
+class _MyBottomOnePageState extends State<MyBottomOnePage> with TickerProviderStateMixin {
 
   final List<String> topData = [
     buildTranslate("dailyMarket")!,
@@ -110,6 +112,8 @@ class _MyBottomOnePageState extends State<MyBottomOnePage>
   late Future<List<NewsData>> futureHomeNewsData;
   String typeOfOrganizationData = "";
 
+  bool _isClickAllowed = true; // Flag to prevent double-clicks
+
   @override
   void initState() {
     super.initState();
@@ -156,7 +160,7 @@ class _MyBottomOnePageState extends State<MyBottomOnePage>
 
   Future<void> getPrefValue() async {
     typeOfOrganizationData = await SharedPref.readPreferenceValue(typeOfOrganization, PrefEnum.STRING);
-    print("TypeOfOrganizationData : $typeOfOrganizationData");
+    print("BottomOnePage TypeOfOrganizationData : $typeOfOrganizationData");
     setState(() {
       typeOfOrganizationData = typeOfOrganizationData;
     });
@@ -172,6 +176,7 @@ class _MyBottomOnePageState extends State<MyBottomOnePage>
 
   @override
   Widget build(BuildContext context) {
+
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
     ));
@@ -262,7 +267,7 @@ class _MyBottomOnePageState extends State<MyBottomOnePage>
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.max,
             children: <Widget>[
-              Padding(
+                  Padding(
                 padding: const EdgeInsets.only(left: 10.0, right: 20.0),
                 child: Container(
                   height: 80,
@@ -307,436 +312,443 @@ class _MyBottomOnePageState extends State<MyBottomOnePage>
                   ),
                 ),
               ),
-              selectedTopData == 0
+                  selectedTopData == 0
                   ? Column(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  CarouselSlider(
-                    options: CarouselOptions(
-                      height: 150,
-                      aspectRatio: 2.0,
-                      viewportFraction: 0.9,
-                      initialPage: 0,
-                      enableInfiniteScroll: true,
-                      reverse: false,
-                      autoPlay: true,
-                      autoPlayInterval: const Duration(seconds: 4),
-                      autoPlayAnimationDuration:
-                      const Duration(milliseconds: 800),
-                      autoPlayCurve: Curves.linearToEaseOut,
-                      enlargeCenterPage: true,
-                      enlargeFactor: 0.7,
-                      scrollDirection: Axis.horizontal,
-                    ),
-                    items: imageSliders,
-                  ),
-                  Center(
-                    child: DotsIndicator(
-                      dotsCount: imageSliders.length,
-                      position: currentIndex.toInt(),
-                    ),
-                  ),
-                  FutureBuilder<List<NewsData>>(
-                    future: futureHomeNewsData,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      } else if (snapshot.hasError) {
-                        return Center(child: Text('Error: ${snapshot.error}'));
-                      } else if (snapshot.hasData) {
-                        final List<NewsData> news = snapshot.data!;
-                        return Padding(
-                          padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                                color: const Color(0xFFC4C4C4).withOpacity(0.4),
-                                borderRadius:
-                                const BorderRadius.all(Radius.circular(10))
-                            ),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 20.0,
-                                      right: 20.0,
-                                      top: 10.0,
-                                      bottom: 10.0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Expanded(
-                                          child: Text(
-                                            buildTranslate("latestNews")!,
-                                            softWrap: true,
-                                            style: const TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 20,
-                                                fontFamily: 'poppins-medium'),
-                                          )),
-                                      const VerticalDivider(width: 1.0),
-                                      Expanded(
-                                          child: Align(
-                                            alignment: Alignment.centerRight,
-                                            child: Text(
-                                              buildTranslate("showMore")!,
-                                              softWrap: true,
-                                              style: const TextStyle(
-                                                  color: Colors.grey,
-                                                  fontSize: 15,
-                                                  fontFamily: 'poppins-regular'),
-                                            ),
-                                          )),
-                                    ],
-                                  ),
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        CarouselSlider(
+                          options: CarouselOptions(
+                            height: 150,
+                            aspectRatio: 2.0,
+                            viewportFraction: 0.9,
+                            initialPage: 0,
+                            enableInfiniteScroll: true,
+                            reverse: false,
+                            autoPlay: true,
+                            autoPlayInterval: const Duration(seconds: 4),
+                            autoPlayAnimationDuration:
+                            const Duration(milliseconds: 800),
+                            autoPlayCurve: Curves.linearToEaseOut,
+                            enlargeCenterPage: true,
+                            enlargeFactor: 0.7,
+                            scrollDirection: Axis.horizontal,
+                          ),
+                          items: imageSliders,
+                        ),
+                        Center(
+                          child: DotsIndicator(
+                            dotsCount: imageSliders.length,
+                            position: currentIndex.toInt(),
+                          ),
+                        ),
+                        FutureBuilder<List<NewsData>>(
+                        future: futureHomeNewsData,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return const Center(child: CircularProgressIndicator());
+                          } else if (snapshot.hasError) {
+                            return Center(child: Text('Error: ${snapshot.error}'));
+                          } else if (snapshot.hasData) {
+                            final List<NewsData> news = snapshot.data!;
+                            return Padding(
+                              padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    color: const Color(0xFFC4C4C4).withOpacity(0.4),
+                                    borderRadius:
+                                    const BorderRadius.all(Radius.circular(10))
                                 ),
-                                ListView.builder(
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  itemCount: news.length,
-                                  shrinkWrap: true,
-                                  padding: EdgeInsets.zero, // This removes the default padding
-                                  scrollDirection: Axis.vertical,
-                                  itemBuilder: (context, index) {
-                                    final newsData = news[index];
-                                    return InkWell(
-                                      highlightColor: Colors.transparent,
-                                      splashColor: Colors.transparent,
-                                      onTap: () {
-                                        Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  MyDetailNewsPage(title : newsData.title,
-                                                      description: newsData.description,
-                                                      imageLink: newsData.imageURL)),
-                                        );
-                                      },
-                                      child: Column(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 20.0,
+                                          right: 20.0,
+                                          top: 10.0,
+                                          bottom: 10.0),
+                                      child: Row(
                                         mainAxisAlignment: MainAxisAlignment.start,
                                         crossAxisAlignment: CrossAxisAlignment.start,
-                                        mainAxisSize: MainAxisSize.max,
                                         children: [
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            children: [
-                                              Expanded(
-                                                flex: 3,
-                                                child: Column(
-                                                  mainAxisAlignment: MainAxisAlignment.start,
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: [
-                                                    Padding(
-                                                      padding: const EdgeInsets.only(left: 20.0),
-                                                      child: Text(
-                                                        newsData.title.toString() ?? "",
-                                                        softWrap: true,
-                                                        style: TextStyle(
-                                                            fontSize: 16,
-                                                            fontWeight:
-                                                            FontWeight.bold,
-                                                            color: Colors.black,
-                                                            fontFamily:
-                                                            "poppins-medium"),
-                                                      ),
-                                                    ),
-                                                    Padding(
-                                                      padding: const EdgeInsets.only(left: 20.0, right: 10.0),
-                                                      child: Text(
-                                                        newsData.description.toString() ?? "",
-                                                        softWrap: true,
-                                                        style: TextStyle(
-                                                            fontSize: 13,
-                                                            fontWeight: FontWeight.w700,
-                                                            fontFamily: "poppins-regular",
-                                                            color: Colors.grey),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              Expanded(
-                                                flex: 1,
-                                                // child: Image.asset(
-                                                //   'assets/images/homeItem.png',
-                                                //   width: 50,
-                                                //   height: 50,
-                                                // ),
-                                                child:
-                                                Image.network(newsData.imageURL.toString() ?? "",
-                                                    errorBuilder: (context, error, stackTrace) {
-                                                      return Text('Image not found'); // Custom message for 404
-                                                    },
-                                                    width: 50,
-                                                    height: 50),
-                                              )
-                                            ],
-                                          ),
-
-                                          Padding(
-                                            padding: EdgeInsets.only(left: 20.0, right: 20.0),
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.start,
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                // Text(
-                                                //   "5min Read",
-                                                //   softWrap: true,
-                                                //   style: TextStyle(
-                                                //       color:
-                                                //       Colors.black,
-                                                //       fontSize: 13,
-                                                //       fontFamily:
-                                                //       'poppins-medium'),
-                                                // ),
-                                                // SizedBox(width: 10.0),
-                                                Text(
-                                                  "17 hours ago",
+                                          Expanded(
+                                              child: Text(
+                                                buildTranslate("latestNews")!,
+                                                softWrap: true,
+                                                style: const TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 20,
+                                                    fontFamily: 'poppins-medium'),
+                                              )),
+                                          const VerticalDivider(width: 1.0),
+                                          Expanded(
+                                              child: Align(
+                                                alignment: Alignment.centerRight,
+                                                child: Text(
+                                                  buildTranslate("showMore")!,
                                                   softWrap: true,
-                                                  style: TextStyle(
-                                                      color: Colors
-                                                          .black,
-                                                      fontSize: 13,
-                                                      fontFamily:
-                                                      'poppins-medium'),
+                                                  style: const TextStyle(
+                                                      color: Colors.grey,
+                                                      fontSize: 15,
+                                                      fontFamily: 'poppins-regular'),
                                                 ),
-                                              ],
-                                            ),
-                                          ),
-                                          // Wrap(
-                                          //   // mainAxisAlignment: MainAxisAlignment.center,
-                                          //   // crossAxisAlignment: CrossAxisAlignment.center,
-                                          //   children: <Widget>[
-                                          //     Image.asset(
-                                          //       'assets/images/homeItem.png',
-                                          //       width: 100,
-                                          //       height: 90,
-                                          //     )
-                                          //     // Icon(Icons.close),
-                                          //   ],
-                                          // ),
-                                          const Padding(
-                                            padding: EdgeInsets.only(
-                                                left: 20.0, right: 20.0),
-                                            child: Divider(
-                                              color: Colors.black,
-                                              thickness: 2,
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
+                                              )),
                                         ],
                                       ),
-                                    );
-                                  },
+                                    ),
+                                    ListView.builder(
+                                      physics: const NeverScrollableScrollPhysics(),
+                                      itemCount: news.length,
+                                      shrinkWrap: true,
+                                      padding: EdgeInsets.zero, // This removes the default padding
+                                      scrollDirection: Axis.vertical,
+                                      itemBuilder: (context, index) {
+                                        final newsData = news[index];
+                                        return InkWell(
+                                        highlightColor: Colors.transparent,
+                                        splashColor: Colors.transparent,
+                                        onTap: () {
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    MyDetailNewsPage(title : newsData.title,
+                                                        description: newsData.description,
+                                                        imageLink: newsData.imageURL)),
+                                          );
+                                        },
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.max,
+                                          children: [
+                                            SizedBox(
+                                              width: 10,
+                                            ),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              children: [
+                                                Expanded(
+                                                  flex: 3,
+                                                  child: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      Padding(
+                                                        padding: const EdgeInsets.only(left: 20.0),
+                                                        child: Text(
+                                                          newsData.title.toString() ?? "",
+                                                          softWrap: true,
+                                                          style: TextStyle(
+                                                              fontSize: 16,
+                                                              fontWeight:
+                                                              FontWeight.bold,
+                                                              color: Colors.black,
+                                                              fontFamily:
+                                                              "poppins-medium"),
+                                                        ),
+                                                      ),
+                                                      Padding(
+                                                        padding: const EdgeInsets.only(left: 20.0, right: 10.0),
+                                                        child: Text(
+                                                          newsData.description.toString() ?? "",
+                                                          softWrap: true,
+                                                          style: TextStyle(
+                                                              fontSize: 13,
+                                                              fontWeight: FontWeight.w700,
+                                                              fontFamily: "poppins-regular",
+                                                              color: Colors.grey),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  flex: 1,
+                                                  // child: Image.asset(
+                                                  //   'assets/images/homeItem.png',
+                                                  //   width: 50,
+                                                  //   height: 50,
+                                                  // ),
+                                                  child:
+                                                  Image.network(newsData.imageURL.toString() ?? "",
+                                                      errorBuilder: (context, error, stackTrace) {
+                                                        return Text('Image not found'); // Custom message for 404
+                                                      },
+                                                      width: 50,
+                                                      height: 50),
+                                                )
+                                              ],
+                                            ),
+
+                                            Padding(
+                                              padding: EdgeInsets.only(left: 20.0, right: 20.0),
+                                              child:  Text(
+                                                AppGlobal.convertToCustomDateFormat(newsData.createdAt.toString()),
+                                                softWrap: true,
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 13,
+                                                    fontFamily: 'poppins-medium'),
+                                              ),
+                                              // child: Row(
+                                              //   mainAxisAlignment: MainAxisAlignment.start,
+                                              //   crossAxisAlignment: CrossAxisAlignment.start,
+                                              //   children: [
+                                              //     // Text(
+                                              //     //   "5min Read",
+                                              //     //   softWrap: true,
+                                              //     //   style: TextStyle(
+                                              //     //       color:
+                                              //     //       Colors.black,
+                                              //     //       fontSize: 13,
+                                              //     //       fontFamily:
+                                              //     //       'poppins-medium'),
+                                              //     // ),
+                                              //     // SizedBox(width: 10.0),
+                                              //     // Text(
+                                              //     //   "17 hours ago",
+                                              //     //   softWrap: true,
+                                              //     //   style: TextStyle(
+                                              //     //       color: Colors
+                                              //     //           .black,
+                                              //     //       fontSize: 13,
+                                              //     //       fontFamily:
+                                              //     //       'poppins-medium'),
+                                              //     // ),
+                                              //   ],
+                                              // ),
+                                            ),
+                                            // Wrap(
+                                            //   // mainAxisAlignment: MainAxisAlignment.center,
+                                            //   // crossAxisAlignment: CrossAxisAlignment.center,
+                                            //   children: <Widget>[
+                                            //     Image.asset(
+                                            //       'assets/images/homeItem.png',
+                                            //       width: 100,
+                                            //       height: 90,
+                                            //     )
+                                            //     // Icon(Icons.close),
+                                            //   ],
+                                            // ),
+                                            const Padding(
+                                              padding: EdgeInsets.only(
+                                                  left: 20.0, right: 20.0),
+                                              child: Divider(
+                                                color: Colors.black,
+                                                thickness: 2,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  ),],
                                 ),
-                              ],
-                            ),
-                          ),
-                        );
-                      } else {
-                        return const Center(child: Text('No data available'));
+                              ),
+                          );
+                      }
+                          else {
+                            return const Center(child: Text('No data available'));
                       }
                     },
-                  ),
-                  SizedBox(height: 80,),
-                  // Padding(
-                  //   padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-                  //   child: Container(
-                  //     decoration: BoxDecoration(
-                  //         color: const Color(0xFFC4C4C4).withOpacity(0.4),
-                  //         borderRadius:
-                  //             const BorderRadius.all(Radius.circular(10))),
-                  //     child: LimitedBox(
-                  //       maxHeight: 250,
-                  //       child: Column(
-                  //         mainAxisSize: MainAxisSize.min,
-                  //         children: [
-                  //           Padding(
-                  //             padding: const EdgeInsets.only(
-                  //                 left: 20.0,
-                  //                 right: 20.0,
-                  //                 top: 8.0,
-                  //                 bottom: 8.0),
-                  //             child: Row(
-                  //               mainAxisAlignment: MainAxisAlignment.start,
-                  //               crossAxisAlignment:
-                  //                   CrossAxisAlignment.start,
-                  //               children: [
-                  //                 Expanded(
-                  //                     child: Text(
-                  //                   buildTranslate("latestNews")!,
-                  //                   softWrap: true,
-                  //                   style: const TextStyle(
-                  //                       color: Colors.black,
-                  //                       fontSize: 20,
-                  //                       fontFamily: 'poppins-medium'),
-                  //                 )),
-                  //                 const VerticalDivider(width: 1.0),
-                  //                 Expanded(
-                  //                     child: Align(
-                  //                   alignment: Alignment.centerRight,
-                  //                   child: Text(
-                  //                     buildTranslate("showMore")!,
-                  //                     softWrap: true,
-                  //                     style: const TextStyle(
-                  //                         color: Colors.grey,
-                  //                         fontSize: 15,
-                  //                         fontFamily: 'poppins-regular'),
-                  //                   ),
-                  //                 )),
-                  //               ],
-                  //             ),
-                  //           ),
-                  //           Flexible(
-                  //             child: ListView.builder(
-                  //               itemCount: 1,
-                  //               physics:
-                  //                   const NeverScrollableScrollPhysics(),
-                  //               scrollDirection: Axis.vertical,
-                  //               itemBuilder: (context, index) {
-                  //                 return InkWell(
-                  //                   highlightColor: Colors.transparent,
-                  //                   splashColor: Colors.transparent,
-                  //                   onTap: () {
-                  //                     Navigator.of(context).push(
-                  //                       MaterialPageRoute(
-                  //                           builder: (context) =>
-                  //                               const MyDetailNewsPage()),
-                  //                     );
-                  //                   },
-                  //                   child: Column(
-                  //                     mainAxisSize: MainAxisSize.min,
-                  //                     children: [
-                  //                       ListTile(
-                  //                         contentPadding:
-                  //                             EdgeInsets.all(10),
-                  //                         title: const Row(
-                  //                           children: [
-                  //                             // Icon(Icons.location_on,size: 20,),
-                  //                             SizedBox(
-                  //                               width: 10,
-                  //                             ),
-                  //                             Flexible(
-                  //                                 child: Text(
-                  //                               "Lorem ipsum dolor sit amet.",
-                  //                               style: TextStyle(
-                  //                                   fontSize: 16,
-                  //                                   fontWeight:
-                  //                                       FontWeight.bold,
-                  //                                   color: Colors.black,
-                  //                                   fontFamily:
-                  //                                       "poppins-medium"),
-                  //                             )),
-                  //                           ],
-                  //                         ),
-                  //                         isThreeLine: true,
-                  //                         subtitle: const Column(
-                  //                           children: [
-                  //                             Row(
-                  //                               children: [
-                  //                                 SizedBox(
-                  //                                   width: 10,
-                  //                                 ),
-                  //                                 Flexible(
-                  //                                   child: Text(
-                  //                                     "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-                  //                                     style: TextStyle(
-                  //                                         fontSize: 13,
-                  //                                         fontWeight:
-                  //                                             FontWeight
-                  //                                                 .w700,
-                  //                                         fontFamily:
-                  //                                             "poppins-regular",
-                  //                                         color:
-                  //                                             Colors.grey),
-                  //                                   ),
-                  //                                 ),
-                  //                               ],
-                  //                             ),
-                  //                             SizedBox(
-                  //                               height: 5.0,
-                  //                             ),
-                  //                             Padding(
-                  //                               padding: EdgeInsets.only(
-                  //                                   left: 12.0),
-                  //                               child: Row(
-                  //                                 mainAxisAlignment:
-                  //                                     MainAxisAlignment
-                  //                                         .start,
-                  //                                 crossAxisAlignment:
-                  //                                     CrossAxisAlignment
-                  //                                         .start,
-                  //                                 children: [
-                  //                                   Text(
-                  //                                     "5min Read",
-                  //                                     softWrap: true,
-                  //                                     style: TextStyle(
-                  //                                         color:
-                  //                                             Colors.black,
-                  //                                         fontSize: 13,
-                  //                                         fontFamily:
-                  //                                             'poppins-medium'),
-                  //                                   ),
-                  //                                   SizedBox(width: 10.0),
-                  //                                   Flexible(
-                  //                                     child: Align(
-                  //                                       alignment: Alignment
-                  //                                           .centerRight,
-                  //                                       child: Text(
-                  //                                         "17 hours ago",
-                  //                                         softWrap: true,
-                  //                                         style: TextStyle(
-                  //                                             color: Colors
-                  //                                                 .black,
-                  //                                             fontSize: 13,
-                  //                                             fontFamily:
-                  //                                                 'poppins-medium'),
-                  //                                       ),
-                  //                                     ),
-                  //                                   ),
-                  //                                 ],
-                  //                               ),
-                  //                             ),
-                  //                           ],
-                  //                         ),
-                  //                         trailing: Wrap(
-                  //                           // mainAxisAlignment: MainAxisAlignment.center,
-                  //                           // crossAxisAlignment: CrossAxisAlignment.center,
-                  //                           children: <Widget>[
-                  //                             Image.asset(
-                  //                               'assets/images/homeItem.png',
-                  //                               width: 100,
-                  //                               height: 90,
-                  //                             )
-                  //                             // Icon(Icons.close),
-                  //                           ],
-                  //                         ),
-                  //                       ),
-                  //                       const Padding(
-                  //                         padding: EdgeInsets.only(
-                  //                             left: 20.0, right: 20.0),
-                  //                         child: Divider(
-                  //                           color: Colors.black,
-                  //                           thickness: 2,
-                  //                         ),
-                  //                       )
-                  //                     ],
-                  //                   ),
-                  //                 );
-                  //               },
-                  //             ),
-                  //           ),
-                  //         ],
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
-                ],
-              )
+                  ), SizedBox(height: 80,),
+                        // Padding(
+                        //   padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+                        //   child: Container(
+                        //     decoration: BoxDecoration(
+                        //         color: const Color(0xFFC4C4C4).withOpacity(0.4),
+                        //         borderRadius:
+                        //             const BorderRadius.all(Radius.circular(10))),
+                        //     child: LimitedBox(
+                        //       maxHeight: 250,
+                        //       child: Column(
+                        //         mainAxisSize: MainAxisSize.min,
+                        //         children: [
+                        //           Padding(
+                        //             padding: const EdgeInsets.only(
+                        //                 left: 20.0,
+                        //                 right: 20.0,
+                        //                 top: 8.0,
+                        //                 bottom: 8.0),
+                        //             child: Row(
+                        //               mainAxisAlignment: MainAxisAlignment.start,
+                        //               crossAxisAlignment:
+                        //                   CrossAxisAlignment.start,
+                        //               children: [
+                        //                 Expanded(
+                        //                     child: Text(
+                        //                   buildTranslate("latestNews")!,
+                        //                   softWrap: true,
+                        //                   style: const TextStyle(
+                        //                       color: Colors.black,
+                        //                       fontSize: 20,
+                        //                       fontFamily: 'poppins-medium'),
+                        //                 )),
+                        //                 const VerticalDivider(width: 1.0),
+                        //                 Expanded(
+                        //                     child: Align(
+                        //                   alignment: Alignment.centerRight,
+                        //                   child: Text(
+                        //                     buildTranslate("showMore")!,
+                        //                     softWrap: true,
+                        //                     style: const TextStyle(
+                        //                         color: Colors.grey,
+                        //                         fontSize: 15,
+                        //                         fontFamily: 'poppins-regular'),
+                        //                   ),
+                        //                 )),
+                        //               ],
+                        //             ),
+                        //           ),
+                        //           Flexible(
+                        //             child: ListView.builder(
+                        //               itemCount: 1,
+                        //               physics:
+                        //                   const NeverScrollableScrollPhysics(),
+                        //               scrollDirection: Axis.vertical,
+                        //               itemBuilder: (context, index) {
+                        //                 return InkWell(
+                        //                   highlightColor: Colors.transparent,
+                        //                   splashColor: Colors.transparent,
+                        //                   onTap: () {
+                        //                     Navigator.of(context).push(
+                        //                       MaterialPageRoute(
+                        //                           builder: (context) =>
+                        //                               const MyDetailNewsPage()),
+                        //                     );
+                        //                   },
+                        //                   child: Column(
+                        //                     mainAxisSize: MainAxisSize.min,
+                        //                     children: [
+                        //                       ListTile(
+                        //                         contentPadding:
+                        //                             EdgeInsets.all(10),
+                        //                         title: const Row(
+                        //                           children: [
+                        //                             // Icon(Icons.location_on,size: 20,),
+                        //                             SizedBox(
+                        //                               width: 10,
+                        //                             ),
+                        //                             Flexible(
+                        //                                 child: Text(
+                        //                               "Lorem ipsum dolor sit amet.",
+                        //                               style: TextStyle(
+                        //                                   fontSize: 16,
+                        //                                   fontWeight:
+                        //                                       FontWeight.bold,
+                        //                                   color: Colors.black,
+                        //                                   fontFamily:
+                        //                                       "poppins-medium"),
+                        //                             )),
+                        //                           ],
+                        //                         ),
+                        //                         isThreeLine: true,
+                        //                         subtitle: const Column(
+                        //                           children: [
+                        //                             Row(
+                        //                               children: [
+                        //                                 SizedBox(
+                        //                                   width: 10,
+                        //                                 ),
+                        //                                 Flexible(
+                        //                                   child: Text(
+                        //                                     "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+                        //                                     style: TextStyle(
+                        //                                         fontSize: 13,
+                        //                                         fontWeight:
+                        //                                             FontWeight
+                        //                                                 .w700,
+                        //                                         fontFamily:
+                        //                                             "poppins-regular",
+                        //                                         color:
+                        //                                             Colors.grey),
+                        //                                   ),
+                        //                                 ),
+                        //                               ],
+                        //                             ),
+                        //                             SizedBox(
+                        //                               height: 5.0,
+                        //                             ),
+                        //                             Padding(
+                        //                               padding: EdgeInsets.only(
+                        //                                   left: 12.0),
+                        //                               child: Row(
+                        //                                 mainAxisAlignment:
+                        //                                     MainAxisAlignment
+                        //                                         .start,
+                        //                                 crossAxisAlignment:
+                        //                                     CrossAxisAlignment
+                        //                                         .start,
+                        //                                 children: [
+                        //                                   Text(
+                        //                                     "5min Read",
+                        //                                     softWrap: true,
+                        //                                     style: TextStyle(
+                        //                                         color:
+                        //                                             Colors.black,
+                        //                                         fontSize: 13,
+                        //                                         fontFamily:
+                        //                                             'poppins-medium'),
+                        //                                   ),
+                        //                                   SizedBox(width: 10.0),
+                        //                                   Flexible(
+                        //                                     child: Align(
+                        //                                       alignment: Alignment
+                        //                                           .centerRight,
+                        //                                       child: Text(
+                        //                                         "17 hours ago",
+                        //                                         softWrap: true,
+                        //                                         style: TextStyle(
+                        //                                             color: Colors
+                        //                                                 .black,
+                        //                                             fontSize: 13,
+                        //                                             fontFamily:
+                        //                                                 'poppins-medium'),
+                        //                                       ),
+                        //                                     ),
+                        //                                   ),
+                        //                                 ],
+                        //                               ),
+                        //                             ),
+                        //                           ],
+                        //                         ),
+                        //                         trailing: Wrap(
+                        //                           // mainAxisAlignment: MainAxisAlignment.center,
+                        //                           // crossAxisAlignment: CrossAxisAlignment.center,
+                        //                           children: <Widget>[
+                        //                             Image.asset(
+                        //                               'assets/images/homeItem.png',
+                        //                               width: 100,
+                        //                               height: 90,
+                        //                             )
+                        //                             // Icon(Icons.close),
+                        //                           ],
+                        //                         ),
+                        //                       ),
+                        //                       const Padding(
+                        //                         padding: EdgeInsets.only(
+                        //                             left: 20.0, right: 20.0),
+                        //                         child: Divider(
+                        //                           color: Colors.black,
+                        //                           thickness: 2,
+                        //                         ),
+                        //                       )
+                        //                     ],
+                        //                   ),
+                        //                 );
+                        //               },
+                        //             ),
+                        //           ),
+                        //         ],
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
+                    ],
+                  )
                   : selectedTopData == 1
                   ? Column(
                 children: [
@@ -1392,7 +1404,7 @@ class _MyBottomOnePageState extends State<MyBottomOnePage>
                       fontFamily: 'poppins-semibold'),)),
               )
                   : Container(),
-              Container(),
+                    Container(),
             ],
           ),
         ),
@@ -1583,9 +1595,16 @@ class _MyBottomOnePageState extends State<MyBottomOnePage>
             )));
       }
     } else if (index == 3) {
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => const MyProfilePage()),
-      );
+      if (_isClickAllowed) {
+        _isClickAllowed = false;
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => const MyProfilePage()),
+        );
+        // Re-enable clicks after a short delay (e.g., 500ms)
+        Timer(Duration(seconds: 1), () {
+          _isClickAllowed = true;
+        });
+      }
     } else if (index == 4) {
       var route = ModalRoute.of(context);
       if (route != null) {
@@ -1602,13 +1621,6 @@ class _MyBottomOnePageState extends State<MyBottomOnePage>
     }
   }
 
-// @override
-// void dispose() {
-//   // _fabAnimationController.dispose(); // you need this
-//   // _borderRadiusAnimationController.dispose(); // you need this
-//   // _hideBottomBarAnimationController.dispose(); // you need this
-//   super.dispose();
-// }
 }
 
 class bottomCategory {

@@ -92,6 +92,7 @@ class _MyEnquiryDetailPageState extends State<MyEnquiryDetailPage>
                     height: 10.0,
                   ),
 
+                  //name
                   Padding(
                     padding: EdgeInsets.only(left: 20.0),
                     child: Row(
@@ -123,11 +124,11 @@ class _MyEnquiryDetailPageState extends State<MyEnquiryDetailPage>
                       ],
                     ),
                   ),
-
                   const SizedBox(
                     height: 10.0,
                   ),
 
+                  //Purpose
                   Padding(
                     padding: const EdgeInsets.only(left: 20.0),
                     child: Row(
@@ -198,6 +199,7 @@ class _MyEnquiryDetailPageState extends State<MyEnquiryDetailPage>
                     height: 10.0,
                   ),
 
+                  //Quantity
                   Padding(
                     padding: EdgeInsets.only(left: 20.0),
                     child: Row(
@@ -233,6 +235,43 @@ class _MyEnquiryDetailPageState extends State<MyEnquiryDetailPage>
                     height: 10.0,
                   ),
 
+                  //Location
+                  Padding(
+                    padding: EdgeInsets.only(left: 20.0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const Expanded(
+                          flex: 1,
+                          child: Text(
+                            "Location :",
+                            softWrap: true,
+                            style: TextStyle(
+                                color: Color(0xFF808080),
+                                fontSize: 15,
+                                fontFamily: 'poppins-semibold'),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Text(
+                            widget.commodity.location.toString(),
+                            softWrap: true,
+                            style: const TextStyle(
+                                color: Color(0xFF808080),
+                                fontSize: 15,
+                                fontFamily: 'poppins-semibold'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 10.0,
+                  ),
+
+                  //Moisture
                   Padding(
                     padding: EdgeInsets.only(left: 20.0),
                     child: Row(
@@ -268,6 +307,7 @@ class _MyEnquiryDetailPageState extends State<MyEnquiryDetailPage>
                     height: 10.0,
                   ),
 
+                  //Grade
                   Padding(
                     padding: const EdgeInsets.only(left: 20.0),
                     child: Row(
@@ -303,6 +343,7 @@ class _MyEnquiryDetailPageState extends State<MyEnquiryDetailPage>
                     height: 10.0,
                   ),
 
+                  //Size
                   Padding(
                     padding: const EdgeInsets.only(left: 20.0),
                     child: Row(
@@ -338,6 +379,7 @@ class _MyEnquiryDetailPageState extends State<MyEnquiryDetailPage>
                     height: 10.0,
                   ),
 
+                  //Count
                   Padding(
                     padding: EdgeInsets.only(left: 20.0),
                     child: Row(
@@ -373,6 +415,7 @@ class _MyEnquiryDetailPageState extends State<MyEnquiryDetailPage>
                     height: 10.0,
                   ),
 
+                  //TargetedPrice
                   Padding(
                     padding: const EdgeInsets.only(left: 20.0),
                     child: Row(
@@ -408,6 +451,7 @@ class _MyEnquiryDetailPageState extends State<MyEnquiryDetailPage>
                     height: 10.0,
                   ),
 
+                  //Expected Purchase Date
                   Padding(
                     padding: EdgeInsets.only(left: 20.0),
                     child: Row(
@@ -439,7 +483,6 @@ class _MyEnquiryDetailPageState extends State<MyEnquiryDetailPage>
                       ],
                     ),
                   ),
-
                   const SizedBox(
                     height: 10.0,
                   ),

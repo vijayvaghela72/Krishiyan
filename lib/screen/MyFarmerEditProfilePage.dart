@@ -1156,20 +1156,8 @@ class _MyFarmerEditProfilePageState extends State<MyFarmerEditProfilePage> {
 
   _farmerEditRegistrationApiCall() async {
     if (ownedAreaController.text.trim().isNotEmpty &&
-        goeLocationController.text.trim().isNotEmpty &&
-        leasedFarmController.text.trim().isNotEmpty &&
-        goeLocationLeasedController.text.trim().isNotEmpty &&
         pincodeController.text.trim().isNotEmpty &&
-        _selectedStateName.toString().isNotEmpty &&
-        _selectedDistrictName.toString().isNotEmpty &&
-        villageController.text.trim().isNotEmpty &&
-        addressController.text.trim().isNotEmpty &&
-        bankNameController.text.trim().isNotEmpty &&
-        accountNameController.text.trim().isNotEmpty &&
-        accountNumberController.text.trim().isNotEmpty &&
-        ifsCodeController.text.trim().isNotEmpty &&
-        panNumberController.text.trim().isNotEmpty &&
-        aadharNumberController.text.trim().isNotEmpty) {
+        villageController.text.trim().isNotEmpty && selectedItemValue.toString().isNotEmpty) {
 
       var headers = {
         'Content-Type': 'application/json'

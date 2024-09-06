@@ -54,7 +54,7 @@ class AppGlobal {
 
   static String convertToCustomDateFormat(String isoDate) {
 
-    print("convertToCustomDateFormat : $isoDate");
+    // print("convertToCustomDateFormat : $isoDate");
 
     // Remove the trailing ':000Z' part to make it a standard ISO 8601 format
     String correctedIsoDate = isoDate.replaceFirst(RegExp(r':\d{3}Z$'), 'Z');

@@ -114,7 +114,7 @@ class _MyBottomTwoPageState extends State<MyBottomTwoPage>
   TextEditingController dateController = TextEditingController();
   TextEditingController geoLocationController = TextEditingController();
   TextEditingController areaInArcesController = TextEditingController();
-  TextEditingController geoLinkAreaController = TextEditingController();
+  // TextEditingController geoLinkAreaController = TextEditingController();
 
   String? _selectedCrop;
   // SelectCropNamesData? _cropData;
@@ -382,8 +382,8 @@ class _MyBottomTwoPageState extends State<MyBottomTwoPage>
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
-                    return const Center(child: Text('No data available'));
-                    // return Center(child: Text('Error: ${snapshot.error}'));
+                    // return Center(child: Text(snapshot.error.toString()));
+                    return Center(child: Text('No data available'));
                   } else if (snapshot.hasData) {
                     List<FarmerDashboard> farmers = snapshot.data!;
                     return ListView.builder(
@@ -391,24 +391,24 @@ class _MyBottomTwoPageState extends State<MyBottomTwoPage>
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemBuilder: (context, index) {
-                          final dealerNo = farmers[index].dealerNumber ?? "";
-                          final Name = farmers[index].name ?? "";
-                          final Address = farmers[index].address ?? "";
-                          final WhatsappNumber = farmers[index].whatsappNumber ?? "";
-                          final GeoLocationOwnedFarm = farmers[index].geoLocationOwnedFarm ?? "";
-                          final TotalOwnedFarm = farmers[index].totalOwnedFarm.toString();
-                          final TotalLeaseFarm = farmers[index].totalLeaseFarm.toString();
-                          final GeoLocationLeaseFarm = farmers[index].geoLocationLeaseFarm ?? "";
-                          final Pincode = farmers[index].pincode ??"";
-                          final State = farmers[index].state ?? "";
-                          final Village = farmers[index].village ?? "";
-                          final District = farmers[index].district ?? "";
-                          final BankName = farmers[index].bankName ?? "";
-                          final AccountName = farmers[index].accountName ?? "";
-                          final AccountNumber = farmers[index].accountNumber ?? "";
-                          final IfscCode = farmers[index].ifscCode ?? "";
-                          final PanNumber = farmers[index].pan ?? "";
-                          final AadhaarNumber = farmers[index].aadhaarNumber ?? "";
+                          final dealerNo = farmers[index].farmerDetails!.dealerNumber ?? "";
+                          final Name = farmers[index].farmerDetails!.name ?? "";
+                          final Address = farmers[index].farmerDetails!.address ?? "";
+                          final WhatsappNumber = farmers[index].farmerDetails!.whatsappNumber ?? "";
+                          final GeoLocationOwnedFarm = farmers[index].farmerDetails!.geoLocationOwnedFarm ?? "";
+                          final TotalOwnedFarm = farmers[index].farmerDetails!.totalOwnedFarm.toString();
+                          final TotalLeaseFarm = farmers[index].farmerDetails!.totalLeaseFarm.toString();
+                          final GeoLocationLeaseFarm = farmers[index].farmerDetails!.geoLocationLeaseFarm ?? "";
+                          final Pincode = farmers[index].farmerDetails!.pincode ??"";
+                          final State = farmers[index].farmerDetails!.state ?? "";
+                          final Village = farmers[index].farmerDetails!.village ?? "";
+                          final District = farmers[index].farmerDetails!.district ?? "";
+                          final BankName = farmers[index].farmerDetails!.bankName ?? "";
+                          final AccountName = farmers[index].farmerDetails!.accountName ?? "";
+                          final AccountNumber = farmers[index].farmerDetails!.accountNumber ?? "";
+                          final IfscCode = farmers[index].farmerDetails!.ifscCode ?? "";
+                          final PanNumber = farmers[index].farmerDetails!.pan ?? "";
+                          final AadhaarNumber = farmers[index].farmerDetails!.aadhaarNumber ?? "";
 
                           return
                             // user card
@@ -1653,60 +1653,60 @@ class _MyBottomTwoPageState extends State<MyBottomTwoPage>
                   height: 20,
                 ),
 
-                // geo link in area
-                Padding(
-                  padding: const EdgeInsets.only(
-                      left: 25.0, right: 25.0),
-                  child: Text(
-                    buildTranslate("geoLinkAreaOnMap")!,
-                    style: const TextStyle(
-                        fontSize: 15,
-                        color: Color(0xFF666666),
-                        fontFamily: 'poppins-semibold'),
-                  ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                      left: 25.0, right: 25.0),
-                  child: TextFormField(
-                    decoration: const InputDecoration(
-                        alignLabelWithHint: true,
-                        fillColor: Colors.white,
-                        filled: true,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(10.0),
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.grey,
-                            width: 1.0,
-                          ),
-                          borderRadius: BorderRadius.all(
-                              Radius.circular(8.0)),
-                        ),
-                        hintText: '----',
-                        hintStyle:
-                        TextStyle(color: Color(0xFFe7e7e7)),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(
-                              Radius.circular(8.0)),
-                          borderSide: BorderSide(
-                              color: Colors.green, width: 0.5),
-                        )),
-                    validator: (value) => value!.isEmpty
-                        ? 'Please, fill this field.'
-                        : null,
-                    controller: geoLinkAreaController,
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
+                // // geo link in area
+                // Padding(
+                //   padding: const EdgeInsets.only(
+                //       left: 25.0, right: 25.0),
+                //   child: Text(
+                //     buildTranslate("geoLinkAreaOnMap")!,
+                //     style: const TextStyle(
+                //         fontSize: 15,
+                //         color: Color(0xFF666666),
+                //         fontFamily: 'poppins-semibold'),
+                //   ),
+                // ),
+                // const SizedBox(
+                //   height: 10,
+                // ),
+                // Padding(
+                //   padding: const EdgeInsets.only(
+                //       left: 25.0, right: 25.0),
+                //   child: TextFormField(
+                //     decoration: const InputDecoration(
+                //         alignLabelWithHint: true,
+                //         fillColor: Colors.white,
+                //         filled: true,
+                //         border: OutlineInputBorder(
+                //           borderRadius: BorderRadius.all(
+                //             Radius.circular(10.0),
+                //           ),
+                //         ),
+                //         enabledBorder: OutlineInputBorder(
+                //           borderSide: BorderSide(
+                //             color: Colors.grey,
+                //             width: 1.0,
+                //           ),
+                //           borderRadius: BorderRadius.all(
+                //               Radius.circular(8.0)),
+                //         ),
+                //         hintText: '----',
+                //         hintStyle:
+                //         TextStyle(color: Color(0xFFe7e7e7)),
+                //         focusedBorder: OutlineInputBorder(
+                //           borderRadius: BorderRadius.all(
+                //               Radius.circular(8.0)),
+                //           borderSide: BorderSide(
+                //               color: Colors.green, width: 0.5),
+                //         )),
+                //     validator: (value) => value!.isEmpty
+                //         ? 'Please, fill this field.'
+                //         : null,
+                //     controller: geoLinkAreaController,
+                //   ),
+                // ),
+                // const SizedBox(
+                //   height: 20,
+                // ),
 
                 // SizedBox(
                 //   height: 40,
@@ -2972,8 +2972,8 @@ class _MyBottomTwoPageState extends State<MyBottomTwoPage>
         dateController.text.trim().isNotEmpty &&
         geoLocationController.text.trim().isNotEmpty &&
         selectedItemValue.toString().isNotEmpty &&
-        areaInArcesController.text.trim().isNotEmpty &&
-        geoLinkAreaController.text.trim().isNotEmpty) {
+        areaInArcesController.text.trim().isNotEmpty) {
+        // geoLinkAreaController.text.trim().isNotEmpty) {
       String? number = await AppGlobal.getStringPreference('dealerNumber');
 
       var body = json.encode({
@@ -2986,7 +2986,7 @@ class _MyBottomTwoPageState extends State<MyBottomTwoPage>
         "geolocation": geoLocationController.text.toString(),
         "typeOfCultivationPractice": selectedItemValue.toString(),
         "areaInAcres": areaInArcesController.text.toString(),
-        "geoLinkAreaOnMap": geoLinkAreaController.text.toString()
+        "geoLinkAreaOnMap": ""
       });
 
       var farmerRegistration =

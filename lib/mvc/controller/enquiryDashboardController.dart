@@ -36,6 +36,19 @@ class EnquiryDashboardController{
     }
   }
 
+  static Future<List<EnquiryData>> getEnquiryDetailsByCommodity(String commodity) async {
+    final response = await http.get(Uri.parse("https://krishiyanback.vercel.app/api/commodities/$commodity"));
+
+    if (response.statusCode == 200) {
+      final jsonResponse = json.decode(response.body);
+      final List<dynamic> data = jsonResponse['data'];
+      print("Get Enquiry Details By Commodity : $data");
+      return data.map((item) => EnquiryData.fromJson(item)).toList();
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
+
   static Future<String?> buySellCommodityData(dynamic data,{required BuildContext context}) async {
 
     var headers = {

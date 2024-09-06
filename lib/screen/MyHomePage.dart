@@ -84,6 +84,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
   Locale _locale = const Locale("en");
   String typeOfOrganizationData = "";
+
+  bool _isClickAllowed = true; // Flag to prevent double-clicks
+
   changeLanguage(Locale locale) {
     setState(() {
       _locale = locale;
@@ -467,13 +470,13 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
   Future<void> getPrefValue() async {
     typeOfOrganizationData = await SharedPref.readPreferenceValue(typeOfOrganization, PrefEnum.STRING);
-    print("TypeOfOrganizationData : $typeOfOrganizationData");
+    print("Home TypeOfOrganizationData : $typeOfOrganizationData");
     setState(() {
       typeOfOrganizationData = typeOfOrganizationData;
     });
   }
 
-  void _onItemTapped(int index) {
+  Future<void> _onItemTapped(int index) async {
 
     print("Home index : $index");
     if (index != 3) {
@@ -530,9 +533,16 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       }
     }
     else if(index == 3){
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => const MyProfilePage()),
-      );
+      if (_isClickAllowed) {
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => const MyProfilePage()),
+        );
+        _isClickAllowed = false;
+        // Re-enable clicks after a short delay (e.g., 500ms)
+        // Simulate an async operation like a navigation or API call
+        await Future.delayed(Duration(seconds: 2)); // Simulating an async task
+        _isClickAllowed = true; // Allow clicks again after the task completes
+      }
     }
     else{
       var route = ModalRoute.of(context);
