@@ -21,7 +21,7 @@ class APIResponse {
   PostOffice? postOfficeData;
   BuyCommodityData? buyCommodityData;
   FarmersNameData? farmerData;
-  FarmerDashboardData? farmerDashboardData;
+  // FarmerDashboardData? farmerDashboardData;
   OtherData? otherData;
   GetProfileDetails? profileData;
   GetFRMProfileDetails? frmProfileData;
@@ -30,7 +30,7 @@ class APIResponse {
   Address? addressData;
 
   APIResponse({this.data, this.message, this.success, this.token, this.buyCommodityData, this.farmerData,
-    this.farmerDashboardData, this.otherData, this.bankData, this.addressData,
+    this.otherData, this.bankData, this.addressData,
     this.frmRegistrationData, this.postOfficeData, this.profileData, this.frmProfileData, this.insightDetails});
 
   factory APIResponse.fromJson(Map<String, dynamic> json) {
@@ -38,7 +38,7 @@ class APIResponse {
       data: json['data'] != null ? Data.fromJson(json['data']) : null,
       buyCommodityData: json['data'] != null ? BuyCommodityData.fromJson(json['data']) : null,
       farmerData: json['data'] != null ? FarmersNameData.fromJson(json['data']) : null,
-      farmerDashboardData: json['data'] != null ? FarmerDashboardData.fromJson(json['data']) : null,
+      // farmerDashboardData: json['data'] != null ? FarmerDashboardData.fromJson(json['data']) : null,
       frmRegistrationData: json['data'] != null ? FRMRegistrationData.fromJson(json['data']) : null,
       otherData: json['data'] != null ? OtherData.fromJson(json['data']) : null,
       bankData: json['data'] != null ? BankData.fromJson(json['data']) : null,
@@ -67,9 +67,9 @@ class APIResponse {
     if (this.farmerData != null) {
       data['data'] = this.farmerData!.toJson();
     }
-    if (this.farmerDashboardData != null) {
-      data['data'] = this.farmerDashboardData!.toJson();
-    }
+    // if (this.farmerDashboardData != null) {
+    //   data['data'] = this.farmerDashboardData!.toJson();
+    // }
     if (this.frmRegistrationData != null) {
       data['data'] = this.frmRegistrationData!.toJson();
     }

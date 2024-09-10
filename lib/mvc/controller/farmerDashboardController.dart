@@ -11,12 +11,13 @@ import '../model/FarmerRegistrationData.dart';
 
 class FarmerDashboardController{
 
-  static Future<List<FarmerDashboard>> fetchFarmerDashboard(BuildContext context,
+  static Future<List<FarmerDetails>> fetchFarmerDashboard(BuildContext context,
       String? villageName,String? typeName) async {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String dealerNumberData = await prefs.getString(dealerNumber) ?? '1';
 
+    // final String baseUrl = "https://krishiyanback.vercel.app/api/appFarmer/data/1";
     final String baseUrl = "https://krishiyanback.vercel.app/api/appFarmer/data/$dealerNumberData";
 
     try {
@@ -47,8 +48,8 @@ class FarmerDashboardController{
 
       if (response.statusCode == 200) {
         List jsonResponse = response.data['data'];
-        // print("Farmer Dashboard Response : ${jsonResponse}");
-        return jsonResponse.map((data) => FarmerDashboard.fromJson(data)).toList();
+        print("Farmer Dashboard Response : ${jsonResponse}");
+        return jsonResponse.map((data) => FarmerDetails.fromJson(data)).toList();
       } else {
         throw Exception('Failed to load farmers');
       }
@@ -173,7 +174,7 @@ class FarmerDashboardController{
     }
   }
 
-  static Future<List<FarmerDashboard>> fetchSearchFarmerDashboard(BuildContext context, String? whatsappNumber) async {
+  static Future<List<FarmerDetails>> fetchSearchFarmerDashboard(BuildContext context, String? whatsappNumber) async {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String dealerNumberData = await prefs.getString(dealerNumber) ?? '1';
@@ -198,7 +199,7 @@ class FarmerDashboardController{
       if (response.statusCode == 200) {
         List jsonResponse = response.data['data'];
         // print("Farmer Dashboard Response : ${jsonResponse}");
-        return jsonResponse.map((data) => FarmerDashboard.fromJson(data)).toList();
+        return jsonResponse.map((data) => FarmerDetails.fromJson(data)).toList();
       } else {
         throw Exception('Failed to load farmers');
       }

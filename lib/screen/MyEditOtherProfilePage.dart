@@ -54,7 +54,7 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
   String? selectedFPOItemValue;
   bool otpVisible = false;
 
-  Future<GetFRMProfileDetails?>? futureProfileDetails;
+  Future<GetProfileDetails?>? futureProfileDetails;
 
   String? nameOfEntity;
   String? dateOfIncorporation;
@@ -71,7 +71,7 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    // getProfileDetails();
+    getProfileDetails();
   }
 
   @override
@@ -151,7 +151,7 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
             const SizedBox(
               height: 10,
             ),
-            FutureBuilder<GetFRMProfileDetails?>(
+            FutureBuilder<GetProfileDetails?>(
               future: futureProfileDetails,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -1570,21 +1570,21 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
     );
   }
 
-  // Future<void> getProfileDetails() async {
-  //   // id = (await AppGlobal.getStringPreference('id'))!;
-  //   contactNumber = (await AppGlobal.getStringPreference('contactNumber'))!;
-  //   futureProfileDetails = AccountSettingController.fetchFRMEditProfileDetails(context, contactNumber);
-  //   setState(() {
-  //     futureProfileDetails = futureProfileDetails;
-  //   });
-  //   Future.delayed(Duration(seconds: 2), () async {
-  //     dateOfIncorporationNumberValue = (await AppGlobal.getStringPreference('dateOfOrganization')) ?? "";
-  //     typeOfOrg = (await AppGlobal.getStringPreference('typeOfOrg')) ?? "";
-  //     setState(() {
-  //     dateOfIncorporationNumberValue = dateOfIncorporationNumberValue;
-  //     selectedFPOItemValue = typeOfOrg;
-  //     });
-  //     dateOfOrganizationController.text = AppGlobal.convertToCustomDateFormat(dateOfIncorporationNumberValue);
-  //   });
-  // }
+  Future<void> getProfileDetails() async {
+    // id = (await AppGlobal.getStringPreference('id'))!;
+    contactNumber = (await AppGlobal.getStringPreference('dealerNumber')) ?? "";
+    futureProfileDetails = AccountSettingController.fetchEditProfileDetails(context, contactNumber);
+    setState(() {
+      futureProfileDetails = futureProfileDetails;
+    });
+    Future.delayed(Duration(seconds: 2), () async {
+      dateOfIncorporationNumberValue = (await AppGlobal.getStringPreference('dateOfOrganization')) ?? "";
+      typeOfOrg = (await AppGlobal.getStringPreference('typeOfOrg')) ?? "";
+      setState(() {
+      dateOfIncorporationNumberValue = dateOfIncorporationNumberValue;
+      selectedFPOItemValue = typeOfOrg;
+      });
+      // dateOfOrganizationController.text = AppGlobal.convertToCustomDateFormat(dateOfIncorporationNumberValue);
+    });
+  }
 }

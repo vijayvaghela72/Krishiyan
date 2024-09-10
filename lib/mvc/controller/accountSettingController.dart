@@ -47,7 +47,7 @@ class AccountSettingController{
     return API
         .callPostImage(PROFILE_DETAILS+id, null, "", isKeyByPass: true)
         .then((response) {
-      AppGlobal.printLog("Edit Profile Details RESPONSE : " + response);
+      AppGlobal.printLog("Trader Edit Profile Details RESPONSE : " + response);
       APIResponse? apiResponse = APIResponse.fromJson(jsonDecode(response));
       if (apiResponse.success!) {
         return apiResponse.profileData;
