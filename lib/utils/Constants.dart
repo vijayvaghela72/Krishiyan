@@ -5,12 +5,14 @@ const String prefKeyUserModel = 'prefUserModel';
 const String isLogin = 'isLogin';
 const String name = 'name';
 const String email = 'email';
-const String contactNumber = 'contactNumber';
+const String contactNo = 'contactNumber';
 const String id = 'id';
-const String dealerNumber = '1';
+// const String dealerNumber = '1';
 const String farmerName = 'farmerName';
 const String typeOfOrganization = 'typeOfOrganization';
 const String dateOfOrganization = 'dateOfOrganization';
+const String dateOfIncorporation = 'dateOfIncorporation';
+const String typeOfEntity = 'typeOfEntity';
 const String typeOfOrg = 'typeOfOrg';
 const String token = 'token';
 
@@ -29,8 +31,8 @@ const String FARMER_DASHBOARD = "https://krishiyanback.vercel.app/api/appFarmer/
 const String FRM_PROFILE_DETAILS = "https://krishiyanback.vercel.app/api/fpoOrganization/contact/";
 const String FRM_UPDATE_PROFILE_DETAILS = "https://krishiyanback.vercel.app/api/fpoOrganization/contact/";
 
-const String PROFILE_DETAILS = "https://krishiyanback.vercel.app/api/entity/contact/0";
-const String UPDATE_PROFILE_DETAILS = "${baseUrl}api/fpoOrganization";
+const String PROFILE_DETAILS = "https://krishiyanback.vercel.app/api/entity/contact/";
+const String UPDATE_PROFILE_DETAILS = "https://krishiyanback.vercel.app/api/entity/contact/";
 
 const String OTHER_DETAILS = "${baseUrl}api/otherDetails/";
 const String UPDATE_OTHER_DETAILS = "${baseUrl}api/otherDetails";
@@ -44,6 +46,9 @@ const String UPDATE_ADDRESS_DETAILS = "${baseUrl}api/address";
 const String RESET_PASSWORD = "${baseUrl}api/app/reset-password";
 
 const String PincodeToState = "api/farmer/address";
+
+const String MANDI_PRICE_STATE = "https://krishiyanback.vercel.app/api/mandi/filter";
+
 const bool DEVELOPER_MODE = true;
 
 const String NEWS_LIST = "https://krishiyanback.vercel.app/api/all/news";

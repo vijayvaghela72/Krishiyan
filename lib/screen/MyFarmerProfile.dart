@@ -1127,7 +1127,7 @@ class _MyFarmerProfilePageState extends State<MyFarmerProfilePage> {
         pincodeController.text.trim().isNotEmpty &&
         villageController.text.trim().isNotEmpty && selectedItemValue.toString().isNotEmpty) {
 
-      String? number = await AppGlobal.getStringPreference('dealerNumber');
+      String? number = await AppGlobal.getStringPreference('contactNumber');
 
       var body = json.encode({
         "dealerNumber": number ?? "1",
@@ -1161,7 +1161,7 @@ class _MyFarmerProfilePageState extends State<MyFarmerProfilePage> {
 
           if (user.farmer != null) {
             SharedPref.savePreferenceValue(
-                dealerNumber, user.farmer!.dealerNumber);
+                contactNo, user.farmer!.dealerNumber);
             SharedPref.savePreferenceValue(farmerName, user.farmer!.name);
           }
           showAlertDialog(context);

@@ -25,7 +25,7 @@ class _MyTraderRegistrationPageState extends State<MyTraderRegistrationPage> {
   int _radioSelected = 1;
   String _radioVal = "";
 
-  final List<String> items = [
+  final List<String> traderItems = [
     'Trader',
     'Retailer',
     'Exporter',
@@ -123,7 +123,7 @@ class _MyTraderRegistrationPageState extends State<MyTraderRegistrationPage> {
                   buildTranslate("selectTypeEntity")!,
                   style: const TextStyle(color: Color(0xFFe7e7e7)),
                 ),
-                items: items.map((item) {
+                items: traderItems.map((item) {
                   return DropdownMenuItem(
                     value: item,
                     //disable default onTap to avoid closing menu when selecting an item
@@ -173,7 +173,7 @@ class _MyTraderRegistrationPageState extends State<MyTraderRegistrationPage> {
                 value: selectedItems.isEmpty ? null : selectedItems.last,
                 onChanged: (value) {},
                 selectedItemBuilder: (context) {
-                  return items.map(
+                  return traderItems.map(
                         (item) {
                       return Container(
                         alignment: AlignmentDirectional.centerStart,

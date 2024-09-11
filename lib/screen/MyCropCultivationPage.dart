@@ -679,7 +679,7 @@ class _MyCropCultivationPageState extends State<MyCropCultivationPage> with Tick
 
   Future<void> _fetchFarmerNameData() async {
     try {
-      String? number = await AppGlobal.getStringPreference('dealerNumber');
+      String? number = await AppGlobal.getStringPreference('contactNumber');
       var num = number ?? "1";
       var response = await Dio().get(FARMER_NAME+num);
 

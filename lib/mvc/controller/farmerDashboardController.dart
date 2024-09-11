@@ -8,6 +8,7 @@ import '../../utils/Constants.dart';
 import '../model/APIResponse.dart';
 import '../model/FarmerDashboardData.dart';
 import '../model/FarmerRegistrationData.dart';
+import '../model/SearchFarmerDetails.dart';
 
 class FarmerDashboardController{
 
@@ -15,7 +16,7 @@ class FarmerDashboardController{
       String? villageName,String? typeName) async {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String dealerNumberData = await prefs.getString(dealerNumber) ?? '1';
+    String dealerNumberData = await prefs.getString(contactNo) ?? '1';
 
     // final String baseUrl = "https://krishiyanback.vercel.app/api/appFarmer/data/1";
     final String baseUrl = "https://krishiyanback.vercel.app/api/appFarmer/data/$dealerNumberData";
@@ -174,10 +175,10 @@ class FarmerDashboardController{
     }
   }
 
-  static Future<List<FarmerDetails>> fetchSearchFarmerDashboard(BuildContext context, String? whatsappNumber) async {
+  static Future<List<SearchFarmerData>> fetchSearchFarmerDashboard(BuildContext context, String? whatsappNumber) async {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String dealerNumberData = await prefs.getString(dealerNumber) ?? '1';
+    String dealerNumberData = await prefs.getString(contactNo) ?? '1';
 
     final String baseUrl = "https://d1dv04h56lh39n.cloudfront.net/api/appFarmer/farmer/"
         "search?dealerNumber=$dealerNumberData&whatsappNumber=$whatsappNumber";
@@ -198,8 +199,7 @@ class FarmerDashboardController{
 
       if (response.statusCode == 200) {
         List jsonResponse = response.data['data'];
-        // print("Farmer Dashboard Response : ${jsonResponse}");
-        return jsonResponse.map((data) => FarmerDetails.fromJson(data)).toList();
+        return jsonResponse.map((data) => SearchFarmerData.fromJson(data)).toList();
       } else {
         throw Exception('Failed to load farmers');
       }

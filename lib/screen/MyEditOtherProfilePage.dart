@@ -7,6 +7,7 @@ import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:krishiyan/localization/AppLocalizations.dart';
 import 'package:krishiyan/mvc/model/GetFRMProfileData.dart';
 import 'package:krishiyan/screen/MyProfilePage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../helper/AlertHelper.dart';
 import '../mvc/controller/accountSettingController.dart';
 import '../mvc/model/GetProfileData.dart';
@@ -41,18 +42,13 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
   TextEditingController editOfficeContactNumberController = TextEditingController();
   TextEditingController editEmailIdController = TextEditingController();
 
-  String id = "", contactNumber = "", dateOfIncorporationNumberValue = "", typeOfOrg = "";
+  String id = "",
+      contactNumber = "",
+      dateOfIncorporationNumberValue = "",
+      typeOfOrg = "";
 
-  final List<String> fpoItems = [
-    buildTranslate('farmerProducerOrganization')!,
-    buildTranslate('farmerProducerCompany')!,
-    buildTranslate('primaryAgriculturalCreditSociety')!,
-    buildTranslate('farmerInterestedGroups')!,
-    buildTranslate('co-operatives')!
-  ];
-
-  String? selectedFPOItemValue;
-  bool otpVisible = false;
+  bool otpVisibleContactNumber = false;
+  bool otpVisibleEmailID = false;
 
   Future<GetProfileDetails?>? futureProfileDetails;
 
@@ -65,7 +61,16 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
   String? officeContactNumber;
   String? emailId;
   DateTime? selectedDate;
+
   final _formKey = GlobalKey<FormState>();
+  final List<String> traderItems = [
+    'Trader',
+    'Retailer',
+    'Exporter',
+    'Importer',
+    'Wholesaler'
+  ];
+  List<String> selectedTraderItems = [];
 
   @override
   void initState() {
@@ -188,9 +193,9 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
                             const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: TextFormField(
                               onSaved: (value) => nameOfEntity = value,
-                              // initialValue: nameOfEntityController == null
-                              //     ? snapshot.data!.nameOfFpo.toString()
-                              //     : null,
+                              initialValue: nameOfEntityController == null
+                                  ? snapshot.data!.nameOfEntity.toString()
+                                  : null,
                               decoration: InputDecoration(
                                   alignLabelWithHint: true,
                                   fillColor: Colors.white,
@@ -213,7 +218,8 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
                                     borderSide: BorderSide(
                                         color: Colors.green, width: 0.5),
                                   )),
-                              validator: (value) => value!.isEmpty
+                              validator: (value) =>
+                              value!.isEmpty
                                   ? 'Please, fill this field.'
                                   : null,
                             ),
@@ -223,88 +229,109 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
                             height: 20,
                           ),
 
-                          // type of entity
+                          // type
                           Padding(
-                            padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
-                            child: Text(
-                              buildTranslate("typeofEntity")!,
-                              style: const TextStyle(
-                                  fontSize: 15,
-                                  color: Color(0xFF666666),
-                                  fontFamily: 'poppins-semibold'),
-                            ),
+                            padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+                            child: Text(buildTranslate("typeOfEntity")!, style: const TextStyle(fontSize: 15,
+                                color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
                           ),
-                          const SizedBox(
-                            height: 10,
-                          ),
+                          const SizedBox(height: 10,),
                           Padding(
-                            padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
-                            child: Container(
-                              color: Colors.white,
-                              child: DropdownButtonFormField2<String>(
-                                value: selectedFPOItemValue,
-                                isExpanded: true,
-                                decoration: InputDecoration(
-                                  contentPadding:
-                                  const EdgeInsets.symmetric(vertical: 10),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(4),
-                                    borderSide: const BorderSide(
-                                      color: Colors.grey,
-                                      width: 1.0,
-                                    ),
-                                  ),
-                                  // Add more decoration..
-                                ),
-                                hint: const Text(
-                                  '--',
-                                  style: TextStyle(fontSize: 14),
-                                ),
-                                items: fpoItems
-                                    .map((item) => DropdownMenuItem<String>(
+                            padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+                            child: DropdownButtonFormField2<String>(
+                              isExpanded: true,
+                              decoration: InputDecoration(
+                                contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: const BorderSide(
+                                    color: Colors.grey,
+                                    width: 1.0,
+                                  ),),
+                                // Add more decoration..
+                              ),
+                              hint: Text(
+                                buildTranslate("selectTypeEntity")!,
+                                style: const TextStyle(color: Color(0xFFe7e7e7)),
+                              ),
+                              items: traderItems.map((item) {
+                                return DropdownMenuItem(
                                   value: item,
-                                  child: Text(
-                                    item,
-                                    style: const TextStyle(
-                                        fontSize: 14,
-                                        color: Colors.grey),
+                                  //disable default onTap to avoid closing menu when selecting an item
+                                  enabled: false,
+                                  child: StatefulBuilder(
+                                    builder: (context, menuSetState) {
+                                      final isSelected = selectedTraderItems.contains(item);
+                                      return InkWell(
+                                        onTap: () {
+                                          isSelected ? selectedTraderItems.remove(item) : selectedTraderItems.add(item);
+                                          //This rebuilds the StatefulWidget to update the button's text
+                                          setState(() {});
+                                          //This rebuilds the dropdownMenu Widget to update the check mark
+                                          menuSetState(() {});
+                                        },
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                          height: double.infinity,
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              if (isSelected)
+                                                const Icon(Icons.check_box_outlined)
+                                              else
+                                                const Icon(Icons.check_box_outline_blank),
+                                              const SizedBox(width: 16),
+                                              Expanded(
+                                                child: Text(
+                                                  softWrap: true,
+                                                  textAlign: TextAlign.start,
+                                                  item,
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    },
                                   ),
-                                ))
-                                    .toList(),
-                                validator: (value) {
-                                  if (value == null) {
-                                    return 'Please select type of Entity.';
-                                  }
-                                  return null;
-                                },
-                                onChanged: (value) {
-                                  //Do something when selected item is changed.
-                                },
-                                onSaved: (value) {
-                                  selectedFPOItemValue = value.toString();
-                                },
-                                buttonStyleData: const ButtonStyleData(
-                                  padding: EdgeInsets.only(right: 8),
-                                ),
-                                iconStyleData: const IconStyleData(
-                                  icon: Icon(
-                                    Icons.arrow_drop_down,
-                                    color: Colors.black45,
-                                  ),
-                                  iconSize: 24,
-                                ),
-                                menuItemStyleData: const MenuItemStyleData(
-                                  padding: EdgeInsets.symmetric(horizontal: 16),
-                                ),
+                                );
+                              }).toList(),
+                              //Use last selected item as the current value so if we've limited menu height, it scroll to last item.
+                              value: selectedTraderItems.isEmpty ? null : selectedTraderItems.last,
+                              onChanged: (value) {},
+                              selectedItemBuilder: (context) {
+                                return traderItems.map(
+                                      (item) {
+                                    return Container(
+                                      alignment: AlignmentDirectional.centerStart,
+                                      child: Text(
+                                        selectedTraderItems.join(', '),
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        maxLines: 1,
+                                      ),
+                                    );
+                                  },
+                                ).toList();
+                              },
+                              buttonStyleData: const ButtonStyleData(
+                                padding: EdgeInsets.only(left: 16, right: 8),
+                                height: 40,
+                                width: 140,
+                              ),
+                              menuItemStyleData: const MenuItemStyleData(
+                                height: 40,
+                                padding: EdgeInsets.zero,
                               ),
                             ),
                           ),
-
-                          const SizedBox(
-                            height: 20,
-                          ),
+                          const SizedBox(height: 20,),
 
                           // incorporationDate
                           Padding(
@@ -324,46 +351,47 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
                           Padding(
                             padding:
                             const EdgeInsets.only(left: 25.0, right: 25.0),
-                            child: TextFormField(
-                              controller: dateOfIncorporationController,
-                              keyboardType: TextInputType.text,
-                              onSaved: (value) => dateOfIncorporation = value,
-                              // initialValue:
-                              // dateOfOrganizationController == null
-                              //     ? AppGlobal.convertToCustomDateFormat(snapshot.data!.dateOfFpo.toString())
-                              //     : null,
-                              // initialValue: AppGlobal.convertToCustomDateFormat(snapshot.data!.dateOfFpo.toString()),
-                              decoration: InputDecoration(
-                                contentPadding: const EdgeInsets.symmetric(
-                                    vertical: 10.0, horizontal: 10.0),
-                                hintText: 'dd/MM/yyyy',
-                                hintStyle: const TextStyle(color: Colors.grey),
-                                fillColor: Colors.white,
-                                filled: true,
-                                suffixIcon: IconButton(
-                                  icon: const Icon(Icons.calendar_today),
-                                  onPressed: () {
-                                    print("OnPressed : $dateOfIncorporationNumberValue");
-                                    _selectDate(context, dateOfIncorporationNumberValue.toString());
-                                  }, // Open date picker on icon press
-                                ),
-                                border: const OutlineInputBorder(
-                                  // borderRadius: BorderRadius.all(Radius.circular(10.0),),
-                                ),
-                                enabledBorder: const OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Colors.grey,
-                                    width: 1.0,
+                            child: Container(
+                              color: Colors.white,
+                              child: TextFormField(
+                                controller: dateOfIncorporationController,
+                                keyboardType: TextInputType.text,
+                                onSaved: (value) => dateOfIncorporation = value,
+                                decoration: InputDecoration(
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      vertical: 10.0, horizontal: 10.0),
+                                  hintText: 'dd/MM/yyyy',
+                                  hintStyle: const TextStyle(color: Colors.grey),
+                                  fillColor: Colors.white,
+                                  filled: true,
+                                  suffixIcon: IconButton(
+                                    icon: const Icon(Icons.calendar_today),
+                                    onPressed: () {
+                                      print(
+                                          "OnPressed : $dateOfIncorporationNumberValue");
+                                      _selectDate(context,
+                                          dateOfIncorporationNumberValue
+                                              .toString());
+                                    }, // Open date picker on icon press
                                   ),
-                                  // borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                                  border: const OutlineInputBorder(
+                                    // borderRadius: BorderRadius.all(Radius.circular(10.0),),
+                                  ),
+                                  enabledBorder: const OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.grey,
+                                      width: 1.0,
+                                    ),
+                                    // borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                                  ),
+                                  focusedBorder: const OutlineInputBorder(
+                                    // borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                                    borderSide: BorderSide(
+                                        color: Colors.green, width: 0.5),
+                                  ),
                                 ),
-                                focusedBorder: const OutlineInputBorder(
-                                  // borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                                  borderSide: BorderSide(
-                                      color: Colors.green, width: 0.5),
-                                ),
+                                readOnly: true,
                               ),
-                              readOnly: true,
                             ),
                           ),
                           const SizedBox(
@@ -391,14 +419,16 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
                             child: TextFormField(
                               keyboardType: TextInputType.text,
                               onSaved: (value) => incorporationNumber = value,
-                              // initialValue:
-                              // incorporationNumberController == null
-                              //     ? snapshot.data!.registrationNumber.toString()
-                              //     : null,
+                              initialValue:
+                              incorporationNumberController == null
+                                  ? snapshot.data!.incorporationNumber
+                                  .toString()
+                                  : null,
                               decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.symmetric(
                                     vertical: 10.0, horizontal: 10.0),
-                                hintText: buildTranslate('registrationNumber')!,
+                                hintText: buildTranslate(
+                                    "incorporationNumber")!,
                                 hintStyle: const TextStyle(color: Colors.grey),
                                 fillColor: Colors.white,
                                 filled: true,
@@ -445,14 +475,14 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
                             child: TextFormField(
                               keyboardType: TextInputType.text,
                               onSaved: (value) => businessLocationName = value,
-                              // initialValue:
-                              // businessLocationController == null
-                              //     ? snapshot.data!.cBBOName.toString()
-                              //     : null,
+                              initialValue:
+                              businessLocationController == null
+                                  ? snapshot.data!.businessLocation.toString()
+                                  : null,
                               decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.symmetric(
                                     vertical: 10.0, horizontal: 10.0),
-                                hintText: buildTranslate('CBBOName')!,
+                                hintText: buildTranslate("businessLocation")!,
                                 hintStyle: const TextStyle(color: Colors.grey),
                                 fillColor: Colors.white,
                                 filled: true,
@@ -498,16 +528,17 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
                             const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: TextFormField(
                               keyboardType: TextInputType.text,
-                              onSaved: (value) => primaryContactPersonName = value,
-                              // initialValue:
-                              // primaryContactPersonNameController == null
-                              //     ? snapshot.data!.contactNumber.toString()
-                              //     : null,
+                              onSaved: (value) =>
+                              primaryContactPersonName = value,
+                              initialValue:
+                              primaryContactPersonNameController == null
+                                  ? snapshot.data!.contactNumber.toString()
+                                  : null,
                               decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.symmetric(
                                     vertical: 10.0, horizontal: 10.0),
-                                hintText:
-                                buildTranslate('officeContactNumberData')!,
+                                hintText: buildTranslate(
+                                    "primaryContactPersonName")!,
                                 hintStyle: const TextStyle(color: Colors.grey),
                                 fillColor: Colors.white,
                                 filled: true,
@@ -538,7 +569,8 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
                             padding:
                             const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: Text(
-                              buildTranslate("primaryContactPersonDesignation")!,
+                              buildTranslate(
+                                  "primaryContactPersonDesignation")!,
                               style: const TextStyle(
                                   fontSize: 15,
                                   color: Color(0xFF666666),
@@ -552,11 +584,13 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
                             padding:
                             const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: TextFormField(
-                              onSaved: (value) => primaryContactPersonDesignation = value,
-                              // initialValue: primaryContactPersonDesignationController == null
-                              //     ? snapshot.data!.organizationalEmail
-                              //     .toString()
-                              //     : null,
+                              onSaved: (value) =>
+                              primaryContactPersonDesignation = value,
+                              initialValue: primaryContactPersonDesignationController ==
+                                  null
+                                  ? snapshot.data!.yourDesignation
+                                  .toString()
+                                  : null,
                               decoration: InputDecoration(
                                 enabled: true,
                                 alignLabelWithHint: true,
@@ -574,7 +608,7 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
                                   ),
                                   // borderRadius: BorderRadius.all(Radius.circular(10.0)),
                                 ),
-                                hintText: buildTranslate('mailID')!,
+                                hintText: "Primary Contact Person Designation",
                                 hintStyle: const TextStyle(color: Colors.grey),
                                 focusedBorder: const OutlineInputBorder(
                                   borderRadius:
@@ -582,32 +616,15 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
                                   borderSide: BorderSide(
                                       color: Colors.green, width: 0.5),
                                 ),
-                                suffixIcon: Container(
-                                  margin: const EdgeInsets.all(5),
-                                  child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      minimumSize: const Size(70, 35),
-                                      foregroundColor: Colors.white,
-                                      textStyle: const TextStyle(fontSize: 15),
-                                      backgroundColor: const Color(0xFF3FC041),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                        BorderRadius.circular(12.0),
-                                      ),
-                                    ),
-                                    child: Text(buildTranslate("getOtp")!),
-                                    onPressed: () {
-                                      setState(() {
-                                        otpVisible = true;
-                                      });
-                                    },
-                                  ),
-                                ),
                               ),
-                              validator: (value) => value!.isEmpty
+                              validator: (value) =>
+                              value!.isEmpty
                                   ? 'Please, fill this field.'
                                   : null,
                             ),
+                          ),
+                          const SizedBox(
+                            height: 20,
                           ),
 
                           // contact number
@@ -631,10 +648,10 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
                             child: TextFormField(
                               keyboardType: TextInputType.text,
                               onSaved: (value) => officeContactNumber = value,
-                              // initialValue:
-                              // officeContactNumberController == null
-                              //     ? snapshot.data!.contactNumber.toString()
-                              //     : null,
+                              initialValue: officeContactNumberController ==
+                                  null
+                                  ? snapshot.data!.contactNumber.toString()
+                                  : null,
                               decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.symmetric(
                                     vertical: 10.0, horizontal: 10.0),
@@ -658,14 +675,32 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
                                   borderSide: BorderSide(
                                       color: Colors.green, width: 0.5),
                                 ),
+                                suffixIcon: Container(
+                                  margin: const EdgeInsets.all(5),
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      minimumSize: const Size(70, 35),
+                                      foregroundColor: Colors.white,
+                                      textStyle: const TextStyle(fontSize: 15),
+                                      backgroundColor: const Color(0xFF3FC041),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                        BorderRadius.circular(12.0),
+                                      ),
+                                    ),
+                                    child: Text(buildTranslate("getOtp")!),
+                                    onPressed: () {
+                                      setState(() {
+                                        otpVisibleContactNumber = true;
+                                      });
+                                    },
+                                  ),
+                                ),
                               ),
                             ),
                           ),
-                          const SizedBox(
-                            height: 20,
-                          ),
 
-                          otpVisible
+                          otpVisibleContactNumber
                               ? const SizedBox(
                             height: 15,
                           )
@@ -673,7 +708,7 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
 
                           // verify otp
                           Visibility(
-                            visible: otpVisible,
+                            visible: otpVisibleContactNumber,
                             child: Padding(
                               padding: const EdgeInsets.only(
                                   left: 25.0, right: 25.0),
@@ -686,13 +721,13 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
                               ),
                             ),
                           ),
-                          otpVisible
+                          otpVisibleContactNumber
                               ? const SizedBox(
                             height: 15,
                           )
                               : Container(),
                           Visibility(
-                            visible: otpVisible,
+                            visible: otpVisibleContactNumber,
                             child: OtpTextField(
                               numberOfFields: 4,
                               borderColor: const Color(0xFF3dc33b),
@@ -728,10 +763,10 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
                             const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: TextFormField(
                               onSaved: (value) => emailId = value,
-                              // initialValue: emailIdController == null
-                              //     ? snapshot.data!.organizationalEmail
-                              //     .toString()
-                              //     : null,
+                              initialValue: emailIdController == null
+                                  ? snapshot.data!.email
+                                  .toString()
+                                  : null,
                               decoration: InputDecoration(
                                 enabled: true,
                                 alignLabelWithHint: true,
@@ -773,19 +808,20 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
                                     child: Text(buildTranslate("getOtp")!),
                                     onPressed: () {
                                       setState(() {
-                                        otpVisible = true;
+                                        otpVisibleEmailID = true;
                                       });
                                     },
                                   ),
                                 ),
                               ),
-                              validator: (value) => value!.isEmpty
+                              validator: (value) =>
+                              value!.isEmpty
                                   ? 'Please, fill this field.'
                                   : null,
                             ),
                           ),
 
-                          otpVisible
+                          otpVisibleEmailID
                               ? const SizedBox(
                             height: 15,
                           )
@@ -793,7 +829,7 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
 
                           // verify otp
                           Visibility(
-                            visible: otpVisible,
+                            visible: otpVisibleEmailID,
                             child: Padding(
                               padding: const EdgeInsets.only(
                                   left: 25.0, right: 25.0),
@@ -806,13 +842,13 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
                               ),
                             ),
                           ),
-                          otpVisible
+                          otpVisibleEmailID
                               ? const SizedBox(
                             height: 15,
                           )
                               : Container(),
                           Visibility(
-                            visible: otpVisible,
+                            visible: otpVisibleEmailID,
                             child: OtpTextField(
                               numberOfFields: 4,
                               borderColor: const Color(0xFF3dc33b),
@@ -832,12 +868,15 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
                           Align(
                             alignment: FractionalOffset.bottomCenter,
                             child: Container(
-                              width: MediaQuery.of(context).size.width,
+                              width: MediaQuery
+                                  .of(context)
+                                  .size
+                                  .width,
                               padding: const EdgeInsets.only(
                                   left: 25.0, right: 25.0),
                               child: ElevatedButton(
                                 onPressed: () {
-                                  // _getValue();
+                                  _getValue();
                                 },
                                 style: ElevatedButton.styleFrom(
                                   foregroundColor: Colors.white,
@@ -873,10 +912,12 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // name of entity
                       Padding(
-                        padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+                        padding:
+                        const EdgeInsets.only(left: 25.0, right: 25.0),
                         child: Text(
-                          buildTranslate("nameOfOrganization")!,
+                          buildTranslate("nameofEntity")!,
                           style: const TextStyle(
                               fontSize: 15,
                               color: Color(0xFF666666),
@@ -887,10 +928,10 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
                         height: 10,
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+                        padding:
+                        const EdgeInsets.only(left: 25.0, right: 25.0),
                         child: TextFormField(
                           onSaved: (value) => nameOfEntity = value,
-                          controller: editNameOfEntityController,
                           decoration: InputDecoration(
                               alignLabelWithHint: true,
                               fillColor: Colors.white,
@@ -904,106 +945,133 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
                               ),
                               contentPadding: const EdgeInsets.symmetric(
                                   vertical: 10.0, horizontal: 10.0),
-                              hintText:
-                              buildTranslate('enterNameOfTheOrganization')!,
-                              hintStyle: const TextStyle(color: Colors.grey),
+                              hintText: buildTranslate(
+                                  'enterNameOfTheOrganization')!,
+                              hintStyle:
+                              const TextStyle(color: Colors.grey),
                               focusedBorder: const OutlineInputBorder(
                                 // borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                                borderSide:
-                                BorderSide(color: Colors.green, width: 0.5),
+                                borderSide: BorderSide(
+                                    color: Colors.green, width: 0.5),
                               )),
-                          validator: (value) => value!.isEmpty
+                          controller : editNameOfEntityController,
+                          validator: (value) =>
+                          value!.isEmpty
                               ? 'Please, fill this field.'
                               : null,
                         ),
                       ),
+
                       const SizedBox(
                         height: 20,
                       ),
 
-                      // type of entity
+                      // type
                       Padding(
-                        padding:
-                        const EdgeInsets.only(left: 25.0, right: 25.0),
-                        child: Text(
-                          buildTranslate("typeofEntity")!,
-                          style: const TextStyle(
-                              fontSize: 15,
-                              color: Color(0xFF666666),
-                              fontFamily: 'poppins-semibold'),
-                        ),
+                        padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+                        child: Text(buildTranslate("typeOfEntity")!, style: const TextStyle(fontSize: 15,
+                            color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
                       ),
-                      const SizedBox(
-                        height: 10,
-                      ),
+                      const SizedBox(height: 10,),
                       Padding(
-                        padding:
-                        const EdgeInsets.only(left: 25.0, right: 25.0),
-                        child: Container(
-                          color: Colors.white,
-                          child: DropdownButtonFormField2<String>(
-                            value: selectedFPOItemValue,
-                            isExpanded: true,
-                            decoration: InputDecoration(
-                              contentPadding:
-                              const EdgeInsets.symmetric(vertical: 10),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(4),
-                                borderSide: const BorderSide(
-                                  color: Colors.grey,
-                                  width: 1.0,
-                                ),
-                              ),
-                              // Add more decoration..
-                            ),
-                            hint: const Text(
-                              '--',
-                              style: TextStyle(fontSize: 14),
-                            ),
-                            items: fpoItems
-                                .map((item) => DropdownMenuItem<String>(
+                        padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+                        child: DropdownButtonFormField2<String>(
+                          isExpanded: true,
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: const BorderSide(
+                                color: Colors.grey,
+                                width: 1.0,
+                              ),),
+                            // Add more decoration..
+                          ),
+                          hint: Text(
+                            buildTranslate("selectTypeEntity")!,
+                            style: const TextStyle(color: Color(0xFFe7e7e7)),
+                          ),
+                          items: traderItems.map((item) {
+                            return DropdownMenuItem(
                               value: item,
-                              child: Text(
-                                item,
-                                style: const TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.grey),
+                              //disable default onTap to avoid closing menu when selecting an item
+                              enabled: false,
+                              child: StatefulBuilder(
+                                builder: (context, menuSetState) {
+                                  final isSelected = selectedTraderItems.contains(item);
+                                  return InkWell(
+                                    onTap: () {
+                                      isSelected ? selectedTraderItems.remove(item) :
+                                      selectedTraderItems.add(item);
+                                      //This rebuilds the StatefulWidget to update the button's text
+                                      setState(() {});
+                                      //This rebuilds the dropdownMenu Widget to update the check mark
+                                      menuSetState(() {});
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                      height: double.infinity,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          if (isSelected)
+                                            const Icon(Icons.check_box_outlined)
+                                          else
+                                            const Icon(Icons.check_box_outline_blank),
+                                          const SizedBox(width: 16),
+                                          Expanded(
+                                            child: Text(
+                                              softWrap: true,
+                                              textAlign: TextAlign.start,
+                                              item,
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
                               ),
-                            ))
-                                .toList(),
-                            validator: (value) {
-                              if (value == null) {
-                                return 'Please select type of Entity.';
-                              }
-                              return null;
-                            },
-                            onChanged: (value) {
-                              //Do something when selected item is changed.
-                            },
-                            onSaved: (value) {
-                              selectedFPOItemValue = value.toString();
-                            },
-                            buttonStyleData: const ButtonStyleData(
-                              padding: EdgeInsets.only(right: 8),
-                            ),
-                            iconStyleData: const IconStyleData(
-                              icon: Icon(
-                                Icons.arrow_drop_down,
-                                color: Colors.black45,
-                              ),
-                              iconSize: 24,
-                            ),
-                            menuItemStyleData: const MenuItemStyleData(
-                              padding: EdgeInsets.symmetric(horizontal: 16),
-                            ),
+                            );
+                          }).toList(),
+                          //Use last selected item as the current value so if we've limited menu height, it scroll to last item.
+                          value: selectedTraderItems.isEmpty ? null : selectedTraderItems.last,
+                          onChanged: (value) {},
+                          selectedItemBuilder: (context) {
+                            return traderItems.map(
+                                  (item) {
+                                return Container(
+                                  alignment: AlignmentDirectional.centerStart,
+                                  child: Text(
+                                    selectedTraderItems.join(', '),
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    maxLines: 1,
+                                  ),
+                                );
+                              },
+                            ).toList();
+                          },
+                          buttonStyleData: const ButtonStyleData(
+                            padding: EdgeInsets.only(left: 16, right: 8),
+                            height: 40,
+                            width: 140,
+                          ),
+                          menuItemStyleData: const MenuItemStyleData(
+                            height: 40,
+                            padding: EdgeInsets.zero,
                           ),
                         ),
                       ),
+                      const SizedBox(height: 20,),
 
-                      const SizedBox(
-                        height: 20,
-                      ),
-
+                      // incorporationDate
                       Padding(
                         padding:
                         const EdgeInsets.only(left: 25.0, right: 25.0),
@@ -1021,46 +1089,46 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
                       Padding(
                         padding:
                         const EdgeInsets.only(left: 25.0, right: 25.0),
-                        child: TextFormField(
-                          controller: editDateOfIncorporationController,
-                          keyboardType: TextInputType.text,
-                          onSaved: (value) => dateOfIncorporation = value,
-                          // initialValue:
-                          // dateOfOrganizationController == null
-                          //     ? AppGlobal.convertToCustomDateFormat(snapshot.data!.dateOfFpo.toString())
-                          //     : null,
-                          // initialValue: AppGlobal.convertToCustomDateFormat(snapshot.data!.dateOfFpo.toString()),
-                          decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.symmetric(
-                                vertical: 10.0, horizontal: 10.0),
-                            hintText: 'dd/MM/yyyy',
-                            hintStyle: const TextStyle(color: Colors.grey),
-                            fillColor: Colors.white,
-                            filled: true,
-                            suffixIcon: IconButton(
-                              icon: const Icon(Icons.calendar_today),
-                              onPressed: () {
-                                print("OnPressed : $dateOfIncorporationNumberValue");
-                                _selectDate(context, dateOfIncorporationNumberValue.toString());
-                              }, // Open date picker on icon press
-                            ),
-                            border: const OutlineInputBorder(
-                              // borderRadius: BorderRadius.all(Radius.circular(10.0),),
-                            ),
-                            enabledBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.grey,
-                                width: 1.0,
+                        child: Container(
+                          color:Colors.white,
+                          child: TextFormField(
+                            controller: editDateOfIncorporationController,
+                            keyboardType: TextInputType.text,
+                            onSaved: (value) => dateOfIncorporation = value,
+                            decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 10.0, horizontal: 10.0),
+                              hintText: 'dd/MM/yyyy',
+                              hintStyle: const TextStyle(color: Colors.grey),
+                              fillColor: Colors.white,
+                              filled: true,
+                              suffixIcon: IconButton(
+                                icon: const Icon(Icons.calendar_today),
+                                onPressed: () {
+                                  print(
+                                      "OnPressed : $dateOfIncorporationNumberValue");
+                                  _selectDate(context,
+                                      dateOfIncorporationNumberValue.toString());
+                                }, // Open date picker on icon press
                               ),
-                              // borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                              border: const OutlineInputBorder(
+                                // borderRadius: BorderRadius.all(Radius.circular(10.0),),
+                              ),
+                              enabledBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.grey,
+                                  width: 1.0,
+                                ),
+                                // borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                              ),
+                              focusedBorder: const OutlineInputBorder(
+                                // borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                                borderSide: BorderSide(
+                                    color: Colors.green, width: 0.5),
+                              ),
                             ),
-                            focusedBorder: const OutlineInputBorder(
-                              // borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                              borderSide: BorderSide(
-                                  color: Colors.green, width: 0.5),
-                            ),
+                            readOnly: true,
                           ),
-                          readOnly: true,
                         ),
                       ),
                       const SizedBox(
@@ -1087,8 +1155,8 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
                         const EdgeInsets.only(left: 25.0, right: 25.0),
                         child: TextFormField(
                           keyboardType: TextInputType.text,
-                          onSaved: (value) => incorporationNumber = value,
                           controller: editIncorporationNumberController,
+                          onSaved: (value) => incorporationNumber = value,
                           decoration: InputDecoration(
                             contentPadding: const EdgeInsets.symmetric(
                                 vertical: 10.0, horizontal: 10.0),
@@ -1140,6 +1208,10 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
                           keyboardType: TextInputType.text,
                           onSaved: (value) => businessLocationName = value,
                           controller: editBusinessLocationController,
+                          // initialValue:
+                          // businessLocationController == null
+                          //     ? snapshot.data!.cBBOName.toString()
+                          //     : null,
                           decoration: InputDecoration(
                             contentPadding: const EdgeInsets.symmetric(
                                 vertical: 10.0, horizontal: 10.0),
@@ -1169,9 +1241,120 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
                         height: 20,
                       ),
 
+                      // Primary Contact Person Name
+                      Padding(
+                        padding:
+                        const EdgeInsets.only(left: 25.0, right: 25.0),
+                        child: Text(
+                          buildTranslate("primaryContactPersonName")!,
+                          style: const TextStyle(
+                              fontSize: 15,
+                              color: Color(0xFF666666),
+                              fontFamily: 'poppins-semibold'),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Padding(
+                        padding:
+                        const EdgeInsets.only(left: 25.0, right: 25.0),
+                        child: TextFormField(
+                          keyboardType: TextInputType.text,
+                          controller: editPrimaryContactPersonNameController,
+                          onSaved: (value) => primaryContactPersonName = value,
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 10.0, horizontal: 10.0),
+                            hintText:
+                            buildTranslate('officeContactNumberData')!,
+                            hintStyle: const TextStyle(color: Colors.grey),
+                            fillColor: Colors.white,
+                            filled: true,
+                            border: const OutlineInputBorder(
+                              // borderRadius: BorderRadius.all(Radius.circular(10.0),),
+                            ),
+                            enabledBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.grey,
+                                width: 1.0,
+                              ),
+                              // borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                            ),
+                            focusedBorder: const OutlineInputBorder(
+                              // borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                              borderSide: BorderSide(
+                                  color: Colors.green, width: 0.5),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+
+                      // Primary Contact Person Designation
+                      Padding(
+                        padding:
+                        const EdgeInsets.only(left: 25.0, right: 25.0),
+                        child: Text(
+                          buildTranslate("primaryContactPersonDesignation")!,
+                          style: const TextStyle(
+                              fontSize: 15,
+                              color: Color(0xFF666666),
+                              fontFamily: 'poppins-semibold'),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Padding(
+                        padding:
+                        const EdgeInsets.only(left: 25.0, right: 25.0),
+                        child: TextFormField(
+                          onSaved: (value) =>
+                          primaryContactPersonDesignation = value,
+                          controller: editPrimaryContactPersonDesignationController,
+                          decoration: InputDecoration(
+                            enabled: true,
+                            alignLabelWithHint: true,
+                            fillColor: Colors.white,
+                            filled: true,
+                            border: const OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(10.0),
+                              ),
+                            ),
+                            enabledBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.grey,
+                                width: 1.0,
+                              ),
+                              // borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                            ),
+                            hintText: buildTranslate('mailID')!,
+                            hintStyle: const TextStyle(color: Colors.grey),
+                            focusedBorder: const OutlineInputBorder(
+                              borderRadius:
+                              BorderRadius.all(Radius.circular(10.0)),
+                              borderSide: BorderSide(
+                                  color: Colors.green, width: 0.5),
+                            ),
+                          ),
+                          validator: (value) =>
+                          value!.isEmpty
+                              ? 'Please, fill this field.'
+                              : null,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+
                       // contact number
                       Padding(
-                        padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+                        padding:
+                        const EdgeInsets.only(left: 25.0, right: 25.0),
                         child: Text(
                           buildTranslate("officeContactNumberData")!,
                           style: const TextStyle(
@@ -1184,7 +1367,8 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
                         height: 10,
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+                        padding:
+                        const EdgeInsets.only(left: 25.0, right: 25.0),
                         child: TextFormField(
                           keyboardType: TextInputType.text,
                           onSaved: (value) => officeContactNumber = value,
@@ -1209,10 +1393,71 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
                             ),
                             focusedBorder: const OutlineInputBorder(
                               // borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                              borderSide:
-                              BorderSide(color: Colors.green, width: 0.5),
+                              borderSide: BorderSide(
+                                  color: Colors.green, width: 0.5),
+                            ),
+                            suffixIcon: Container(
+                              margin: const EdgeInsets.all(5),
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  minimumSize: const Size(70, 35),
+                                  foregroundColor: Colors.white,
+                                  textStyle: const TextStyle(fontSize: 15),
+                                  backgroundColor: const Color(0xFF3FC041),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                    BorderRadius.circular(12.0),
+                                  ),
+                                ),
+                                child: Text(buildTranslate("getOtp")!),
+                                onPressed: () {
+                                  setState(() {
+                                    otpVisibleContactNumber = true;
+                                  });
+                                },
+                              ),
                             ),
                           ),
+                        ),
+                      ),
+
+                      otpVisibleContactNumber
+                          ? const SizedBox(
+                        height: 15,
+                      )
+                          : Container(),
+
+                      // verify otp
+                      Visibility(
+                        visible: otpVisibleContactNumber,
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              left: 25.0, right: 25.0),
+                          child: Text(
+                            buildTranslate("verifyOtp")!,
+                            style: const TextStyle(
+                                fontSize: 15,
+                                color: Color(0xFF666666),
+                                fontFamily: 'poppins-semibold'),
+                          ),
+                        ),
+                      ),
+                      otpVisibleContactNumber
+                          ? const SizedBox(
+                        height: 15,
+                      )
+                          : Container(),
+                      Visibility(
+                        visible: otpVisibleContactNumber,
+                        child: OtpTextField(
+                          numberOfFields: 4,
+                          borderColor: const Color(0xFF3dc33b),
+                          showFieldAsBox: true,
+                          filled: true,
+                          fieldWidth: 55,
+                          onCodeChanged: (String code) {},
+                          onSubmit:
+                              (String verificationCode) {}, // end onSubmit
                         ),
                       ),
                       const SizedBox(
@@ -1221,7 +1466,8 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
 
                       // email id
                       Padding(
-                        padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+                        padding:
+                        const EdgeInsets.only(left: 25.0, right: 25.0),
                         child: Text(
                           buildTranslate("emailId")!,
                           style: const TextStyle(
@@ -1234,10 +1480,11 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
                         height: 10,
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+                        padding:
+                        const EdgeInsets.only(left: 25.0, right: 25.0),
                         child: TextFormField(
                           onSaved: (value) => emailId = value,
-                          controller: editEmailIdController,
+                          controller : editEmailIdController,
                           decoration: InputDecoration(
                             enabled: true,
                             alignLabelWithHint: true,
@@ -1260,8 +1507,8 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
                             focusedBorder: const OutlineInputBorder(
                               borderRadius:
                               BorderRadius.all(Radius.circular(10.0)),
-                              borderSide:
-                              BorderSide(color: Colors.green, width: 0.5),
+                              borderSide: BorderSide(
+                                  color: Colors.green, width: 0.5),
                             ),
                             suffixIcon: Container(
                               margin: const EdgeInsets.all(5),
@@ -1272,25 +1519,27 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
                                   textStyle: const TextStyle(fontSize: 15),
                                   backgroundColor: const Color(0xFF3FC041),
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12.0),
+                                    borderRadius:
+                                    BorderRadius.circular(12.0),
                                   ),
                                 ),
                                 child: Text(buildTranslate("getOtp")!),
                                 onPressed: () {
                                   setState(() {
-                                    otpVisible = true;
+                                    otpVisibleEmailID = true;
                                   });
                                 },
                               ),
                             ),
                           ),
-                          validator: (value) => value!.isEmpty
+                          validator: (value) =>
+                          value!.isEmpty
                               ? 'Please, fill this field.'
                               : null,
                         ),
                       ),
 
-                      otpVisible
+                      otpVisibleEmailID
                           ? const SizedBox(
                         height: 15,
                       )
@@ -1298,10 +1547,10 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
 
                       // verify otp
                       Visibility(
-                        visible: otpVisible,
+                        visible: otpVisibleEmailID,
                         child: Padding(
-                          padding:
-                          const EdgeInsets.only(left: 25.0, right: 25.0),
+                          padding: const EdgeInsets.only(
+                              left: 25.0, right: 25.0),
                           child: Text(
                             buildTranslate("verifyOtp")!,
                             style: const TextStyle(
@@ -1311,13 +1560,13 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
                           ),
                         ),
                       ),
-                      otpVisible
+                      otpVisibleEmailID
                           ? const SizedBox(
                         height: 15,
                       )
                           : Container(),
                       Visibility(
-                        visible: otpVisible,
+                        visible: otpVisibleEmailID,
                         child: OtpTextField(
                           numberOfFields: 4,
                           borderColor: const Color(0xFF3dc33b),
@@ -1337,36 +1586,25 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
                       Align(
                         alignment: FractionalOffset.bottomCenter,
                         child: Container(
-                          width: MediaQuery.of(context).size.width,
-                          padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+                          width: MediaQuery
+                              .of(context)
+                              .size
+                              .width,
+                          padding: const EdgeInsets.only(
+                              left: 25.0, right: 25.0),
                           child: ElevatedButton(
                             onPressed: () {
-                              // if (editNameOfOrganizationController.text.toString().isNotEmpty &&
-                              //     selectedFPOItemValue.toString().isNotEmpty &&
-                              //     editDateOfOrganizationController.text.toString().isNotEmpty &&
-                              //     editRegistrationNumberController.text.toString().isNotEmpty &&
-                              //     editOfficeContactNumberController.text.toString().isNotEmpty &&
-                              //     editEmailIdController.text.toString().isNotEmpty &&
-                              //     editNameOfPromoterController.text.toString().isNotEmpty &&
-                              //     editCbboNameController.text.toString().isNotEmpty &&
-                              //     editYourDesignationController.text.toString().isNotEmpty) {
-                              //
-                              //   _updateProfileDetailsApiCall(
-                              //     editNameOfOrganizationController.text.toString(),
-                              //     selectedFPOItemValue.toString(),
-                              //     editDateOfOrganizationController.text.toString(),
-                              //     editRegistrationNumberController.text.toString(),
-                              //     editOfficeContactNumberController.text.toString(),
-                              //     editEmailIdController.text.toString(),
-                              //     editNameOfPromoterController.text.toString(),
-                              //       editCbboNameController.text.toString(),
-                              //       editYourDesignationController.text.toString()
-                              //   );
-                              // }
-                              // else {
-                              //   AlertHelper.showToast(
-                              //       "Please enter credentials.", context);
-                              // }
+                              _updateProfileDetailsApiCall(
+                              editNameOfEntityController.text.toString(),
+                                  selectedTraderItems.toString(),
+                              editDateOfIncorporationController.toString(),
+                              editIncorporationNumberController.toString(),
+                              editBusinessLocationController.text.toString(),
+                              editPrimaryContactPersonNameController.text.toString(),
+                              editPrimaryContactPersonDesignationController.text.toString(),
+                              editOfficeContactNumberController.text.toString(),
+                              editEmailIdController.text.toString()
+                              );
                             },
                             style: ElevatedButton.styleFrom(
                               foregroundColor: Colors.white,
@@ -1381,7 +1619,8 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
                             child: Text(
                               buildTranslate('save')!,
                               style: const TextStyle(
-                                  fontSize: 15, fontFamily: 'poppins-medium'),
+                                  fontSize: 15,
+                                  fontFamily: 'poppins-medium'),
                             ),
                           ),
                         ),
@@ -1402,88 +1641,106 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
 
   Future<void> _selectDate(BuildContext context, String date) async {
     // Show the date picker dialog
-    if(date.isNotEmpty) {
+    if (date.isNotEmpty) {
       selectedDate = DateTime.parse(date).toLocal();
       print("selectedDate : $selectedDate");
     }
     final DateTime? pickedDate = await showDatePicker(
       context: context,
-      initialDate: selectedDate !=null ? selectedDate : DateTime.now(), // Default date is the current date
-      firstDate: DateTime(2000), // Earliest selectable date
-      lastDate: DateTime(2101), // Latest selectable date
+      initialDate: selectedDate != null ? selectedDate : DateTime.now(),
+      // Default date is the current date
+      firstDate: DateTime(2000),
+      // Earliest selectable date
+      lastDate: DateTime(2101),
+      // Latest selectable date
       helpText: 'Select a date', // Optional help text
     );
     if (pickedDate != null) {
       print("pickedDate : $pickedDate");
       setState(() {
         // Format the selected date and display it in the TextFormField
-        dateOfIncorporationController.text = DateFormat('dd-MM-yyyy').format(pickedDate);
+        dateOfIncorporationController.text =
+            DateFormat('dd-MM-yyyy').format(pickedDate);
         dateOfIncorporationNumberValue = "${pickedDate}Z";
       });
     }
   }
 
-  // void _getValue() {
-  //   if (_formKey.currentState!.validate()) {
-  //     _formKey.currentState!.save(); // This triggers onSaved for each TextFormField
-  //
-  //     if (nameOfOrganization != null &&
-  //         selectedFPOItemValue != null &&
-  //         dateOfOrganization != null &&
-  //         registrationNumber != null &&
-  //         officeContactNumber != null &&
-  //         emailId != null &&
-  //         nameOfPromoter != null && cbboName !=null && yourDesignation !=null) {
-  //
-  //       _updateProfileDetailsApiCall(
-  //           nameOfOrganization.toString(),
-  //           selectedFPOItemValue.toString(),
-  //           dateOfOrganization.toString(),
-  //           registrationNumber.toString(),
-  //           officeContactNumber.toString(),
-  //           emailId.toString(),
-  //           nameOfPromoter.toString(), cbboName.toString(), yourDesignation.toString());
-  //     }
-  //     else {
-  //       AlertHelper.showToast("Please enter data.", context);
-  //     }
-  //   }
-  // }
+  void _getValue() {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save(); // This triggers onSaved for each TextFormField
+
+      if (nameOfEntity != null &&
+          selectedTraderItems.isNotEmpty &&
+          dateOfIncorporationController.text.isNotEmpty &&
+          incorporationNumber != null &&
+          businessLocationName != null &&
+          primaryContactPersonName != null &&
+          primaryContactPersonDesignation != null &&
+          officeContactNumber != null && emailId != null) {
+        _updateProfileDetailsApiCall(
+            nameOfEntity.toString(),
+            selectedTraderItems.toString(),
+            dateOfIncorporationController.text.toString(),
+            incorporationNumber.toString(),
+            businessLocationName.toString(),
+            primaryContactPersonName.toString(),
+            primaryContactPersonDesignation.toString(),
+            officeContactNumber.toString(),
+            emailId.toString());
+      }
+      else {
+        print("nameOfEntity : $nameOfEntity");
+        print("selectedTraderItems : $selectedTraderItems");
+        print("selectedDate : $selectedDate");
+        print("incorporationNumber : $incorporationNumber");
+        print("businessLocationName : $businessLocationName");
+        print("primaryContactPersonName : $primaryContactPersonName");
+        print("primaryContactPersonDesignation : $primaryContactPersonDesignation");
+        print("officeContactNumber : $officeContactNumber");
+        print("emailId : $emailId");
+
+        AlertHelper.showToast("Please enter credentials.", context);
+      }
+    }
+  }
 
   _updateProfileDetailsApiCall(
-      String nameOfOrganization,
-      String typeOfOrganization,
-      String dateOrganization,
-      String registrationNumber,
-      String officeNumber,
-      String emailID,
-      String promoterName, String cbboName, String designation) async {
+      String nameOfEntity,
+      String typeOfTraders,
+      String dateTrader,
+      String incorporationNumber,
+      String businessLocationName,
+      String primaryContactPersonName,
+      String primaryContactPersonDesignation, String officeContactNumber,
+      String emailId) async {
 
-    if (nameOfOrganization.isNotEmpty &&
-        typeOfOrganization.isNotEmpty &&
-        dateOfOrganization.toString().isNotEmpty &&
-        registrationNumber.isNotEmpty &&
-        officeNumber.isNotEmpty &&
-        emailID.isNotEmpty &&
-        promoterName.isNotEmpty && cbboName.isNotEmpty && designation.isNotEmpty) {
-
+    if (nameOfEntity != null &&
+        selectedTraderItems.isNotEmpty &&
+        dateOfIncorporationController.text.isNotEmpty &&
+        incorporationNumber != null &&
+        businessLocationName != null &&
+        primaryContactPersonName != null &&
+        primaryContactPersonDesignation != null &&
+        officeContactNumber != null && emailId != null) {
       var headers = {'Content-Type': 'application/json'};
 
       var data = json.encode({
-      "nameOfFpo": nameOfOrganization,
-      "typeOfFpo": typeOfOrganization,
-      "dateOfFpo": dateOfOrganization,
-      "organizationalEmail": emailID,
-      "contactNumber": officeNumber,
-      "yourDesignation": designation,
-      "promoterName": promoterName,
-      "RegistrationNumber": registrationNumber,
-      "CBBOName": cbboName
+        "nameOfEntity": nameOfEntity,
+        "typeOfEntity": typeOfTraders,
+        "Email": emailId,
+        "incorporationDate": dateTrader,
+        "incorporationNumber": incorporationNumber,
+        "businessLocation": businessLocationName,
+        "contactPersonName": primaryContactPersonName,
+        "yourDesignation": primaryContactPersonDesignation,
+        "contactNumber": officeContactNumber,
+        "URL": ""
       });
 
       var dio = Dio();
       var response = await dio.request(
-        FRM_UPDATE_PROFILE_DETAILS+contactNumber,
+        UPDATE_PROFILE_DETAILS + contactNumber,
         options: Options(
           method: 'PUT',
           headers: headers,
@@ -1572,19 +1829,23 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
 
   Future<void> getProfileDetails() async {
     // id = (await AppGlobal.getStringPreference('id'))!;
-    contactNumber = (await AppGlobal.getStringPreference('dealerNumber')) ?? "";
+    // contactNumber = (await AppGlobal.getStringPreference('contactNumber')) ?? "";
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    contactNumber = await prefs.getString(contactNo) ?? '1';
     futureProfileDetails = AccountSettingController.fetchEditProfileDetails(context, contactNumber);
     setState(() {
       futureProfileDetails = futureProfileDetails;
     });
-    Future.delayed(Duration(seconds: 2), () async {
-      dateOfIncorporationNumberValue = (await AppGlobal.getStringPreference('dateOfOrganization')) ?? "";
-      typeOfOrg = (await AppGlobal.getStringPreference('typeOfOrg')) ?? "";
+    Future.delayed(Duration(seconds:1), () async {
+      dateOfIncorporationNumberValue = (await AppGlobal.getStringPreference('dateOfIncorporation')) ?? "";
+      typeOfOrg = (await AppGlobal.getStringPreference('typeOfEntity')) ?? "";
+      // Convert string to List<String> by splitting with a comma
+      // List<String> listOfEntity = typeOfOrg.split(',');
       setState(() {
       dateOfIncorporationNumberValue = dateOfIncorporationNumberValue;
-      selectedFPOItemValue = typeOfOrg;
+      // selectedTraderItems = listOfEntity;
       });
-      // dateOfOrganizationController.text = AppGlobal.convertToCustomDateFormat(dateOfIncorporationNumberValue);
+      dateOfIncorporationController.text = AppGlobal.convertToCustomDateFormat(dateOfIncorporationNumberValue);
     });
   }
 }

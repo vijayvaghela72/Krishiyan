@@ -50,6 +50,17 @@ class AccountSettingController{
       AppGlobal.printLog("Trader Edit Profile Details RESPONSE : " + response);
       APIResponse? apiResponse = APIResponse.fromJson(jsonDecode(response));
       if (apiResponse.success!) {
+        if(apiResponse.profileData!.incorporationDate !=null) {
+
+          String? incorporationDate = apiResponse.profileData!.incorporationDate ?? "";
+          String? typeOfEntityData = apiResponse.profileData!.typeOfEntity ?? "";
+
+          print("New Api incorporationDate : $incorporationDate");
+          print("New Api typeOfEntityData : $typeOfEntityData");
+
+          SharedPref.savePreferenceValue(dateOfIncorporation, incorporationDate ?? "");
+          SharedPref.savePreferenceValue(typeOfEntity, typeOfEntityData ?? "");
+        }
         return apiResponse.profileData;
       }
       if (apiResponse.message != "") {

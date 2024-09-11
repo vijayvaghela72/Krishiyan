@@ -354,7 +354,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
 
           SharedPref.savePreferenceValue(name, user.fpoOrganization!.nameOfFpo ?? "");
           SharedPref.savePreferenceValue(email, user.fpoOrganization!.organizationalEmail ?? "");
-          SharedPref.savePreferenceValue(contactNumber, user.fpoOrganization!.contactNumber ?? "");
+          SharedPref.savePreferenceValue(contactNo, user.fpoOrganization!.contactNumber ?? "");
           SharedPref.savePreferenceValue(id, user.fpoOrganization!.sId ?? "");
           SharedPref.savePreferenceValue(token, user.token ?? "");
 

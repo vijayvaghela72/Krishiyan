@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:dio/dio.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,6 +16,9 @@ import '../helper/SharedPref.dart';
 import '../localization/AppLocalizations.dart';
 import '../mvc/controller/homeDashboardController.dart';
 import '../mvc/model/DailyNewsDetails.dart';
+import '../mvc/model/MandiPriceCommodityData.dart';
+import '../mvc/model/MandiPriceDistrictData.dart';
+import '../mvc/model/MandiPriceStateData.dart';
 import 'MyBottomCenterEnquiryPage.dart';
 import 'MyBottomThreePage.dart';
 import 'MyBottomTwoPage.dart';
@@ -22,6 +26,7 @@ import 'MyDetailNewsPage.dart';
 import 'MyHomePage.dart';
 import 'MyProfilePage.dart';
 import 'MySelectLanguagePage.dart';
+import 'package:intl/intl.dart'; // Required for date formatting
 
 class MyBottomOnePage extends StatefulWidget {
   bool aapbarVisibility;
@@ -56,23 +61,13 @@ class _MyBottomOnePageState extends State<MyBottomOnePage> with TickerProviderSt
   int currentIndex = 0;
   int selectedTopData = 0;
 
-  final List<String> stateItems = [
-    'State',
-    'Maize',
-    'Paddy',
-  ];
-  String selectedStateItemValue = "";
+  String? selectedStateItemValue;
+  MandiPriceStateData? stateItems;
 
-  final List<String> districtItems = [
-    'All',
-    'Ganapathy',
-  ];
-  String selectedDistrictItemValue = "";
+  MandiPriceDistrictData? districtItems;
+  String? selectedDistrictItemValue;
 
-  final List<String> commodityItems = [
-    'All',
-    'Ganapathy',
-  ];
+  MandiPriceCommodityData? commodityItems;
   String selectedCommodityItemValue = "";
 
   List<bottomCategory> iconList = [
@@ -104,6 +99,8 @@ class _MyBottomOnePageState extends State<MyBottomOnePage> with TickerProviderSt
   TextEditingController fromDateController = TextEditingController();
   TextEditingController toDateController = TextEditingController();
 
+  String dateOfIncorporationNumberValue = "", dateOfToValue = "";
+
   final List<String> sortItems = [
     buildTranslate('lowToHighPrice')!,
     buildTranslate('highToLowPrice')!,
@@ -113,6 +110,7 @@ class _MyBottomOnePageState extends State<MyBottomOnePage> with TickerProviderSt
   String typeOfOrganizationData = "";
 
   bool _isClickAllowed = true; // Flag to prevent double-clicks
+  DateTime? selectedDate;
 
   @override
   void initState() {
@@ -156,6 +154,7 @@ class _MyBottomOnePageState extends State<MyBottomOnePage> with TickerProviderSt
 
     futureHomeNewsData = HomeDashboardController.getNewsDetails();
     getPrefValue();
+    _fetchStateData();
   }
 
   Future<void> getPrefValue() async {
@@ -164,6 +163,62 @@ class _MyBottomOnePageState extends State<MyBottomOnePage> with TickerProviderSt
     setState(() {
       typeOfOrganizationData = typeOfOrganizationData;
     });
+  }
+
+  Future<void> _fetchStateData() async {
+    try {
+      // Replace with your actual API endpoint
+      var response = await Dio().get(MANDI_PRICE_STATE);
+
+      if (response.statusCode == 200) {
+        setState(() {
+          stateItems = MandiPriceStateData.fromJson(response.data);
+        });
+        print("StateItems : $stateItems");
+      } else {
+        throw Exception('Failed to load state');
+      }
+    } catch (e) {
+      print('HomePage Mandi Price : Error fetching state data: $e');
+    }
+  }
+
+  Future<void> _fetchDistrictData() async {
+    try {
+      // Replace with your actual API endpoint
+      var response = await Dio().get("https://krishiyanback.vercel.app"
+          "/api/mandi/filter?stateName=$selectedStateItemValue");
+
+      if (response.statusCode == 200) {
+        setState(() {
+          districtItems = MandiPriceDistrictData.fromJson(response.data);
+        });
+        print("DistrictItems : $districtItems");
+      } else {
+        throw Exception('Failed to load state');
+      }
+    } catch (e) {
+      print('HomePage Mandi Price : Error fetching state data: $e');
+    }
+  }
+
+  Future<void> _fetchCommodityData() async {
+    try {
+      // Replace with your actual API endpoint
+      var response = await Dio().get("https://krishiyanback.vercel.app"
+          "/api/mandi/filter?stateName=$selectedStateItemValue&districtName=$selectedCommodityItemValue");
+
+      if (response.statusCode == 200) {
+        setState(() {
+          commodityItems = MandiPriceCommodityData.fromJson(response.data);
+        });
+        print("DistrictItems : $districtItems");
+      } else {
+        throw Exception('Failed to load state');
+      }
+    } catch (e) {
+      print('HomePage Mandi Price : Error fetching state data: $e');
+    }
   }
 
   @override
@@ -779,11 +834,15 @@ class _MyBottomOnePageState extends State<MyBottomOnePage> with TickerProviderSt
                             const SizedBox(
                               height: 10,
                             ),
+                            stateItems == null ||
+                                stateItems!.data == null
+                                ? const Center(child: Text('No data available'))
+                                :
                             Container(
                               color: Colors.white,
-                              alignment: Alignment.bottomCenter,
                               child: DropdownButtonFormField2<String>(
                                 isExpanded: true,
+                                dropdownStyleData: const DropdownStyleData(maxHeight: 200),
                                 decoration: InputDecoration(
                                   contentPadding:
                                   const EdgeInsets.symmetric(
@@ -797,27 +856,27 @@ class _MyBottomOnePageState extends State<MyBottomOnePage> with TickerProviderSt
                                   buildTranslate("selectState")!,
                                   style: const TextStyle(fontSize: 13, fontFamily: "poppins-regular"),
                                 ),
-                                items: stateItems
-                                    .map((item) => DropdownMenuItem<String>(
-                                  value: item,
-                                  child: Text(
-                                    item,
-                                    style: const TextStyle(
-                                      color: Color(0xFF666666),
-                                      fontSize: 13,
-                                      fontFamily: "poppins-regular",
-                                    ),
-                                  ),
-                                ))
-                                    .toList(),
+                                items: stateItems!.data!.map((String crop) {
+                                  return DropdownMenuItem<String>(
+                                    value: crop,
+                                    child: Text(crop, style: const TextStyle(
+                                        fontSize: 15,
+                                        color: Colors.black,
+                                        fontFamily: 'poppins-regular')),
+                                  );
+                                }).toList(),
                                 validator: (value) {
                                   if (value == null) {
-                                    return 'Please select type of Entity.';
+                                    return 'Please select type of state.';
                                   }
                                   return null;
                                 },
                                 onChanged: (value) {
-                                  //Do something when selected item is changed.
+                                  setState(() {
+                                    selectedStateItemValue = value;
+                                  });
+                                  print("SelectedStateItemValue : $selectedStateItemValue");
+                                  _fetchDistrictData();
                                 },
                                 onSaved: (value) {
                                   selectedStateItemValue = value.toString();
@@ -838,6 +897,66 @@ class _MyBottomOnePageState extends State<MyBottomOnePage> with TickerProviderSt
                                 ),
                               ),
                             ),
+                            // Container(
+                            //   color: Colors.white,
+                            //   alignment: Alignment.bottomCenter,
+                            //   child:
+                            //   DropdownButtonFormField2<String>(
+                            //     isExpanded: true,
+                            //     decoration: InputDecoration(
+                            //       contentPadding:
+                            //       const EdgeInsets.symmetric(
+                            //           vertical: 10),
+                            //       border: OutlineInputBorder(
+                            //         borderRadius: BorderRadius.circular(8),
+                            //       ),
+                            //       // Add more decoration..
+                            //     ),
+                            //     hint: Text(
+                            //       buildTranslate("selectState")!,
+                            //       style: const TextStyle(fontSize: 13, fontFamily: "poppins-regular"),
+                            //     ),
+                            //     items: stateItems
+                            //         .map((item) => DropdownMenuItem<String>(
+                            //       value: item,
+                            //       child: Text(
+                            //         item,
+                            //         style: const TextStyle(
+                            //           color: Color(0xFF666666),
+                            //           fontSize: 13,
+                            //           fontFamily: "poppins-regular",
+                            //         ),
+                            //       ),
+                            //     ))
+                            //         .toList(),
+                            //     validator: (value) {
+                            //       if (value == null) {
+                            //         return 'Please select type of Entity.';
+                            //       }
+                            //       return null;
+                            //     },
+                            //     onChanged: (value) {
+                            //       //Do something when selected item is changed.
+                            //     },
+                            //     onSaved: (value) {
+                            //       selectedStateItemValue = value.toString();
+                            //     },
+                            //     buttonStyleData: const ButtonStyleData(
+                            //       padding: EdgeInsets.only(right: 8),
+                            //     ),
+                            //     iconStyleData: const IconStyleData(
+                            //       icon: Icon(
+                            //         Icons.arrow_drop_down,
+                            //         color: Colors.black45,
+                            //       ),
+                            //       iconSize: 24,
+                            //     ),
+                            //     menuItemStyleData: const MenuItemStyleData(
+                            //       padding:
+                            //       EdgeInsets.symmetric(horizontal: 16),
+                            //     ),
+                            //   ),
+                            // ),
 
                             const SizedBox(
                               height: 20,
@@ -855,11 +974,15 @@ class _MyBottomOnePageState extends State<MyBottomOnePage> with TickerProviderSt
                             const SizedBox(
                               height: 10,
                             ),
+                            districtItems == null ||
+                                districtItems!.data == null
+                                ? const Center(child: Text('No data available'))
+                                :
                             Container(
                               color: Colors.white,
-                              alignment: Alignment.bottomCenter,
                               child: DropdownButtonFormField2<String>(
                                 isExpanded: true,
+                                dropdownStyleData: const DropdownStyleData(maxHeight: 200),
                                 decoration: InputDecoration(
                                   contentPadding:
                                   const EdgeInsets.symmetric(
@@ -873,31 +996,30 @@ class _MyBottomOnePageState extends State<MyBottomOnePage> with TickerProviderSt
                                   buildTranslate("selectDistrict")!,
                                   style: const TextStyle(fontSize: 13, fontFamily: "poppins-regular"),
                                 ),
-                                items: districtItems
-                                    .map((item) => DropdownMenuItem<String>(
-                                  value: item,
-                                  child: Text(
-                                    item,
-                                    style: const TextStyle(
-                                      color: Color(0xFF666666),
-                                      fontFamily: "poppins-regular",
-                                      fontSize: 13,
-                                    ),
-                                  ),
-                                ))
-                                    .toList(),
+                                items: districtItems!.data!.map((String crop) {
+                                  return DropdownMenuItem<String>(
+                                    value: crop,
+                                    child: Text(crop, style: const TextStyle(
+                                        fontSize: 15,
+                                        color: Colors.black,
+                                        fontFamily: 'poppins-regular')),
+                                  );
+                                }).toList(),
                                 validator: (value) {
                                   if (value == null) {
-                                    return 'Please select type of Entity.';
+                                    return 'Please select type of district.';
                                   }
                                   return null;
                                 },
                                 onChanged: (value) {
-                                  //Do something when selected item is changed.
+                                  setState(() {
+                                    selectedDistrictItemValue = value;
+                                  });
+                                  print("selectedDistrictItemValue : $selectedDistrictItemValue");
+                                  _fetchCommodityData();
                                 },
                                 onSaved: (value) {
-                                  selectedDistrictItemValue =
-                                      value.toString();
+                                  selectedDistrictItemValue = value.toString();
                                 },
                                 buttonStyleData: const ButtonStyleData(
                                   padding: EdgeInsets.only(right: 8),
@@ -915,6 +1037,66 @@ class _MyBottomOnePageState extends State<MyBottomOnePage> with TickerProviderSt
                                 ),
                               ),
                             ),
+                            // Container(
+                            //   color: Colors.white,
+                            //   alignment: Alignment.bottomCenter,
+                            //   child: DropdownButtonFormField2<String>(
+                            //     isExpanded: true,
+                            //     decoration: InputDecoration(
+                            //       contentPadding:
+                            //       const EdgeInsets.symmetric(
+                            //           vertical: 10),
+                            //       border: OutlineInputBorder(
+                            //         borderRadius: BorderRadius.circular(8),
+                            //       ),
+                            //       // Add more decoration..
+                            //     ),
+                            //     hint: Text(
+                            //       buildTranslate("selectDistrict")!,
+                            //       style: const TextStyle(fontSize: 13, fontFamily: "poppins-regular"),
+                            //     ),
+                            //     items: districtItems
+                            //         .map((item) => DropdownMenuItem<String>(
+                            //       value: item,
+                            //       child: Text(
+                            //         item,
+                            //         style: const TextStyle(
+                            //           color: Color(0xFF666666),
+                            //           fontFamily: "poppins-regular",
+                            //           fontSize: 13,
+                            //         ),
+                            //       ),
+                            //     ))
+                            //         .toList(),
+                            //     validator: (value) {
+                            //       if (value == null) {
+                            //         return 'Please select type of Entity.';
+                            //       }
+                            //       return null;
+                            //     },
+                            //     onChanged: (value) {
+                            //       //Do something when selected item is changed.
+                            //     },
+                            //     onSaved: (value) {
+                            //       selectedDistrictItemValue =
+                            //           value.toString();
+                            //     },
+                            //     buttonStyleData: const ButtonStyleData(
+                            //       padding: EdgeInsets.only(right: 8),
+                            //     ),
+                            //     iconStyleData: const IconStyleData(
+                            //       icon: Icon(
+                            //         Icons.arrow_drop_down,
+                            //         color: Colors.black45,
+                            //       ),
+                            //       iconSize: 24,
+                            //     ),
+                            //     menuItemStyleData: const MenuItemStyleData(
+                            //       padding:
+                            //       EdgeInsets.symmetric(horizontal: 16),
+                            //     ),
+                            //   ),
+                            // ),
                             const SizedBox(
                               height: 20,
                             ),
@@ -931,11 +1113,15 @@ class _MyBottomOnePageState extends State<MyBottomOnePage> with TickerProviderSt
                             const SizedBox(
                               height: 10,
                             ),
+                            commodityItems == null ||
+                                commodityItems!.data == null
+                                ? const Center(child: Text('No data available'))
+                                :
                             Container(
                               color: Colors.white,
-                              alignment: Alignment.bottomCenter,
                               child: DropdownButtonFormField2<String>(
                                 isExpanded: true,
+                                dropdownStyleData: const DropdownStyleData(maxHeight: 200),
                                 decoration: InputDecoration(
                                   contentPadding:
                                   const EdgeInsets.symmetric(
@@ -949,31 +1135,29 @@ class _MyBottomOnePageState extends State<MyBottomOnePage> with TickerProviderSt
                                   buildTranslate("selectCommodity")!,
                                   style: const TextStyle(fontSize: 13, fontFamily: "poppins-regular"),
                                 ),
-                                items: commodityItems
-                                    .map((item) => DropdownMenuItem<String>(
-                                  value: item,
-                                  child: Text(
-                                    item,
-                                    style: const TextStyle(
-                                      color: Color(0xFF666666),
-                                      fontFamily: "poppins-regular",
-                                      fontSize: 13,
-                                    ),
-                                  ),
-                                ))
-                                    .toList(),
+                                items: commodityItems!.data!.map((String crop) {
+                                  return DropdownMenuItem<String>(
+                                    value: crop,
+                                    child: Text(crop, style: const TextStyle(
+                                        fontSize: 15,
+                                        color: Colors.black,
+                                        fontFamily: 'poppins-regular')),
+                                  );
+                                }).toList(),
                                 validator: (value) {
                                   if (value == null) {
-                                    return 'Please select type of Entity.';
+                                    return 'Please select type of district.';
                                   }
                                   return null;
                                 },
                                 onChanged: (value) {
-                                  //Do something when selected item is changed.
+                                  setState(() {
+                                    selectedCommodityItemValue = value!;
+                                  });
+                                  print("selectedCommodityItemValue : $selectedCommodityItemValue");
                                 },
                                 onSaved: (value) {
-                                  selectedCommodityItemValue =
-                                      value.toString();
+                                  selectedCommodityItemValue = value.toString();
                                 },
                                 buttonStyleData: const ButtonStyleData(
                                   padding: EdgeInsets.only(right: 8),
@@ -1023,7 +1207,7 @@ class _MyBottomOnePageState extends State<MyBottomOnePage> with TickerProviderSt
                                               color: Colors.grey,
                                             ),
                                             onPressed: () {
-
+                                              _selectFromDate(context);
                                             },
                                           ),
                                           alignLabelWithHint: true,
@@ -1079,7 +1263,7 @@ class _MyBottomOnePageState extends State<MyBottomOnePage> with TickerProviderSt
                                               color: Colors.grey,
                                             ),
                                             onPressed: () {
-
+                                              _selectToDate(context);
                                             },
                                           ),
                                           alignLabelWithHint: true,
@@ -1556,6 +1740,52 @@ class _MyBottomOnePageState extends State<MyBottomOnePage> with TickerProviderSt
         )
             : null
     );
+  }
+
+  Future<void> _selectFromDate(BuildContext context) async {
+    // Show the date picker dialog
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: selectedDate != null ? selectedDate : DateTime.now(),
+      // Default date is the current date
+      firstDate: DateTime(2000),
+      // Earliest selectable date
+      lastDate: DateTime(2101),
+      // Latest selectable date
+      helpText: 'Select a date', // Optional help text
+    );
+    if (pickedDate != null) {
+      print("pickedDate : $pickedDate");
+      setState(() {
+        // Format the selected date and display it in the TextFormField
+        fromDateController.text =
+            DateFormat('dd-MM-yyyy').format(pickedDate);
+        dateOfIncorporationNumberValue = "${pickedDate}Z";
+      });
+    }
+  }
+
+  Future<void> _selectToDate(BuildContext context) async {
+    // Show the date picker dialog
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: selectedDate != null ? selectedDate : DateTime.now(),
+      // Default date is the current date
+      firstDate: DateTime(2000),
+      // Earliest selectable date
+      lastDate: DateTime(2101),
+      // Latest selectable date
+      helpText: 'Select a date', // Optional help text
+    );
+    if (pickedDate != null) {
+      print("pickedDate : $pickedDate");
+      setState(() {
+        // Format the selected date and display it in the TextFormField
+        toDateController.text =
+            DateFormat('dd-MM-yyyy').format(pickedDate);
+        dateOfToValue = "${pickedDate}Z";
+      });
+    }
   }
 
   void _onSelectedTopDataTapped(int index) {

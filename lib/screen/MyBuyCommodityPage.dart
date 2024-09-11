@@ -36,10 +36,6 @@ class _MyBuyCommodityPageState extends State<MyBuyCommodityPage> {
   TextEditingController deliveryLocationController = TextEditingController();
   TextEditingController commentsController = TextEditingController();
 
-  // final List<String> commodityItems = ['Maize', 'Coriander', 'Soya'];
-  // String? selectedCommodityItemValue;
-
-  late Future<List<CropLibraryData>?> futureCropData;
   String? _selectedCrop;
   SelectCropNamesData? _cropData;
 
@@ -56,7 +52,6 @@ class _MyBuyCommodityPageState extends State<MyBuyCommodityPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    futureCropData = CropController.fetchCrop();
     _fetchCropData();
   }
 

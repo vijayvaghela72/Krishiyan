@@ -33,6 +33,7 @@ class GetProfileDetails {
   String? contactPersonName;
   String? yourDesignation;
   String? uRL;
+  String? email;
   String? contactNumber;
 
   GetProfileDetails(
@@ -44,6 +45,7 @@ class GetProfileDetails {
         this.contactPersonName,
         this.yourDesignation,
         this.uRL,
+        this.email,
         this.contactNumber});
 
   GetProfileDetails.fromJson(Map<String, dynamic> json) {
@@ -55,6 +57,7 @@ class GetProfileDetails {
     contactPersonName = json['contactPersonName'];
     yourDesignation = json['yourDesignation'];
     uRL = json['URL'];
+    email = json['Email'];
     contactNumber = json['contactNumber'];
   }
 
@@ -68,6 +71,7 @@ class GetProfileDetails {
     data['contactPersonName'] = this.contactPersonName;
     data['yourDesignation'] = this.yourDesignation;
     data['URL'] = this.uRL;
+    data['Email'] = this.email;
     data['contactNumber'] = this.contactNumber;
     return data;
   }
