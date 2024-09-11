@@ -10,8 +10,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:krishiyan/mvc/model/GetMandiPriceData.dart';
 import 'package:krishiyan/utils/AppGlobal.dart';
 import 'package:krishiyan/utils/Constants.dart';
+import '../helper/AlertHelper.dart';
 import '../helper/SharedPref.dart';
 import '../localization/AppLocalizations.dart';
 import '../mvc/controller/homeDashboardController.dart';
@@ -99,7 +101,7 @@ class _MyBottomOnePageState extends State<MyBottomOnePage> with TickerProviderSt
   TextEditingController fromDateController = TextEditingController();
   TextEditingController toDateController = TextEditingController();
 
-  String dateOfIncorporationNumberValue = "", dateOfToValue = "";
+  String dateOfFromValue = "", dateOfToValue = "";
 
   final List<String> sortItems = [
     buildTranslate('lowToHighPrice')!,
@@ -111,6 +113,8 @@ class _MyBottomOnePageState extends State<MyBottomOnePage> with TickerProviderSt
 
   bool _isClickAllowed = true; // Flag to prevent double-clicks
   DateTime? selectedDate;
+
+  Future<List<MandiPriceData>>? futureMandiPrice;
 
   @override
   void initState() {
@@ -288,35 +292,12 @@ class _MyBottomOnePageState extends State<MyBottomOnePage> with TickerProviderSt
                     ],
                   ),
                 ),
-                // Padding(
-                //   padding: const EdgeInsets.only(right: 5.0, top: 20.0),
-                //   child: Row(
-                //     mainAxisAlignment: MainAxisAlignment.end,
-                //     children: [
-                //       const Text(
-                //         "Select Language",
-                //         style: TextStyle(
-                //             color: Colors.black,
-                //             fontFamily: 'poppins-semibold',
-                //             fontSize: 15),
-                //       ),
-                //       const SizedBox(
-                //         width: 10,
-                //       ),
-                //       Image.asset(
-                //         'assets/images/appbar_down.png',
-                //         // color: Colors.white,
-                //       ),
-                //     ],
-                //   ),
-                // ),
               ],
             ),
           ),
         )
             : null,
         body: SingleChildScrollView(
-          physics: AlwaysScrollableScrollPhysics(),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -609,7 +590,8 @@ class _MyBottomOnePageState extends State<MyBottomOnePage> with TickerProviderSt
                             return const Center(child: Text('No data available'));
                       }
                     },
-                  ), SizedBox(height: 80,),
+                  ),
+                        SizedBox(height: 80,),
                         // Padding(
                         //   padding: const EdgeInsets.only(left: 20.0, right: 20.0),
                         //   child: Container(
@@ -806,778 +788,993 @@ class _MyBottomOnePageState extends State<MyBottomOnePage> with TickerProviderSt
                   )
                   : selectedTopData == 1
                   ? Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        top: 10.0, right: 20.0, left: 20.0),
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      decoration: const BoxDecoration(
-                          color: Colors.white,
-                          borderRadius:
-                          BorderRadius.all(Radius.circular(18))),
-                      child: Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // select state
-                            Text(
-                              buildTranslate("selectState")!,
-                              softWrap: true,
-                              style: const TextStyle(
-                                  color: Color(0xFF666666),
-                                  fontSize: 13,
-                                  fontFamily: 'poppins-semibold'),
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            stateItems == null ||
-                                stateItems!.data == null
-                                ? const Center(child: Text('No data available'))
-                                :
-                            Container(
-                              color: Colors.white,
-                              child: DropdownButtonFormField2<String>(
-                                isExpanded: true,
-                                dropdownStyleData: const DropdownStyleData(maxHeight: 200),
-                                decoration: InputDecoration(
-                                  contentPadding:
-                                  const EdgeInsets.symmetric(
-                                      vertical: 10),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  // Add more decoration..
-                                ),
-                                hint: Text(
-                                  buildTranslate("selectState")!,
-                                  style: const TextStyle(fontSize: 13, fontFamily: "poppins-regular"),
-                                ),
-                                items: stateItems!.data!.map((String crop) {
-                                  return DropdownMenuItem<String>(
-                                    value: crop,
-                                    child: Text(crop, style: const TextStyle(
-                                        fontSize: 15,
-                                        color: Colors.black,
-                                        fontFamily: 'poppins-regular')),
-                                  );
-                                }).toList(),
-                                validator: (value) {
-                                  if (value == null) {
-                                    return 'Please select type of state.';
-                                  }
-                                  return null;
-                                },
-                                onChanged: (value) {
-                                  setState(() {
-                                    selectedStateItemValue = value;
-                                  });
-                                  print("SelectedStateItemValue : $selectedStateItemValue");
-                                  _fetchDistrictData();
-                                },
-                                onSaved: (value) {
-                                  selectedStateItemValue = value.toString();
-                                },
-                                buttonStyleData: const ButtonStyleData(
-                                  padding: EdgeInsets.only(right: 8),
-                                ),
-                                iconStyleData: const IconStyleData(
-                                  icon: Icon(
-                                    Icons.arrow_drop_down,
-                                    color: Colors.black45,
-                                  ),
-                                  iconSize: 24,
-                                ),
-                                menuItemStyleData: const MenuItemStyleData(
-                                  padding:
-                                  EdgeInsets.symmetric(horizontal: 16),
-                                ),
-                              ),
-                            ),
-                            // Container(
-                            //   color: Colors.white,
-                            //   alignment: Alignment.bottomCenter,
-                            //   child:
-                            //   DropdownButtonFormField2<String>(
-                            //     isExpanded: true,
-                            //     decoration: InputDecoration(
-                            //       contentPadding:
-                            //       const EdgeInsets.symmetric(
-                            //           vertical: 10),
-                            //       border: OutlineInputBorder(
-                            //         borderRadius: BorderRadius.circular(8),
-                            //       ),
-                            //       // Add more decoration..
-                            //     ),
-                            //     hint: Text(
-                            //       buildTranslate("selectState")!,
-                            //       style: const TextStyle(fontSize: 13, fontFamily: "poppins-regular"),
-                            //     ),
-                            //     items: stateItems
-                            //         .map((item) => DropdownMenuItem<String>(
-                            //       value: item,
-                            //       child: Text(
-                            //         item,
-                            //         style: const TextStyle(
-                            //           color: Color(0xFF666666),
-                            //           fontSize: 13,
-                            //           fontFamily: "poppins-regular",
-                            //         ),
-                            //       ),
-                            //     ))
-                            //         .toList(),
-                            //     validator: (value) {
-                            //       if (value == null) {
-                            //         return 'Please select type of Entity.';
-                            //       }
-                            //       return null;
-                            //     },
-                            //     onChanged: (value) {
-                            //       //Do something when selected item is changed.
-                            //     },
-                            //     onSaved: (value) {
-                            //       selectedStateItemValue = value.toString();
-                            //     },
-                            //     buttonStyleData: const ButtonStyleData(
-                            //       padding: EdgeInsets.only(right: 8),
-                            //     ),
-                            //     iconStyleData: const IconStyleData(
-                            //       icon: Icon(
-                            //         Icons.arrow_drop_down,
-                            //         color: Colors.black45,
-                            //       ),
-                            //       iconSize: 24,
-                            //     ),
-                            //     menuItemStyleData: const MenuItemStyleData(
-                            //       padding:
-                            //       EdgeInsets.symmetric(horizontal: 16),
-                            //     ),
-                            //   ),
-                            // ),
-
-                            const SizedBox(
-                              height: 20,
-                            ),
-
-                            // select district
-                            Text(
-                              buildTranslate("selectDistrict")!,
-                              softWrap: true,
-                              style: const TextStyle(
-                                  color: Color(0xFF666666),
-                                  fontSize: 13,
-                                  fontFamily: 'poppins-semibold'),
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            districtItems == null ||
-                                districtItems!.data == null
-                                ? const Center(child: Text('No data available'))
-                                :
-                            Container(
-                              color: Colors.white,
-                              child: DropdownButtonFormField2<String>(
-                                isExpanded: true,
-                                dropdownStyleData: const DropdownStyleData(maxHeight: 200),
-                                decoration: InputDecoration(
-                                  contentPadding:
-                                  const EdgeInsets.symmetric(
-                                      vertical: 10),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  // Add more decoration..
-                                ),
-                                hint: Text(
-                                  buildTranslate("selectDistrict")!,
-                                  style: const TextStyle(fontSize: 13, fontFamily: "poppins-regular"),
-                                ),
-                                items: districtItems!.data!.map((String crop) {
-                                  return DropdownMenuItem<String>(
-                                    value: crop,
-                                    child: Text(crop, style: const TextStyle(
-                                        fontSize: 15,
-                                        color: Colors.black,
-                                        fontFamily: 'poppins-regular')),
-                                  );
-                                }).toList(),
-                                validator: (value) {
-                                  if (value == null) {
-                                    return 'Please select type of district.';
-                                  }
-                                  return null;
-                                },
-                                onChanged: (value) {
-                                  setState(() {
-                                    selectedDistrictItemValue = value;
-                                  });
-                                  print("selectedDistrictItemValue : $selectedDistrictItemValue");
-                                  _fetchCommodityData();
-                                },
-                                onSaved: (value) {
-                                  selectedDistrictItemValue = value.toString();
-                                },
-                                buttonStyleData: const ButtonStyleData(
-                                  padding: EdgeInsets.only(right: 8),
-                                ),
-                                iconStyleData: const IconStyleData(
-                                  icon: Icon(
-                                    Icons.arrow_drop_down,
-                                    color: Colors.black45,
-                                  ),
-                                  iconSize: 24,
-                                ),
-                                menuItemStyleData: const MenuItemStyleData(
-                                  padding:
-                                  EdgeInsets.symmetric(horizontal: 16),
-                                ),
-                              ),
-                            ),
-                            // Container(
-                            //   color: Colors.white,
-                            //   alignment: Alignment.bottomCenter,
-                            //   child: DropdownButtonFormField2<String>(
-                            //     isExpanded: true,
-                            //     decoration: InputDecoration(
-                            //       contentPadding:
-                            //       const EdgeInsets.symmetric(
-                            //           vertical: 10),
-                            //       border: OutlineInputBorder(
-                            //         borderRadius: BorderRadius.circular(8),
-                            //       ),
-                            //       // Add more decoration..
-                            //     ),
-                            //     hint: Text(
-                            //       buildTranslate("selectDistrict")!,
-                            //       style: const TextStyle(fontSize: 13, fontFamily: "poppins-regular"),
-                            //     ),
-                            //     items: districtItems
-                            //         .map((item) => DropdownMenuItem<String>(
-                            //       value: item,
-                            //       child: Text(
-                            //         item,
-                            //         style: const TextStyle(
-                            //           color: Color(0xFF666666),
-                            //           fontFamily: "poppins-regular",
-                            //           fontSize: 13,
-                            //         ),
-                            //       ),
-                            //     ))
-                            //         .toList(),
-                            //     validator: (value) {
-                            //       if (value == null) {
-                            //         return 'Please select type of Entity.';
-                            //       }
-                            //       return null;
-                            //     },
-                            //     onChanged: (value) {
-                            //       //Do something when selected item is changed.
-                            //     },
-                            //     onSaved: (value) {
-                            //       selectedDistrictItemValue =
-                            //           value.toString();
-                            //     },
-                            //     buttonStyleData: const ButtonStyleData(
-                            //       padding: EdgeInsets.only(right: 8),
-                            //     ),
-                            //     iconStyleData: const IconStyleData(
-                            //       icon: Icon(
-                            //         Icons.arrow_drop_down,
-                            //         color: Colors.black45,
-                            //       ),
-                            //       iconSize: 24,
-                            //     ),
-                            //     menuItemStyleData: const MenuItemStyleData(
-                            //       padding:
-                            //       EdgeInsets.symmetric(horizontal: 16),
-                            //     ),
-                            //   ),
-                            // ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-
-                            // select commodity
-                            Text(
-                              buildTranslate("selectCommodity")!,
-                              softWrap: true,
-                              style: const TextStyle(
-                                  color: Color(0xFF666666),
-                                  fontSize: 13,
-                                  fontFamily: 'poppins-semibold'),
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            commodityItems == null ||
-                                commodityItems!.data == null
-                                ? const Center(child: Text('No data available'))
-                                :
-                            Container(
-                              color: Colors.white,
-                              child: DropdownButtonFormField2<String>(
-                                isExpanded: true,
-                                dropdownStyleData: const DropdownStyleData(maxHeight: 200),
-                                decoration: InputDecoration(
-                                  contentPadding:
-                                  const EdgeInsets.symmetric(
-                                      vertical: 10),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  // Add more decoration..
-                                ),
-                                hint: Text(
-                                  buildTranslate("selectCommodity")!,
-                                  style: const TextStyle(fontSize: 13, fontFamily: "poppins-regular"),
-                                ),
-                                items: commodityItems!.data!.map((String crop) {
-                                  return DropdownMenuItem<String>(
-                                    value: crop,
-                                    child: Text(crop, style: const TextStyle(
-                                        fontSize: 15,
-                                        color: Colors.black,
-                                        fontFamily: 'poppins-regular')),
-                                  );
-                                }).toList(),
-                                validator: (value) {
-                                  if (value == null) {
-                                    return 'Please select type of district.';
-                                  }
-                                  return null;
-                                },
-                                onChanged: (value) {
-                                  setState(() {
-                                    selectedCommodityItemValue = value!;
-                                  });
-                                  print("selectedCommodityItemValue : $selectedCommodityItemValue");
-                                },
-                                onSaved: (value) {
-                                  selectedCommodityItemValue = value.toString();
-                                },
-                                buttonStyleData: const ButtonStyleData(
-                                  padding: EdgeInsets.only(right: 8),
-                                ),
-                                iconStyleData: const IconStyleData(
-                                  icon: Icon(
-                                    Icons.arrow_drop_down,
-                                    color: Colors.black45,
-                                  ),
-                                  iconSize: 24,
-                                ),
-                                menuItemStyleData: const MenuItemStyleData(
-                                  padding:
-                                  EdgeInsets.symmetric(horizontal: 16),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-
-                            // Search By Date Range
-                            Text(
-                              buildTranslate("searchByDateRange")!,
-                              softWrap: true,
-                              style: const TextStyle(
-                                  color: Color(0xFF666666),
-                                  fontSize: 13,
-                                  fontFamily: 'poppins-semibold'),
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: Container(
-                                    color: Colors.white,
-                                    alignment: Alignment.bottomCenter,
-                                    child: TextFormField(
-                                      decoration: InputDecoration(
-                                          suffixIcon: IconButton(
-                                            icon: const Icon(
-                                              Icons.calendar_month,
-                                              size: 20.0,
-                                              color: Colors.grey,
-                                            ),
-                                            onPressed: () {
-                                              _selectFromDate(context);
-                                            },
-                                          ),
-                                          alignLabelWithHint: true,
-                                          fillColor: Colors.white,
-                                          filled: true,
-                                          contentPadding:
-                                          const EdgeInsets.all(10.0),
-                                          border: const OutlineInputBorder(
-                                            borderRadius: BorderRadius.all(
-                                              Radius.circular(10.0),
-                                            ),
-                                          ),
-                                          enabledBorder: const OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                              color: Colors.grey,
-                                              width: 1.0,
-                                            ),
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(8.0)),
-                                          ),
-                                          hintText: buildTranslate("from"),
-                                          hintStyle: const TextStyle(
-                                              color: Color(0xFF757575),
-                                              fontFamily: "poppins-regular",
-                                              fontSize: 13.0),
-                                          focusedBorder: const OutlineInputBorder(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(8.0)),
-                                            borderSide: BorderSide(
-                                                color: Colors.green,
-                                                width: 0.5),
-                                          )),
-                                      validator: (value) => value!.isEmpty
-                                          ? 'Please, fill this field.'
-                                          : null,
-                                      controller: fromDateController,
-                                    ),
-                                  ),
-                                ),
-                                const VerticalDivider(
-                                  width: 10,
-                                ),
-                                Expanded(
-                                  child: Container(
-                                    color: Colors.white,
-                                    alignment: Alignment.bottomCenter,
-                                    child: TextFormField(
-                                      decoration: InputDecoration(
-                                          suffixIcon: IconButton(
-                                            icon: const Icon(
-                                              Icons.calendar_month,
-                                              size: 20.0,
-                                              color: Colors.grey,
-                                            ),
-                                            onPressed: () {
-                                              _selectToDate(context);
-                                            },
-                                          ),
-                                          alignLabelWithHint: true,
-                                          fillColor: Colors.white,
-                                          filled: true,
-                                          contentPadding:
-                                          const EdgeInsets.all(10.0),
-                                          border: const OutlineInputBorder(
-                                            borderRadius: BorderRadius.all(
-                                              Radius.circular(10.0),
-                                            ),
-                                          ),
-                                          enabledBorder: const OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                              color: Colors.grey,
-                                              width: 1.0,
-                                            ),
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(8.0)),
-                                          ),
-                                          hintText: buildTranslate("to"),
-                                          hintStyle: const TextStyle(
-                                              color: Color(0xFF757575),
-                                              fontFamily: "poppins-regular",
-                                              fontSize: 13.0),
-                                          focusedBorder: const OutlineInputBorder(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(8.0)),
-                                            borderSide: BorderSide(
-                                                color: Colors.green,
-                                                width: 0.5),
-                                          )),
-                                      validator: (value) => value!.isEmpty
-                                          ? 'Please, fill this field.'
-                                          : null,
-                                      controller: toDateController,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-
-                            const SizedBox(
-                              height: 30,
-                            ),
-                            Container(
-                                width: MediaQuery.of(context).size.width,
-                                child: ElevatedButton(
-                                  onPressed: () {},
-                                  style: ElevatedButton.styleFrom(
-                                    foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.all(12),
-                                    textStyle:
-                                    const TextStyle(fontSize: 18),
-                                    backgroundColor:
-                                    const Color(0xFF3FC041),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(
-                                          12), // <-- Radius
-                                    ),
-                                  ),
-                                  child: Text(
-                                    buildTranslate('SUBMIT')!,
-                                    style: const TextStyle(
-                                        fontSize: 15,
-                                        fontFamily: 'poppins-regular'),
-                                  ),
-                                )),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 20.0, left: 20.0),
-                    child: Align(
-                      alignment: Alignment.bottomRight,
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            top: 10.0, right: 20.0, left: 20.0),
                         child: Container(
-                          width: 130,
-                          height: 40,
-                          color: Colors.white,
-                          child: DropdownButtonFormField2<String>(
-                            isExpanded: true,
-                            decoration: InputDecoration(
-                              contentPadding: const EdgeInsets.symmetric(vertical: 5),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: const BorderSide(
-                                  color: Color(0xFF666666),
-                                  width: 1.0,
-                                ),),
-                              // Add more decoration..
-                            ),
-                            hint: Text(
-                              buildTranslate('sortBy')!,
-                              style: const TextStyle(fontSize: 9, color:
-                              Color(0xFF666666), fontFamily: "poppins-regular"),
-                            ),
-                            items: sortItems
-                                .map((item) => DropdownMenuItem<String>(
-                              value: item,
-                              child: Text(
-                                item,
-                                style: const TextStyle(
-                                    fontSize: 9,
-                                    color: Color(0xFF666666)
-                                ),
-                              ),
-                            ))
-                                .toList(),
-                            onChanged: (value) {
-                              //Do something when selected item is changed.
-                            },
-                            onSaved: (value) {
-                              selectedSortItemsValue = value.toString();
-                            },
-                            // customButton: Align(
-                            //     alignment: Alignment.centerRight,
-                            //     child: Image.asset('assets/images/sortBy.png', height: 20, width: 20,)),
-                            buttonStyleData: const ButtonStyleData(
-                              padding: EdgeInsets.only(right: 10),
-                            ),
-                            iconStyleData: const IconStyleData(
-                              icon: ImageIcon(AssetImage('assets/images/sortBy.png')),
-                              iconSize: 18,
-                              iconEnabledColor: Colors.black,
-                            ),
-                            // iconStyleData: IconStyleData(
-                            //   openMenuIcon: Image.asset('assets/images/sortBy.png', height: 20, width: 20,),
-                            //   // icon: Icon(
-                            //   //   Icons.arrow_drop_down,
-                            //   //   color: Colors.black45,
-                            //   // ),
-                            //   iconSize: 0,
-                            // ),
-                            menuItemStyleData: const MenuItemStyleData(
-                              padding: EdgeInsets.symmetric(horizontal: 16),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        top: 10.0, right: 20.0, left: 20.0),
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      decoration: const BoxDecoration(
-                          color: Colors.white,
-                          borderRadius:
-                          BorderRadius.all(Radius.circular(18))),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 15.0),
-                            child: Row(
+                          width: MediaQuery.of(context).size.width,
+                          decoration: const BoxDecoration(
+                              color: Colors.white,
+                              borderRadius:
+                              BorderRadius.all(Radius.circular(18))),
+                          child: Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.max,
                               children: [
-                                Expanded(
-                                  child: Row(
-                                    children: [
-                                      Image.asset("assets/images/location.png", width: 15, height: 15,),
-                                      const SizedBox(
-                                        width: 5,
-                                      ),
-                                      const Text(
-                                        "COIMBATORE",
-                                        softWrap: true,
-                                        style: TextStyle(
-                                            color: Color(0xFF959595),
-                                            fontSize: 11,
-                                            fontFamily: 'poppins-semibold'),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Image.asset("assets/images/calendar.png", width: 15, height: 15,),
-                                      const SizedBox(
-                                        width: 5,
-                                      ),
-                                      const Text(
-                                        "30-07-2024",
-                                        softWrap: true,
-                                        style: TextStyle(
-                                            color: Color(0xFF959595),
-                                            fontSize: 11,
-                                            fontFamily: 'poppins-semibold'),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 15.0, right: 15.0,),
-                            child: Row(
-                              children: [
-                                Image.asset("assets/images/mandiBG.png",),
-                                const SizedBox(
-                                  width: 5,
-                                ),
-                                const Text(
-                                  "COCONUT",
+                                // select state
+                                Text(
+                                  buildTranslate("selectState")!,
                                   softWrap: true,
-                                  style: TextStyle(
-                                      color: Color(0xFF808080),
-                                      fontSize: 14,
+                                  style: const TextStyle(
+                                      color: Color(0xFF666666),
+                                      fontSize: 13,
                                       fontFamily: 'poppins-semibold'),
                                 ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                stateItems == null ||
+                                    stateItems!.data == null
+                                    ? const Center(child: Text('No data available'))
+                                    :
+                                Container(
+                                  color: Colors.white,
+                                  child: DropdownButtonFormField2<String>(
+                                    isExpanded: true,
+                                    dropdownStyleData: const DropdownStyleData(maxHeight: 200),
+                                    decoration: InputDecoration(
+                                      contentPadding:
+                                      const EdgeInsets.symmetric(
+                                          vertical: 10),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      // Add more decoration..
+                                    ),
+                                    hint: Text(
+                                      buildTranslate("selectState")!,
+                                      style: const TextStyle(fontSize: 13, fontFamily: "poppins-regular"),
+                                    ),
+                                    items: stateItems!.data!.map((String crop) {
+                                      return DropdownMenuItem<String>(
+                                        value: crop,
+                                        child: Text(crop, style: const TextStyle(
+                                            fontSize: 15,
+                                            color: Colors.black,
+                                            fontFamily: 'poppins-regular')),
+                                      );
+                                    }).toList(),
+                                    validator: (value) {
+                                      if (value == null) {
+                                        return 'Please select type of state.';
+                                      }
+                                      return null;
+                                    },
+                                    onChanged: (value) {
+                                      setState(() {
+                                        selectedStateItemValue = value;
+                                      });
+                                      print("SelectedStateItemValue : $selectedStateItemValue");
+                                      _fetchDistrictData();
+                                    },
+                                    onSaved: (value) {
+                                      selectedStateItemValue = value.toString();
+                                    },
+                                    buttonStyleData: const ButtonStyleData(
+                                      padding: EdgeInsets.only(right: 8),
+                                    ),
+                                    iconStyleData: const IconStyleData(
+                                      icon: Icon(
+                                        Icons.arrow_drop_down,
+                                        color: Colors.black45,
+                                      ),
+                                      iconSize: 24,
+                                    ),
+                                    menuItemStyleData: const MenuItemStyleData(
+                                      padding:
+                                      EdgeInsets.symmetric(horizontal: 16),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 20,
+                                ),
+
+                                // select district
+                                Text(
+                                  buildTranslate("selectDistrict")!,
+                                  softWrap: true,
+                                  style: const TextStyle(
+                                      color: Color(0xFF666666),
+                                      fontSize: 13,
+                                      fontFamily: 'poppins-semibold'),
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                districtItems == null ||
+                                    districtItems!.data == null
+                                    ? Container(
+                                  color: Colors.white,
+                                  child: DropdownButtonFormField2<String>(
+                                    isExpanded: true,
+                                    dropdownStyleData: const DropdownStyleData(maxHeight: 200),
+                                    decoration: InputDecoration(
+                                      contentPadding:
+                                      const EdgeInsets.symmetric(
+                                          vertical: 10),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      // Add more decoration..
+                                    ),
+                                    hint: Text(
+                                      buildTranslate("selectDistrict")!,
+                                      style: const TextStyle(fontSize: 13, fontFamily: "poppins-regular"),
+                                    ),
+                                    validator: (value) {
+                                      if (value == null) {
+                                        return 'Please select type of district.';
+                                      }
+                                      return null;
+                                    },
+                                    onChanged: (value) {
+
+                                    },
+                                    onSaved: (value) {
+                                    },
+                                    buttonStyleData: const ButtonStyleData(
+                                      padding: EdgeInsets.only(right: 8),
+                                    ),
+                                    iconStyleData: const IconStyleData(
+                                      icon: Icon(
+                                        Icons.arrow_drop_down,
+                                        color: Colors.black45,
+                                      ),
+                                      iconSize: 24,
+                                    ),
+                                    menuItemStyleData: const MenuItemStyleData(
+                                      padding:
+                                      EdgeInsets.symmetric(horizontal: 16),
+                                    ), items: [],
+                                  ),
+                                )
+                                    :
+                                Container(
+                                  color: Colors.white,
+                                  child: DropdownButtonFormField2<String>(
+                                    isExpanded: true,
+                                    dropdownStyleData: const DropdownStyleData(maxHeight: 200),
+                                    decoration: InputDecoration(
+                                      contentPadding:
+                                      const EdgeInsets.symmetric(
+                                          vertical: 10),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      // Add more decoration..
+                                    ),
+                                    hint: Text(
+                                      buildTranslate("selectDistrict")!,
+                                      style: const TextStyle(fontSize: 13, fontFamily: "poppins-regular"),
+                                    ),
+                                    items: districtItems!.data!.map((String crop) {
+                                      return DropdownMenuItem<String>(
+                                        value: crop,
+                                        child: Text(crop, style: const TextStyle(
+                                            fontSize: 15,
+                                            color: Colors.black,
+                                            fontFamily: 'poppins-regular')),
+                                      );
+                                    }).toList(),
+                                    validator: (value) {
+                                      if (value == null) {
+                                        return 'Please select type of district.';
+                                      }
+                                      return null;
+                                    },
+                                    onChanged: (value) {
+                                      setState(() {
+                                        selectedDistrictItemValue = value;
+                                      });
+                                      print("selectedDistrictItemValue : $selectedDistrictItemValue");
+                                      _fetchCommodityData();
+                                    },
+                                    onSaved: (value) {
+                                      selectedDistrictItemValue = value.toString();
+                                    },
+                                    buttonStyleData: const ButtonStyleData(
+                                      padding: EdgeInsets.only(right: 8),
+                                    ),
+                                    iconStyleData: const IconStyleData(
+                                      icon: Icon(
+                                        Icons.arrow_drop_down,
+                                        color: Colors.black45,
+                                      ),
+                                      iconSize: 24,
+                                    ),
+                                    menuItemStyleData: const MenuItemStyleData(
+                                      padding:
+                                      EdgeInsets.symmetric(horizontal: 16),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 20,
+                                ),
+
+                                // select commodity
+                                Text(
+                                  buildTranslate("selectCommodity")!,
+                                  softWrap: true,
+                                  style: const TextStyle(
+                                      color: Color(0xFF666666),
+                                      fontSize: 13,
+                                      fontFamily: 'poppins-semibold'),
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                commodityItems == null ||
+                                    commodityItems!.data == null
+                                    ? Container(
+                                  color: Colors.white,
+                                  child: DropdownButtonFormField2<String>(
+                                    isExpanded: true,
+                                    dropdownStyleData: const DropdownStyleData(maxHeight: 200),
+                                    decoration: InputDecoration(
+                                      contentPadding:
+                                      const EdgeInsets.symmetric(
+                                          vertical: 10),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      // Add more decoration..
+                                    ),
+                                    hint: Text(
+                                      buildTranslate("selectCommodity")!,
+                                      style: const TextStyle(fontSize: 13, fontFamily: "poppins-regular"),
+                                    ),
+                                    items: [],
+                                    validator: (value) {
+                                      if (value == null) {
+                                        return 'Please select type of district.';
+                                      }
+                                      return null;
+                                    },
+                                    onChanged: (value) {
+
+                                    },
+                                    onSaved: (value) {
+
+                                    },
+                                    buttonStyleData: const ButtonStyleData(
+                                      padding: EdgeInsets.only(right: 8),
+                                    ),
+                                    iconStyleData: const IconStyleData(
+                                      icon: Icon(
+                                        Icons.arrow_drop_down,
+                                        color: Colors.black45,
+                                      ),
+                                      iconSize: 24,
+                                    ),
+                                    menuItemStyleData: const MenuItemStyleData(
+                                      padding:
+                                      EdgeInsets.symmetric(horizontal: 16),
+                                    ),
+                                  ),
+                                )
+                                    :
+                                Container(
+                                  color: Colors.white,
+                                  child: DropdownButtonFormField2<String>(
+                                    isExpanded: true,
+                                    dropdownStyleData: const DropdownStyleData(maxHeight: 200),
+                                    decoration: InputDecoration(
+                                      contentPadding:
+                                      const EdgeInsets.symmetric(
+                                          vertical: 10),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      // Add more decoration..
+                                    ),
+                                    hint: Text(
+                                      buildTranslate("selectCommodity")!,
+                                      style: const TextStyle(fontSize: 13, fontFamily: "poppins-regular"),
+                                    ),
+                                    items: commodityItems!.data!.map((String crop) {
+                                      return DropdownMenuItem<String>(
+                                        value: crop,
+                                        child: Text(crop, style: const TextStyle(
+                                            fontSize: 15,
+                                            color: Colors.black,
+                                            fontFamily: 'poppins-regular')),
+                                      );
+                                    }).toList(),
+                                    validator: (value) {
+                                      if (value == null) {
+                                        return 'Please select type of district.';
+                                      }
+                                      return null;
+                                    },
+                                    onChanged: (value) {
+                                      setState(() {
+                                        selectedCommodityItemValue = value!;
+                                      });
+                                      print("selectedCommodityItemValue : $selectedCommodityItemValue");
+                                    },
+                                    onSaved: (value) {
+                                      selectedCommodityItemValue = value.toString();
+                                    },
+                                    buttonStyleData: const ButtonStyleData(
+                                      padding: EdgeInsets.only(right: 8),
+                                    ),
+                                    iconStyleData: const IconStyleData(
+                                      icon: Icon(
+                                        Icons.arrow_drop_down,
+                                        color: Colors.black45,
+                                      ),
+                                      iconSize: 24,
+                                    ),
+                                    menuItemStyleData: const MenuItemStyleData(
+                                      padding:
+                                      EdgeInsets.symmetric(horizontal: 16),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 20,
+                                ),
+
+                                // Search By Date Range
+                                Text(
+                                  buildTranslate("searchByDateRange")!,
+                                  softWrap: true,
+                                  style: const TextStyle(
+                                      color: Color(0xFF666666),
+                                      fontSize: 13,
+                                      fontFamily: 'poppins-semibold'),
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                      child: Container(
+                                        color: Colors.white,
+                                        alignment: Alignment.bottomCenter,
+                                        child: TextFormField(
+                                          decoration: InputDecoration(
+                                              suffixIcon: IconButton(
+                                                icon: const Icon(
+                                                  Icons.calendar_month,
+                                                  size: 20.0,
+                                                  color: Colors.grey,
+                                                ),
+                                                onPressed: () {
+                                                  _selectFromDate(context);
+                                                },
+                                              ),
+                                              alignLabelWithHint: true,
+                                              fillColor: Colors.white,
+                                              filled: true,
+                                              contentPadding:
+                                              const EdgeInsets.all(10.0),
+                                              border: const OutlineInputBorder(
+                                                borderRadius: BorderRadius.all(
+                                                  Radius.circular(10.0),
+                                                ),
+                                              ),
+                                              enabledBorder: const OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: Colors.grey,
+                                                  width: 1.0,
+                                                ),
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(8.0)),
+                                              ),
+                                              hintText: buildTranslate("from"),
+                                              hintStyle: const TextStyle(
+                                                  color: Color(0xFF757575),
+                                                  fontFamily: "poppins-regular",
+                                                  fontSize: 13.0),
+                                              focusedBorder: const OutlineInputBorder(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(8.0)),
+                                                borderSide: BorderSide(
+                                                    color: Colors.green,
+                                                    width: 0.5),
+                                              )),
+                                          validator: (value) => value!.isEmpty
+                                              ? 'Please, fill this field.'
+                                              : null,
+                                          controller: fromDateController,
+                                          readOnly: true,
+                                        ),
+                                      ),
+                                    ),
+                                    const VerticalDivider(
+                                      width: 10,
+                                    ),
+                                    Expanded(
+                                      child: Container(
+                                        color: Colors.white,
+                                        alignment: Alignment.bottomCenter,
+                                        child: TextFormField(
+                                          decoration: InputDecoration(
+                                              suffixIcon: IconButton(
+                                                icon: const Icon(
+                                                  Icons.calendar_month,
+                                                  size: 20.0,
+                                                  color: Colors.grey,
+                                                ),
+                                                onPressed: () {
+                                                  _selectToDate(context);
+                                                },
+                                              ),
+                                              alignLabelWithHint: true,
+                                              fillColor: Colors.white,
+                                              filled: true,
+                                              contentPadding:
+                                              const EdgeInsets.all(10.0),
+                                              border: const OutlineInputBorder(
+                                                borderRadius: BorderRadius.all(
+                                                  Radius.circular(10.0),
+                                                ),
+                                              ),
+                                              enabledBorder: const OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: Colors.grey,
+                                                  width: 1.0,
+                                                ),
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(8.0)),
+                                              ),
+                                              hintText: buildTranslate("to"),
+                                              hintStyle: const TextStyle(
+                                                  color: Color(0xFF757575),
+                                                  fontFamily: "poppins-regular",
+                                                  fontSize: 13.0),
+                                              focusedBorder: const OutlineInputBorder(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(8.0)),
+                                                borderSide: BorderSide(
+                                                    color: Colors.green,
+                                                    width: 0.5),
+                                              )),
+                                          validator: (value) => value!.isEmpty
+                                              ? 'Please, fill this field.'
+                                              : null,
+                                          controller: toDateController,
+                                          readOnly: true,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+
+                                const SizedBox(
+                                  height: 30,
+                                ),
+                                Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        getValue();
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        foregroundColor: Colors.white,
+                                        padding: const EdgeInsets.all(12),
+                                        textStyle:
+                                        const TextStyle(fontSize: 18),
+                                        backgroundColor:
+                                        const Color(0xFF3FC041),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                              12), // <-- Radius
+                                        ),
+                                      ),
+                                      child: Text(
+                                        buildTranslate('SUBMIT')!,
+                                        style: const TextStyle(
+                                            fontSize: 15,
+                                            fontFamily: 'poppins-regular'),
+                                      ),
+                                    )),
                               ],
                             ),
                           ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          const Center(
-                            child: Text(
-                              "Price Per Quintal",
-                              softWrap: true,
-                              style: TextStyle(
-                                  color: Color(0xFF808080),
-                                  fontSize: 17,
-                                  fontFamily: 'poppins-semibold'),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 25,
-                          ),
-                          Container(
-                            width: MediaQuery.of(context).size.width,
-                            height: 50,
-                            decoration: const BoxDecoration(
-                                color: Color(0xFF116B38),
-                                borderRadius:
-                                BorderRadius.only(bottomLeft: Radius.circular(10),
-                                    bottomRight: Radius.circular(10))),
-                            child: const Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    "Min ₹: \n3850",
-                                    textAlign:
-                                    TextAlign.center,
-                                    softWrap: true,
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12,
-                                        fontFamily:
-                                        'poppins-regular'),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    "Average ₹: \n3950",
-                                    textAlign:
-                                    TextAlign.center,
-                                    softWrap: true,
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12,
-                                        fontFamily:
-                                        'poppins-regular'),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    "Max ₹: \n4000",
-                                    textAlign:
-                                    TextAlign.center,
-                                    softWrap: true,
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12,
-                                        fontFamily:
-                                        'poppins-regular'),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          // const SizedBox(
-                          //   height: 20,
-                          // ),
-                        ],
+                        ),
                       ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 50,
-                  ),
-                ],
-              )
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 20.0, left: 20.0),
+                        child: Align(
+                          alignment: Alignment.bottomRight,
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: Container(
+                              width: 130,
+                              height: 40,
+                              color: Colors.white,
+                              child: DropdownButtonFormField2<String>(
+                                isExpanded: true,
+                                decoration: InputDecoration(
+                                  contentPadding: const EdgeInsets.symmetric(vertical: 5),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: const BorderSide(
+                                      color: Color(0xFF666666),
+                                      width: 1.0,
+                                    ),),
+                                  // Add more decoration..
+                                ),
+                                hint: Text(
+                                  buildTranslate('sortBy')!,
+                                  style: const TextStyle(fontSize: 9, color:
+                                  Color(0xFF666666), fontFamily: "poppins-regular"),
+                                ),
+                                items: sortItems
+                                    .map((item) => DropdownMenuItem<String>(
+                                  value: item,
+                                  child: Text(
+                                    item,
+                                    style: const TextStyle(
+                                        fontSize: 9,
+                                        color: Color(0xFF666666)
+                                    ),
+                                  ),
+                                ))
+                                    .toList(),
+                                onChanged: (value) {
+                                  //Do something when selected item is changed.
+                                },
+                                onSaved: (value) {
+                                  selectedSortItemsValue = value.toString();
+                                },
+                                // customButton: Align(
+                                //     alignment: Alignment.centerRight,
+                                //     child: Image.asset('assets/images/sortBy.png', height: 20, width: 20,)),
+                                buttonStyleData: const ButtonStyleData(
+                                  padding: EdgeInsets.only(right: 10),
+                                ),
+                                iconStyleData: const IconStyleData(
+                                  icon: ImageIcon(AssetImage('assets/images/sortBy.png')),
+                                  iconSize: 18,
+                                  iconEnabledColor: Colors.black,
+                                ),
+                                // iconStyleData: IconStyleData(
+                                //   openMenuIcon: Image.asset('assets/images/sortBy.png', height: 20, width: 20,),
+                                //   // icon: Icon(
+                                //   //   Icons.arrow_drop_down,
+                                //   //   color: Colors.black45,
+                                //   // ),
+                                //   iconSize: 0,
+                                // ),
+                                menuItemStyleData: const MenuItemStyleData(
+                                  padding: EdgeInsets.symmetric(horizontal: 16),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      futureMandiPrice.toString().isEmpty
+                          ? const Center(child: Text('No data available'))
+                          :
+                      FutureBuilder<List<MandiPriceData>>(
+                        future: futureMandiPrice,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return const Center(child: CircularProgressIndicator());
+                          } else if (snapshot.hasError) {
+                            return Center(child: Text('Error: ${snapshot.error}'));
+                          } else if (snapshot.hasData) {
+                            final List<MandiPriceData> mandiPrice = snapshot.data!;
+                            return
+                              ListView.builder(
+                                itemCount: mandiPrice.length,
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemBuilder: (context, index) {
+                                  return Padding(
+                                      padding: const EdgeInsets.only(
+                                          top: 10.0, right: 20.0, left: 20.0,),
+                                      child: Container(
+                                        width: MediaQuery.of(context).size.width,
+                                        decoration: const BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                            BorderRadius.all(Radius.circular(18))),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 15.0),
+                                              child: Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: Row(
+                                                      children: [
+                                                        Image.asset("assets/images/location.png", width: 15, height: 15,),
+                                                        const SizedBox(
+                                                          width: 5,
+                                                        ),
+                                                        Text(
+                                                          mandiPrice[index].state ?? "",
+                                                          softWrap: true,
+                                                          style: TextStyle(
+                                                              color: Color(0xFF959595),
+                                                              fontSize: 11,
+                                                              fontFamily: 'poppins-semibold'),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.end,
+                                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                                      children: [
+                                                        Image.asset("assets/images/calendar.png", width: 15, height: 15,),
+                                                        const SizedBox(
+                                                          width: 5,
+                                                        ),
+                                                        Text(
+                                                          mandiPrice[index].arrivalDate ?? "",
+                                                          softWrap: true,
+                                                          style: TextStyle(
+                                                              color: Color(0xFF959595),
+                                                              fontSize: 11,
+                                                              fontFamily: 'poppins-semibold'),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              height: 20,
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(left: 15.0, right: 15.0,),
+                                              child: Row(
+                                                children: [
+                                                  Image.asset("assets/images/mandiBG.png",),
+                                                  const SizedBox(
+                                                    width: 5,
+                                                  ),
+                                                  Text(
+                                                    mandiPrice[index].commodity ?? "",
+                                                    softWrap: true,
+                                                    style: TextStyle(
+                                                        color: Color(0xFF808080),
+                                                        fontSize: 14,
+                                                        fontFamily: 'poppins-semibold'),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              height: 15,
+                                            ),
+                                            const Center(
+                                              child: Text(
+                                                "Price Per Quintal",
+                                                softWrap: true,
+                                                style: TextStyle(
+                                                    color: Color(0xFF808080),
+                                                    fontSize: 17,
+                                                    fontFamily: 'poppins-semibold'),
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              height: 20,
+                                            ),
+                                            Container(
+                                              width: MediaQuery.of(context).size.width,
+                                              height: 50,
+                                              decoration: const BoxDecoration(
+                                                  color: Color(0xFF116B38),
+                                                  borderRadius:
+                                                  BorderRadius.only(bottomLeft: Radius.circular(10),
+                                                      bottomRight: Radius.circular(10))),
+                                              child: Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: Column(
+                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                                      children: [
+                                                        Text(
+                                                          "Min ₹:",
+                                                          textAlign:
+                                                          TextAlign.center,
+                                                          softWrap: true,
+                                                          style: TextStyle(
+                                                              color: Colors.white,
+                                                              fontSize: 12,
+                                                              fontFamily:
+                                                              'poppins-regular'),
+                                                        ),
+                                                        Text(
+                                                          mandiPrice[index].minPrice.toString() ?? "",
+                                                          textAlign:
+                                                          TextAlign.center,
+                                                          softWrap: true,
+                                                          style: TextStyle(
+                                                              color: Colors.white,
+                                                              fontSize: 12,
+                                                              fontFamily:
+                                                              'poppins-regular'),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    child: Column(
+                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                                      children: [
+                                                        Text(
+                                                          "Average ₹:",
+                                                          textAlign:
+                                                          TextAlign.center,
+                                                          softWrap: true,
+                                                          style: TextStyle(
+                                                              color: Colors.white,
+                                                              fontSize: 12,
+                                                              fontFamily:
+                                                              'poppins-regular'),
+                                                        ),
+                                                        Text(
+                                                          mandiPrice[index].modalPrice.toString() ??"",
+                                                          textAlign:
+                                                          TextAlign.center,
+                                                          softWrap: true,
+                                                          style: TextStyle(
+                                                              color: Colors.white,
+                                                              fontSize: 12,
+                                                              fontFamily:
+                                                              'poppins-regular'),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    child: Column(
+                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                                      children: [
+                                                        Text(
+                                                          "Max ₹:",
+                                                          textAlign:
+                                                          TextAlign.center,
+                                                          softWrap: true,
+                                                          style: TextStyle(
+                                                              color: Colors.white,
+                                                              fontSize: 12,
+                                                              fontFamily:
+                                                              'poppins-regular'),
+                                                        ),
+                                                        Text(
+                                                          mandiPrice[index].maxPrice.toString() ??"",
+                                                          textAlign:
+                                                          TextAlign.center,
+                                                          softWrap: true,
+                                                          style: TextStyle(
+                                                              color: Colors.white,
+                                                              fontSize: 12,
+                                                              fontFamily:
+                                                              'poppins-regular'),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            // const SizedBox(
+                                            //   height: 20,
+                                            // ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                },
+                              );
+                          }
+                          else {
+                            return const Center(child: Padding(
+                              padding: EdgeInsets.only(bottom: 40.0),
+                              child: Text('No data available'),
+                            ));
+                          }
+                        },
+                      ),
+                      // Padding(
+                      //   padding: const EdgeInsets.only(
+                      //       top: 10.0, right: 20.0, left: 20.0),
+                      //   child: Container(
+                      //     width: MediaQuery.of(context).size.width,
+                      //     decoration: const BoxDecoration(
+                      //         color: Colors.white,
+                      //         borderRadius:
+                      //         BorderRadius.all(Radius.circular(18))),
+                      //     child: Column(
+                      //       mainAxisAlignment: MainAxisAlignment.start,
+                      //       crossAxisAlignment: CrossAxisAlignment.start,
+                      //       children: [
+                      //         const SizedBox(
+                      //           height: 10,
+                      //         ),
+                      //         Padding(
+                      //           padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 15.0),
+                      //           child: Row(
+                      //             children: [
+                      //               Expanded(
+                      //                 child: Row(
+                      //                   children: [
+                      //                     Image.asset("assets/images/location.png", width: 15, height: 15,),
+                      //                     const SizedBox(
+                      //                       width: 5,
+                      //                     ),
+                      //                     const Text(
+                      //                       "COIMBATORE",
+                      //                       softWrap: true,
+                      //                       style: TextStyle(
+                      //                           color: Color(0xFF959595),
+                      //                           fontSize: 11,
+                      //                           fontFamily: 'poppins-semibold'),
+                      //                     ),
+                      //                   ],
+                      //                 ),
+                      //               ),
+                      //               Expanded(
+                      //                 child: Row(
+                      //                   mainAxisAlignment: MainAxisAlignment.end,
+                      //                   crossAxisAlignment: CrossAxisAlignment.end,
+                      //                   children: [
+                      //                     Image.asset("assets/images/calendar.png", width: 15, height: 15,),
+                      //                     const SizedBox(
+                      //                       width: 5,
+                      //                     ),
+                      //                     const Text(
+                      //                       "30-07-2024",
+                      //                       softWrap: true,
+                      //                       style: TextStyle(
+                      //                           color: Color(0xFF959595),
+                      //                           fontSize: 11,
+                      //                           fontFamily: 'poppins-semibold'),
+                      //                     ),
+                      //                   ],
+                      //                 ),
+                      //               ),
+                      //             ],
+                      //           ),
+                      //         ),
+                      //         const SizedBox(
+                      //           height: 20,
+                      //         ),
+                      //         Padding(
+                      //           padding: const EdgeInsets.only(left: 15.0, right: 15.0,),
+                      //           child: Row(
+                      //             children: [
+                      //               Image.asset("assets/images/mandiBG.png",),
+                      //               const SizedBox(
+                      //                 width: 5,
+                      //               ),
+                      //               const Text(
+                      //                 "COCONUT",
+                      //                 softWrap: true,
+                      //                 style: TextStyle(
+                      //                     color: Color(0xFF808080),
+                      //                     fontSize: 14,
+                      //                     fontFamily: 'poppins-semibold'),
+                      //               ),
+                      //             ],
+                      //           ),
+                      //         ),
+                      //         const SizedBox(
+                      //           height: 20,
+                      //         ),
+                      //         const Center(
+                      //           child: Text(
+                      //             "Price Per Quintal",
+                      //             softWrap: true,
+                      //             style: TextStyle(
+                      //                 color: Color(0xFF808080),
+                      //                 fontSize: 17,
+                      //                 fontFamily: 'poppins-semibold'),
+                      //           ),
+                      //         ),
+                      //         const SizedBox(
+                      //           height: 25,
+                      //         ),
+                      //         Container(
+                      //           width: MediaQuery.of(context).size.width,
+                      //           height: 50,
+                      //           decoration: const BoxDecoration(
+                      //               color: Color(0xFF116B38),
+                      //               borderRadius:
+                      //               BorderRadius.only(bottomLeft: Radius.circular(10),
+                      //                   bottomRight: Radius.circular(10))),
+                      //           child: const Row(
+                      //             children: [
+                      //               Expanded(
+                      //                 child: Text(
+                      //                   "Min ₹: \n3850",
+                      //                   textAlign:
+                      //                   TextAlign.center,
+                      //                   softWrap: true,
+                      //                   style: TextStyle(
+                      //                       color: Colors.white,
+                      //                       fontSize: 12,
+                      //                       fontFamily:
+                      //                       'poppins-regular'),
+                      //                 ),
+                      //               ),
+                      //               Expanded(
+                      //                 child: Text(
+                      //                   "Average ₹: \n3950",
+                      //                   textAlign:
+                      //                   TextAlign.center,
+                      //                   softWrap: true,
+                      //                   style: TextStyle(
+                      //                       color: Colors.white,
+                      //                       fontSize: 12,
+                      //                       fontFamily:
+                      //                       'poppins-regular'),
+                      //                 ),
+                      //               ),
+                      //               Expanded(
+                      //                 child: Text(
+                      //                   "Max ₹: \n4000",
+                      //                   textAlign:
+                      //                   TextAlign.center,
+                      //                   softWrap: true,
+                      //                   style: TextStyle(
+                      //                       color: Colors.white,
+                      //                       fontSize: 12,
+                      //                       fontFamily:
+                      //                       'poppins-regular'),
+                      //                 ),
+                      //               ),
+                      //             ],
+                      //           ),
+                      //         ),
+                      //         // const SizedBox(
+                      //         //   height: 20,
+                      //         // ),
+                      //       ],
+                      //     ),
+                      //   ),
+                      // ),
+                      const SizedBox(
+                        height: 60,
+                      ),
+                    ],
+                  )
                   : selectedTopData == 2
                   ? const Padding(
                 padding: EdgeInsets.only(top: 200.0),
@@ -1760,7 +1957,7 @@ class _MyBottomOnePageState extends State<MyBottomOnePage> with TickerProviderSt
         // Format the selected date and display it in the TextFormField
         fromDateController.text =
             DateFormat('dd-MM-yyyy').format(pickedDate);
-        dateOfIncorporationNumberValue = "${pickedDate}Z";
+        dateOfFromValue = "${pickedDate}Z";
       });
     }
   }
@@ -1848,6 +2045,27 @@ class _MyBottomOnePageState extends State<MyBottomOnePage> with TickerProviderSt
         _bottomNavIndex = index;
       });
       print("One : bottomNavIndex : $_bottomNavIndex");
+    }
+  }
+
+  void getValue() {
+
+    if(selectedStateItemValue.toString().isNotEmpty &&
+        selectedDistrictItemValue.toString().isNotEmpty &&
+        selectedCommodityItemValue.toString().isNotEmpty &&
+        dateOfFromValue.isNotEmpty && dateOfToValue.isNotEmpty)
+    {
+      futureMandiPrice = HomeDashboardController.getMandiPriceDetails(selectedStateItemValue.toString(),
+          selectedDistrictItemValue.toString(),
+          selectedCommodityItemValue.toString(), dateOfFromValue,
+          dateOfToValue);
+
+      setState(() {
+        futureMandiPrice = futureMandiPrice;
+      });
+    }
+    else{
+      AlertHelper.showToast("Please enter details.", context);
     }
   }
 

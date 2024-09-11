@@ -280,7 +280,9 @@ class _MyEditProfilePageState extends State<MyEditProfilePage> {
                                   return null;
                                 },
                                 onChanged: (value) {
-                                  //Do something when selected item is changed.
+                                  setState(() {
+                                    selectedFPOItemValue = value.toString();
+                                  });
                                 },
                                 onSaved: (value) {
                                   selectedFPOItemValue = value.toString();
@@ -901,7 +903,9 @@ class _MyEditProfilePageState extends State<MyEditProfilePage> {
                               return null;
                             },
                             onChanged: (value) {
-                              //Do something when selected item is changed.
+                             setState(() {
+                               selectedFPOItemValue = value.toString();
+                             });
                             },
                             onSaved: (value) {
                               selectedFPOItemValue = value.toString();
@@ -1576,6 +1580,7 @@ class _MyEditProfilePageState extends State<MyEditProfilePage> {
   Future<void> getProfileDetails() async {
     // id = (await AppGlobal.getStringPreference('id'))!;
     contactNumber = (await AppGlobal.getStringPreference('contactNumber'))!;
+    print("contactNumber : $contactNumber");
     futureProfileDetails = AccountSettingController.fetchFRMEditProfileDetails(context, contactNumber);
     setState(() {
       futureProfileDetails = futureProfileDetails;

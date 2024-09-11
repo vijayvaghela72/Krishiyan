@@ -71,6 +71,7 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
     'Wholesaler'
   ];
   List<String> selectedTraderItems = [];
+  List<String> selectedTraderItemsValue = [];
 
   @override
   void initState() {
@@ -1755,7 +1756,8 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
       } else {
         print(response.statusMessage);
       }
-    } else {
+    }
+    else {
       AlertHelper.showToast("Please enter credentials.", context);
     }
   }
@@ -1843,7 +1845,7 @@ class _MyEditOtherProfilePageState extends State<MyEditOtherProfilePage> {
       // List<String> listOfEntity = typeOfOrg.split(',');
       setState(() {
       dateOfIncorporationNumberValue = dateOfIncorporationNumberValue;
-      // selectedTraderItems = listOfEntity;
+      // selectedTraderItemsValue = listOfEntity;
       });
       dateOfIncorporationController.text = AppGlobal.convertToCustomDateFormat(dateOfIncorporationNumberValue);
     });

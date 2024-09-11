@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:krishiyan/localization/AppLocalizations.dart';
 import '../mvc/controller/enquiryDashboardController.dart';
 import '../mvc/model/GetAllEnquiryData.dart';
+import '../mvc/model/GetEnquiryByFilterData.dart';
 import '../mvc/model/SelectCropNamesData.dart';
 import '../utils/Constants.dart';
 import 'MyEnquiryDetailPage.dart';

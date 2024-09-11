@@ -12,12 +12,16 @@ import 'package:page_transition/page_transition.dart';
 
 import '../helper/SharedPref.dart';
 import '../localization/AppLocalizations.dart';
+import '../mvc/controller/enquiryDashboardController.dart';
+import '../mvc/model/GetEnquiryByFilterData.dart';
 import '../mvc/model/SelectCropNamesData.dart';
 import '../utils/Constants.dart';
 import 'MyBottomOnePage.dart';
 import 'MyBottomThreePage.dart';
 import 'MyBottomTwoPage.dart';
 import 'MyBuyCommodityPage.dart';
+import 'MyEditBuyCommodityPage.dart';
+import 'MyEditSellCommodityPage.dart';
 import 'MyEnquiryDashboardPage.dart';
 import 'MyProfilePage.dart';
 import 'MySelectLanguagePage.dart';
@@ -32,8 +36,7 @@ class MyBottomCenterEnquiryPage extends StatefulWidget {
   State<MyBottomCenterEnquiryPage> createState() => _MyBottomCenterEnquiryPageState();
 }
 
-class _MyBottomCenterEnquiryPageState extends State<MyBottomCenterEnquiryPage>
-    with TickerProviderStateMixin {
+class _MyBottomCenterEnquiryPageState extends State<MyBottomCenterEnquiryPage> with TickerProviderStateMixin {
 
   String? selectedItemValue;
 
@@ -89,10 +92,6 @@ class _MyBottomCenterEnquiryPageState extends State<MyBottomCenterEnquiryPage>
   TextEditingController? naneController;
   bool otpVisible = false;
 
-  final List<String> villageItems = [
-    'All',
-    'Ganapathy',
-  ];
   String typeOfOrganizationData = "";
 
   List<cropsCategory> search_crops = [
@@ -108,7 +107,6 @@ class _MyBottomCenterEnquiryPageState extends State<MyBottomCenterEnquiryPage>
         icon: 'assets/images/crops1.png'),
   ];
 
-  String? selectedCropItemValue, selectedVillageItemValue;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   List<Enquiry> postEnquiry = [
@@ -123,13 +121,13 @@ class _MyBottomCenterEnquiryPageState extends State<MyBottomCenterEnquiryPage>
       id: "2",
     ),
   ];
-  bool showCommodity = false;
 
   final List<String> _chipNames = [
     buildTranslate("buy")!,
     buildTranslate("sell")!,
   ];
   int _currentIndex = 0;
+  Future<List<EnquiryByFilterData>>? futureEnquiryFilterData;
 
   @override
   void initState() {
@@ -491,564 +489,984 @@ class _MyBottomCenterEnquiryPageState extends State<MyBottomCenterEnquiryPage>
               )
                   : selectedTopData == 2
                   ? Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Center(
-                    child: Text(
-                      buildTranslate("myEnquiry")!,
-                      softWrap: true,
-                      style: const TextStyle(
-                          color: Color(0xFF3FC041),
-                          fontSize: 20,
-                          fontFamily: 'poppins-medium'),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 30.0),
-                    child: Text(
-                      buildTranslate("selectYourCommodity")!,
-                      softWrap: true,
-                      style: const TextStyle(
-                          color: Colors.grey,
-                          fontSize: 15,
-                          fontFamily: 'poppins-semibold'),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        left: 25.0, right: 25.0, top: 10.0),
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(
-                              color: const Color(0xFFd3d3d3),
-                              width: 1),
-                          borderRadius: BorderRadius.circular(5)),
-                      child: Container(
-                        width: 240,
-                        height: 50,
-                        color: Colors.white,
-                        child: Container(
-                          color: Colors.white,
-                          child: _cropData == null ||
-                              _cropData!.data == null
-                              ? const Center(
-                              child: Text('No data available'))
-                              : DropdownButtonFormField2<String>(
-                            dropdownStyleData:
-                            DropdownStyleData(
-                                maxHeight: 200),
-                            hint: const Text(
-                                'Select your Commodity'),
-                            decoration: InputDecoration(
-                              contentPadding:
-                              const EdgeInsets.symmetric(
-                                  vertical: 16),
-                              filled: true,
-                              fillColor: Colors.white,
-                              border: OutlineInputBorder(
-                                borderRadius:
-                                BorderRadius.circular(8),
-                                borderSide: const BorderSide(
-                                  color: Colors.black,
-                                  width: 1.0,
-                                ),
-                              ),
-                              // Add more decoration..
-                            ),
-                            buttonStyleData:
-                            const ButtonStyleData(
-                              padding:
-                              EdgeInsets.only(right: 8),
-                            ),
-                            iconStyleData:
-                            const IconStyleData(
-                              icon: Icon(
-                                Icons.arrow_drop_down,
-                                color: Colors.black45,
-                              ),
-                              iconSize: 24,
-                            ),
-                            menuItemStyleData:
-                            const MenuItemStyleData(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 16),
-                            ),
-                            value: _selectedCrop,
-                            items: _cropData!.data!
-                                .map((String crop) {
-                              return DropdownMenuItem<String>(
-                                value: crop,
-                                child: Text(crop,
-                                    style: const TextStyle(
-                                        fontSize: 15,
-                                        color: Colors.black,
-                                        fontFamily:
-                                        'poppins-regular')),
-                              );
-                            }).toList(),
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                _selectedCrop = newValue;
-                              });
-                            },
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  Container(
-                      width: MediaQuery.of(context).size.width,
-                      padding: const EdgeInsets.only(
-                          left: 30.0, right: 30.0),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            showCommodity = true;
-                          });
-                        },
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.all(12),
-                          textStyle: const TextStyle(fontSize: 15),
-                          backgroundColor: const Color(0xFF3FC041),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                                12), // <-- Radius
-                          ),
-                        ),
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                      Center(
                         child: Text(
-                          buildTranslate('SUBMIT')!,
+                          buildTranslate("myEnquiry")!,
+                          softWrap: true,
                           style: const TextStyle(
-                              fontSize: 18,
+                              color: Color(0xFF3FC041),
+                              fontSize: 20,
                               fontFamily: 'poppins-medium'),
                         ),
-                      )),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Visibility(
-                    visible: showCommodity,
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                          left: 20.0, right: 20.0),
-                      child: Padding(
+                      ),
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 30.0),
+                        child: Text(
+                          buildTranslate("selectYourCommodity")!,
+                          softWrap: true,
+                          style: const TextStyle(
+                              color: Colors.grey,
+                              fontSize: 15,
+                              fontFamily: 'poppins-semibold'),
+                        ),
+                      ),
+                      Padding(
                         padding: const EdgeInsets.only(
-                            left: 20.0, right: 20.0),
+                            left: 25.0, right: 25.0, top: 10.0),
                         child: Container(
-                          height: 45,
-                          alignment: Alignment.center,
-                          margin: EdgeInsets.zero,
-                          padding: EdgeInsets.zero,
+                          width: MediaQuery.of(context).size.width,
                           decoration: BoxDecoration(
                               color: Colors.white,
                               border: Border.all(
                                   color: const Color(0xFFd3d3d3),
                                   width: 1),
-                              borderRadius:
-                              BorderRadius.circular(25)),
-                          child: ChipList(
-                            listOfChipNames: _chipNames,
-                            showCheckmark: false,
-                            extraOnToggle: (val) {
-                              _currentIndex = val;
-                              setState(() {});
-                              print("Chip index : $_currentIndex");
-                            },
-                            padding: const EdgeInsets.only(
-                                left: 30.0, right: 30.0),
-                            activeBgColorList: const [
-                              Color(0xFF2A9D8F)
-                            ],
-                            inactiveBgColorList: const [
-                              Colors.white
-                            ],
-                            activeTextColorList: const [
-                              Colors.white
-                            ],
-                            inactiveTextColorList: const [
-                              Color(0xFF666666)
-                            ],
-                            // borderColorList: [Theme.of(context).primaryColor],
-                            listOfChipIndicesCurrentlySelected: [
-                              _currentIndex
-                            ],
+                              borderRadius: BorderRadius.circular(5)),
+                          child: Container(
+                            width: 240,
+                            height: 50,
+                            color: Colors.white,
+                            child: Container(
+                              color: Colors.white,
+                              child: _cropData == null ||
+                                  _cropData!.data == null
+                                  ? const Center(
+                                  child: Text('No data available'))
+                                  : DropdownButtonFormField2<String>(
+                                dropdownStyleData:
+                                DropdownStyleData(
+                                    maxHeight: 200),
+                                hint: const Text(
+                                    'Select your Commodity'),
+                                decoration: InputDecoration(
+                                  contentPadding:
+                                  const EdgeInsets.symmetric(
+                                      vertical: 16),
+                                  filled: true,
+                                  fillColor: Colors.white,
+                                  border: OutlineInputBorder(
+                                    borderRadius:
+                                    BorderRadius.circular(8),
+                                    borderSide: const BorderSide(
+                                      color: Colors.black,
+                                      width: 1.0,
+                                    ),
+                                  ),
+                                  // Add more decoration..
+                                ),
+                                buttonStyleData:
+                                const ButtonStyleData(
+                                  padding:
+                                  EdgeInsets.only(right: 8),
+                                ),
+                                iconStyleData:
+                                const IconStyleData(
+                                  icon: Icon(
+                                    Icons.arrow_drop_down,
+                                    color: Colors.black45,
+                                  ),
+                                  iconSize: 24,
+                                ),
+                                menuItemStyleData:
+                                const MenuItemStyleData(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 16),
+                                ),
+                                value: _selectedCrop,
+                                items: _cropData!.data!
+                                    .map((String crop) {
+                                  return DropdownMenuItem<String>(
+                                    value: crop,
+                                    child: Text(crop,
+                                        style: const TextStyle(
+                                            fontSize: 15,
+                                            color: Colors.black,
+                                            fontFamily:
+                                            'poppins-regular')),
+                                  );
+                                }).toList(),
+                                onChanged: (String? newValue) {
+                                  setState(() {
+                                    _selectedCrop = newValue;
+                                  });
+                                },
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ),
-                  Visibility(
-                    visible: showCommodity && _currentIndex == 0,
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                          top: 10.0, right: 30.0, left: 30.0),
-                      child: Container(
-                        decoration: const BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.all(
-                                Radius.circular(12))),
-                        child: Column(
-                          crossAxisAlignment:
-                          CrossAxisAlignment.start,
-                          mainAxisAlignment:
-                          MainAxisAlignment.start,
-                          children: [
-                            Stack(children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.all(18.0),
-                                child: Container(
-                                  width: MediaQuery.of(context)
-                                      .size
-                                      .width,
-                                  height: 180,
-                                  decoration: const BoxDecoration(
-                                      borderRadius:
-                                      BorderRadius.all(
-                                          Radius.circular(12)),
-                                      image: DecorationImage(
-                                          image: AssetImage(
-                                              "assets/images/enquiryBG.png"),
-                                          fit: BoxFit.cover)),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 18.0, left: 18.0),
-                                child: IntrinsicWidth(
-                                  child: Container(
-                                    // constraints: const BoxConstraints(
-                                    //   maxWidth: 120,
-                                    // ),
-                                    decoration: const BoxDecoration(
-                                      color: Color(0xFF008000),
-                                      borderRadius:
-                                      BorderRadius.all(
-                                          Radius.circular(12)),
-                                    ),
-                                    child: const Align(
-                                        alignment:
-                                        Alignment.topLeft,
-                                        child: Padding(
-                                          padding: EdgeInsets.only(
-                                              left: 12.0,
-                                              right: 12.0,
-                                              top: 5.0,
-                                              bottom: 5.0),
-                                          child: Text(
-                                            'Price  Rs.25000',
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 11,
-                                                fontFamily:
-                                                "poppins-semibold"),
-                                          ),
-                                        )),
-                                  ),
-                                ),
-                              ),
-                            ]),
-                            const SizedBox(
-                              height: 5.0,
-                            ),
-                            const Padding(
-                              padding: EdgeInsets.only(left: 20.0),
-                              child: Text(
-                                "Name :  Ankit",
-                                softWrap: true,
-                                style: TextStyle(
-                                    color: Color(0xFF808080),
-                                    fontSize: 15,
-                                    fontFamily: 'poppins-semibold'),
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      Container(
+                          width: MediaQuery.of(context).size.width,
+                          padding: const EdgeInsets.only(
+                              left: 30.0, right: 30.0),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                if(_currentIndex == 0) {
+                                  futureEnquiryFilterData =
+                                      EnquiryDashboardController
+                                          .getEnquiryDetailsByFilterCommodity(_selectedCrop.toString(), "Buy");
+                                  setState(() {
+                                    futureEnquiryFilterData = futureEnquiryFilterData;
+                                  });
+                                }
+                                else{
+                                  futureEnquiryFilterData =
+                                      EnquiryDashboardController
+                                          .getEnquiryDetailsByFilterCommodity(_selectedCrop.toString(), "Sell");
+                                  setState(() {
+                                    futureEnquiryFilterData = futureEnquiryFilterData;
+                                  });
+                                }
+                                });
+                            },
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.all(12),
+                              textStyle: const TextStyle(fontSize: 15),
+                              backgroundColor: const Color(0xFF3FC041),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                    12), // <-- Radius
                               ),
                             ),
-                            const Padding(
-                              padding: EdgeInsets.only(
-                                  left: 20.0, top: 10.0),
-                              child: Text(
-                                "Purpose:  To Buy",
-                                softWrap: true,
-                                style: TextStyle(
-                                    color: Color(0xFF808080),
-                                    fontSize: 15,
-                                    fontFamily: 'poppins-semibold'),
-                              ),
+                            child: Text(
+                              buildTranslate('SUBMIT')!,
+                              style: const TextStyle(
+                                  fontSize: 18,
+                                  fontFamily: 'poppins-medium'),
                             ),
-                            const Padding(
-                              padding: EdgeInsets.only(
-                                  left: 20.0, top: 10.0),
-                              child: Text(
-                                "Quantity :  10 Metric Ton (MT)",
-                                softWrap: true,
-                                style: TextStyle(
-                                    color: Color(0xFF808080),
-                                    fontSize: 15,
-                                    fontFamily: 'poppins-semibold'),
-                              ),
-                            ),
-                            const Padding(
-                              padding: EdgeInsets.only(
-                                  left: 20.0, top: 10.0),
-                              child: Text(
-                                "Location :  Latur, Maharastra",
-                                softWrap: true,
-                                style: TextStyle(
-                                    color: Color(0xFF808080),
-                                    fontSize: 15,
-                                    fontFamily: 'poppins-semibold'),
-                              ),
-                            ),
-                            Padding(
+                          )),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 20.0, right: 20.0),
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              left: 20.0, right: 20.0),
+                          child: Container(
+                            height: 45,
+                            alignment: Alignment.center,
+                            margin: EdgeInsets.zero,
+                            padding: EdgeInsets.zero,
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(
+                                    color: const Color(0xFFd3d3d3),
+                                    width: 1),
+                                borderRadius:
+                                BorderRadius.circular(25)),
+                            child: ChipList(
+                              listOfChipNames: _chipNames,
+                              showCheckmark: false,
+                              extraOnToggle: (val) {
+                                _currentIndex = val;
+                                if(_currentIndex == 0) {
+                                  futureEnquiryFilterData =
+                                      EnquiryDashboardController
+                                          .getEnquiryDetailsByFilterCommodity(_selectedCrop.toString(), "Buy");
+                                  setState(() {
+                                    futureEnquiryFilterData = futureEnquiryFilterData;
+                                  });
+                                }
+                                else{
+                                  futureEnquiryFilterData =
+                                      EnquiryDashboardController
+                                          .getEnquiryDetailsByFilterCommodity(_selectedCrop.toString(), "Sell");
+                                  setState(() {
+                                    futureEnquiryFilterData = futureEnquiryFilterData;
+                                  });
+                                }
+                                setState(() {
+                                  futureEnquiryFilterData = futureEnquiryFilterData;
+                                });
+                                print("Chip index : $_currentIndex");
+                              },
                               padding: const EdgeInsets.only(
-                                  left: 10.0,
-                                  right: 10.0,
-                                  top: 20.0),
-                              child: Container(
-                                width: MediaQuery.of(context)
-                                    .size
-                                    .width,
-                                height: 40,
-                                child: Container(
-                                    width: MediaQuery.of(context)
-                                        .size
-                                        .width,
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                const MyBuyCommodityPage()));
-                                      },
-                                      style:
-                                      ElevatedButton.styleFrom(
-                                        foregroundColor:
-                                        Colors.white,
-                                        padding:
-                                        const EdgeInsets.all(3),
-                                        textStyle: const TextStyle(
-                                            fontSize: 18),
-                                        backgroundColor:
-                                        const Color(0xFF3FC041),
-                                        shape:
-                                        RoundedRectangleBorder(
-                                          borderRadius:
-                                          BorderRadius.circular(
-                                              12), // <-- Radius
-                                        ),
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          buildTranslate('edit')!,
-                                          textAlign:
-                                          TextAlign.center,
-                                          style: TextStyle(
-                                              fontSize: 17,
-                                              fontFamily:
-                                              'poppins-medium'),
-                                        ),
-                                      ),
-                                    )),
-                              ),
+                                  left: 30.0, right: 30.0),
+                              activeBgColorList: const [
+                                Color(0xFF2A9D8F)
+                              ],
+                              inactiveBgColorList: const [
+                                Colors.white
+                              ],
+                              activeTextColorList: const [
+                                Colors.white
+                              ],
+                              inactiveTextColorList: const [
+                                Color(0xFF666666)
+                              ],
+                              // borderColorList: [Theme.of(context).primaryColor],
+                              listOfChipIndicesCurrentlySelected: [_currentIndex],
                             ),
-                            const SizedBox(
-                              height: 15,
-                            ),
-                          ],
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                  Visibility(
-                    visible: showCommodity && _currentIndex == 1,
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                          top: 10.0, right: 30.0, left: 30.0),
-                      child: Container(
-                        decoration: const BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.all(
-                                Radius.circular(12))),
-                        child: Column(
-                          crossAxisAlignment:
-                          CrossAxisAlignment.start,
-                          mainAxisAlignment:
-                          MainAxisAlignment.start,
-                          children: [
-                            Stack(children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.all(18.0),
-                                child: Container(
-                                  width: MediaQuery.of(context)
-                                      .size
-                                      .width,
-                                  height: 180,
-                                  decoration: const BoxDecoration(
-                                      borderRadius:
-                                      BorderRadius.all(
-                                          Radius.circular(12)),
-                                      image: DecorationImage(
-                                          image: AssetImage(
-                                              "assets/images/enquiryBG.png"),
-                                          fit: BoxFit.cover)),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 18.0, left: 18.0),
-                                child: IntrinsicWidth(
-                                  child: Container(
-                                    // constraints: const BoxConstraints(
-                                    //   maxWidth: 150,
-                                    // ),
-                                    decoration: const BoxDecoration(
-                                      color: Color(0xFF008000),
-                                      borderRadius:
-                                      BorderRadius.all(
-                                          Radius.circular(12)),
-                                    ),
-                                    child: const Align(
-                                        alignment:
-                                        Alignment.topLeft,
-                                        child: Padding(
-                                          padding: EdgeInsets.only(
-                                              left: 12.0,
-                                              right: 12.0,
-                                              top: 5.0,
-                                              bottom: 5.0),
-                                          child: Text(
-                                            'Price  Rs.25000',
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 11,
-                                                fontFamily:
-                                                "poppins-semibold"),
-                                          ),
-                                        )),
-                                  ),
-                                ),
-                              ),
-                            ]),
-                            const SizedBox(
-                              height: 5.0,
-                            ),
-                            const Padding(
-                              padding: EdgeInsets.only(left: 20.0),
-                              child: Text(
-                                "Name :  Ankit",
-                                softWrap: true,
-                                style: TextStyle(
-                                    color: Color(0xFF808080),
-                                    fontSize: 15,
-                                    fontFamily: 'poppins-semibold'),
-                              ),
-                            ),
-                            const Padding(
-                              padding: EdgeInsets.only(
-                                  left: 20.0, top: 10.0),
-                              child: Text(
-                                "Purpose:  To Sell",
-                                softWrap: true,
-                                style: TextStyle(
-                                    color: Color(0xFF808080),
-                                    fontSize: 15,
-                                    fontFamily: 'poppins-semibold'),
-                              ),
-                            ),
-                            const Padding(
-                              padding: EdgeInsets.only(
-                                  left: 20.0, top: 10.0),
-                              child: Text(
-                                "Quantity :  10 Metric Ton (MT)",
-                                softWrap: true,
-                                style: TextStyle(
-                                    color: Color(0xFF808080),
-                                    fontSize: 15,
-                                    fontFamily: 'poppins-semibold'),
-                              ),
-                            ),
-                            const Padding(
-                              padding: EdgeInsets.only(
-                                  left: 20.0, top: 10.0),
-                              child: Text(
-                                "Location :  Latur, Maharastra",
-                                softWrap: true,
-                                style: TextStyle(
-                                    color: Color(0xFF808080),
-                                    fontSize: 15,
-                                    fontFamily: 'poppins-semibold'),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 10.0,
-                                  right: 10.0,
-                                  top: 20.0),
-                              child: Container(
-                                width: MediaQuery.of(context)
-                                    .size
-                                    .width,
-                                height: 40,
-                                child: Container(
-                                    width: MediaQuery.of(context)
-                                        .size
-                                        .width,
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                const MySellCommodityPage()));
-                                      },
-                                      style:
-                                      ElevatedButton.styleFrom(
-                                        foregroundColor:
-                                        Colors.white,
-                                        padding:
-                                        const EdgeInsets.all(3),
-                                        textStyle: const TextStyle(
-                                            fontSize: 18),
-                                        backgroundColor:
-                                        const Color(0xFF3FC041),
-                                        shape:
-                                        RoundedRectangleBorder(
-                                          borderRadius:
-                                          BorderRadius.circular(
-                                              12), // <-- Radius
-                                        ),
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          buildTranslate('edit')!,
-                                          textAlign:
-                                          TextAlign.center,
-                                          style: TextStyle(
-                                              fontSize: 17,
-                                              fontFamily:
-                                              'poppins-medium'),
-                                        ),
-                                      ),
-                                    )),
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 15,
-                            ),
-                          ],
-                        ),
+                      const SizedBox(
+                        height: 20,
                       ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 40,
-                  ),
+                      futureEnquiryFilterData.toString().isNotEmpty ?
+                      FutureBuilder<List<EnquiryByFilterData>>(
+                        future: futureEnquiryFilterData,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return const Center(child: CircularProgressIndicator());
+                          } else if (snapshot.hasError) {
+                            return Center(child: Text('No Data Available'));
+                            // return Center(child: Text(snapshot.hasError.toString()));
+                          } else if (snapshot.hasData) {
+                            final List<EnquiryByFilterData> enquiry = snapshot.data!;
+                            return ListView.builder(
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: enquiry.length,
+                              shrinkWrap: true,
+                              scrollDirection: Axis.vertical,
+                              itemBuilder: (context, index) {
+                                final enquiryFilterData = enquiry[index];
+                                return Column(
+                                  children: [
+                                    Visibility(
+                                      visible: _currentIndex == 0,
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            right: 30.0, left: 30.0),
+                                        child: Container(
+                                          decoration: const BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(12))),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                            children: [
+                                              Stack(children: <Widget>[
+                                                Padding(
+                                                  padding: const EdgeInsets.all(18.0),
+                                                  child: Container(
+                                                    width: MediaQuery.of(context)
+                                                        .size
+                                                        .width,
+                                                    height: 180,
+                                                    decoration: const BoxDecoration(
+                                                        borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(12)),
+                                                        image: DecorationImage(
+                                                            image: AssetImage(
+                                                                "assets/images/enquiryBG.png"),
+                                                            fit: BoxFit.cover)),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding: const EdgeInsets.only(
+                                                      top: 18.0, left: 18.0),
+                                                  child: IntrinsicWidth(
+                                                    child: Container(
+                                                      decoration: const BoxDecoration(
+                                                        color: Color(0xFF008000),
+                                                        borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(12)),
+                                                      ),
+                                                      child: Align(
+                                                          alignment:
+                                                          Alignment.topLeft,
+                                                          child: Padding(
+                                                            padding: EdgeInsets.only(
+                                                                left: 12.0,
+                                                                right: 12.0,
+                                                                top: 5.0,
+                                                                bottom: 5.0),
+                                                            child: Text(
+                                                              'Price  Rs.${enquiryFilterData.price}',
+                                                              style: TextStyle(
+                                                                  color: Colors.white,
+                                                                  fontSize: 11,
+                                                                  fontFamily:
+                                                                  "poppins-semibold"),
+                                                            ),
+                                                          )),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ]),
+                                              const SizedBox(
+                                                height: 5.0,
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.only(left: 20.0),
+                                                child: Text(
+                                                  "Name : ${enquiryFilterData.uid}",
+                                                  softWrap: true,
+                                                  style: TextStyle(
+                                                      color: Color(0xFF808080),
+                                                      fontSize: 15,
+                                                      fontFamily: 'poppins-semibold'),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    left: 20.0, top: 10.0),
+                                                child: Text(
+                                                  "Purpose:  To ${enquiryFilterData.operation}",
+                                                  softWrap: true,
+                                                  style: TextStyle(
+                                                      color: Color(0xFF808080),
+                                                      fontSize: 15,
+                                                      fontFamily: 'poppins-semibold'),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    left: 20.0, top: 10.0),
+                                                child: Text(
+                                                  "Quantity : ${enquiryFilterData.quantity.toString()}",
+                                                  softWrap: true,
+                                                  style: TextStyle(
+                                                      color: Color(0xFF808080),
+                                                      fontSize: 15,
+                                                      fontFamily: 'poppins-semibold'),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    left: 20.0, top: 10.0),
+                                                child: Text(
+                                                  "Location : ${enquiryFilterData.location}",
+                                                  softWrap: true,
+                                                  style: TextStyle(
+                                                      color: Color(0xFF808080),
+                                                      fontSize: 15,
+                                                      fontFamily: 'poppins-semibold'),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 10.0,
+                                                    right: 10.0,
+                                                    top: 20.0),
+                                                child: Container(
+                                                  width: MediaQuery.of(context)
+                                                      .size
+                                                      .width,
+                                                  height: 40,
+                                                  child: Container(
+                                                      width: MediaQuery.of(context)
+                                                          .size
+                                                          .width,
+                                                      child: ElevatedButton(
+                                                        onPressed: () {
+                                                          Navigator.of(context).push(
+                                                              MaterialPageRoute(
+                                                                  builder: (context) =>
+                                                                      MyEditBuyCommodityPage(enquiryData : enquiryFilterData)));
+                                                        },
+                                                        style:
+                                                        ElevatedButton.styleFrom(
+                                                          foregroundColor:
+                                                          Colors.white,
+                                                          padding:
+                                                          const EdgeInsets.all(3),
+                                                          textStyle: const TextStyle(
+                                                              fontSize: 18),
+                                                          backgroundColor:
+                                                          const Color(0xFF3FC041),
+                                                          shape:
+                                                          RoundedRectangleBorder(
+                                                            borderRadius:
+                                                            BorderRadius.circular(
+                                                                12), // <-- Radius
+                                                          ),
+                                                        ),
+                                                        child: Center(
+                                                          child: Text(
+                                                            buildTranslate('edit')!,
+                                                            textAlign:
+                                                            TextAlign.center,
+                                                            style: TextStyle(
+                                                                fontSize: 17,
+                                                                fontFamily:
+                                                                'poppins-medium'),
+                                                          ),
+                                                        ),
+                                                      )),
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                height: 15,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Visibility(
+                                      visible: _currentIndex == 1,
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            right: 30.0, left: 30.0),
+                                        child: Container(
+                                          decoration: const BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(12))),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                            children: [
+                                              Stack(children: <Widget>[
+                                                Padding(
+                                                  padding: const EdgeInsets.all(18.0),
+                                                  child: Container(
+                                                    width: MediaQuery.of(context)
+                                                        .size
+                                                        .width,
+                                                    height: 180,
+                                                    decoration: const BoxDecoration(
+                                                        borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(12)),
+                                                        image: DecorationImage(
+                                                            image: AssetImage(
+                                                                "assets/images/enquiryBG.png"),
+                                                            fit: BoxFit.cover)),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding: const EdgeInsets.only(
+                                                      top: 18.0, left: 18.0),
+                                                  child: IntrinsicWidth(
+                                                    child: Container(
+                                                      decoration: const BoxDecoration(
+                                                        color: Color(0xFF008000),
+                                                        borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(12)),
+                                                      ),
+                                                      child: Align(
+                                                          alignment:
+                                                          Alignment.topLeft,
+                                                          child: Padding(
+                                                            padding: EdgeInsets.only(
+                                                                left: 12.0,
+                                                                right: 12.0,
+                                                                top: 5.0,
+                                                                bottom: 5.0),
+                                                            child: Text(
+                                                              'Price  Rs.${enquiryFilterData.price}',
+                                                              style: TextStyle(
+                                                                  color: Colors.white,
+                                                                  fontSize: 11,
+                                                                  fontFamily:
+                                                                  "poppins-semibold"),
+                                                            ),
+                                                          )),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ]),
+                                              const SizedBox(
+                                                height: 5.0,
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.only(left: 20.0),
+                                                child: Text(
+                                                  "Name : ${enquiryFilterData.uid}",
+                                                  softWrap: true,
+                                                  style: TextStyle(
+                                                      color: Color(0xFF808080),
+                                                      fontSize: 15,
+                                                      fontFamily: 'poppins-semibold'),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    left: 20.0, top: 10.0),
+                                                child: Text(
+                                                  "Purpose:  To ${enquiryFilterData.operation}",
+                                                  softWrap: true,
+                                                  style: TextStyle(
+                                                      color: Color(0xFF808080),
+                                                      fontSize: 15,
+                                                      fontFamily: 'poppins-semibold'),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    left: 20.0, top: 10.0),
+                                                child: Text(
+                                                  "Quantity : ${enquiryFilterData.quantity.toString()}",
+                                                  softWrap: true,
+                                                  style: TextStyle(
+                                                      color: Color(0xFF808080),
+                                                      fontSize: 15,
+                                                      fontFamily: 'poppins-semibold'),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    left: 20.0, top: 10.0),
+                                                child: Text(
+                                                  "Location : ${enquiryFilterData.location}",
+                                                  softWrap: true,
+                                                  style: TextStyle(
+                                                      color: Color(0xFF808080),
+                                                      fontSize: 15,
+                                                      fontFamily: 'poppins-semibold'),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 10.0,
+                                                    right: 10.0,
+                                                    top: 20.0),
+                                                child: Container(
+                                                  width: MediaQuery.of(context)
+                                                      .size
+                                                      .width,
+                                                  height: 40,
+                                                  child: Container(
+                                                      width: MediaQuery.of(context)
+                                                          .size
+                                                          .width,
+                                                      child: ElevatedButton(
+                                                        onPressed: () {
+                                                          Navigator.of(context).push(
+                                                              MaterialPageRoute(
+                                                                  builder: (context) =>
+                                                                      MyEditSellCommodityPage(enquiryData : enquiryFilterData)));
+                                                        },
+                                                        style:
+                                                        ElevatedButton.styleFrom(
+                                                          foregroundColor:
+                                                          Colors.white,
+                                                          padding:
+                                                          const EdgeInsets.all(3),
+                                                          textStyle: const TextStyle(
+                                                              fontSize: 18),
+                                                          backgroundColor:
+                                                          const Color(0xFF3FC041),
+                                                          shape:
+                                                          RoundedRectangleBorder(
+                                                            borderRadius:
+                                                            BorderRadius.circular(
+                                                                12), // <-- Radius
+                                                          ),
+                                                        ),
+                                                        child: Center(
+                                                          child: Text(
+                                                            buildTranslate('edit')!,
+                                                            textAlign:
+                                                            TextAlign.center,
+                                                            style: TextStyle(
+                                                                fontSize: 17,
+                                                                fontFamily:
+                                                                'poppins-medium'),
+                                                          ),
+                                                        ),
+                                                      )),
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                height: 15,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ) ;
+                              },
+                            );
+                          } else {
+                            return const Center(child: Text('No data available'));
+                          }
+                        },
+                      )
+                          : Center(child: Text('No Data Available')),
+                      // buy commodity
+
+                      // Visibility(
+                      //   visible: _currentIndex == 0,
+                      //   child: Padding(
+                      //     padding: const EdgeInsets.only(
+                      //         top: 10.0, right: 30.0, left: 30.0),
+                      //     child: Container(
+                      //       decoration: const BoxDecoration(
+                      //           color: Colors.white,
+                      //           borderRadius: BorderRadius.all(
+                      //               Radius.circular(12))),
+                      //       child: Column(
+                      //         crossAxisAlignment:
+                      //         CrossAxisAlignment.start,
+                      //         mainAxisAlignment:
+                      //         MainAxisAlignment.start,
+                      //         children: [
+                      //           Stack(children: <Widget>[
+                      //             Padding(
+                      //               padding: const EdgeInsets.all(18.0),
+                      //               child: Container(
+                      //                 width: MediaQuery.of(context)
+                      //                     .size
+                      //                     .width,
+                      //                 height: 180,
+                      //                 decoration: const BoxDecoration(
+                      //                     borderRadius:
+                      //                     BorderRadius.all(
+                      //                         Radius.circular(12)),
+                      //                     image: DecorationImage(
+                      //                         image: AssetImage(
+                      //                             "assets/images/enquiryBG.png"),
+                      //                         fit: BoxFit.cover)),
+                      //               ),
+                      //             ),
+                      //             Padding(
+                      //               padding: const EdgeInsets.only(
+                      //                   top: 18.0, left: 18.0),
+                      //               child: IntrinsicWidth(
+                      //                 child: Container(
+                      //                   // constraints: const BoxConstraints(
+                      //                   //   maxWidth: 120,
+                      //                   // ),
+                      //                   decoration: const BoxDecoration(
+                      //                     color: Color(0xFF008000),
+                      //                     borderRadius:
+                      //                     BorderRadius.all(
+                      //                         Radius.circular(12)),
+                      //                   ),
+                      //                   child: const Align(
+                      //                       alignment:
+                      //                       Alignment.topLeft,
+                      //                       child: Padding(
+                      //                         padding: EdgeInsets.only(
+                      //                             left: 12.0,
+                      //                             right: 12.0,
+                      //                             top: 5.0,
+                      //                             bottom: 5.0),
+                      //                         child: Text(
+                      //                           'Price  Rs.25000',
+                      //                           style: TextStyle(
+                      //                               color: Colors.white,
+                      //                               fontSize: 11,
+                      //                               fontFamily:
+                      //                               "poppins-semibold"),
+                      //                         ),
+                      //                       )),
+                      //                 ),
+                      //               ),
+                      //             ),
+                      //           ]),
+                      //           const SizedBox(
+                      //             height: 5.0,
+                      //           ),
+                      //           const Padding(
+                      //             padding: EdgeInsets.only(left: 20.0),
+                      //             child: Text(
+                      //               "Name :  Ankit",
+                      //               softWrap: true,
+                      //               style: TextStyle(
+                      //                   color: Color(0xFF808080),
+                      //                   fontSize: 15,
+                      //                   fontFamily: 'poppins-semibold'),
+                      //             ),
+                      //           ),
+                      //           const Padding(
+                      //             padding: EdgeInsets.only(
+                      //                 left: 20.0, top: 10.0),
+                      //             child: Text(
+                      //               "Purpose:  To Buy",
+                      //               softWrap: true,
+                      //               style: TextStyle(
+                      //                   color: Color(0xFF808080),
+                      //                   fontSize: 15,
+                      //                   fontFamily: 'poppins-semibold'),
+                      //             ),
+                      //           ),
+                      //           const Padding(
+                      //             padding: EdgeInsets.only(
+                      //                 left: 20.0, top: 10.0),
+                      //             child: Text(
+                      //               "Quantity :  10 Metric Ton (MT)",
+                      //               softWrap: true,
+                      //               style: TextStyle(
+                      //                   color: Color(0xFF808080),
+                      //                   fontSize: 15,
+                      //                   fontFamily: 'poppins-semibold'),
+                      //             ),
+                      //           ),
+                      //           const Padding(
+                      //             padding: EdgeInsets.only(
+                      //                 left: 20.0, top: 10.0),
+                      //             child: Text(
+                      //               "Location :  Latur, Maharastra",
+                      //               softWrap: true,
+                      //               style: TextStyle(
+                      //                   color: Color(0xFF808080),
+                      //                   fontSize: 15,
+                      //                   fontFamily: 'poppins-semibold'),
+                      //             ),
+                      //           ),
+                      //           Padding(
+                      //             padding: const EdgeInsets.only(
+                      //                 left: 10.0,
+                      //                 right: 10.0,
+                      //                 top: 20.0),
+                      //             child: Container(
+                      //               width: MediaQuery.of(context)
+                      //                   .size
+                      //                   .width,
+                      //               height: 40,
+                      //               child: Container(
+                      //                   width: MediaQuery.of(context)
+                      //                       .size
+                      //                       .width,
+                      //                   child: ElevatedButton(
+                      //                     onPressed: () {
+                      //                       Navigator.of(context).push(
+                      //                           MaterialPageRoute(
+                      //                               builder: (context) =>
+                      //                               const MyBuyCommodityPage()));
+                      //                     },
+                      //                     style:
+                      //                     ElevatedButton.styleFrom(
+                      //                       foregroundColor:
+                      //                       Colors.white,
+                      //                       padding:
+                      //                       const EdgeInsets.all(3),
+                      //                       textStyle: const TextStyle(
+                      //                           fontSize: 18),
+                      //                       backgroundColor:
+                      //                       const Color(0xFF3FC041),
+                      //                       shape:
+                      //                       RoundedRectangleBorder(
+                      //                         borderRadius:
+                      //                         BorderRadius.circular(
+                      //                             12), // <-- Radius
+                      //                       ),
+                      //                     ),
+                      //                     child: Center(
+                      //                       child: Text(
+                      //                         buildTranslate('edit')!,
+                      //                         textAlign:
+                      //                         TextAlign.center,
+                      //                         style: TextStyle(
+                      //                             fontSize: 17,
+                      //                             fontFamily:
+                      //                             'poppins-medium'),
+                      //                       ),
+                      //                     ),
+                      //                   )),
+                      //             ),
+                      //           ),
+                      //           const SizedBox(
+                      //             height: 15,
+                      //           ),
+                      //         ],
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
+
+                      // sell commodity
+
+                      // Visibility(
+                      //   visible: _currentIndex == 1,
+                      //   child: Padding(
+                      //     padding: const EdgeInsets.only(
+                      //         top: 10.0, right: 30.0, left: 30.0),
+                      //     child: Container(
+                      //       decoration: const BoxDecoration(
+                      //           color: Colors.white,
+                      //           borderRadius: BorderRadius.all(
+                      //               Radius.circular(12))),
+                      //       child: Column(
+                      //         crossAxisAlignment:
+                      //         CrossAxisAlignment.start,
+                      //         mainAxisAlignment:
+                      //         MainAxisAlignment.start,
+                      //         children: [
+                      //           Stack(children: <Widget>[
+                      //             Padding(
+                      //               padding: const EdgeInsets.all(18.0),
+                      //               child: Container(
+                      //                 width: MediaQuery.of(context)
+                      //                     .size
+                      //                     .width,
+                      //                 height: 180,
+                      //                 decoration: const BoxDecoration(
+                      //                     borderRadius:
+                      //                     BorderRadius.all(
+                      //                         Radius.circular(12)),
+                      //                     image: DecorationImage(
+                      //                         image: AssetImage(
+                      //                             "assets/images/enquiryBG.png"),
+                      //                         fit: BoxFit.cover)),
+                      //               ),
+                      //             ),
+                      //             Padding(
+                      //               padding: const EdgeInsets.only(
+                      //                   top: 18.0, left: 18.0),
+                      //               child: IntrinsicWidth(
+                      //                 child: Container(
+                      //                   // constraints: const BoxConstraints(
+                      //                   //   maxWidth: 150,
+                      //                   // ),
+                      //                   decoration: const BoxDecoration(
+                      //                     color: Color(0xFF008000),
+                      //                     borderRadius:
+                      //                     BorderRadius.all(
+                      //                         Radius.circular(12)),
+                      //                   ),
+                      //                   child: const Align(
+                      //                       alignment:
+                      //                       Alignment.topLeft,
+                      //                       child: Padding(
+                      //                         padding: EdgeInsets.only(
+                      //                             left: 12.0,
+                      //                             right: 12.0,
+                      //                             top: 5.0,
+                      //                             bottom: 5.0),
+                      //                         child: Text(
+                      //                           'Price  Rs.25000',
+                      //                           style: TextStyle(
+                      //                               color: Colors.white,
+                      //                               fontSize: 11,
+                      //                               fontFamily:
+                      //                               "poppins-semibold"),
+                      //                         ),
+                      //                       )),
+                      //                 ),
+                      //               ),
+                      //             ),
+                      //           ]),
+                      //           const SizedBox(
+                      //             height: 5.0,
+                      //           ),
+                      //           const Padding(
+                      //             padding: EdgeInsets.only(left: 20.0),
+                      //             child: Text(
+                      //               "Name :  Ankit",
+                      //               softWrap: true,
+                      //               style: TextStyle(
+                      //                   color: Color(0xFF808080),
+                      //                   fontSize: 15,
+                      //                   fontFamily: 'poppins-semibold'),
+                      //             ),
+                      //           ),
+                      //           const Padding(
+                      //             padding: EdgeInsets.only(
+                      //                 left: 20.0, top: 10.0),
+                      //             child: Text(
+                      //               "Purpose:  To Sell",
+                      //               softWrap: true,
+                      //               style: TextStyle(
+                      //                   color: Color(0xFF808080),
+                      //                   fontSize: 15,
+                      //                   fontFamily: 'poppins-semibold'),
+                      //             ),
+                      //           ),
+                      //           const Padding(
+                      //             padding: EdgeInsets.only(
+                      //                 left: 20.0, top: 10.0),
+                      //             child: Text(
+                      //               "Quantity :  10 Metric Ton (MT)",
+                      //               softWrap: true,
+                      //               style: TextStyle(
+                      //                   color: Color(0xFF808080),
+                      //                   fontSize: 15,
+                      //                   fontFamily: 'poppins-semibold'),
+                      //             ),
+                      //           ),
+                      //           const Padding(
+                      //             padding: EdgeInsets.only(
+                      //                 left: 20.0, top: 10.0),
+                      //             child: Text(
+                      //               "Location :  Latur, Maharastra",
+                      //               softWrap: true,
+                      //               style: TextStyle(
+                      //                   color: Color(0xFF808080),
+                      //                   fontSize: 15,
+                      //                   fontFamily: 'poppins-semibold'),
+                      //             ),
+                      //           ),
+                      //           Padding(
+                      //             padding: const EdgeInsets.only(
+                      //                 left: 10.0,
+                      //                 right: 10.0,
+                      //                 top: 20.0),
+                      //             child: Container(
+                      //               width: MediaQuery.of(context)
+                      //                   .size
+                      //                   .width,
+                      //               height: 40,
+                      //               child: Container(
+                      //                   width: MediaQuery.of(context)
+                      //                       .size
+                      //                       .width,
+                      //                   child: ElevatedButton(
+                      //                     onPressed: () {
+                      //                       Navigator.of(context).push(
+                      //                           MaterialPageRoute(
+                      //                               builder: (context) =>
+                      //                               const MySellCommodityPage()));
+                      //                     },
+                      //                     style:
+                      //                     ElevatedButton.styleFrom(
+                      //                       foregroundColor:
+                      //                       Colors.white,
+                      //                       padding:
+                      //                       const EdgeInsets.all(3),
+                      //                       textStyle: const TextStyle(
+                      //                           fontSize: 18),
+                      //                       backgroundColor:
+                      //                       const Color(0xFF3FC041),
+                      //                       shape:
+                      //                       RoundedRectangleBorder(
+                      //                         borderRadius:
+                      //                         BorderRadius.circular(
+                      //                             12), // <-- Radius
+                      //                       ),
+                      //                     ),
+                      //                     child: Center(
+                      //                       child: Text(
+                      //                         buildTranslate('edit')!,
+                      //                         textAlign:
+                      //                         TextAlign.center,
+                      //                         style: TextStyle(
+                      //                             fontSize: 17,
+                      //                             fontFamily:
+                      //                             'poppins-medium'),
+                      //                       ),
+                      //                     ),
+                      //                   )),
+                      //             ),
+                      //           ),
+                      //           const SizedBox(
+                      //             height: 15,
+                      //           ),
+                      //         ],
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
+                      const SizedBox(
+                        height: 40,
+                      ),
                 ],
               )
                   : Container(),

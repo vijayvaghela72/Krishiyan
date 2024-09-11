@@ -1,8 +1,10 @@
 import 'dart:convert';
-
+import 'package:intl/intl.dart';
 import '../../utils/Constants.dart';
 import '../model/DailyNewsDetails.dart';
 import 'package:http/http.dart' as http;
+
+import '../model/GetMandiPriceData.dart';
 
 class HomeDashboardController{
 
@@ -19,4 +21,32 @@ class HomeDashboardController{
     }
   }
 
+  static Future<List<MandiPriceData>> getMandiPriceDetails(String state, String district, String commodity,
+      String initialDate, String finalDate) async {
+
+    DateTime initialDateTime = DateTime.parse(initialDate);
+    String initialFormattedDate = DateFormat('dd/MM/yyyy').format(initialDateTime);
+
+    DateTime finalDateTime = DateTime.parse(initialDate);
+    String finalFormattedDate = DateFormat('dd/MM/yyyy').format(finalDateTime);
+
+    final response = await http.get(Uri.parse("https://krishiyanback.vercel.app/api/mandi/mandiPrices"
+        "?state=$state&district=$district&commodity=$commodity"
+        "&initialDate=$initialFormattedDate&finalDate=$finalFormattedDate"));
+
+    print("state : $state");
+    print("district : $district");
+    print("commodity : $commodity");
+    print("initialDate : $initialFormattedDate");
+    print("finalDate : $finalFormattedDate");
+
+    if (response.statusCode == 200) {
+      final jsonResponse = json.decode(response.body);
+      final List<dynamic> data = jsonResponse['data'];
+      print("Get Mandi Price Details : $data");
+      return data.map((item) => MandiPriceData.fromJson(item)).toList();
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
 }
