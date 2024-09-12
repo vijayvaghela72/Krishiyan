@@ -222,5 +222,8 @@
   "incorporationNumber": "Incorporation Number",
   "businessLocation": "Business Location",
   "primaryContactPersonName": "Primary Contact Person Name",
-  "primaryContactPersonDesignation": "Primary Contact Person Designation"
+  "primaryContactPersonDesignation": "Primary Contact Person Designation",
+  "noDataAvailable": "No data available",
+  "screenLocked": "This screen is Locked !",
+  "apply": "Apply"
 }

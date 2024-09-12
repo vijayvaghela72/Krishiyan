@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:krishiyan/screen/MyWelcomePage.dart';
+import 'package:krishiyan/screen/Welcome/WelcomePage.dart';
 import 'package:krishiyan/utils/Constants.dart';
 
 import 'localization/AppLocalizations.dart';
@@ -52,7 +52,7 @@ class MyApp extends StatelessWidget {
         Locale('hi'), // Hindi
       ],
       debugShowCheckedModeBanner: false,
-      home: const MyWelcomePage(),
+      home: const WelcomePage(),
       routes: const <String, WidgetBuilder>{},
     );
     // return ChangeNotifierProvider(

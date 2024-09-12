@@ -215,5 +215,15 @@
   "panCard": "पैन कार्ड",
   "GSTNumber": "जीएसटी नंबर",
   "udyamAadhaar": "उद्यम आधार",
-  "selectFarmer": "किसान का चयन करें"
+  "selectFarmer": "किसान का चयन करें",
+  "nameofEntity": "इकाई का नाम",
+  "typeofEntity": "निकाय के प्रकार",
+  "incorporationDate" : "निगमन तिथि",
+  "incorporationNumber": "निगमन संख्या",
+  "businessLocation": "व्यावसायिक स्थान",
+  "primaryContactPersonName": "प्राथमिक संपर्क व्यक्ति का नाम",
+  "primaryContactPersonDesignation": "प्राथमिक संपर्क व्यक्ति पदनाम",
+  "noDataAvailable": "कोई डेटा मौजूद नहीं",
+  "screenLocked": "यह स्क्रीन लॉक है!",
+  "apply": ""
 }
