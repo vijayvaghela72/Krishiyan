@@ -1292,8 +1292,8 @@ class _FarmerEditProfilePageState extends State<FarmerEditProfilePage> {
             splashColor: Colors.transparent,
             onTap: () {
               Navigator.of(context).pop();
-              Navigator.of(context).pop();
-            },
+              Navigator.of(context).pop('Updated Data from FarmerEdit Profile');
+              },
             child: const Align(
               alignment: Alignment.topRight,
               child: Icon(

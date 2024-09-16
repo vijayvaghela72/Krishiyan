@@ -22,8 +22,6 @@ class _FarmerGroupRegistrationPageOneState extends State<FarmerGroupRegistration
   TextEditingController organizationMailIDController = TextEditingController();
   TextEditingController contactNumberController = TextEditingController();
   TextEditingController nameOfPromoterController = TextEditingController();
-  TextEditingController userPasswordController = TextEditingController();
-  TextEditingController userConfirmPasswordController = TextEditingController();
 
   bool otpVisible = false;
 
@@ -180,7 +178,7 @@ class _FarmerGroupRegistrationPageOneState extends State<FarmerGroupRegistration
                 controller: dateOfOrganizationController,
                 readOnly: true,
                 decoration: InputDecoration(
-                  hintText: 'dd/mm/yyyy',
+                  hintText: 'DD/MM/YYYY',
                   suffixIcon: IconButton(
                     icon: const Icon(Icons.calendar_today),
                     onPressed: () {
@@ -459,7 +457,7 @@ class _FarmerGroupRegistrationPageOneState extends State<FarmerGroupRegistration
       context: context,
       initialDate: DateTime.now(), // Default date is the current date
       firstDate: DateTime(2000), // Earliest selectable date
-      lastDate: DateTime(2101), // Latest selectable date
+      lastDate: DateTime.now(),  // Restrict to past and current date
       helpText: 'Select a date', // Optional help text
     );
     if (pickedDate != null) {

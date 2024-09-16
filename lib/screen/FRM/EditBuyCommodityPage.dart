@@ -622,7 +622,7 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
                 // initialValue: widget.enquiryData.date,
                 decoration: InputDecoration(
                   contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-                  hintText: 'dd/mm/yyyy',
+                  hintText: 'DD/MM/YYYY',
                   hintStyle: const TextStyle(color: Colors.grey),
                   fillColor: Colors.white,
                   filled: true,
@@ -751,7 +751,7 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
       context: context,
       initialDate: DateTime.now(), // Default date is the current date
       firstDate: DateTime(2000), // Earliest selectable date
-      lastDate: DateTime(2101), // Latest selectable date
+      lastDate: DateTime.now(),  // Latest selectable date
       helpText: 'Select a date', // Optional help text
     );
     if (pickedDate != null) {

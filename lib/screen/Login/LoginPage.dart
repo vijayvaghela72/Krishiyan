@@ -147,6 +147,22 @@ class _LoginPageState extends State<LoginPage> {
                 onChanged: (value) {
                   _login();
                 },
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a password';
+                  }
+
+                  // Check if password meets the required conditions
+                  String pattern = r'^(?=.*[a-z])(?=.*[A-Z]).{8,}$';
+                  RegExp regExp = RegExp(pattern);
+
+                  if (!regExp.hasMatch(value)) {
+                    return 'Password must contain at least 1 uppercase letter, 1 '
+                        'lowercase letter, and be at least 8 characters long';
+                  }
+
+                  return null;
+                },
                 decoration: InputDecoration(
                   errorText: _passwordErrorText,
                   hintText: buildTranslate("enterYourPassword")!,

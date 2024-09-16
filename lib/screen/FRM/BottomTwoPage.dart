@@ -15,7 +15,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../helper/AlertHelper.dart';
 import '../../localization/AppLocalizations.dart';
 import '../../mvc/controller/farmerDashboardController.dart';
-import '../../mvc/model/SearchFarmerDetails.dart';
 import '../../mvc/model/SelectCropNamesData.dart';
 import '../../mvc/model/SelectVillagesNameData.dart';
 import '../../utils/AppGlobal.dart';
@@ -120,8 +119,6 @@ class _BottomTwoPageState extends State<BottomTwoPage>
   TextEditingController geoLocationController = TextEditingController();
   TextEditingController areaInArcesController = TextEditingController();
 
-  // TextEditingController geoLinkAreaController = TextEditingController();
-
   String? _selectedCrop;
 
   // SelectCropNamesData? _cropData;
@@ -139,7 +136,7 @@ class _BottomTwoPageState extends State<BottomTwoPage>
   String dealerNumberData = "";
 
   late Future<List<FarmerDetails>> futureFarmerProfiles;
-  late Future<List<SearchFarmerDetails>> futureSearchFarmerProfiles;
+  // late Future<List<SearchFarmerData>> futureSearchFarmerProfiles;
   String _searchText = '';
 
   @override
@@ -160,14 +157,16 @@ class _BottomTwoPageState extends State<BottomTwoPage>
       });
     }
     if (_searchText.isNotEmpty) {
-      // futureSearchFarmerProfiles =
-      //     FarmerDashboardController.fetchSearchFarmerDashboard(
-      //         context, _searchText);
+      if(mounted) {
+        setState(() {
+          futureFarmerProfiles = FarmerDashboardController.fetchSearchFarmerDashboard(context, _searchText);
+        });
+      }
     } else {
       if (mounted) {
         setState(() {
-          futureFarmerProfiles = FarmerDashboardController.fetchFarmerDashboard(
-              context, widget.villageName, widget.typeName);
+          futureFarmerProfiles = FarmerDashboardController.fetchFarmerDashboard(context,
+              widget.villageName, widget.typeName);
         });
       }
     }
@@ -259,7 +258,7 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                                         ? Colors.green
                                         : Colors.black),
                                 borderRadius: const BorderRadius.all(
-                                  Radius.circular(12),
+                                  Radius.circular(20),
                                 )),
                             label: Text(topData[index].toString(),
                                 style: TextStyle(
@@ -389,476 +388,6 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                           ],
                         ),
                       ),
-                      _searchText.isNotEmpty ?
-                      // FutureBuilder<List<SearchFarmerDetails>>(
-                      //     future: futureSearchFarmerProfiles,
-                      //     builder: (context, snapshot) {
-                      //       if (snapshot.connectionState ==
-                      //           ConnectionState.waiting) {
-                      //         return const Center(
-                      //             child: CircularProgressIndicator());
-                      //       } else if (snapshot.hasError) {
-                      //         // return Center(child: Text(snapshot.error.toString()));
-                      //         return Center(child: Text('No data available'));
-                      //       } else if (snapshot.hasData) {
-                      //         List<FarmerDetails> farmers = snapshot.data!;
-                      //
-                      //         return ListView.builder(
-                      //             itemCount: snapshot.data!.length,
-                      //             shrinkWrap: true,
-                      //             physics: const NeverScrollableScrollPhysics(),
-                      //             itemBuilder: (context, index) {
-                      //               final dealerNo = farmers[index].farmerDetails.dealerNumber ?? "";
-                      //               final Name = farmers[index].farmerDetails.name ?? "";
-                      //               final Address = farmers[index].farmerDetails.address ?? "";
-                      //               final WhatsappNumber = farmers[index].farmerDetails.whatsappNumber ?? "";
-                      //               final GeoLocationOwnedFarm = farmers[index].farmerDetails.geoLocationOwnedFarm ?? "";
-                      //               final TotalOwnedFarm = farmers[index]
-                      //                   .farmerDetails.totalOwnedFarm.toString();
-                      //               final TotalLeaseFarm = farmers[index]
-                      //                   .farmerDetails.totalLeaseFarm.toString();
-                      //               final GeoLocationLeaseFarm = farmers[index]
-                      //                   .farmerDetails.geoLocationLeaseFarm ?? "";
-                      //               final Pincode = farmers[index].farmerDetails.pincode ?? "";
-                      //               final State = farmers[index].farmerDetails.state ?? "";
-                      //               final Village = farmers[index].farmerDetails.village ?? "";
-                      //               final District = farmers[index].farmerDetails.district ?? "";
-                      //               final BankName = farmers[index].farmerDetails.bankName ?? "";
-                      //               final AccountName = farmers[index].farmerDetails.accountName ?? "";
-                      //               final AccountNumber = farmers[index].farmerDetails.accountNumber ?? "";
-                      //               final IfscCode = farmers[index].farmerDetails.ifscCode ?? "";
-                      //               final PanNumber = farmers[index].farmerDetails.pan ?? "";
-                      //               final AadhaarNumber = farmers[index].farmerDetails.aadhaarNumber ?? "";
-                      //
-                      //               final cropDetails = farmers[index].cropCultivationDetails;
-                      //               return
-                      //                 // user card
-                      //                 Padding(
-                      //                   padding: const EdgeInsets.only(
-                      //                       top: 10.0, right: 20.0, left: 20.0),
-                      //                   child: Container(
-                      //                     decoration: const BoxDecoration(
-                      //                         color: Color(0xFFe7e7e7),
-                      //                         borderRadius: BorderRadius.all(
-                      //                             Radius.circular(12))),
-                      //                     child: Column(
-                      //                       crossAxisAlignment:
-                      //                       CrossAxisAlignment.start,
-                      //                       mainAxisAlignment:
-                      //                       MainAxisAlignment.start,
-                      //                       children: [
-                      //                         Padding(
-                      //                           padding: const EdgeInsets.only(
-                      //                               top: 10.0,
-                      //                               right: 15.0,
-                      //                               left: 15.0),
-                      //                           child: Row(
-                      //                             children: <Widget>[
-                      //                               Container(
-                      //                                 height: 50.0,
-                      //                                 width: 50.0,
-                      //                                 decoration: const BoxDecoration(
-                      //                                     shape: BoxShape.circle,
-                      //                                     image: DecorationImage(
-                      //                                         image: AssetImage(
-                      //                                             "assets/images/profile_image.png"),
-                      //                                         fit: BoxFit.cover)),
-                      //                               ),
-                      //                               const SizedBox(
-                      //                                 width: 15,
-                      //                               ),
-                      //                               Flexible(
-                      //                                 child: Column(
-                      //                                   mainAxisAlignment:
-                      //                                   MainAxisAlignment
-                      //                                       .start,
-                      //                                   crossAxisAlignment:
-                      //                                   CrossAxisAlignment
-                      //                                       .start,
-                      //                                   children: [
-                      //                                     Text(
-                      //                                       Name ?? "",
-                      //                                       softWrap: true,
-                      //                                       style: const TextStyle(
-                      //                                           color: Color(
-                      //                                               0xFF808080),
-                      //                                           fontSize: 15,
-                      //                                           fontFamily:
-                      //                                           'poppins-semibold'),
-                      //                                     ),
-                      //                                     Text(
-                      //                                       Address ?? "",
-                      //                                       softWrap: true,
-                      //                                       style: const TextStyle(
-                      //                                           color: Color(
-                      //                                               0xFF959595),
-                      //                                           fontSize: 11,
-                      //                                           fontFamily:
-                      //                                           'poppins-semibold'),
-                      //                                     ),
-                      //                                     Text(
-                      //                                       WhatsappNumber ?? "",
-                      //                                       softWrap: true,
-                      //                                       style: const TextStyle(
-                      //                                           color: Color(
-                      //                                               0xFF959595),
-                      //                                           fontSize: 11,
-                      //                                           fontFamily:
-                      //                                           'poppins-semibold'),
-                      //                                     ),
-                      //                                   ],
-                      //                                 ),
-                      //                               ),
-                      //                             ],
-                      //                           ),
-                      //                         ),
-                      //                         Padding(
-                      //                           padding: const EdgeInsets.only(
-                      //                               left: 20.0,
-                      //                               right: 20.0,
-                      //                               top: 8.0,
-                      //                               bottom: 12.0),
-                      //                           child: Row(
-                      //                             mainAxisAlignment:
-                      //                             MainAxisAlignment.start,
-                      //                             crossAxisAlignment:
-                      //                             CrossAxisAlignment.start,
-                      //                             children: [
-                      //                               Expanded(
-                      //                                   child: InkWell(
-                      //                                     highlightColor:
-                      //                                     Colors.transparent,
-                      //                                     splashColor:
-                      //                                     Colors.transparent,
-                      //                                     onTap: () {
-                      //                                       setState(() {
-                      //                                         if (firstCardVisibleValue ==
-                      //                                             index) {
-                      //                                           firstCardVisibleValue =
-                      //                                           null; // Deselect if tapped again
-                      //                                         } else {
-                      //                                           firstCardVisibleValue =
-                      //                                               index; // Select the item
-                      //                                         }
-                      //                                       });
-                      //                                     },
-                      //                                     child: Row(
-                      //                                       children: [
-                      //                                         Text(
-                      //                                           buildTranslate(
-                      //                                               "showCropData")!,
-                      //                                           softWrap: true,
-                      //                                           style:
-                      //                                           const TextStyle(
-                      //                                             color: Color(
-                      //                                                 0XFF008000),
-                      //                                             fontSize: 15,
-                      //                                             fontFamily:
-                      //                                             'poppins-semibold',
-                      //                                             decoration:
-                      //                                             TextDecoration
-                      //                                                 .underline,
-                      //                                             decorationColor:
-                      //                                             Color(
-                      //                                                 0XFF008000),
-                      //                                           ),
-                      //                                         ),
-                      //                                         Image.asset(
-                      //                                             'assets/images/dropdown_arrow.png'),
-                      //                                       ],
-                      //                                     ),
-                      //                                   )),
-                      //                               const VerticalDivider(
-                      //                                   width: 1.0),
-                      //                               Expanded(
-                      //                                   child: Align(
-                      //                                     alignment:
-                      //                                     Alignment.centerRight,
-                      //                                     child: InkWell(
-                      //                                       highlightColor:
-                      //                                       Colors.transparent,
-                      //                                       splashColor:
-                      //                                       Colors.transparent,
-                      //                                       onTap: () {
-                      //                                         print("Name : $Name");
-                      //                                         print(
-                      //                                             "WhatsappNumber : $WhatsappNumber");
-                      //                                         print(
-                      //                                             "dealerNo : $dealerNo");
-                      //                                         Navigator.of(context)
-                      //                                             .push(
-                      //                                           MaterialPageRoute(
-                      //                                               builder: (context) => MyFarmerEditProfilePage(
-                      //                                                   dealerNumber:
-                      //                                                   dealerNo,
-                      //                                                   name: Name,
-                      //                                                   whatsappNumber:
-                      //                                                   WhatsappNumber,
-                      //                                                   address:
-                      //                                                   Address,
-                      //                                                   geoLocationOwnedFarm:
-                      //                                                   GeoLocationOwnedFarm,
-                      //                                                   totalOwnedFarm:
-                      //                                                   TotalOwnedFarm,
-                      //                                                   totalLeaseFarm:
-                      //                                                   TotalLeaseFarm,
-                      //                                                   geoLocationLeaseFarm:
-                      //                                                   GeoLocationLeaseFarm,
-                      //                                                   pincode:
-                      //                                                   Pincode,
-                      //                                                   state: State,
-                      //                                                   district:
-                      //                                                   District,
-                      //                                                   village:
-                      //                                                   Village,
-                      //                                                   bankName:
-                      //                                                   BankName,
-                      //                                                   accountName:
-                      //                                                   AccountName,
-                      //                                                   accountNumber:
-                      //                                                   AccountNumber,
-                      //                                                   ifscCode:
-                      //                                                   IfscCode,
-                      //                                                   panNumber:
-                      //                                                   PanNumber,
-                      //                                                   aadhaarNumber:
-                      //                                                   AadhaarNumber)),
-                      //                                         );
-                      //                                       },
-                      //                                       child: Text(
-                      //                                         buildTranslate(
-                      //                                             "editProfile")!,
-                      //                                         softWrap: true,
-                      //                                         style: const TextStyle(
-                      //                                           color:
-                      //                                           Color(0XFF008000),
-                      //                                           fontSize: 15,
-                      //                                           fontFamily:
-                      //                                           'poppins-semibold',
-                      //                                           decoration:
-                      //                                           TextDecoration
-                      //                                               .underline,
-                      //                                           decorationColor:
-                      //                                           Color(0XFF008000),
-                      //                                         ),
-                      //                                       ),
-                      //                                     ),
-                      //                                   )),
-                      //                             ],
-                      //                           ),
-                      //                         ),
-                      //                         SizedBox(height: 10),
-                      //                         cropDetails is String
-                      //                             ? firstCardVisibleValue == index ? Center
-                      //                           (child: Text(cropDetails, softWrap: true,style: TextStyle(color: Colors.black, fontSize: 15.0, fontFamily: "poppins-semibold" ),)) : Container()
-                      //                             : ListView.builder(
-                      //                           shrinkWrap: true,
-                      //                           physics: NeverScrollableScrollPhysics(),
-                      //                           itemCount: cropDetails.length,
-                      //                           itemBuilder: (context, cropIndex) {
-                      //                             // final crop = cropDetails[cropIndex];
-                      //                             // final crop = CropDetails.fromJson(cropDetails[index]);
-                      //                             return Padding(
-                      //                               padding: const EdgeInsets.only(bottom: 8.0),
-                      //                               child: Column(
-                      //                                 crossAxisAlignment: CrossAxisAlignment.start,
-                      //                                 children: [
-                      //                                   firstCardVisibleValue == index  ? const Padding(
-                      //                                     padding: EdgeInsets.only(
-                      //                                       left: 15.0,
-                      //                                       right: 15.0,
-                      //                                     ),
-                      //                                     child: Divider(
-                      //                                       color: Colors.black,
-                      //                                       thickness: 1,
-                      //                                     ),
-                      //                                   ) : Container(),
-                      //                                   firstCardVisibleValue == index  ? Padding(
-                      //                                     padding: const EdgeInsets.only(
-                      //                                         left: 25.0,
-                      //                                         right: 15.0,
-                      //                                         bottom: 12.0),
-                      //                                     child: Row(
-                      //                                       mainAxisAlignment:
-                      //                                       MainAxisAlignment.start,
-                      //                                       crossAxisAlignment:
-                      //                                       CrossAxisAlignment.start,
-                      //                                       children: [
-                      //                                         Expanded(
-                      //                                             child: Row(
-                      //                                               mainAxisAlignment:
-                      //                                               MainAxisAlignment.start,
-                      //                                               crossAxisAlignment:
-                      //                                               CrossAxisAlignment.start,
-                      //                                               children: [
-                      //                                                 Expanded(
-                      //                                                   child: Text(
-                      //                                                     cropDetails[cropIndex].crops ?? "",
-                      //                                                     softWrap: true,
-                      //                                                     textAlign: TextAlign.center,
-                      //                                                     style: TextStyle(
-                      //                                                       color: Colors.grey,
-                      //                                                       fontSize: 15,
-                      //                                                       fontFamily:
-                      //                                                       'poppins-semibold',
-                      //                                                     ),
-                      //                                                   ),
-                      //                                                 ),
-                      //                                                 Expanded(
-                      //                                                   child: Text(
-                      //                                                     cropDetails[cropIndex].typeOfCultivationPractice ?? "",
-                      //                                                     softWrap: true,
-                      //                                                     textAlign: TextAlign.center,
-                      //                                                     style: TextStyle(
-                      //                                                       color: Colors.grey,
-                      //                                                       fontSize: 15,
-                      //                                                       fontFamily:
-                      //                                                       'poppins-semibold',
-                      //                                                     ),
-                      //                                                   ),
-                      //                                                 ),
-                      //                                               ],
-                      //                                             )),
-                      //                                         Expanded(
-                      //                                             child: Align(
-                      //                                               alignment: Alignment.centerRight,
-                      //                                               child: InkWell(
-                      //                                                 onTap: () {
-                      //                                                   Navigator.of(context).push(
-                      //                                                       MaterialPageRoute(
-                      //                                                           builder: (context) =>
-                      //                                                           const MyCropCultivationPage()));
-                      //                                                 },
-                      //                                                 child: Text(
-                      //                                                   buildTranslate(
-                      //                                                       "editCropData")!,
-                      //                                                   softWrap: true,
-                      //                                                   style: const TextStyle(
-                      //                                                     color: Color(0XFF008000),
-                      //                                                     fontSize: 15,
-                      //                                                     fontFamily:
-                      //                                                     'poppins-semibold',
-                      //                                                   ),
-                      //                                                 ),
-                      //                                               ),
-                      //                                             )),
-                      //                                       ],
-                      //                                     ),
-                      //                                   ) : Container(),
-                      //                                 ],
-                      //                               ),
-                      //                             );
-                      //                           },
-                      //                         ),
-                      //                         firstCardVisibleValue == index ? SizedBox(height: 10) : Container(),
-                      //                         firstCardVisibleValue == index  ? Padding(
-                      //                           padding: const EdgeInsets.only(
-                      //                               left: 10.0,
-                      //                               right: 10.0,
-                      //                               top: 8.0,
-                      //                               bottom: 20.0),
-                      //                           child: Row(
-                      //                             mainAxisAlignment:
-                      //                             MainAxisAlignment.start,
-                      //                             crossAxisAlignment:
-                      //                             CrossAxisAlignment.start,
-                      //                             children: [
-                      //                               Expanded(
-                      //                                   flex: 2,
-                      //                                   child: InkWell(
-                      //                                     highlightColor:
-                      //                                     Colors.transparent,
-                      //                                     splashColor:
-                      //                                     Colors.transparent,
-                      //                                     onTap: () {},
-                      //                                     child: Container(
-                      //                                       decoration: BoxDecoration(
-                      //                                           color: const Color(
-                      //                                               0XFF3FC041),
-                      //                                           border: Border.all(
-                      //                                               color: const Color(
-                      //                                                   0XFF3FC041),
-                      //                                               width: 1),
-                      //                                           borderRadius:
-                      //                                           BorderRadius
-                      //                                               .circular(18)),
-                      //                                       padding:
-                      //                                       const EdgeInsets.all(
-                      //                                           8.0),
-                      //                                       child: Text(
-                      //                                         buildTranslate(
-                      //                                             "showMoreCrops")!,
-                      //                                         softWrap: true,
-                      //                                         textAlign:
-                      //                                         TextAlign.center,
-                      //                                         style: const TextStyle(
-                      //                                             color: Colors.white,
-                      //                                             fontSize: 12,
-                      //                                             fontFamily:
-                      //                                             'poppins-regular'),
-                      //                                       ),
-                      //                                     ),
-                      //                                   )),
-                      //                               Expanded(
-                      //                                   flex: 2,
-                      //                                   child: Align(
-                      //                                     alignment:
-                      //                                     Alignment.centerRight,
-                      //                                     child: InkWell(
-                      //                                       highlightColor:
-                      //                                       Colors.transparent,
-                      //                                       splashColor:
-                      //                                       Colors.transparent,
-                      //                                       onTap: () {
-                      //                                         Navigator.of(context).push(
-                      //                                             MaterialPageRoute(
-                      //                                                 builder: (context) =>
-                      //                                                 const MyCropCultivationPage()));
-                      //                                       },
-                      //                                       child: Container(
-                      //                                         decoration: BoxDecoration(
-                      //                                             color: const Color(
-                      //                                                 0XFF3FC041),
-                      //                                             border: Border.all(
-                      //                                                 color: const Color(
-                      //                                                     0XFF3FC041),
-                      //                                                 width: 1),
-                      //                                             borderRadius:
-                      //                                             BorderRadius
-                      //                                                 .circular(
-                      //                                                 18)),
-                      //                                         padding:
-                      //                                         const EdgeInsets.all(
-                      //                                             8.0),
-                      //                                         child: Text(
-                      //                                           buildTranslate(
-                      //                                               "addNewCultivations")!,
-                      //                                           softWrap: true,
-                      //                                           style: const TextStyle(
-                      //                                             color: Colors.white,
-                      //                                             fontSize: 11,
-                      //                                             fontFamily:
-                      //                                             'poppins-regular',
-                      //                                           ),
-                      //                                         ),
-                      //                                       ),
-                      //                                     ),
-                      //                                   )),
-                      //                             ],
-                      //                           ),
-                      //                         ) : Container(),
-                      //                       ],
-                      //                     ),
-                      //                   ),
-                      //                 );
-                      //             });
-                      //       } else {
-                      //         return const Center(
-                      //             child: Text('No data available'));
-                      //       }
-                      //     })
-                      Container()
-                          :
                       FutureBuilder<List<FarmerDetails>>(
                           future: futureFarmerProfiles,
                           builder: (context, snapshot) {
@@ -1048,51 +577,60 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                                                           Colors.transparent,
                                                       splashColor:
                                                           Colors.transparent,
-                                                      onTap: () {
+                                                      onTap: () async {
                                                         print("Name : $Name");
                                                         print(
                                                             "WhatsappNumber : $WhatsappNumber");
                                                         print(
                                                             "dealerNo : $dealerNo");
-                                                        Navigator.of(context)
+                                                        // Navigate to ScreenB and wait for result
+                                                        final result = await  Navigator.of(context)
                                                             .push(
                                                           MaterialPageRoute(
                                                               builder: (context) => FarmerEditProfilePage(
                                                                   dealerNumber:
-                                                                      dealerNo,
+                                                                  dealerNo,
                                                                   name: Name,
                                                                   whatsappNumber:
-                                                                      WhatsappNumber,
+                                                                  WhatsappNumber,
                                                                   address:
-                                                                      Address,
+                                                                  Address,
                                                                   geoLocationOwnedFarm:
-                                                                      GeoLocationOwnedFarm,
+                                                                  GeoLocationOwnedFarm,
                                                                   totalOwnedFarm:
-                                                                      TotalOwnedFarm,
+                                                                  TotalOwnedFarm,
                                                                   totalLeaseFarm:
-                                                                      TotalLeaseFarm,
+                                                                  TotalLeaseFarm,
                                                                   geoLocationLeaseFarm:
-                                                                      GeoLocationLeaseFarm,
+                                                                  GeoLocationLeaseFarm,
                                                                   pincode:
-                                                                      Pincode,
+                                                                  Pincode,
                                                                   state: State,
                                                                   district:
-                                                                      District,
+                                                                  District,
                                                                   village:
-                                                                      Village,
+                                                                  Village,
                                                                   bankName:
-                                                                      BankName,
+                                                                  BankName,
                                                                   accountName:
-                                                                      AccountName,
+                                                                  AccountName,
                                                                   accountNumber:
-                                                                      AccountNumber,
+                                                                  AccountNumber,
                                                                   ifscCode:
-                                                                      IfscCode,
+                                                                  IfscCode,
                                                                   panNumber:
-                                                                      PanNumber,
+                                                                  PanNumber,
                                                                   aadhaarNumber:
-                                                                      AadhaarNumber)),
+                                                                  AadhaarNumber)),
                                                         );
+
+                                                        // When ScreenB is popped, update data with result
+                                                        if (result != null) {
+                                                          setState(() {
+                                                            futureFarmerProfiles = FarmerDashboardController.fetchFarmerDashboard(
+                                                                context, widget.villageName, widget.typeName);
+                                                          });
+                                                        }
                                                       },
                                                       child: Text(
                                                         buildTranslate(
@@ -1822,7 +1360,7 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(8.0)),
                                       ),
-                                      hintText: 'dd/mm/yyyy',
+                                      hintText: 'DD/MM/YYYY',
                                       hintStyle: const TextStyle(
                                           color: Color(0xFFe7e7e7)),
                                       focusedBorder: const OutlineInputBorder(
@@ -2130,7 +1668,6 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                                                             width: 1.0,
                                                           ),
                                                         ),
-                                                        // Add more decoration..
                                                       ),
                                                       buttonStyleData:
                                                           const ButtonStyleData(
@@ -2311,7 +1848,6 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                                                     //           BorderRadius
                                                     //               .circular(8),
                                                     //     ),
-                                                    //     // Add more decoration..
                                                     //   ),
                                                     //   hint: Text(
                                                     //     buildTranslate(
@@ -2578,7 +2114,6 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                                                         width: 1.0,
                                                       ),
                                                     ),
-                                                    // Add more decoration..
                                                   ),
                                                   hint: Text(
                                                     buildTranslate('sortBy')!,
@@ -2645,7 +2180,6 @@ class _BottomTwoPageState extends State<BottomTwoPage>
       floatingActionButton: widget.aapbarVisibility
           ? FloatingActionButton(
               backgroundColor: Colors.white.withAlpha(0),
-              // add this line.
               elevation: 0,
               // also important, removes the shadow
               heroTag: "floatingActionBtn",
@@ -2811,7 +2345,7 @@ class _BottomTwoPageState extends State<BottomTwoPage>
       // Default date is the current date
       firstDate: DateTime(2000),
       // Earliest selectable date
-      lastDate: DateTime(2101),
+      lastDate: DateTime.now(),
       // Latest selectable date
       helpText: 'Select a date', // Optional help text
     );
@@ -2877,6 +2411,14 @@ class _BottomTwoPageState extends State<BottomTwoPage>
     setState(() {
       selectedTopData = index;
     });
+    if(selectedTopData == 0){
+      if (mounted) {
+        setState(() {
+          futureFarmerProfiles = FarmerDashboardController.fetchFarmerDashboard(context,
+              widget.villageName, widget.typeName);
+        });
+      }
+    }
     print("Selected Top Page : $selectedTopData");
   }
 
@@ -2963,7 +2505,6 @@ class _BottomTwoPageState extends State<BottomTwoPage>
               2: FlexColumnWidth(5),
             },
             border: TableBorder.all(),
-            // Allows to add a border decoration around your table
             children: const [
               TableRow(children: [
                 Padding(
@@ -3147,33 +2688,6 @@ class _BottomTwoPageState extends State<BottomTwoPage>
       ),
     );
   }
-
-  // Future<void> getSearchInsightDetails() async {
-  //   number = (await AppGlobal.getStringPreference('contactNumber'))!;
-  //   futureSearchInsightDetails =
-  //       SearchByInsightController.searchByInsightDetails(context, number);
-  //   setState(() {
-  //     futureSearchInsightDetails = futureSearchInsightDetails;
-  //   });
-  // }
-
-  // Future<void> getDashboardApi() async {
-  //   // farmerDashboardList = (await FarmerDashboardController.fetchFarmerDashboard(context))!;
-  //   // farmerDashboardList = FarmerDashboardController.fetchFarmerDashboard(context);
-  //   final url = Uri.parse(FARMER_DASHBOARD+"/"+dealerNumberData);
-  //   final response = await http.get(url);
-  //   final body = response.body;
-  //   final json = jsonDecode(body);
-  //   print("FRM Dashboard url : ${url}");
-  //   print("FRM Dashboard dealerNumber : ${dealerNumberData}");
-  //   print("FRM Dashboard json : ${json.toString()}");
-  //   if (mounted) {
-  //     setState(() {
-  //       farmerItem = json['data'];
-  //     });
-  //   }
-  //   print("Farmer Profile Details : ${farmerItem.toString()}");
-  // }
 
   _farmerRegistrationCall() async {
     if (nameController.text.trim().isNotEmpty &&

@@ -243,9 +243,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         height: 70,
         itemCount: iconList1.length,
         tabBuilder: (int index, bool isActive) {
-          final color = isActive
-              ? AppColor.greenColor
-              : AppColor.greyColor;
+          final color = isActive ? Colors.green : Colors.grey;
           return Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -293,9 +291,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         height: 70,
         itemCount: iconList2.length,
         tabBuilder: (int index, bool isActive) {
-          final color = isActive
-              ? AppColor.greenColor
-              : AppColor.greyColor;
+          final color = isActive ? Colors.green : Colors.grey;
           return Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,

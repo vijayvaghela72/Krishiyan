@@ -138,7 +138,7 @@ class _EditBankDetailPageState extends State<EditBankDetailPage> {
                                   ),
                                   contentPadding: const EdgeInsets.symmetric(
                                       vertical: 10.0, horizontal: 10.0),
-                                  hintText: buildTranslate('unionBankOfIndia')!,
+                                  hintText: buildTranslate('enterBankName')!,
                                   hintStyle: const TextStyle(color: Colors.grey),
                                   focusedBorder: const OutlineInputBorder(
                                     borderSide:

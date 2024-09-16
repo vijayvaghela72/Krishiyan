@@ -8,7 +8,6 @@ import '../../utils/Constants.dart';
 import '../model/APIResponse.dart';
 import '../model/FarmerDashboardData.dart';
 import '../model/FarmerRegistrationData.dart';
-import '../model/SearchFarmerDetails.dart';
 
 class FarmerDashboardController{
 
@@ -18,7 +17,6 @@ class FarmerDashboardController{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String dealerNumberData = await prefs.getString(contactNo) ?? '1';
 
-    // final String baseUrl = "https://krishiyanback.vercel.app/api/appFarmer/data/1";
     final String baseUrl = "https://krishiyanback.vercel.app/api/appFarmer/data/$dealerNumberData";
 
     try {
@@ -50,6 +48,36 @@ class FarmerDashboardController{
       if (response.statusCode == 200) {
         List jsonResponse = response.data['data'];
         print("Farmer Dashboard Response : ${jsonResponse}");
+        return jsonResponse.map((data) => FarmerDetails.fromJson(data)).toList();
+      } else {
+        throw Exception('Failed to load farmers');
+      }
+    } catch (e) {
+      throw Exception('Failed to load farmers: $e');
+    }
+  }
+
+  static Future<List<FarmerDetails>> fetchSearchFarmerDashboard(BuildContext context,
+      String? whatsappNumber) async {
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String dealerNumberData = await prefs.getString(contactNo) ?? '1';
+
+    final String baseUrl = "https://krishiyanback.vercel.app/api/appFarmer/data/$dealerNumberData"
+        "?whatsappNumber=$whatsappNumber";
+
+    try {
+      final Dio dio = Dio();
+      var response = await dio.get(baseUrl);
+      // response = await dio.get(baseUrl, queryParameters: {
+      //   'whatsappNumber': whatsappNumber
+      // });
+      print("fetchSearchFarmerDashboard If: ${response.toString()}");
+
+      print("fetchSearchFarmerDashboard response : $response");
+      if (response.statusCode == 200) {
+        List jsonResponse = response.data['data'];
+        print("Farmer Dashboard Search Response : ${jsonResponse}");
         return jsonResponse.map((data) => FarmerDetails.fromJson(data)).toList();
       } else {
         throw Exception('Failed to load farmers');
@@ -175,36 +203,36 @@ class FarmerDashboardController{
     }
   }
 
-  static Future<List<SearchFarmerData>> fetchSearchFarmerDashboard(BuildContext context, String? whatsappNumber) async {
-
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String dealerNumberData = await prefs.getString(contactNo) ?? '1';
-
-    final String baseUrl = "https://d1dv04h56lh39n.cloudfront.net/api/appFarmer/farmer/"
-        "search?dealerNumber=$dealerNumberData&whatsappNumber=$whatsappNumber";
-
-    try {
-      final Dio dio = Dio();
-      var response;
-      if(dealerNumberData !=null && whatsappNumber !=null) {
-        response = await dio.get(baseUrl, queryParameters: {
-          'dealerNumber': dealerNumberData,
-          'whatsappNumber': whatsappNumber,
-        });
-        print("Farmer Search Response : ${response}");
-      }
-      else{
-        response = await dio.get(baseUrl);
-      }
-
-      if (response.statusCode == 200) {
-        List jsonResponse = response.data['data'];
-        return jsonResponse.map((data) => SearchFarmerData.fromJson(data)).toList();
-      } else {
-        throw Exception('Failed to load farmers');
-      }
-    } catch (e) {
-      throw Exception('Failed to load farmers: $e');
-    }
-  }
+  // static Future<List<SearchFarmerData>> fetchSearchFarmerDashboard(BuildContext context, String? whatsappNumber) async {
+  //
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String dealerNumberData = await prefs.getString(contactNo) ?? '1';
+  //
+  //   final String baseUrl = "https://d1dv04h56lh39n.cloudfront.net/api/appFarmer/farmer/"
+  //       "search?dealerNumber=$dealerNumberData&whatsappNumber=$whatsappNumber";
+  //
+  //   try {
+  //     final Dio dio = Dio();
+  //     var response;
+  //     if(dealerNumberData !=null && whatsappNumber !=null) {
+  //       response = await dio.get(baseUrl, queryParameters: {
+  //         'dealerNumber': dealerNumberData,
+  //         'whatsappNumber': whatsappNumber,
+  //       });
+  //       print("Farmer Search Response : ${response}");
+  //     }
+  //     else{
+  //       response = await dio.get(baseUrl);
+  //     }
+  //
+  //     if (response.statusCode == 200) {
+  //       List jsonResponse = response.data['data'];
+  //       return jsonResponse.map((data) => SearchFarmerData.fromJson(data)).toList();
+  //     } else {
+  //       throw Exception('Failed to load farmers');
+  //     }
+  //   } catch (e) {
+  //     throw Exception('Failed to load farmers: $e');
+  //   }
+  // }
 }

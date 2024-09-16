@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../helper/AlertHelper.dart';
 import '../../localization/AppLocalizations.dart';
+import '../../mvc/controller/farmerDashboardController.dart';
 import '../../mvc/model/SelectCropNamesData.dart';
 import '../../utils/AppGlobal.dart';
 import '../../utils/Constants.dart';
@@ -19,12 +23,10 @@ class CropCultivationPage extends StatefulWidget {
 
 class _CropCultivationPageState extends State<CropCultivationPage> with TickerProviderStateMixin {
 
-  TextEditingController cropsController = TextEditingController();
-  TextEditingController varietyController = TextEditingController();
-  TextEditingController dateOfSowingController = TextEditingController();
   TextEditingController geoLocationController = TextEditingController();
   TextEditingController areaInArcsController = TextEditingController();
-  // TextEditingController geoLinkAreaController = TextEditingController();
+  TextEditingController varietyController = TextEditingController();
+  TextEditingController dateOfSowingController = TextEditingController();
 
   final List<String> items = [
     buildTranslate('organic')!,
@@ -238,6 +240,61 @@ class _CropCultivationPageState extends State<CropCultivationPage> with TickerPr
               height: 20,
             ),
 
+            // varity
+            Padding(
+              padding: const EdgeInsets.only(
+                  left: 25.0, right: 25.0),
+              child: Text(
+                buildTranslate("variety")!,
+                style: const TextStyle(
+                    fontSize: 15,
+                    color: Color(0xFF666666),
+                    fontFamily: 'poppins-semibold'),
+              ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                  left: 25.0, right: 25.0),
+              child: TextFormField(
+                decoration: InputDecoration(
+                    alignLabelWithHint: true,
+                    fillColor: Colors.white,
+                    filled: true,
+                    border: const OutlineInputBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(10.0),
+                      ),
+                    ),
+                    enabledBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.grey,
+                        width: 1.0,
+                      ),
+                      borderRadius: BorderRadius.all(
+                          Radius.circular(8.0)),
+                    ),
+                    hintText: buildTranslate("enterVariety")!,
+                    hintStyle: const TextStyle(
+                        color: Color(0xFFe7e7e7)),
+                    focusedBorder: const OutlineInputBorder(
+                      borderRadius: BorderRadius.all(
+                          Radius.circular(8.0)),
+                      borderSide: BorderSide(
+                          color: Colors.green, width: 0.5),
+                    )),
+                validator: (value) => value!.isEmpty
+                    ? 'Please, fill this field.'
+                    : null,
+                controller: varietyController,
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+
             // date
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
@@ -279,7 +336,7 @@ class _CropCultivationPageState extends State<CropCultivationPage> with TickerPr
                       borderRadius: BorderRadius.all(
                           Radius.circular(8.0)),
                     ),
-                    hintText: 'dd/mm/yyyy',
+                    hintText: 'DD/MM/YYYY',
                     hintStyle: const TextStyle(color: Color(0xFFe7e7e7)),
                     focusedBorder: const OutlineInputBorder(
                       borderRadius: BorderRadius.all(
@@ -291,6 +348,7 @@ class _CropCultivationPageState extends State<CropCultivationPage> with TickerPr
                     ? 'Please, fill this field.'
                     : null,
                 controller: dateOfSowingController,
+                readOnly: true,
               ),
             ),
             const SizedBox(
@@ -570,7 +628,7 @@ class _CropCultivationPageState extends State<CropCultivationPage> with TickerPr
                     left: 25.0, right: 25.0),
                 child: ElevatedButton(
                   onPressed: () {
-                    // showAlertDialog(context);
+                    _cropCultivationRegisterApiCall();
                   },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
@@ -603,7 +661,7 @@ class _CropCultivationPageState extends State<CropCultivationPage> with TickerPr
       context: context,
       initialDate: DateTime.now(), // Default date is the current date
       firstDate: DateTime(2000), // Earliest selectable date
-      lastDate: DateTime(2101), // Latest selectable date
+      lastDate: DateTime.now(),  // Latest selectable date
       helpText: 'Select a date', // Optional help text
     );
     if (pickedDate != null) {
@@ -623,7 +681,6 @@ class _CropCultivationPageState extends State<CropCultivationPage> with TickerPr
             highlightColor: Colors.transparent,
             splashColor: Colors.transparent,
             onTap: () async {
-              Navigator.of(context).pop();
               Navigator.of(context).pop();
               Navigator.of(context).pop();
               // Navigator.of(context).popUntil((route) => route.isFirst);
@@ -713,6 +770,49 @@ class _CropCultivationPageState extends State<CropCultivationPage> with TickerPr
       }
     } catch (e) {
       print('Crop Cultivation : Error fetching crop data: $e');
+    }
+  }
+
+  _cropCultivationRegisterApiCall() async {
+    if (_selectedFarmersName!.isNotEmpty &&
+        _selectedCrop!.isNotEmpty &&
+        varietyController.text.trim().isNotEmpty &&
+        dateOfSowingController.text.trim().isNotEmpty &&
+        geoLocationController.text.trim().isNotEmpty &&
+        selectedItemValue.toString().isNotEmpty &&
+        areaInArcsController.text.trim().isNotEmpty) {
+      // geoLinkAreaController.text.trim().isNotEmpty) {
+      String? number = await AppGlobal.getStringPreference('contactNumber');
+
+      var body = json.encode({
+        "dealerNumber": number ?? "1",
+        "fid": "F123856",
+        "farmerName": _selectedFarmersName.toString(),
+        "crops": _selectedCrop.toString(),
+        "variety": varietyController.text.toString(),
+        "dateOfSowing": dateOfSowingController.text.toString(),
+        "geolocation": geoLocationController.text.toString(),
+        "typeOfCultivationPractice": selectedItemValue.toString(),
+        "areaInAcres": areaInArcsController.text.toString(),
+        "geoLinkAreaOnMap": ""
+      });
+
+      var farmerRegistration =
+      FarmerDashboardController.cropCultivationRegister(body,
+          context: context);
+
+      if (farmerRegistration.toString().isNotEmpty) {
+        Future.delayed(const Duration(seconds: 1), () {
+          print('crop cultivation registered successfully');
+
+          showAlertDialog(context);
+        });
+      } else {
+        AlertHelper.showToast("Api error", context);
+        print("Api error");
+      }
+    } else {
+      AlertHelper.showToast("Please enter details.", context);
     }
   }
 
