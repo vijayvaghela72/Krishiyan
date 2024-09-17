@@ -91,8 +91,7 @@ class _BottomTwoPageState extends State<BottomTwoPage>
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   bool searchCropsFlag = false;
-  bool firstCardVisible = false;
-  int? firstCardVisibleValue;
+  int? showCropDataVisible;
 
   final List<String> items = [
     buildTranslate('organic')!,
@@ -118,6 +117,7 @@ class _BottomTwoPageState extends State<BottomTwoPage>
   TextEditingController dateController = TextEditingController();
   TextEditingController geoLocationController = TextEditingController();
   TextEditingController areaInArcesController = TextEditingController();
+  TextEditingController geoLinkAreaOnMapController = TextEditingController();
 
   String? _selectedCrop;
 
@@ -136,7 +136,6 @@ class _BottomTwoPageState extends State<BottomTwoPage>
   String dealerNumberData = "";
 
   late Future<List<FarmerDetails>> futureFarmerProfiles;
-  // late Future<List<SearchFarmerData>> futureSearchFarmerProfiles;
   String _searchText = '';
   String WhatsappNumberData = '';
 
@@ -158,16 +157,18 @@ class _BottomTwoPageState extends State<BottomTwoPage>
       });
     }
     if (_searchText.isNotEmpty) {
-      if(mounted) {
+      if (mounted) {
         setState(() {
-          futureFarmerProfiles = FarmerDashboardController.fetchSearchFarmerDashboard(context, _searchText);
+          futureFarmerProfiles =
+              FarmerDashboardController.fetchSearchFarmerDashboard(
+                  context, _searchText);
         });
       }
     } else {
       if (mounted) {
         setState(() {
-          futureFarmerProfiles = FarmerDashboardController.fetchFarmerDashboard(context,
-              widget.villageName, widget.typeName);
+          futureFarmerProfiles = FarmerDashboardController.fetchFarmerDashboard(
+              context, widget.villageName, widget.typeName);
         });
       }
     }
@@ -398,7 +399,9 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                                   child: CircularProgressIndicator());
                             } else if (snapshot.hasError) {
                               // return Center(child: Text(snapshot.error.toString()));
-                              return Center(child: Text(buildTranslate("noDataAvailable")!));
+                              return Center(
+                                  child:
+                                      Text(buildTranslate("noDataAvailable")!));
                             } else if (snapshot.hasData) {
                               List<FarmerDetails> farmers = snapshot.data!;
 
@@ -407,478 +410,571 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                                   shrinkWrap: true,
                                   physics: const NeverScrollableScrollPhysics(),
                                   itemBuilder: (context, index) {
-                                    final dealerNo = farmers[index].farmerDetails.dealerNumber ?? "";
-                                    final Name = farmers[index].farmerDetails.name ?? "";
-                                    final Address = farmers[index].farmerDetails.address ?? "";
-                                    WhatsappNumberData = farmers[index].farmerDetails.whatsappNumber ?? "";
-                                    final GeoLocationOwnedFarm = farmers[index].farmerDetails.geoLocationOwnedFarm ?? "";
+                                    final dealerNo = farmers[index]
+                                            .farmerDetails
+                                            .dealerNumber ??
+                                        "";
+                                    final Name =
+                                        farmers[index].farmerDetails.name ?? "";
+                                    final Address =
+                                        farmers[index].farmerDetails.address ??
+                                            "";
+                                    WhatsappNumberData = farmers[index]
+                                            .farmerDetails
+                                            .whatsappNumber ??
+                                        "";
+                                    final GeoLocationOwnedFarm = farmers[index]
+                                            .farmerDetails
+                                            .geoLocationOwnedFarm ??
+                                        "";
                                     final TotalOwnedFarm = farmers[index]
-                                        .farmerDetails.totalOwnedFarm.toString();
+                                        .farmerDetails
+                                        .totalOwnedFarm
+                                        .toString();
                                     final TotalLeaseFarm = farmers[index]
-                                        .farmerDetails.totalLeaseFarm.toString();
+                                        .farmerDetails
+                                        .totalLeaseFarm
+                                        .toString();
                                     final GeoLocationLeaseFarm = farmers[index]
-                                        .farmerDetails.geoLocationLeaseFarm ?? "";
-                                    final Pincode = farmers[index].farmerDetails.pincode ?? "";
-                                    final State = farmers[index].farmerDetails.state ?? "";
-                                    final Village = farmers[index].farmerDetails.village ?? "";
-                                    final District = farmers[index].farmerDetails.district ?? "";
-                                    final BankName = farmers[index].farmerDetails.bankName ?? "";
-                                    final AccountName = farmers[index].farmerDetails.accountName ?? "";
-                                    final AccountNumber = farmers[index].farmerDetails.accountNumber ?? "";
-                                    final IfscCode = farmers[index].farmerDetails.ifscCode ?? "";
-                                    final PanNumber = farmers[index].farmerDetails.pan ?? "";
-                                    final AadhaarNumber = farmers[index].farmerDetails.aadhaarNumber ?? "";
-                                    final TypeOfCultivationPractice = farmers[index].farmerDetails.typeOfCultivationPractice ?? "";
+                                            .farmerDetails
+                                            .geoLocationLeaseFarm ??
+                                        "";
+                                    final Pincode =
+                                        farmers[index].farmerDetails.pincode ??
+                                            "";
+                                    final State =
+                                        farmers[index].farmerDetails.state ??
+                                            "";
+                                    final Village =
+                                        farmers[index].farmerDetails.village ??
+                                            "";
+                                    final District =
+                                        farmers[index].farmerDetails.district ??
+                                            "";
+                                    final BankName =
+                                        farmers[index].farmerDetails.bankName ??
+                                            "";
+                                    final AccountName = farmers[index]
+                                            .farmerDetails
+                                            .accountName ??
+                                        "";
+                                    final AccountNumber = farmers[index]
+                                            .farmerDetails
+                                            .accountNumber ??
+                                        "";
+                                    final IfscCode =
+                                        farmers[index].farmerDetails.ifscCode ??
+                                            "";
+                                    final PanNumber =
+                                        farmers[index].farmerDetails.pan ?? "";
+                                    final AadhaarNumber = farmers[index]
+                                            .farmerDetails
+                                            .aadhaarNumber ??
+                                        "";
+                                    final TypeOfCultivationPractice =
+                                        farmers[index]
+                                                .farmerDetails
+                                                .typeOfCultivationPractice ??
+                                            "";
 
-                                    final cropDetails = farmers[index].cropCultivationDetails;
+                                    final cropDetails =
+                                        farmers[index].cropCultivationDetails;
                                     return
                                         // user card
                                         Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 10.0, right: 20.0, left: 20.0),
-                                      child: Container(
-                                        decoration: const BoxDecoration(
-                                            color: Color(0xFFe7e7e7),
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(12))),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 10.0,
-                                                  right: 15.0,
-                                                  left: 15.0),
-                                              child: Row(
-                                                children: <Widget>[
-                                                  Container(
-                                                    height: 50.0,
-                                                    width: 50.0,
-                                                    decoration: const BoxDecoration(
-                                                        shape: BoxShape.circle,
-                                                        image: DecorationImage(
-                                                            image: AssetImage(
-                                                                "assets/images/profile_image.png"),
-                                                            fit: BoxFit.cover)),
-                                                  ),
-                                                  const SizedBox(
-                                                    width: 15,
-                                                  ),
-                                                  Flexible(
-                                                    child: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Text(
-                                                          Name ?? "",
-                                                          softWrap: true,
-                                                          style: const TextStyle(
-                                                              color: Color(
-                                                                  0xFF808080),
-                                                              fontSize: 15,
-                                                              fontFamily:
-                                                                  'poppins-semibold'),
-                                                        ),
-                                                        Text(
-                                                          Address ?? "",
-                                                          softWrap: true,
-                                                          style: const TextStyle(
-                                                              color: Color(
-                                                                  0xFF959595),
-                                                              fontSize: 11,
-                                                              fontFamily:
-                                                                  'poppins-semibold'),
-                                                        ),
-                                                        Text(
-                                                          WhatsappNumberData ?? "",
-                                                          softWrap: true,
-                                                          style: const TextStyle(
-                                                              color: Color(
-                                                                  0xFF959595),
-                                                              fontSize: 11,
-                                                              fontFamily:
-                                                                  'poppins-semibold'),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 20.0,
-                                                  right: 20.0,
-                                                  top: 8.0,
-                                                  bottom: 12.0),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Expanded(
-                                                      child: InkWell(
-                                                    highlightColor:
-                                                        Colors.transparent,
-                                                    splashColor:
-                                                        Colors.transparent,
-                                                    onTap: () {
-                                                      setState(() {
-                                                        if (firstCardVisibleValue ==
-                                                            index) {
-                                                          firstCardVisibleValue =
-                                                              null; // Deselect if tapped again
-                                                        } else {
-                                                          firstCardVisibleValue =
-                                                              index; // Select the item
-                                                        }
-                                                      });
-                                                    },
-                                                    child: Row(
-                                                      children: [
-                                                        Text(
-                                                          buildTranslate(
-                                                              "showCropData")!,
-                                                          softWrap: true,
-                                                          style:
-                                                              const TextStyle(
-                                                            color: Color(
-                                                                0XFF008000),
-                                                            fontSize: 15,
-                                                            fontFamily:
-                                                                'poppins-semibold',
-                                                            decoration:
-                                                                TextDecoration
-                                                                    .underline,
-                                                            decorationColor:
-                                                                Color(
-                                                                    0XFF008000),
-                                                          ),
-                                                        ),
-                                                        Image.asset(
-                                                            'assets/images/dropdown_arrow.png'),
-                                                      ],
-                                                    ),
-                                                  )),
-                                                  const VerticalDivider(
-                                                      width: 1.0),
-                                                  Expanded(
-                                                      child: Align(
-                                                    alignment:
-                                                        Alignment.centerRight,
-                                                    child: InkWell(
-                                                      highlightColor:
-                                                          Colors.transparent,
-                                                      splashColor:
-                                                          Colors.transparent,
-                                                      onTap: () async {
-                                                        print("Name : $Name");
-                                                        print(
-                                                            "WhatsappNumber : $WhatsappNumberData");
-                                                        print(
-                                                            "dealerNo : $dealerNo");
-                                                        // Navigate to ScreenB and wait for result
-                                                        final result = await  Navigator.of(context)
-                                                            .push(
-                                                          MaterialPageRoute(
-                                                              builder: (context) => FarmerEditProfilePage(
-                                                                  dealerNumber: dealerNo,
-                                                                  name: Name,
-                                                                  whatsappNumber: WhatsappNumberData,
-                                                                  address: Address,
-                                                                  geoLocationOwnedFarm: GeoLocationOwnedFarm,
-                                                                  totalOwnedFarm: TotalOwnedFarm,
-                                                                  totalLeaseFarm: TotalLeaseFarm,
-                                                                  geoLocationLeaseFarm: GeoLocationLeaseFarm,
-                                                                  pincode: Pincode,
-                                                                  state: State,
-                                                                  district: District,
-                                                                  village: Village,
-                                                                  bankName: BankName,
-                                                                  accountName: AccountName,
-                                                                  accountNumber: AccountNumber,
-                                                                  ifscCode: IfscCode,
-                                                                  panNumber: PanNumber,
-                                                                  aadhaarNumber: AadhaarNumber,
-                                                                  typeOfCultivationPractice : TypeOfCultivationPractice)),
-                                                        );
-
-                                                        // When ScreenB is popped, update data with result
-                                                        if (result != null) {
-                                                          setState(() {
-                                                            futureFarmerProfiles = FarmerDashboardController.fetchFarmerDashboard(
-                                                                context, widget.villageName, widget.typeName);
-                                                          });
-                                                        }
-                                                      },
-                                                      child: Text(
-                                                        buildTranslate(
-                                                            "editProfile")!,
-                                                        softWrap: true,
-                                                        style: const TextStyle(
-                                                          color:
-                                                              Color(0XFF008000),
-                                                          fontSize: 15,
-                                                          fontFamily:
-                                                              'poppins-semibold',
-                                                          decoration:
-                                                              TextDecoration
-                                                                  .underline,
-                                                          decorationColor:
-                                                              Color(0XFF008000),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  )),
-                                                ],
-                                              ),
-                                            ),
-                                            SizedBox(height: 10),
-                                            cropDetails is String
-                                                ? firstCardVisibleValue == index ? Center
-                                                    (child: Text(cropDetails, softWrap: true,style:
-                                            TextStyle(color: Colors.black, fontSize: 15.0, fontFamily: "poppins-semibold" ),)) : Container()
-                                                : Column(
-                                                mainAxisAlignment: MainAxisAlignment.start,
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: [
-                                                    firstCardVisibleValue == index ? Padding(
-                                                      padding: const EdgeInsets.only(
-                                                          left: 20.0,
-                                                          right: 20.0,
-                                                          bottom: 20.0),
-                                                      child: Text(
-                                                        buildTranslate("cropCultivations")!,
-                                                        softWrap: true,
-                                                        textAlign: TextAlign.center,
-                                                        style: TextStyle(
-                                                          color: Colors.black,
-                                                          fontSize: 16,
-                                                          fontFamily:
-                                                          'poppins-semibold',
-                                                        ),
-                                                      ),
-                                                    ) : Container(),
-                                                    ListView.builder(
-                                                        shrinkWrap: true,
-                                                        physics: NeverScrollableScrollPhysics(),
-                                                        itemCount: cropDetails.length,
-                                                        itemBuilder: (context, cropIndex) {
-                                                          final cropItem = cropDetails[cropIndex];
-                                                          return
-                                                            firstCardVisibleValue == index  ?
-                                                            Padding(
-                                                            padding: const EdgeInsets.only(bottom: 8.0),
-                                                            child: Column(
-                                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                                              children: [
-                                                                Padding(
-                                                                  padding: const EdgeInsets.only(
-                                                                      left: 20.0,
-                                                                      right: 20.0,
-                                                                      bottom: 12.0),
-                                                                  child: Row(
-                                                                    mainAxisAlignment:
-                                                                    MainAxisAlignment.start,
-                                                                    crossAxisAlignment:
-                                                                    CrossAxisAlignment.start,
-                                                                    children: [
-                                                                      Expanded(
-                                                                          child: Row(
-                                                                            mainAxisAlignment:
-                                                                            MainAxisAlignment.start,
-                                                                            crossAxisAlignment:
-                                                                            CrossAxisAlignment.start,
-                                                                            children: [
-                                                                              Expanded(
-                                                                                flex:1,
-                                                                                child: Text(
-                                                                                  "${cropIndex+1} : "+
-                                                                                      cropDetails[cropIndex] ?? "",
-                                                                                  softWrap: true,
-                                                                                  textAlign: TextAlign.start,
-                                                                                  style: TextStyle(
-                                                                                    color: Color(0xFF666666),
-                                                                                    fontSize: 15,
-                                                                                    fontFamily:
-                                                                                    'poppins-semibold',
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                              Expanded(
-                                                                                flex:1,
-                                                                                child: Text(
-                                                                                  cropDetails[cropIndex].typeOfCultivationPractice ?? "",
-                                                                                  softWrap: true,
-                                                                                  textAlign: TextAlign.start,
-                                                                                  style: TextStyle(
-                                                                                    color: Color(0xFF666666),
-                                                                                    fontSize: 15,
-                                                                                    fontFamily:
-                                                                                    'poppins-semibold',
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                            ],
-                                                                          )),
-                                                                      Expanded(
-                                                                          flex:1,
-                                                                          child: Align(
-                                                                            alignment: Alignment.centerRight,
-                                                                            child: InkWell(
-                                                                              onTap: () {
-                                                                                Navigator.of(context).push(
-                                                                                    MaterialPageRoute(
-                                                                                        builder: (context) =>
-                                                                                            EditCropCultivationPage(
-                                                                                    WhatsappNumber : WhatsappNumberData, )));
-                                                                              },
-                                                                              child: Text(
-                                                                                buildTranslate(
-                                                                                    "editCropData")!,
-                                                                                softWrap: true,
-                                                                                style: const TextStyle(
-                                                                                  color: Color(0XFF008000),
-                                                                                  fontSize: 15,
-                                                                                  fontFamily:
-                                                                                  'poppins-semibold',
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          )),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                                const Padding(
-                                                                  padding: EdgeInsets.only(
-                                                                    left: 15.0,
-                                                                    right: 15.0,
-                                                                  ),
-                                                                  child: Divider(
-                                                                    color: Colors.black,
-                                                                    thickness: 1,
-                                                                  ),
-                                                                ),
-                                                              ],
+                                            padding: const EdgeInsets.only(
+                                                top: 10.0,
+                                                right: 20.0,
+                                                left: 20.0),
+                                            child: Container(
+                                                decoration: const BoxDecoration(
+                                                    color: Color(0xFFe7e7e7),
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(
+                                                                12))),
+                                                child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    children: [
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(
+                                                                top: 10.0,
+                                                                right: 15.0,
+                                                                left: 15.0),
+                                                        child: Row(
+                                                          children: <Widget>[
+                                                            Container(
+                                                              height: 50.0,
+                                                              width: 50.0,
+                                                              decoration: const BoxDecoration(
+                                                                  shape: BoxShape
+                                                                      .circle,
+                                                                  image: DecorationImage(
+                                                                      image: AssetImage(
+                                                                          "assets/images/profile_image.png"),
+                                                                      fit: BoxFit
+                                                                          .cover)),
                                                             ),
-                                                          ) : Container();
-                                                        },
-                                                      ),
-                                                  ],
-                                                ),
-                                            firstCardVisibleValue == index ? SizedBox(height: 5) : Container(),
-                                            firstCardVisibleValue == index  ? Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 10.0,
-                                                  right: 10.0,
-                                                  top: 8.0,
-                                                  bottom: 20.0),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                                children: [
-                                                  Expanded(
-                                                      flex: 2,
-                                                      child: InkWell(
-                                                        highlightColor:
-                                                        Colors.transparent,
-                                                        splashColor:
-                                                        Colors.transparent,
-                                                        onTap: () {},
-                                                        child: Container(
-                                                          decoration: BoxDecoration(
-                                                              color: const Color(
-                                                                  0XFF3FC041),
-                                                              border: Border.all(
-                                                                  color: const Color(
-                                                                      0XFF3FC041),
-                                                                  width: 1),
-                                                              borderRadius:
-                                                              BorderRadius
-                                                                  .circular(18)),
-                                                          padding:
-                                                          const EdgeInsets.all(
-                                                              8.0),
-                                                          child: Text(
-                                                            buildTranslate(
-                                                                "showMoreCrops")!,
-                                                            softWrap: true,
-                                                            textAlign:
-                                                            TextAlign.center,
-                                                            style: const TextStyle(
-                                                                color: Colors.white,
-                                                                fontSize: 12,
-                                                                fontFamily:
-                                                                'poppins-regular'),
-                                                          ),
-                                                        ),
-                                                      )),
-                                                  Expanded(
-                                                      flex: 2,
-                                                      child: Align(
-                                                        alignment:
-                                                        Alignment.centerRight,
-                                                        child: InkWell(
-                                                          highlightColor:
-                                                          Colors.transparent,
-                                                          splashColor:
-                                                          Colors.transparent,
-                                                          onTap: () {
-                                                            Navigator.of(context).push(
-                                                                MaterialPageRoute(
-                                                                    builder: (context) =>
-                                                                        CropCultivationPage(WhatsappNumber : WhatsappNumberData)));
-                                                          },
-                                                          child: Container(
-                                                            decoration: BoxDecoration(
-                                                                color: const Color(
-                                                                    0XFF3FC041),
-                                                                border: Border.all(
-                                                                    color: const Color(
-                                                                        0XFF3FC041),
-                                                                    width: 1),
-                                                                borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                    18)),
-                                                            padding:
-                                                            const EdgeInsets.all(
-                                                                8.0),
-                                                            child: Text(
-                                                              buildTranslate(
-                                                                  "addNewCultivations")!,
-                                                              softWrap: true,
-                                                              style: const TextStyle(
-                                                                color: Colors.white,
-                                                                fontSize: 11,
-                                                                fontFamily:
-                                                                'poppins-regular',
+                                                            const SizedBox(
+                                                              width: 15,
+                                                            ),
+                                                            Flexible(
+                                                              child: Column(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .start,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  Text(
+                                                                    Name ?? "",
+                                                                    softWrap:
+                                                                        true,
+                                                                    style: const TextStyle(
+                                                                        color: Color(
+                                                                            0xFF808080),
+                                                                        fontSize:
+                                                                            15,
+                                                                        fontFamily:
+                                                                            'poppins-semibold'),
+                                                                  ),
+                                                                  Text(
+                                                                    Address ??
+                                                                        "",
+                                                                    softWrap:
+                                                                        true,
+                                                                    style: const TextStyle(
+                                                                        color: Color(
+                                                                            0xFF959595),
+                                                                        fontSize:
+                                                                            11,
+                                                                        fontFamily:
+                                                                            'poppins-semibold'),
+                                                                  ),
+                                                                  Text(
+                                                                    WhatsappNumberData ??
+                                                                        "",
+                                                                    softWrap:
+                                                                        true,
+                                                                    style: const TextStyle(
+                                                                        color: Color(
+                                                                            0xFF959595),
+                                                                        fontSize:
+                                                                            11,
+                                                                        fontFamily:
+                                                                            'poppins-semibold'),
+                                                                  ),
+                                                                ],
                                                               ),
                                                             ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(
+                                                                left: 20.0,
+                                                                right: 20.0,
+                                                                top: 8.0,
+                                                                bottom: 12.0),
+                                                        child: Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Expanded(
+                                                                child: InkWell(
+                                                              highlightColor:
+                                                                  Colors
+                                                                      .transparent,
+                                                              splashColor: Colors
+                                                                  .transparent,
+                                                              onTap: () {
+                                                                setState(() {
+                                                                  if (showCropDataVisible ==
+                                                                      index) {
+                                                                    showCropDataVisible =
+                                                                        null; // Deselect if tapped again
+                                                                  } else {
+                                                                    showCropDataVisible =
+                                                                        index; // Select the item
+                                                                  }
+                                                                });
+                                                              },
+                                                              child: Row(
+                                                                children: [
+                                                                  Text(
+                                                                    buildTranslate(
+                                                                        "showCropData")!,
+                                                                    softWrap:
+                                                                        true,
+                                                                    style:
+                                                                        const TextStyle(
+                                                                      color: Color(
+                                                                          0XFF008000),
+                                                                      fontSize:
+                                                                          15,
+                                                                      fontFamily:
+                                                                          'poppins-semibold',
+                                                                      decoration:
+                                                                          TextDecoration
+                                                                              .underline,
+                                                                      decorationColor:
+                                                                          Color(
+                                                                              0XFF008000),
+                                                                    ),
+                                                                  ),
+                                                                  Image.asset(
+                                                                      'assets/images/dropdown_arrow.png'),
+                                                                ],
+                                                              ),
+                                                            )),
+                                                            const VerticalDivider(
+                                                                width: 1.0),
+                                                            Expanded(
+                                                                child: Align(
+                                                              alignment: Alignment
+                                                                  .centerRight,
+                                                              child: InkWell(
+                                                                highlightColor:
+                                                                    Colors
+                                                                        .transparent,
+                                                                splashColor: Colors
+                                                                    .transparent,
+                                                                onTap:
+                                                                    () async {
+                                                                  print(
+                                                                      "Name : $Name");
+                                                                  print(
+                                                                      "WhatsappNumber : $WhatsappNumberData");
+                                                                  print(
+                                                                      "dealerNo : $dealerNo");
+                                                                  // Navigate to ScreenB and wait for result
+                                                                  final result =
+                                                                      await Navigator.of(
+                                                                              context)
+                                                                          .push(
+                                                                    MaterialPageRoute(
+                                                                        builder: (context) => FarmerEditProfilePage(
+                                                                            dealerNumber:
+                                                                                dealerNo,
+                                                                            name:
+                                                                                Name,
+                                                                            whatsappNumber:
+                                                                                WhatsappNumberData,
+                                                                            address:
+                                                                                Address,
+                                                                            geoLocationOwnedFarm:
+                                                                                GeoLocationOwnedFarm,
+                                                                            totalOwnedFarm:
+                                                                                TotalOwnedFarm,
+                                                                            totalLeaseFarm:
+                                                                                TotalLeaseFarm,
+                                                                            geoLocationLeaseFarm:
+                                                                                GeoLocationLeaseFarm,
+                                                                            pincode:
+                                                                                Pincode,
+                                                                            state:
+                                                                                State,
+                                                                            district:
+                                                                                District,
+                                                                            village:
+                                                                                Village,
+                                                                            bankName:
+                                                                                BankName,
+                                                                            accountName:
+                                                                                AccountName,
+                                                                            accountNumber:
+                                                                                AccountNumber,
+                                                                            ifscCode:
+                                                                                IfscCode,
+                                                                            panNumber:
+                                                                                PanNumber,
+                                                                            aadhaarNumber:
+                                                                                AadhaarNumber,
+                                                                            typeOfCultivationPractice:
+                                                                                TypeOfCultivationPractice)),
+                                                                  );
+
+                                                                  // When ScreenB is popped, update data with result
+                                                                  if (result !=
+                                                                      null) {
+                                                                    setState(
+                                                                        () {
+                                                                      futureFarmerProfiles = FarmerDashboardController.fetchFarmerDashboard(
+                                                                          context,
+                                                                          widget
+                                                                              .villageName,
+                                                                          widget
+                                                                              .typeName);
+                                                                    });
+                                                                  }
+                                                                },
+                                                                child: Text(
+                                                                  buildTranslate(
+                                                                      "editProfile")!,
+                                                                  softWrap:
+                                                                      true,
+                                                                  style:
+                                                                      const TextStyle(
+                                                                    color: Color(
+                                                                        0XFF008000),
+                                                                    fontSize:
+                                                                        15,
+                                                                    fontFamily:
+                                                                        'poppins-semibold',
+                                                                    decoration:
+                                                                        TextDecoration
+                                                                            .underline,
+                                                                    decorationColor:
+                                                                        Color(
+                                                                            0XFF008000),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            )),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      SizedBox(height: 10),
+                                                      showCropDataVisible == index ? Padding(
+                                                        padding: const EdgeInsets.only(
+                                                            left: 20.0,
+                                                            right: 20.0,),
+                                                        child: Text(
+                                                          buildTranslate("cropCultivations")!,
+                                                          softWrap: true,
+                                                          textAlign: TextAlign.center,
+                                                          style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontSize: 16,
+                                                            fontFamily:
+                                                            'poppins-semibold',
                                                           ),
                                                         ),
-                                                      )),
-                                                ],
-                                              ),
-                                            ) : Container(),
-                                          ],
-                                        ),
-                                      ),
-                                    );
+                                                      ) : Container(),
+                                                      SizedBox(height: 10),
+                                                      showCropDataVisible == index ?
+                                                      ListView.builder(
+                                                          shrinkWrap: true,
+                                                          physics: NeverScrollableScrollPhysics(),
+                                                          itemCount: 1,
+                                                          itemBuilder: (context, cropIndex) {
+                                                            if (cropDetails is List<CropDetails>) {
+                                                              return
+                                                                Column(
+                                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                                children: cropDetails.map((crop) {
+                                                                  return
+                                                                    Padding(
+                                                                      padding: const EdgeInsets.only(
+                                                                        top: 5.0,
+                                                                          left: 20.0,
+                                                                          right: 20.0,
+                                                                          bottom: 12.0),
+                                                                      child: Row(
+                                                                        mainAxisAlignment: MainAxisAlignment.start,
+                                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                                        children: [
+                                                                          Expanded(
+                                                                              child: Row(
+                                                                                mainAxisAlignment:
+                                                                                MainAxisAlignment.start,
+                                                                                crossAxisAlignment:
+                                                                                CrossAxisAlignment.start,
+                                                                                children: [
+                                                                                  Expanded(
+                                                                                    flex:2,
+                                                                                    child: Text(
+                                                                                      "${crop.crops}",
+                                                                                      softWrap: true,
+                                                                                      textAlign: TextAlign.start,
+                                                                                      style: TextStyle(
+                                                                                        color: Color(0xFF666666),
+                                                                                        fontSize: 10,
+                                                                                        fontFamily:
+                                                                                        'poppins-semibold',
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                  Expanded(
+                                                                                    flex:1,
+                                                                                    child: Text(crop.typeOfCultivationPractice,
+                                                                                      softWrap: true,
+                                                                                      textAlign: TextAlign.start,
+                                                                                      style: TextStyle(
+                                                                                        color: Color(0xFF666666),
+                                                                                        fontSize: 10,
+                                                                                        fontFamily:
+                                                                                        'poppins-semibold',
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ],
+                                                                              )),
+                                                                          Expanded(
+                                                                              flex:1,
+                                                                              child: Align(
+                                                                                alignment: Alignment.centerRight,
+                                                                                child: InkWell(
+                                                                                  onTap: () {
+                                                                                    Navigator.of(context).push(
+                                                                                        MaterialPageRoute(
+                                                                                            builder: (context) =>
+                                                                                                EditCropCultivationPage(
+                                                                                                  WhatsappNumber : WhatsappNumberData,
+                                                                                                selectedCrop : crop.crops,
+                                                                                                id: crop.id,
+                                                                                                variety : crop.variety,
+                                                                                                date : crop.dateOfSowing,
+                                                                                                geoLocation : crop.geolocation,
+                                                                                                cultivationType : crop.typeOfCultivationPractice,
+                                                                                                areaInArce : crop.areaInAcres.toString(),
+                                                                                                geoLinkArea : crop.geoLinkAreaOnMap)));
+                                                                                  },
+                                                                                  child: Text(
+                                                                                    buildTranslate(
+                                                                                        "editCropData")!,
+                                                                                    softWrap: true,
+                                                                                    style: const TextStyle(
+                                                                                      color: Color(0XFF008000),
+                                                                                      fontSize: 11,
+                                                                                      fontFamily:
+                                                                                      'poppins-semibold',
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              )),
+                                                                        ],
+                                                                      ),
+                                                                    );
+                                                                }).toList(),
+                                                              );
+                                                            }
+                                                            else {
+                                                              return Text(cropDetails, softWrap: true,style:
+                                                              TextStyle(color: Colors.black, fontSize: 15.0, fontFamily: "poppins-semibold" ));
+                                                            }
+                                                          }) : Container(),
+                                                      showCropDataVisible == index ? SizedBox(height: 5) : Container(),
+                                                      showCropDataVisible == index  ? Padding(
+                                                        padding: const EdgeInsets.only(
+                                                            left: 10.0,
+                                                            right: 10.0,
+                                                            top: 8.0,
+                                                            bottom: 20.0),
+                                                        child: Row(
+                                                          mainAxisAlignment:
+                                                          MainAxisAlignment.start,
+                                                          crossAxisAlignment:
+                                                          CrossAxisAlignment.start,
+                                                          children: [
+                                                            Expanded(
+                                                                flex: 2,
+                                                                child: InkWell(
+                                                                  highlightColor:
+                                                                  Colors.transparent,
+                                                                  splashColor:
+                                                                  Colors.transparent,
+                                                                  onTap: () {},
+                                                                  child: Container(
+                                                                    decoration: BoxDecoration(
+                                                                        color: const Color(
+                                                                            0XFF3FC041),
+                                                                        border: Border.all(
+                                                                            color: const Color(
+                                                                                0XFF3FC041),
+                                                                            width: 1),
+                                                                        borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(18)),
+                                                                    padding:
+                                                                    const EdgeInsets.all(
+                                                                        8.0),
+                                                                    child: Text(
+                                                                      buildTranslate(
+                                                                          "showMoreCrops")!,
+                                                                      softWrap: true,
+                                                                      textAlign:
+                                                                      TextAlign.center,
+                                                                      style: const TextStyle(
+                                                                          color: Colors.white,
+                                                                          fontSize: 12,
+                                                                          fontFamily:
+                                                                          'poppins-regular'),
+                                                                    ),
+                                                                  ),
+                                                                )),
+                                                            Expanded(
+                                                                flex: 2,
+                                                                child: Align(
+                                                                  alignment:
+                                                                  Alignment.centerRight,
+                                                                  child: InkWell(
+                                                                    highlightColor:
+                                                                    Colors.transparent,
+                                                                    splashColor:
+                                                                    Colors.transparent,
+                                                                    onTap: () {
+                                                                      Navigator.of(context).push(
+                                                                          MaterialPageRoute(
+                                                                              builder: (context) =>
+                                                                                  CropCultivationPage(WhatsappNumber : WhatsappNumberData)));
+                                                                    },
+                                                                    child: Container(
+                                                                      decoration: BoxDecoration(
+                                                                          color: const Color(
+                                                                              0XFF3FC041),
+                                                                          border: Border.all(
+                                                                              color: const Color(
+                                                                                  0XFF3FC041),
+                                                                              width: 1),
+                                                                          borderRadius:
+                                                                          BorderRadius
+                                                                              .circular(
+                                                                              18)),
+                                                                      padding:
+                                                                      const EdgeInsets.all(
+                                                                          8.0),
+                                                                      child: Text(
+                                                                        buildTranslate(
+                                                                            "addNewCultivations")!,
+                                                                        softWrap: true,
+                                                                        style: const TextStyle(
+                                                                          color: Colors.white,
+                                                                          fontSize: 11,
+                                                                          fontFamily:
+                                                                          'poppins-regular',
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                )),
+                                                          ],
+                                                        ),
+                                                      ) : Container(),
+                                                    ])));
+                                    // cropDetails is String
+                                    //     ? firstCardVisibleValue == index ? Center
+                                    //         (child: Text(cropDetails, softWrap: true,style:
+                                    // TextStyle(color: Colors.black, fontSize: 15.0, fontFamily: "poppins-semibold" ),)) : Container()
+                                    //     :
                                   });
                             } else {
                               return Center(
-                                  child: Text(buildTranslate("noDataAvailable")!));
+                                  child:
+                                      Text(buildTranslate("noDataAvailable")!));
                             }
                           }),
                       const SizedBox(
@@ -1077,10 +1173,9 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                                   filled: true,
                                   fieldWidth: 60,
                                   //runs when a code is typed in
-                                  onCodeChanged: (String code) {
-                                  },
-                                  onSubmit: (String verificationCode) {
-                                  }, // end onSubmit
+                                  onCodeChanged: (String code) {},
+                                  onSubmit: (String
+                                      verificationCode) {}, // end onSubmit
                                 )
                               : Container(),
 
@@ -1158,7 +1253,8 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                                       dropdownStyleData:
                                           const DropdownStyleData(
                                               maxHeight: 200),
-                                      hint: Text(buildTranslate("selectFarmer")!),
+                                      hint:
+                                          Text(buildTranslate("selectFarmer")!),
                                       decoration: InputDecoration(
                                         contentPadding:
                                             const EdgeInsets.symmetric(
@@ -1192,9 +1288,7 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                                       value: _selectedFarmersName,
                                       items: dropdownItems,
                                       onChanged: (String? newValue) {
-                                        setState(() {
-                                          _selectedFarmersName = newValue;
-                                        });
+                                        _selectedFarmersName = newValue;
                                       },
                                     )),
                               ),
@@ -1222,11 +1316,13 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                                     left: 25.0, right: 25.0),
                                 child: crops.isEmpty
                                     ? Center(
-                                        child: Text(buildTranslate("noDataAvailable")!))
+                                        child: Text(
+                                            buildTranslate("noDataAvailable")!))
                                     : DropdownButtonFormField2<String>(
                                         dropdownStyleData:
                                             DropdownStyleData(maxHeight: 200),
-                                        hint: Text(buildTranslate("selectCrops")!),
+                                        hint: Text(
+                                            buildTranslate("selectCrops")!),
                                         decoration: InputDecoration(
                                           contentPadding:
                                               const EdgeInsets.symmetric(
@@ -1508,8 +1604,9 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                                       return null;
                                     },
                                     onChanged: (value) {
-                                      selectedItemValue = value.toString();
-                                      //Do something when selected item is changed.
+                                      setState(() {
+                                        selectedItemValue = value.toString();
+                                      });
                                     },
                                     onSaved: (value) {
                                       selectedItemValue = value.toString();
@@ -1554,6 +1651,14 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                                 padding: const EdgeInsets.only(
                                     left: 25.0, right: 25.0),
                                 child: TextFormField(
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: <TextInputFormatter>[
+                                    FilteringTextInputFormatter.allow(RegExp('[0-9]')),
+                                    //To remove first '0'
+                                    FilteringTextInputFormatter.deny(RegExp(r'^0+')),
+                                    //To remove first '94' or your country code
+                                    FilteringTextInputFormatter.deny(RegExp(r'^94+')),
+                                  ],
                                   decoration: const InputDecoration(
                                       alignLabelWithHint: true,
                                       fillColor: Colors.white,
@@ -1586,6 +1691,95 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                                   controller: areaInArcesController,
                                 ),
                               ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+
+                              // geo Link Area On Map
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 25.0, right: 25.0),
+                                child: Text(
+                                  buildTranslate("geoLinkAreaOnMap")!,
+                                  style: const TextStyle(
+                                      fontSize: 15,
+                                      color: Color(0xFF666666),
+                                      fontFamily: 'poppins-semibold'),
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 25.0, right: 25.0),
+                                child: TextFormField(
+                                  decoration: const InputDecoration(
+                                      alignLabelWithHint: true,
+                                      fillColor: Colors.white,
+                                      filled: true,
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(10.0),
+                                        ),
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Colors.grey,
+                                          width: 1.0,
+                                        ),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(8.0)),
+                                      ),
+                                      hintText: 'Enter geoLink area on map',
+                                      hintStyle:
+                                          TextStyle(color: Color(0xFFe7e7e7)),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(8.0)),
+                                        borderSide: BorderSide(
+                                            color: Colors.green, width: 0.5),
+                                      )),
+                                  validator: (value) => value!.isEmpty
+                                      ? 'Please, fill this field.'
+                                      : null,
+                                  controller: geoLinkAreaOnMapController,
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              Container(
+                                  width: 180,
+                                  height: 45,
+                                  padding: const EdgeInsets.only(
+                                      left: 25.0, right: 25.0),
+                                  child: ElevatedButton(
+                                    onPressed: () {
+
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.all(12),
+                                      textStyle: const TextStyle(fontSize: 18),
+                                      backgroundColor: const Color(0xFF3FC041),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                            12), // <-- Radius
+                                      ),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.add),
+                                        Text(
+                                          "Add Crop",
+                                          style: const TextStyle(
+                                              fontSize: 18,
+                                              fontFamily: 'poppins-medium'),
+                                        ),
+                                      ],
+                                    ),
+                                  )),
                               const SizedBox(
                                 height: 20,
                               ),
@@ -1665,7 +1859,8 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                                                       dropdownStyleData:
                                                           const DropdownStyleData(
                                                               maxHeight: 200),
-                                                      hint: Text(buildTranslate("selectCrops")!),
+                                                      hint: Text(buildTranslate(
+                                                          "selectCrops")!),
                                                       decoration:
                                                           InputDecoration(
                                                         contentPadding:
@@ -1784,7 +1979,8 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                                                       dropdownStyleData:
                                                           const DropdownStyleData(
                                                               maxHeight: 200),
-                                                      hint: Text(buildTranslate("selectVillages")!),
+                                                      hint: Text(buildTranslate(
+                                                          "selectVillages")!),
                                                       decoration:
                                                           InputDecoration(
                                                         contentPadding:
@@ -2428,11 +2624,11 @@ class _BottomTwoPageState extends State<BottomTwoPage>
     setState(() {
       selectedTopData = index;
     });
-    if(selectedTopData == 0){
+    if (selectedTopData == 0) {
       if (mounted) {
         setState(() {
-          futureFarmerProfiles = FarmerDashboardController.fetchFarmerDashboard(context,
-              widget.villageName, widget.typeName);
+          futureFarmerProfiles = FarmerDashboardController.fetchFarmerDashboard(
+              context, widget.villageName, widget.typeName);
         });
       }
     }
@@ -2718,7 +2914,7 @@ class _BottomTwoPageState extends State<BottomTwoPage>
     }
   }
 
-  showAlertDialog(BuildContext context) {
+  showAlertDialog(BuildContext context, String message) {
     AlertDialog alert = AlertDialog(
       backgroundColor: Colors.white,
       title: Column(
@@ -2745,7 +2941,7 @@ class _BottomTwoPageState extends State<BottomTwoPage>
             height: 100,
           )),
           Text(
-            buildTranslate("SuccessfullyUpdate")!,
+            message,
             softWrap: true,
             textAlign: TextAlign.center,
             style: const TextStyle(
@@ -2781,14 +2977,19 @@ class _BottomTwoPageState extends State<BottomTwoPage>
   }
 
   _cropCultivationRegisterApiCall() async {
-    if (_selectedFarmersName!.isNotEmpty &&
-        _selectedCrop!.isNotEmpty &&
-        varietyController.text.trim().isNotEmpty &&
+    if(
+    varietyController.text.trim().isNotEmpty &&
         dateController.text.trim().isNotEmpty &&
         geoLocationController.text.trim().isNotEmpty &&
         selectedItemValue.toString().isNotEmpty &&
-        areaInArcesController.text.trim().isNotEmpty) {
+        areaInArcesController.text.trim().isNotEmpty &&
+        geoLinkAreaOnMapController.text.trim().isNotEmpty) {
       String? number = await AppGlobal.getStringPreference('contactNumber');
+
+      // Parse the input date string
+      DateTime parsedDate = DateFormat('dd-MM-yyyy').parse(dateController.text.toString());
+      // Format it to YYYY-MM-DD
+      String formattedDate = DateFormat('yyyy-MM-dd').format(parsedDate);
 
       var body = json.encode({
         "dealerNumber": number ?? "1",
@@ -2796,28 +2997,29 @@ class _BottomTwoPageState extends State<BottomTwoPage>
         "farmerName": _selectedFarmersName.toString(),
         "crops": _selectedCrop.toString(),
         "variety": varietyController.text.toString(),
-        "dateOfSowing": dateController.text.toString(),
+        "dateOfSowing": formattedDate,
         "geolocation": geoLocationController.text.toString(),
         "typeOfCultivationPractice": selectedItemValue.toString(),
         "areaInAcres": areaInArcesController.text.toString(),
-        "geoLinkAreaOnMap": ""
+        "geoLinkAreaOnMap": geoLinkAreaOnMapController.text.toString()
       });
 
       var farmerRegistration =
-          FarmerDashboardController.cropCultivationRegister(body,
-              context: context);
+      FarmerDashboardController.cropCultivationRegister(body,
+          context: context);
 
       if (farmerRegistration.toString().isNotEmpty) {
         Future.delayed(const Duration(seconds: 1), () {
           print('crop cultivation registered successfully');
 
-          showAlertDialog(context);
+          showAlertDialog(context, farmerRegistration.toString());
         });
       } else {
         AlertHelper.showToast("Api error", context);
         print("Api error");
       }
-    } else {
+    }
+    else {
       AlertHelper.showToast("Please enter details.", context);
     }
   }
@@ -2989,7 +3191,8 @@ class _MyDrawerState extends State<MyDrawer> {
                                   _villageNameData == null ||
                                           _villageNameData!.data == null
                                       ? Center(
-                                          child: Text(buildTranslate("noDataAvailable")!))
+                                          child: Text(buildTranslate(
+                                              "noDataAvailable")!))
                                       : Padding(
                                           padding: const EdgeInsets.only(
                                               left: 8.0, right: 8.0),
@@ -3016,7 +3219,8 @@ class _MyDrawerState extends State<MyDrawer> {
                                   _villageNameData == null ||
                                           _villageNameData!.data == null
                                       ? Center(
-                                          child: Text(buildTranslate("noDataAvailable")!))
+                                          child: Text(buildTranslate(
+                                              "noDataAvailable")!))
                                       : Padding(
                                           padding: const EdgeInsets.only(
                                               left: 8.0, right: 8.0),

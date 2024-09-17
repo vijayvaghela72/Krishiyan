@@ -29,6 +29,7 @@ class _CropCultivationPageState extends State<CropCultivationPage> with TickerPr
   TextEditingController areaInArcsController = TextEditingController();
   TextEditingController varietyController = TextEditingController();
   TextEditingController dateOfSowingController = TextEditingController();
+  TextEditingController geoLinkAreaOnMapController = TextEditingController();
 
   final List<String> items = [
     buildTranslate('organic')!,
@@ -151,9 +152,7 @@ class _CropCultivationPageState extends State<CropCultivationPage> with TickerPr
                     value: _selectedFarmersName,
                     items: dropdownItems,
                     onChanged: (String? newValue) {
-                      setState(() {
-                        _selectedFarmersName = newValue;
-                      });
+                      _selectedFarmersName = newValue;
                     },
                   )),
             ),
@@ -464,10 +463,14 @@ class _CropCultivationPageState extends State<CropCultivationPage> with TickerPr
                     return null;
                   },
                   onChanged: (value) {
-                    //Do something when selected item is changed.
+                    setState(() {
+                      selectedItemValue = value.toString();
+                    });
                   },
                   onSaved: (value) {
-                    selectedItemValue = value.toString();
+                    setState(() {
+                      selectedItemValue = value.toString();
+                    });
                   },
                   buttonStyleData: const ButtonStyleData(
                     padding: EdgeInsets.only(right: 8),
@@ -507,6 +510,14 @@ class _CropCultivationPageState extends State<CropCultivationPage> with TickerPr
               padding: const EdgeInsets.only(
                   left: 25.0, right: 25.0),
               child: TextFormField(
+                keyboardType: TextInputType.number,
+                inputFormatters: <TextInputFormatter>[
+                  FilteringTextInputFormatter.allow(RegExp('[0-9]')),
+                  //To remove first '0'
+                  FilteringTextInputFormatter.deny(RegExp(r'^0+')),
+                  //To remove first '94' or your country code
+                  FilteringTextInputFormatter.deny(RegExp(r'^94+')),
+                ],
                 decoration: InputDecoration(
                     alignLabelWithHint: true,
                     fillColor: Colors.white,
@@ -536,6 +547,61 @@ class _CropCultivationPageState extends State<CropCultivationPage> with TickerPr
                     ? 'Please, fill this field.'
                     : null,
                 controller: areaInArcsController,
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+
+            // geo Link Area On Map
+            Padding(
+              padding: const EdgeInsets.only(
+                  left: 25.0, right: 25.0),
+              child: Text(
+                buildTranslate("geoLinkAreaOnMap")!,
+                style: const TextStyle(
+                    fontSize: 15,
+                    color: Color(0xFF666666),
+                    fontFamily: 'poppins-semibold'),
+              ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                  left: 25.0, right: 25.0),
+              child: TextFormField(
+                decoration: const InputDecoration(
+                    alignLabelWithHint: true,
+                    fillColor: Colors.white,
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(10.0),
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.grey,
+                        width: 1.0,
+                      ),
+                      borderRadius: BorderRadius.all(
+                          Radius.circular(8.0)),
+                    ),
+                    hintText: 'Enter geoLink area on map',
+                    hintStyle:
+                    TextStyle(color: Color(0xFFe7e7e7)),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(
+                          Radius.circular(8.0)),
+                      borderSide: BorderSide(
+                          color: Colors.green, width: 0.5),
+                    )),
+                validator: (value) => value!.isEmpty
+                    ? 'Please, fill this field.'
+                    : null,
+                controller: geoLinkAreaOnMapController,
               ),
             ),
             const SizedBox(
@@ -694,15 +760,19 @@ class _CropCultivationPageState extends State<CropCultivationPage> with TickerPr
   }
 
   _cropCultivationRegisterApiCall() async {
-    // if (_selectedFarmersName!.isNotEmpty &&
-    //     _selectedCrop!.isNotEmpty &&
     if(
         varietyController.text.trim().isNotEmpty &&
         dateOfSowingController.text.trim().isNotEmpty &&
         geoLocationController.text.trim().isNotEmpty &&
         selectedItemValue.toString().isNotEmpty &&
-        areaInArcsController.text.trim().isNotEmpty) {
+        areaInArcsController.text.trim().isNotEmpty &&
+            geoLinkAreaOnMapController.text.trim().isNotEmpty) {
       String? number = await AppGlobal.getStringPreference('contactNumber');
+
+      // Parse the input date string
+      DateTime parsedDate = DateFormat('dd-MM-yyyy').parse(dateOfSowingController.text.toString());
+      // Format it to YYYY-MM-DD
+      String formattedDate = DateFormat('yyyy-MM-dd').format(parsedDate);
 
       var body = json.encode({
         "dealerNumber": number ?? "1",
@@ -710,11 +780,11 @@ class _CropCultivationPageState extends State<CropCultivationPage> with TickerPr
         "farmerName": _selectedFarmersName.toString(),
         "crops": _selectedCrop.toString(),
         "variety": varietyController.text.toString(),
-        "dateOfSowing": dateOfSowingController.text.toString(),
+        "dateOfSowing": formattedDate,
         "geolocation": geoLocationController.text.toString(),
         "typeOfCultivationPractice": selectedItemValue.toString(),
         "areaInAcres": areaInArcsController.text.toString(),
-        "geoLinkAreaOnMap": ""
+        "geoLinkAreaOnMap": geoLinkAreaOnMapController.text.toString()
       });
 
       var farmerRegistration =

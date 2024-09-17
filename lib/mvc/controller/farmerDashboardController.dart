@@ -187,7 +187,7 @@ class FarmerDashboardController{
     );
 
     if (response.statusCode == 201) {
-      print("Crop cultivation registr response : "+json.encode(response.data));
+      print("Crop cultivation register response : "+json.encode(response.data));
 
       APIResponse? apiResponse = APIResponse.fromJson(response.data);
       if (apiResponse.success!) {
