@@ -1372,7 +1372,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               }
                               else {
                                 AlertHelper.showToast(
-                                    "Please enter credentials.", context);
+                                    "Please enter details.", context);
                               }
                             },
                             style: ElevatedButton.styleFrom(
@@ -1506,7 +1506,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         print(response.statusMessage);
       }
     } else {
-      AlertHelper.showToast("Please enter credentials.", context);
+      AlertHelper.showToast("Please enter details.", context);
     }
   }
 

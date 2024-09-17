@@ -1699,7 +1699,7 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
         print("officeContactNumber : $officeContactNumber");
         print("emailId : $emailId");
 
-        AlertHelper.showToast("Please enter credentials.", context);
+        AlertHelper.showToast("Please enter details.", context);
       }
     }
   }
@@ -1756,7 +1756,7 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
       }
     }
     else {
-      AlertHelper.showToast("Please enter credentials.", context);
+      AlertHelper.showToast("Please enter details.", context);
     }
   }
 

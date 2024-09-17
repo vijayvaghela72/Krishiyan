@@ -897,7 +897,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
         print(response.statusMessage);
       }
     } else {
-      AlertHelper.showToast("Please enter credentials.", context);
+      AlertHelper.showToast("Please enter details.", context);
     }
   }
 

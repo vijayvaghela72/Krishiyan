@@ -666,7 +666,7 @@ class _EditBankDetailPageState extends State<EditBankDetailPage> {
                                     editIfscController.text.toString());
                               } else {
                                 AlertHelper.showToast(
-                                    "Please enter credentials.", context);
+                                    "Please enter details.", context);
                               }
                             },
                             style: ElevatedButton.styleFrom(
@@ -754,7 +754,7 @@ class _EditBankDetailPageState extends State<EditBankDetailPage> {
       }
     }
     else {
-      AlertHelper.showToast("Please enter credentials.", context);
+      AlertHelper.showToast("Please enter details.", context);
     }
   }
 

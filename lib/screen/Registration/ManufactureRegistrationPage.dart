@@ -456,7 +456,7 @@ class _ManufactureRegistrationPageState extends State<ManufactureRegistrationPag
                     );
                   }
                   else{
-                    AlertHelper.showToast("Please enter credentials.",context);
+                    AlertHelper.showToast("Please enter details.",context);
                   }
                 },
                 style: ElevatedButton.styleFrom(

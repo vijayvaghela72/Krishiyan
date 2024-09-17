@@ -24,7 +24,9 @@ class FarmerEditProfilePage extends StatefulWidget {
       geoLocationLeaseFarm,
       pincode,
       state,
-      district,village, bankName, accountName, accountNumber, ifscCode, panNumber, aadhaarNumber, dealerNumber;
+      district,village, bankName,
+      accountName, accountNumber, ifscCode,
+      panNumber, aadhaarNumber, dealerNumber, typeOfCultivationPractice;
 
   String? farmerName, farmerWhatsappNumber;
 
@@ -39,11 +41,10 @@ class FarmerEditProfilePage extends StatefulWidget {
       this.geoLocationLeaseFarm,
       this.pincode,
       this.state,
-      this.district,
-        this.village,
+      this.district, this.village,
       this.farmerName,
       this.farmerWhatsappNumber, this.bankName, this.accountName, this.dealerNumber,
-        this.accountNumber, this.ifscCode, this.panNumber, this.aadhaarNumber});
+        this.accountNumber, this.ifscCode, this.panNumber, this.aadhaarNumber, this.typeOfCultivationPractice});
 
   @override
   State<FarmerEditProfilePage> createState() => _FarmerEditProfilePageState();
@@ -70,7 +71,7 @@ class _FarmerEditProfilePageState extends State<FarmerEditProfilePage> {
     buildTranslate('inOrganic')!,
   ];
 
-  String? selectedItemValue;
+  String selectedItemValue = "";
 
   String? _selectedStateName, _selectedDistrictName;
   List<DropdownMenuItem<String>>? dropdownStateItems;
@@ -88,7 +89,7 @@ class _FarmerEditProfilePageState extends State<FarmerEditProfilePage> {
     goeLocationController.text = widget.geoLocationOwnedFarm ?? "";
     leasedFarmController.text = widget.totalLeaseFarm ?? "";
     goeLocationLeasedController.text = widget.geoLocationLeaseFarm ?? "";
-    // pincodeController.text = widget.pincode ?? "";
+    pincodeController.text = widget.pincode ?? "";
     addressController.text = widget.address ?? "";
     villageController.text = widget.village ?? "";
     bankNameController.text = widget.bankName ?? "";
@@ -97,6 +98,14 @@ class _FarmerEditProfilePageState extends State<FarmerEditProfilePage> {
     ifsCodeController.text = widget.ifscCode ?? "";
     panNumberController.text = widget.panNumber ?? "";
     aadharNumberController.text = widget.aadhaarNumber ?? "";
+
+    selectedItemValue = widget.typeOfCultivationPractice ?? "";
+    if(pincodeController.text.isNotEmpty){
+      _onTextChanged(pincodeController.text);
+      _selectedStateName = widget.state;
+      _selectedDistrictName = widget.district;
+    }
+    print("selectedItemValue : $selectedItemValue");
   }
 
   @override
@@ -461,42 +470,6 @@ class _FarmerEditProfilePageState extends State<FarmerEditProfilePage> {
                     },
                   )),
             ),
-            // Padding(
-            //   padding: const EdgeInsets.only(
-            //       left: 25.0, right: 25.0),
-            //   child: TextFormField(
-            //     decoration: const InputDecoration(
-            //         alignLabelWithHint: true,
-            //         fillColor: Colors.white,
-            //         filled: true,
-            //         border: OutlineInputBorder(
-            //           borderRadius: BorderRadius.all(
-            //             Radius.circular(10.0),
-            //           ),
-            //         ),
-            //         enabledBorder: OutlineInputBorder(
-            //           borderSide: BorderSide(
-            //             color: Colors.white,
-            //             width: 1.0,
-            //           ),
-            //           borderRadius: BorderRadius.all(
-            //               Radius.circular(8.0)),
-            //         ),
-            //         contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-            //         hintText: '----',
-            //         hintStyle: TextStyle(color: Color(0xFFe7e7e7)),
-            //         focusedBorder: OutlineInputBorder(
-            //           borderRadius: BorderRadius.all(
-            //               Radius.circular(8.0)),
-            //           borderSide: BorderSide(
-            //               color: Colors.white, width: 0.5),
-            //         )),
-            //     validator: (value) => value!.isEmpty
-            //         ? buildTranslate('enterState')
-            //         : null,
-            //     controller: stateController,
-            //   ),
-            // ),
             const SizedBox(
               height: 20,
             ),
@@ -570,42 +543,6 @@ class _FarmerEditProfilePageState extends State<FarmerEditProfilePage> {
                     },
                   )),
             ),
-            // Padding(
-            //   padding: const EdgeInsets.only(
-            //       left: 25.0, right: 25.0),
-            //   child: TextFormField(
-            //     decoration: InputDecoration(
-            //         alignLabelWithHint: true,
-            //         fillColor: Colors.white,
-            //         filled: true,
-            //         border: const OutlineInputBorder(
-            //           borderRadius: BorderRadius.all(
-            //             Radius.circular(10.0),
-            //           ),
-            //         ),
-            //         enabledBorder: const OutlineInputBorder(
-            //           borderSide: BorderSide(
-            //             color: Colors.white,
-            //             width: 1.0,
-            //           ),
-            //           borderRadius: BorderRadius.all(
-            //               Radius.circular(8.0)),
-            //         ),
-            //         contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-            //         hintText: buildTranslate("district")!,
-            //         hintStyle: const TextStyle(color: Color(0xFFe7e7e7)),
-            //         focusedBorder: const OutlineInputBorder(
-            //           borderRadius: BorderRadius.all(
-            //               Radius.circular(8.0)),
-            //           borderSide: BorderSide(
-            //               color: Colors.white, width: 0.5),
-            //         )),
-            //     validator: (value) => value!.isEmpty
-            //         ? 'Enter District'
-            //         : null,
-            //     controller: districtController,
-            //   ),
-            // ),
             const SizedBox(
               height: 20,
             ),
@@ -737,9 +674,9 @@ class _FarmerEditProfilePageState extends State<FarmerEditProfilePage> {
                         borderSide: BorderSide.none),
                     // Add more decoration..
                   ),
-                  hint: const Text(
-                    '--',
-                    style: TextStyle(fontSize: 14),
+                  hint: Text(
+                    selectedItemValue,
+                    style: TextStyle(fontSize: 14, color: Colors.grey),
                   ),
                   items: items
                       .map((item) => DropdownMenuItem<String>(
@@ -792,10 +729,7 @@ class _FarmerEditProfilePageState extends State<FarmerEditProfilePage> {
                 width: MediaQuery.of(context).size.width,
                 child: ElevatedButton(
                   onPressed: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(builder: (context) => const MyHomePage()),
-                    // );
+
                   },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
@@ -1068,7 +1002,7 @@ class _FarmerEditProfilePageState extends State<FarmerEditProfilePage> {
               height: 20,
             ),
 
-            // dharma number
+            // aadhaarNumber number
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: Text(
@@ -1202,7 +1136,7 @@ class _FarmerEditProfilePageState extends State<FarmerEditProfilePage> {
         print("Edit Profile Details Error : "+response.statusMessage.toString());
       }
     } else {
-      AlertHelper.showToast("Please enter credentials.", context);
+      AlertHelper.showToast("Please enter details.", context);
     }
   }
 
@@ -1234,31 +1168,14 @@ class _FarmerEditProfilePageState extends State<FarmerEditProfilePage> {
           ];
         }
 
-        // dropdownStateItems = response.data['PostOffice'].map<DropdownMenuItem<String>>((item) {
-        //   return DropdownMenuItem<String>(
-        //     value: item[0]['State'],
-        //     child: Text(item[0]['State']),
-        //   );
-        // }).toList();
-
-        // dropdownDistrictItems =
-        //     response.data['PostOffice'].map<DropdownMenuItem<String>>((item) {
-        //   return DropdownMenuItem<String>(
-        //     value: item['District'],
-        //     child: Text(item['District']),
-        //   );
-        // }).toList();
-
         setState(() {
           dropdownStateItems = dropdownStateItems;
           dropdownDistrictItems = dropdownDistrictItems;
         });
       } else {
-        // Handle non-200 status codes
         print('Error: ${response.statusCode}');
       }
     } catch (e) {
-      // Handle error
       print('API call failed: $e');
     }
   }

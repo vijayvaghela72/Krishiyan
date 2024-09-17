@@ -460,7 +460,7 @@ class _MyTraderRegistrationPageState extends State<MyTraderRegistrationPage> {
                     );
                   }
                   else{
-                    AlertHelper.showToast("Please enter credentials.",context);
+                    AlertHelper.showToast("Please enter details.",context);
                   }
                 },
                 style: ElevatedButton.styleFrom(

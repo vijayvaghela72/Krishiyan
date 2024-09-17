@@ -741,18 +741,9 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
   }
 
   _buyCommodityApiCall() async {
-    if (varietyController.text.trim().isNotEmpty
-        && quantityController.text.trim().isNotEmpty
-        && moistureController.text.trim().isNotEmpty
-        && localGradeController.text.trim().isNotEmpty
-        && sizeController.text.trim().isNotEmpty
-        && countController.text.trim().isNotEmpty
-        && purchasePriceController.text.trim().isNotEmpty
-        && dateOfDeliveryController.text.trim().isNotEmpty
-        && originCommodityController.text.trim().isNotEmpty
-        && deliveryLocationController.text.trim().isNotEmpty
-        && commentsController.text.trim().isNotEmpty
-    ) {
+    if (quantityController.text.trim().isNotEmpty
+        && _selectedCrop.toString().isNotEmpty)
+    {
 
       contactNumber = (await AppGlobal.getStringPreference('contactNumber'))!;
 
@@ -760,18 +751,18 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
         "uid": contactNumber,
         "operation": "Buy",
         "commodity": _selectedCrop,
-        "variety": varietyController.text.toString(),
+        "variety": varietyController.text.toString() ?? "",
         "quantity": quantityController.text.toString(),
-        "moisture": moistureController.text.toString(),
-        "localGradeSpecification": localGradeController.text.toString(),
-        "size": sizeController.text.toString(),
-        "count": countController.text.toString(),
-        "price": purchasePriceController.text.toString(),
-        "date": dateOfDeliveryController.text.toString(),
-        "origin": originCommodityController.text.toString(),
-        "location": deliveryLocationController.text.toString(),
-        "photoVideoLink": "http://example.com/photo",
-        "comments": commentsController.text.toString(),
+        "moisture": moistureController.text.toString() ?? "",
+        "localGradeSpecification": localGradeController.text.toString() ?? "",
+        "size": sizeController.text.toString() ?? "",
+        "count": countController.text.toString() ?? "",
+        "price": purchasePriceController.text.toString() ?? "",
+        "date": dateOfDeliveryController.text.toString() ?? "",
+        "origin": originCommodityController.text.toString() ?? "",
+        "location": deliveryLocationController.text.toString() ?? "",
+        "photoVideoLink": "",
+        "comments": commentsController.text.toString() ?? "",
         "verified": true
       });
 

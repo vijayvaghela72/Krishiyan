@@ -363,7 +363,7 @@ class _OtherDetailPageState extends State<OtherDetailPage> {
                                     editUdyamController.text.toString());
                               } else {
                                 AlertHelper.showToast(
-                                    "Please enter credentials.", context);
+                                    "Please enter details.", context);
                               }
                             },
                             style: ElevatedButton.styleFrom(

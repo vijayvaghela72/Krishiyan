@@ -13,17 +13,17 @@ import '../../utils/Constants.dart';
 import '../HomeScreen/HomePage.dart';
 import 'package:intl/intl.dart';
 
-class CropCultivationPage extends StatefulWidget {
+class EditCropCultivationPage extends StatefulWidget {
 
   String WhatsappNumber;
 
-  CropCultivationPage({super.key, required this.WhatsappNumber});
+  EditCropCultivationPage({super.key, required this.WhatsappNumber});
 
   @override
-  State<CropCultivationPage> createState() => _CropCultivationPageState();
+  State<EditCropCultivationPage> createState() => _EditCropCultivationPageState();
 }
 
-class _CropCultivationPageState extends State<CropCultivationPage> with TickerProviderStateMixin {
+class _EditCropCultivationPageState extends State<EditCropCultivationPage> with TickerProviderStateMixin {
 
   TextEditingController geoLocationController = TextEditingController();
   TextEditingController areaInArcsController = TextEditingController();

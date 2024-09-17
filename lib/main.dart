@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:krishiyan/screen/SplashScreen.dart';
 import 'package:krishiyan/screen/Welcome/WelcomePage.dart';
 import 'package:krishiyan/utils/Constants.dart';
 
@@ -12,7 +13,6 @@ import 'package:http/http.dart' as http;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // Bypass SSL verification for self-signed certificates
   HttpOverrides.global = MyHttpOverrides();
   runApp(const MyApp());
 }
@@ -52,29 +52,8 @@ class MyApp extends StatelessWidget {
         Locale('hi'), // Hindi
       ],
       debugShowCheckedModeBanner: false,
-      home: const WelcomePage(),
+      home: SplashScreen(),
       routes: const <String, WidgetBuilder>{},
     );
-    // return ChangeNotifierProvider(
-    //     create: (BuildContext context) => appLanguage,
-    //     child: Consumer<AppLanguageProvider>(builder: (context, model, child) {
-    //       return MaterialApp(
-    //         debugShowCheckedModeBanner: false,
-    //         title: 'Flutter Demo',
-    //         theme: ThemeData(
-    //           colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
-    //           useMaterial3: true,
-    //         ),
-    //         home: const MyWelcomePage(),
-    //         locale: model.appLocal,
-    //         supportedLocales: const [
-    //           Locale('en', 'US'),
-    //         ],
-    //         localizationsDelegates: const [
-    //           AppLocalizations.delegate,
-    //         ],
-    //       );
-    //     })
-    // );
   }
 }

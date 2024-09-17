@@ -7,7 +7,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../helper/AlertHelper.dart';
 import '../../utils/Constants.dart';
 import '../model/APIResponse.dart';
-import '../model/CreateBuyCommodityData.dart';
 import '../model/GetAllEnquiryData.dart';
 import 'package:http/http.dart' as http;
 

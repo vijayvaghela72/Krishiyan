@@ -715,17 +715,8 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
   }
 
   _sellCommodityApiCall() async {
-    if (varietyController.text.trim().isNotEmpty
-        && quantityController.text.trim().isNotEmpty
-        && moistureController.text.trim().isNotEmpty
-        && localGradeController.text.trim().isNotEmpty
-        && sizeController.text.trim().isNotEmpty
-        && countController.text.trim().isNotEmpty
-        && supplyPriceController.text.trim().isNotEmpty
-        && dateOfShipmentController.text.trim().isNotEmpty
-        && originCommodityController.text.trim().isNotEmpty
-        && commentsController.text.trim().isNotEmpty
-    ) {
+    if (quantityController.text.trim().isNotEmpty
+        && _selectedCrop.toString().isNotEmpty){
 
       contactNumber = (await AppGlobal.getStringPreference('contactNumber'))!;
 
@@ -733,18 +724,18 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
         "uid": contactNumber,
         "operation": "Sell",
         "commodity": _selectedCrop,
-        "variety": varietyController.text.toString(),
-        "quantity": quantityController.text.toString(),
-        "moisture": moistureController.text.toString(),
-        "localGradeSpecification": localGradeController.text.toString(),
-        "size": sizeController.text.toString(),
-        "count": countController.text.toString(),
-        "price": supplyPriceController.text.toString(),
-        "date": dateOfShipmentController.text.toString(),
-        "origin": originCommodityController.text.toString(),
+        "variety": varietyController.text.toString() ?? "",
+        "quantity": quantityController.text.toString() ?? "",
+        "moisture": moistureController.text.toString() ?? "",
+        "localGradeSpecification": localGradeController.text.toString() ?? "",
+        "size": sizeController.text.toString() ?? "",
+        "count": countController.text.toString() ?? "",
+        "price": supplyPriceController.text.toString() ?? "",
+        "date": dateOfShipmentController.text.toString() ?? "",
+        "origin": originCommodityController.text.toString() ??"",
         "location": "",
-        "photoVideoLink": "http://example.com/photo",
-        "comments": commentsController.text.toString(),
+        "photoVideoLink": "",
+        "comments": commentsController.text.toString() ?? "",
         "verified": true
       });
 

@@ -396,7 +396,7 @@ class _LoginPageState extends State<LoginPage> {
       }
     }
     else{
-      AlertHelper.showToast("Please enter credentials.",context);
+      AlertHelper.showToast("Please enter details.",context);
     }
   }
 
