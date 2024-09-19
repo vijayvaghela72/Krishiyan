@@ -2390,85 +2390,85 @@ class _BottomTwoPageState extends State<BottomTwoPage>
           ],
         ),
       ),
-      floatingActionButton: widget.aapbarVisibility
-          ? FloatingActionButton(
-              backgroundColor: Colors.white.withAlpha(0),
-              elevation: 0,
-              // also important, removes the shadow
-              heroTag: "floatingActionBtn",
-              shape: const RoundedRectangleBorder(
-                // <= Change BeveledRectangleBorder to RoundedRectangularBorder
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(30.0),
-                  topRight: Radius.circular(30.0),
-                  bottomLeft: Radius.circular(30.0),
-                  bottomRight: Radius.circular(30.0),
-                ),
-              ),
-              child: InkWell(
-                highlightColor: Colors.transparent,
-                splashColor: Colors.transparent,
-                onTap: () {
-                  setState(() {
-                    // typeOfOrganization == "Farmer groups" ?  _onItemTapped(4) : _onItemTapped(2);
-                    _onItemTapped(4);
-                  });
-                },
-                child: Image.asset(
-                  'assets/images/bottomCenter.png',
-                  // color: Colors.white,
-                ),
-              ),
-              onPressed: () {},
-            )
-          : null,
-      floatingActionButtonLocation: widget.aapbarVisibility
-          ? FloatingActionButtonLocation.centerDocked
-          : null,
-      bottomNavigationBar: widget.aapbarVisibility
-          ? AnimatedBottomNavigationBar.builder(
-              height: 70,
-              itemCount: iconList.length,
-              tabBuilder: (int index, bool isActive) {
-                final color = isActive ? Colors.green : Colors.grey;
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(
-                      iconList[index].icon ?? "",
-                      color: color,
-                      width: 30,
-                      height: 30,
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      iconList[index].name ?? "",
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                          color: Color(0xFF666666),
-                          fontSize: 13,
-                          fontFamily: 'poppins-regular'),
-                    ),
-                  ],
-                );
-              },
-              // backgroundColor: Colors.white,
-              activeIndex: _bottomNavIndex,
-              // splashColor: Colors.green,
-              splashSpeedInMilliseconds: 300,
-              notchSmoothness: NotchSmoothness.defaultEdge,
-              gapLocation: GapLocation.center,
-              leftCornerRadius: 32,
-              rightCornerRadius: 32,
-              notchMargin: 7,
-              onTap: (index) {
-                setState(() {
-                  _onItemTapped(index);
-                });
-              },
-            )
-          : null,
+      // floatingActionButton: widget.aapbarVisibility
+      //     ? FloatingActionButton(
+      //         backgroundColor: Colors.white.withAlpha(0),
+      //         elevation: 0,
+      //         // also important, removes the shadow
+      //         heroTag: "floatingActionBtn",
+      //         shape: const RoundedRectangleBorder(
+      //           // <= Change BeveledRectangleBorder to RoundedRectangularBorder
+      //           borderRadius: BorderRadius.only(
+      //             topLeft: Radius.circular(30.0),
+      //             topRight: Radius.circular(30.0),
+      //             bottomLeft: Radius.circular(30.0),
+      //             bottomRight: Radius.circular(30.0),
+      //           ),
+      //         ),
+      //         child: InkWell(
+      //           highlightColor: Colors.transparent,
+      //           splashColor: Colors.transparent,
+      //           onTap: () {
+      //             setState(() {
+      //               // typeOfOrganization == "Farmer groups" ?  _onItemTapped(4) : _onItemTapped(2);
+      //               _onItemTapped(4);
+      //             });
+      //           },
+      //           child: Image.asset(
+      //             'assets/images/bottomCenter.png',
+      //             // color: Colors.white,
+      //           ),
+      //         ),
+      //         onPressed: () {},
+      //       )
+      //     : null,
+      // floatingActionButtonLocation: widget.aapbarVisibility
+      //     ? FloatingActionButtonLocation.centerDocked
+      //     : null,
+      // bottomNavigationBar: widget.aapbarVisibility
+      //     ? AnimatedBottomNavigationBar.builder(
+      //         height: 70,
+      //         itemCount: iconList.length,
+      //         tabBuilder: (int index, bool isActive) {
+      //           final color = isActive ? Colors.green : Colors.grey;
+      //           return Column(
+      //             mainAxisSize: MainAxisSize.min,
+      //             mainAxisAlignment: MainAxisAlignment.center,
+      //             children: [
+      //               Image.asset(
+      //                 iconList[index].icon ?? "",
+      //                 color: color,
+      //                 width: 30,
+      //                 height: 30,
+      //               ),
+      //               const SizedBox(height: 5),
+      //               Text(
+      //                 iconList[index].name ?? "",
+      //                 textAlign: TextAlign.center,
+      //                 style: const TextStyle(
+      //                     color: Color(0xFF666666),
+      //                     fontSize: 13,
+      //                     fontFamily: 'poppins-regular'),
+      //               ),
+      //             ],
+      //           );
+      //         },
+      //         // backgroundColor: Colors.white,
+      //         activeIndex: _bottomNavIndex,
+      //         // splashColor: Colors.green,
+      //         splashSpeedInMilliseconds: 300,
+      //         notchSmoothness: NotchSmoothness.defaultEdge,
+      //         gapLocation: GapLocation.center,
+      //         leftCornerRadius: 32,
+      //         rightCornerRadius: 32,
+      //         notchMargin: 7,
+      //         onTap: (index) {
+      //           setState(() {
+      //             _onItemTapped(index);
+      //           });
+      //         },
+      //       )
+      //     : null,
     );
   }
 

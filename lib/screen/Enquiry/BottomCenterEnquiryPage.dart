@@ -15,17 +15,18 @@ import '../../localization/AppLocalizations.dart';
 import '../../mvc/controller/enquiryDashboardController.dart';
 import '../../mvc/model/GetEnquiryByFilterData.dart';
 import '../../mvc/model/SelectCropNamesData.dart';
+import '../../utils/AppColor.dart';
 import '../../utils/Constants.dart';
 import '../HomeScreen/BottomOnePage.dart';
 import '../CropLibrary/BottomThreePage.dart';
 import '../FRM/BottomTwoPage.dart';
-import '../FRM/BuyCommodityPage.dart';
-import '../FRM/EditBuyCommodityPage.dart';
-import '../FRM/EditSellCommodityPage.dart';
+import 'EditBuyCommodityPage.dart';
+import 'EditSellCommodityPage.dart';
+import 'BuyCommodityPage.dart';
 import 'EnquiryDashboardPage.dart';
 import '../AccountSettings/ProfilePage.dart';
 import '../Language/SelectLanguagePage.dart';
-import '../FRM/SellCommodityPage.dart';
+import 'SellCommodityPage.dart';
 
 class BottomCenterEnquiryPage extends StatefulWidget {
   bool aapbarVisibility;
@@ -46,19 +47,19 @@ class _BottomCenterEnquiryPageState extends State<BottomCenterEnquiryPage> with 
     buildTranslate("myEnquiries")!,
   ];
 
-  late AnimationController _fabAnimationController;
-  late AnimationController _borderRadiusAnimationController;
-  late Animation<double> fabAnimation;
-  late Animation<double> borderRadiusAnimation;
-  late CurvedAnimation fabCurve;
-  late CurvedAnimation borderRadiusCurve;
-  late AnimationController _hideBottomBarAnimationController;
+  // late AnimationController _fabAnimationController;
+  // late AnimationController _borderRadiusAnimationController;
+  // late Animation<double> fabAnimation;
+  // late Animation<double> borderRadiusAnimation;
+  // late CurvedAnimation fabCurve;
+  // late CurvedAnimation borderRadiusCurve;
+  // late AnimationController _hideBottomBarAnimationController;
   var _bottomNavIndex = 1; //default index of a first screen
 
   String? _selectedCrop;
   SelectCropNamesData? _cropData;
 
-  List<bottomCategory> iconList = [
+  List<bottomCategory> iconList1 = [
     bottomCategory(
         name: buildTranslate("home")!,
         id: "1",
@@ -133,41 +134,41 @@ class _BottomCenterEnquiryPageState extends State<BottomCenterEnquiryPage> with 
   void initState() {
     super.initState();
 
-    _fabAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 500),
-      vsync: this,
-    );
-    _borderRadiusAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 500),
-      vsync: this,
-    );
-    fabCurve = CurvedAnimation(
-      parent: _fabAnimationController,
-      curve: const Interval(0.5, 1.0, curve: Curves.fastOutSlowIn),
-    );
-    borderRadiusCurve = CurvedAnimation(
-      parent: _borderRadiusAnimationController,
-      curve: const Interval(0.5, 1.0, curve: Curves.fastOutSlowIn),
-    );
-
-    fabAnimation = Tween<double>(begin: 1, end: 1).animate(fabCurve);
-    borderRadiusAnimation = Tween<double>(begin: 1, end: 1).animate(
-      borderRadiusCurve,
-    );
-
-    _hideBottomBarAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 200),
-      vsync: this,
-    );
-
-    Future.delayed(
-      const Duration(seconds: 1),
-          () => _fabAnimationController.forward(),
-    );
-    Future.delayed(
-      const Duration(seconds: 1),
-          () => _borderRadiusAnimationController.forward(),
-    );
+    // _fabAnimationController = AnimationController(
+    //   duration: const Duration(milliseconds: 500),
+    //   vsync: this,
+    // );
+    // _borderRadiusAnimationController = AnimationController(
+    //   duration: const Duration(milliseconds: 500),
+    //   vsync: this,
+    // );
+    // fabCurve = CurvedAnimation(
+    //   parent: _fabAnimationController,
+    //   curve: const Interval(0.5, 1.0, curve: Curves.fastOutSlowIn),
+    // );
+    // borderRadiusCurve = CurvedAnimation(
+    //   parent: _borderRadiusAnimationController,
+    //   curve: const Interval(0.5, 1.0, curve: Curves.fastOutSlowIn),
+    // );
+    //
+    // fabAnimation = Tween<double>(begin: 1, end: 1).animate(fabCurve);
+    // borderRadiusAnimation = Tween<double>(begin: 1, end: 1).animate(
+    //   borderRadiusCurve,
+    // );
+    //
+    // _hideBottomBarAnimationController = AnimationController(
+    //   duration: const Duration(milliseconds: 200),
+    //   vsync: this,
+    // );
+    //
+    // Future.delayed(
+    //   const Duration(seconds: 1),
+    //       () => _fabAnimationController.forward(),
+    // );
+    // Future.delayed(
+    //   const Duration(seconds: 1),
+    //       () => _borderRadiusAnimationController.forward(),
+    // );
     _fetchCropData();
     getPrefValue();
   }
@@ -1065,371 +1066,6 @@ class _BottomCenterEnquiryPageState extends State<BottomCenterEnquiryPage> with 
                         },
                       )
                           : Center(child: Text(buildTranslate("noDataAvailable")!)),
-
-                      // buy commodity
-                      // Visibility(
-                      //   visible: _currentIndex == 0,
-                      //   child: Padding(
-                      //     padding: const EdgeInsets.only(
-                      //         top: 10.0, right: 30.0, left: 30.0),
-                      //     child: Container(
-                      //       decoration: const BoxDecoration(
-                      //           color: Colors.white,
-                      //           borderRadius: BorderRadius.all(
-                      //               Radius.circular(12))),
-                      //       child: Column(
-                      //         crossAxisAlignment:
-                      //         CrossAxisAlignment.start,
-                      //         mainAxisAlignment:
-                      //         MainAxisAlignment.start,
-                      //         children: [
-                      //           Stack(children: <Widget>[
-                      //             Padding(
-                      //               padding: const EdgeInsets.all(18.0),
-                      //               child: Container(
-                      //                 width: MediaQuery.of(context)
-                      //                     .size
-                      //                     .width,
-                      //                 height: 180,
-                      //                 decoration: const BoxDecoration(
-                      //                     borderRadius:
-                      //                     BorderRadius.all(
-                      //                         Radius.circular(12)),
-                      //                     image: DecorationImage(
-                      //                         image: AssetImage(
-                      //                             "assets/images/enquiryBG.png"),
-                      //                         fit: BoxFit.cover)),
-                      //               ),
-                      //             ),
-                      //             Padding(
-                      //               padding: const EdgeInsets.only(
-                      //                   top: 18.0, left: 18.0),
-                      //               child: IntrinsicWidth(
-                      //                 child: Container(
-                      //                   // constraints: const BoxConstraints(
-                      //                   //   maxWidth: 120,
-                      //                   // ),
-                      //                   decoration: const BoxDecoration(
-                      //                     color: Color(0xFF008000),
-                      //                     borderRadius:
-                      //                     BorderRadius.all(
-                      //                         Radius.circular(12)),
-                      //                   ),
-                      //                   child: const Align(
-                      //                       alignment:
-                      //                       Alignment.topLeft,
-                      //                       child: Padding(
-                      //                         padding: EdgeInsets.only(
-                      //                             left: 12.0,
-                      //                             right: 12.0,
-                      //                             top: 5.0,
-                      //                             bottom: 5.0),
-                      //                         child: Text(
-                      //                           'Price  Rs.25000',
-                      //                           style: TextStyle(
-                      //                               color: Colors.white,
-                      //                               fontSize: 11,
-                      //                               fontFamily:
-                      //                               "poppins-semibold"),
-                      //                         ),
-                      //                       )),
-                      //                 ),
-                      //               ),
-                      //             ),
-                      //           ]),
-                      //           const SizedBox(
-                      //             height: 5.0,
-                      //           ),
-                      //           const Padding(
-                      //             padding: EdgeInsets.only(left: 20.0),
-                      //             child: Text(
-                      //               "Name :  Ankit",
-                      //               softWrap: true,
-                      //               style: TextStyle(
-                      //                   color: Color(0xFF808080),
-                      //                   fontSize: 15,
-                      //                   fontFamily: 'poppins-semibold'),
-                      //             ),
-                      //           ),
-                      //           const Padding(
-                      //             padding: EdgeInsets.only(
-                      //                 left: 20.0, top: 10.0),
-                      //             child: Text(
-                      //               "Purpose:  To Buy",
-                      //               softWrap: true,
-                      //               style: TextStyle(
-                      //                   color: Color(0xFF808080),
-                      //                   fontSize: 15,
-                      //                   fontFamily: 'poppins-semibold'),
-                      //             ),
-                      //           ),
-                      //           const Padding(
-                      //             padding: EdgeInsets.only(
-                      //                 left: 20.0, top: 10.0),
-                      //             child: Text(
-                      //               "Quantity :  10 Metric Ton (MT)",
-                      //               softWrap: true,
-                      //               style: TextStyle(
-                      //                   color: Color(0xFF808080),
-                      //                   fontSize: 15,
-                      //                   fontFamily: 'poppins-semibold'),
-                      //             ),
-                      //           ),
-                      //           const Padding(
-                      //             padding: EdgeInsets.only(
-                      //                 left: 20.0, top: 10.0),
-                      //             child: Text(
-                      //               "Location :  Latur, Maharastra",
-                      //               softWrap: true,
-                      //               style: TextStyle(
-                      //                   color: Color(0xFF808080),
-                      //                   fontSize: 15,
-                      //                   fontFamily: 'poppins-semibold'),
-                      //             ),
-                      //           ),
-                      //           Padding(
-                      //             padding: const EdgeInsets.only(
-                      //                 left: 10.0,
-                      //                 right: 10.0,
-                      //                 top: 20.0),
-                      //             child: Container(
-                      //               width: MediaQuery.of(context)
-                      //                   .size
-                      //                   .width,
-                      //               height: 40,
-                      //               child: Container(
-                      //                   width: MediaQuery.of(context)
-                      //                       .size
-                      //                       .width,
-                      //                   child: ElevatedButton(
-                      //                     onPressed: () {
-                      //                       Navigator.of(context).push(
-                      //                           MaterialPageRoute(
-                      //                               builder: (context) =>
-                      //                               const MyBuyCommodityPage()));
-                      //                     },
-                      //                     style:
-                      //                     ElevatedButton.styleFrom(
-                      //                       foregroundColor:
-                      //                       Colors.white,
-                      //                       padding:
-                      //                       const EdgeInsets.all(3),
-                      //                       textStyle: const TextStyle(
-                      //                           fontSize: 18),
-                      //                       backgroundColor:
-                      //                       const Color(0xFF3FC041),
-                      //                       shape:
-                      //                       RoundedRectangleBorder(
-                      //                         borderRadius:
-                      //                         BorderRadius.circular(
-                      //                             12), // <-- Radius
-                      //                       ),
-                      //                     ),
-                      //                     child: Center(
-                      //                       child: Text(
-                      //                         buildTranslate('edit')!,
-                      //                         textAlign:
-                      //                         TextAlign.center,
-                      //                         style: TextStyle(
-                      //                             fontSize: 17,
-                      //                             fontFamily:
-                      //                             'poppins-medium'),
-                      //                       ),
-                      //                     ),
-                      //                   )),
-                      //             ),
-                      //           ),
-                      //           const SizedBox(
-                      //             height: 15,
-                      //           ),
-                      //         ],
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
-
-                      // sell commodity
-
-                      // Visibility(
-                      //   visible: _currentIndex == 1,
-                      //   child: Padding(
-                      //     padding: const EdgeInsets.only(
-                      //         top: 10.0, right: 30.0, left: 30.0),
-                      //     child: Container(
-                      //       decoration: const BoxDecoration(
-                      //           color: Colors.white,
-                      //           borderRadius: BorderRadius.all(
-                      //               Radius.circular(12))),
-                      //       child: Column(
-                      //         crossAxisAlignment:
-                      //         CrossAxisAlignment.start,
-                      //         mainAxisAlignment:
-                      //         MainAxisAlignment.start,
-                      //         children: [
-                      //           Stack(children: <Widget>[
-                      //             Padding(
-                      //               padding: const EdgeInsets.all(18.0),
-                      //               child: Container(
-                      //                 width: MediaQuery.of(context)
-                      //                     .size
-                      //                     .width,
-                      //                 height: 180,
-                      //                 decoration: const BoxDecoration(
-                      //                     borderRadius:
-                      //                     BorderRadius.all(
-                      //                         Radius.circular(12)),
-                      //                     image: DecorationImage(
-                      //                         image: AssetImage(
-                      //                             "assets/images/enquiryBG.png"),
-                      //                         fit: BoxFit.cover)),
-                      //               ),
-                      //             ),
-                      //             Padding(
-                      //               padding: const EdgeInsets.only(
-                      //                   top: 18.0, left: 18.0),
-                      //               child: IntrinsicWidth(
-                      //                 child: Container(
-                      //                   // constraints: const BoxConstraints(
-                      //                   //   maxWidth: 150,
-                      //                   // ),
-                      //                   decoration: const BoxDecoration(
-                      //                     color: Color(0xFF008000),
-                      //                     borderRadius:
-                      //                     BorderRadius.all(
-                      //                         Radius.circular(12)),
-                      //                   ),
-                      //                   child: const Align(
-                      //                       alignment:
-                      //                       Alignment.topLeft,
-                      //                       child: Padding(
-                      //                         padding: EdgeInsets.only(
-                      //                             left: 12.0,
-                      //                             right: 12.0,
-                      //                             top: 5.0,
-                      //                             bottom: 5.0),
-                      //                         child: Text(
-                      //                           'Price  Rs.25000',
-                      //                           style: TextStyle(
-                      //                               color: Colors.white,
-                      //                               fontSize: 11,
-                      //                               fontFamily:
-                      //                               "poppins-semibold"),
-                      //                         ),
-                      //                       )),
-                      //                 ),
-                      //               ),
-                      //             ),
-                      //           ]),
-                      //           const SizedBox(
-                      //             height: 5.0,
-                      //           ),
-                      //           const Padding(
-                      //             padding: EdgeInsets.only(left: 20.0),
-                      //             child: Text(
-                      //               "Name :  Ankit",
-                      //               softWrap: true,
-                      //               style: TextStyle(
-                      //                   color: Color(0xFF808080),
-                      //                   fontSize: 15,
-                      //                   fontFamily: 'poppins-semibold'),
-                      //             ),
-                      //           ),
-                      //           const Padding(
-                      //             padding: EdgeInsets.only(
-                      //                 left: 20.0, top: 10.0),
-                      //             child: Text(
-                      //               "Purpose:  To Sell",
-                      //               softWrap: true,
-                      //               style: TextStyle(
-                      //                   color: Color(0xFF808080),
-                      //                   fontSize: 15,
-                      //                   fontFamily: 'poppins-semibold'),
-                      //             ),
-                      //           ),
-                      //           const Padding(
-                      //             padding: EdgeInsets.only(
-                      //                 left: 20.0, top: 10.0),
-                      //             child: Text(
-                      //               "Quantity :  10 Metric Ton (MT)",
-                      //               softWrap: true,
-                      //               style: TextStyle(
-                      //                   color: Color(0xFF808080),
-                      //                   fontSize: 15,
-                      //                   fontFamily: 'poppins-semibold'),
-                      //             ),
-                      //           ),
-                      //           const Padding(
-                      //             padding: EdgeInsets.only(
-                      //                 left: 20.0, top: 10.0),
-                      //             child: Text(
-                      //               "Location :  Latur, Maharastra",
-                      //               softWrap: true,
-                      //               style: TextStyle(
-                      //                   color: Color(0xFF808080),
-                      //                   fontSize: 15,
-                      //                   fontFamily: 'poppins-semibold'),
-                      //             ),
-                      //           ),
-                      //           Padding(
-                      //             padding: const EdgeInsets.only(
-                      //                 left: 10.0,
-                      //                 right: 10.0,
-                      //                 top: 20.0),
-                      //             child: Container(
-                      //               width: MediaQuery.of(context)
-                      //                   .size
-                      //                   .width,
-                      //               height: 40,
-                      //               child: Container(
-                      //                   width: MediaQuery.of(context)
-                      //                       .size
-                      //                       .width,
-                      //                   child: ElevatedButton(
-                      //                     onPressed: () {
-                      //                       Navigator.of(context).push(
-                      //                           MaterialPageRoute(
-                      //                               builder: (context) =>
-                      //                               const MySellCommodityPage()));
-                      //                     },
-                      //                     style:
-                      //                     ElevatedButton.styleFrom(
-                      //                       foregroundColor:
-                      //                       Colors.white,
-                      //                       padding:
-                      //                       const EdgeInsets.all(3),
-                      //                       textStyle: const TextStyle(
-                      //                           fontSize: 18),
-                      //                       backgroundColor:
-                      //                       const Color(0xFF3FC041),
-                      //                       shape:
-                      //                       RoundedRectangleBorder(
-                      //                         borderRadius:
-                      //                         BorderRadius.circular(
-                      //                             12), // <-- Radius
-                      //                       ),
-                      //                     ),
-                      //                     child: Center(
-                      //                       child: Text(
-                      //                         buildTranslate('edit')!,
-                      //                         textAlign:
-                      //                         TextAlign.center,
-                      //                         style: TextStyle(
-                      //                             fontSize: 17,
-                      //                             fontFamily:
-                      //                             'poppins-medium'),
-                      //                       ),
-                      //                     ),
-                      //                   )),
-                      //             ),
-                      //           ),
-                      //           const SizedBox(
-                      //             height: 15,
-                      //           ),
-                      //         ],
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
                       const SizedBox(
                         height: 40,
                       ),
@@ -1439,15 +1075,11 @@ class _BottomCenterEnquiryPageState extends State<BottomCenterEnquiryPage> with 
             ],
           ),
         ),
-        floatingActionButton: widget.aapbarVisibility
-            ? FloatingActionButton(
-          backgroundColor: Colors.white.withAlpha(0),
-          // add this line.
-          elevation: 0,
-          // also important, removes the shadow
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: AppColor.whiteColor.withAlpha(0), // add this line.
+          elevation: 0, // also important, removes the shadow
           heroTag: "floatingActionBtn",
-          shape: const RoundedRectangleBorder(
-            // <= Change BeveledRectangleBorder to RoundedRectangularBorder
+          shape: const RoundedRectangleBorder( // <= Change BeveledRectangleBorder to RoundedRectangularBorder
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(30.0),
               topRight: Radius.circular(30.0),
@@ -1457,126 +1089,227 @@ class _BottomCenterEnquiryPageState extends State<BottomCenterEnquiryPage> with 
           ),
           child: Image.asset(
             'assets/images/bottomCenter.png',
-            // color: Colors.white,
           ),
           onPressed: () {
-            _fabAnimationController.reset();
-            _borderRadiusAnimationController.reset();
-            _borderRadiusAnimationController.forward();
-            _fabAnimationController.forward();
-          },
-        )
-            : null,
-        floatingActionButtonLocation: widget.aapbarVisibility
-            ? FloatingActionButtonLocation.centerDocked
-            : null,
-        bottomNavigationBar: widget.aapbarVisibility && typeOfOrganizationData == "Farmer groups"
-            ? AnimatedBottomNavigationBar.builder(
-          height: 70,
-          itemCount: iconList.length,
-          tabBuilder: (int index, bool isActive) {
-            final color = isActive ? Colors.green : Colors.grey;
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(
-                  iconList[index].icon ?? "",
-                  color: color,
-                  width: 25,
-                  height: 25,
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  iconList[index].name ?? "",
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                      color: Color(0xFF666666),
-                      fontSize: 13,
-                      fontFamily: 'poppins-regular'),
-                ),
-              ],
-            );
-          },
-          // backgroundColor: Colors.white,
-          activeIndex: _bottomNavIndex,
-          // splashColor: Colors.green,
-          notchAndCornersAnimation: borderRadiusAnimation,
-          splashSpeedInMilliseconds: 300,
-          notchSmoothness: NotchSmoothness.defaultEdge,
-          gapLocation: GapLocation.center,
-          leftCornerRadius: 32,
-          rightCornerRadius: 32,
-          notchMargin: 7,
-          onTap: (index) {
+            print("Center dock");
             setState(() {
-              _onItemTapped(index);
+              typeOfOrganizationData == "Farmer groups" ?
+              Navigator
+                  .of(context)
+                  .push(
+                  MaterialPageRoute(builder: (BuildContext context) =>
+                      BottomCenterEnquiryPage(aapbarVisibility: true,))) : Container();
+              // _onItemTapped(4);
             });
           },
-          // setState(() => _bottomNavIndex = index),
-          hideAnimationController: _hideBottomBarAnimationController,
-          shadow: const BoxShadow(
-            offset: Offset(0, 1),
-            blurRadius: 2,
-            spreadRadius: 0.2,
-            color: Colors.white,
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        bottomNavigationBar:
+        typeOfOrganizationData == "Farmer groups" ?
+        Container(
+          height: 65,
+          decoration: BoxDecoration(
+              color: Colors.grey,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(30.0),  // Top-left corner
+                topRight: Radius.circular(30.0), // Top-right corner
+              ),
+              boxShadow: [
+                BoxShadow(
+                  offset: Offset(0, 1),
+                  blurRadius: 2,
+                  spreadRadius: 0.2,
+                  color: AppColor.whiteColor,
+                ),
+              ]
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(30.0),  // Matches the Container's border radius
+              topRight: Radius.circular(30.0), // Matches the Container's border radius
+            ),
+            child: BottomNavigationBar(
+              currentIndex: _bottomNavIndex,
+              onTap: (index) {
+                setState(() {
+                  _bottomNavIndex = index; // Set the current index when tapped
+                });
+                _onItemTapped(_bottomNavIndex);
+                print("_bottomNavIndex 1: $_bottomNavIndex");
+              },
+              selectedLabelStyle: TextStyle(
+                color: Colors.black,
+              ),
+              unselectedLabelStyle: TextStyle(
+                color: Colors.black,
+              ),
+              items: iconList1.map((category) {
+                return BottomNavigationBarItem(
+                  icon: Image.asset(category.icon ?? "", width: 25, height: 25,
+                    color: _bottomNavIndex == iconList1.indexOf(category)
+                        ? Colors.green
+                        : Colors.grey,),
+                  label: category.name,
+                );
+              }).toList(),
+              type: BottomNavigationBarType.fixed, // Keeps the icons in a fixed position
+            ),
           ),
         )
-            : widget.aapbarVisibility && typeOfOrganizationData != "Farmer groups" ?
-        AnimatedBottomNavigationBar.builder(
-          height: 70,
-          itemCount: iconList2.length,
-          tabBuilder: (int index, bool isActive) {
-            final color = isActive
-                ? Colors.green
-                : Colors.grey;
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(
-                  iconList2[index].icon ?? "",
-                  color: color,
-                  width: 25, height: 25,
+            :
+        Container(
+          height: 65,
+          decoration: BoxDecoration(
+              color: Colors.grey,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(30.0),  // Top-left corner
+                topRight: Radius.circular(30.0), // Top-right corner
+              ),
+              boxShadow: [
+                BoxShadow(
+                  offset: Offset(0, 5),
+                  blurRadius: 2,
+                  spreadRadius: 0.8,
+                  color: AppColor.whiteColor,
                 ),
-                const SizedBox(height: 5),
-                Text(
-                  iconList2[index].name ?? "",
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                      color: Color(0xFF666666),
-                      fontSize: 13,
-                      fontFamily: 'poppins-regular'),
-                ),
-              ],
-            );
-          },
-          // backgroundColor: Colors.white,
-          activeIndex: _bottomNavIndex,
-          // splashColor: Colors.green,
-          notchAndCornersAnimation: borderRadiusAnimation,
-          splashSpeedInMilliseconds: 300,
-          notchSmoothness: NotchSmoothness.defaultEdge,
-          gapLocation: GapLocation.center,
-          leftCornerRadius: 32,
-          rightCornerRadius: 32,
-          notchMargin: 7,
-          onTap: (index) {
-            setState(() {
-              print("Type 2 BottomCenterEnquiry: $index");
-              typeOfOrganizationData == "Farmer groups" ? _onItemTapped(index) : index == 0 ?_onItemTapped(index)
-                  : _onItemTapped(3);
-            });
-          },
-          hideAnimationController: _hideBottomBarAnimationController,
-          shadow: const BoxShadow(
-            offset: Offset(0, 1),
-            blurRadius: 2,
-            spreadRadius: 0.2,
-            color: Colors.white,
+              ]
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(30.0),  // Matches the Container's border radius
+              topRight: Radius.circular(30.0), // Matches the Container's border radius
+            ),
+            child: BottomNavigationBar(
+              currentIndex: _bottomNavIndex,
+              onTap: (index) {
+                setState(() {
+                  _bottomNavIndex = index; // Set the current index when tapped
+                  _onItemTappedData(_bottomNavIndex);
+                });
+                print("_bottomNavIndex 2: $_bottomNavIndex");
+              },
+              selectedItemColor: Colors.grey,
+              unselectedItemColor: Colors.grey,
+              items: iconList2.map((category) {
+                return BottomNavigationBarItem(
+                  icon: Image.asset(category.icon ?? "", width: 25, height: 25,
+                    color: _bottomNavIndex == iconList2.indexOf(category)
+                        ? Colors.green
+                        : Colors.grey,),
+                  label: category.name,
+                );
+              }).toList(),
+              type: BottomNavigationBarType.fixed, // Keeps the icons in a fixed position
+            ),
           ),
         )
-            : null
+        // bottomNavigationBar: widget.aapbarVisibility && typeOfOrganizationData == "Farmer groups"
+        //     ? AnimatedBottomNavigationBar.builder(
+        //   height: 70,
+        //   itemCount: iconList.length,
+        //   tabBuilder: (int index, bool isActive) {
+        //     final color = isActive ? Colors.green : Colors.grey;
+        //     return Column(
+        //       mainAxisSize: MainAxisSize.min,
+        //       mainAxisAlignment: MainAxisAlignment.center,
+        //       children: [
+        //         Image.asset(
+        //           iconList[index].icon ?? "",
+        //           color: color,
+        //           width: 25,
+        //           height: 25,
+        //         ),
+        //         const SizedBox(height: 5),
+        //         Text(
+        //           iconList[index].name ?? "",
+        //           textAlign: TextAlign.center,
+        //           style: const TextStyle(
+        //               color: Color(0xFF666666),
+        //               fontSize: 13,
+        //               fontFamily: 'poppins-regular'),
+        //         ),
+        //       ],
+        //     );
+        //   },
+        //   // backgroundColor: Colors.white,
+        //   activeIndex: _bottomNavIndex,
+        //   // splashColor: Colors.green,
+        //   notchAndCornersAnimation: borderRadiusAnimation,
+        //   splashSpeedInMilliseconds: 300,
+        //   notchSmoothness: NotchSmoothness.defaultEdge,
+        //   gapLocation: GapLocation.center,
+        //   leftCornerRadius: 32,
+        //   rightCornerRadius: 32,
+        //   notchMargin: 7,
+        //   onTap: (index) {
+        //     setState(() {
+        //       _onItemTapped(index);
+        //     });
+        //   },
+        //   // setState(() => _bottomNavIndex = index),
+        //   hideAnimationController: _hideBottomBarAnimationController,
+        //   shadow: const BoxShadow(
+        //     offset: Offset(0, 1),
+        //     blurRadius: 2,
+        //     spreadRadius: 0.2,
+        //     color: Colors.white,
+        //   ),
+        // )
+        //     : widget.aapbarVisibility && typeOfOrganizationData != "Farmer groups" ?
+        // AnimatedBottomNavigationBar.builder(
+        //   height: 70,
+        //   itemCount: iconList2.length,
+        //   tabBuilder: (int index, bool isActive) {
+        //     final color = isActive
+        //         ? Colors.green
+        //         : Colors.grey;
+        //     return Column(
+        //       mainAxisSize: MainAxisSize.min,
+        //       mainAxisAlignment: MainAxisAlignment.center,
+        //       children: [
+        //         Image.asset(
+        //           iconList2[index].icon ?? "",
+        //           color: color,
+        //           width: 25, height: 25,
+        //         ),
+        //         const SizedBox(height: 5),
+        //         Text(
+        //           iconList2[index].name ?? "",
+        //           textAlign: TextAlign.center,
+        //           style: const TextStyle(
+        //               color: Color(0xFF666666),
+        //               fontSize: 13,
+        //               fontFamily: 'poppins-regular'),
+        //         ),
+        //       ],
+        //     );
+        //   },
+        //   // backgroundColor: Colors.white,
+        //   activeIndex: _bottomNavIndex,
+        //   // splashColor: Colors.green,
+        //   notchAndCornersAnimation: borderRadiusAnimation,
+        //   splashSpeedInMilliseconds: 300,
+        //   notchSmoothness: NotchSmoothness.defaultEdge,
+        //   gapLocation: GapLocation.center,
+        //   leftCornerRadius: 32,
+        //   rightCornerRadius: 32,
+        //   notchMargin: 7,
+        //   onTap: (index) {
+        //     setState(() {
+        //       print("Type 2 BottomCenterEnquiry: $index");
+        //       typeOfOrganizationData == "Farmer groups" ? _onItemTapped(index) : index == 0 ?_onItemTapped(index)
+        //           : _onItemTapped(3);
+        //     });
+        //   },
+        //   hideAnimationController: _hideBottomBarAnimationController,
+        //   shadow: const BoxShadow(
+        //     offset: Offset(0, 1),
+        //     blurRadius: 2,
+        //     spreadRadius: 0.2,
+        //     color: Colors.white,
+        //   ),
+        // )
+        //     : null
     );
   }
 
@@ -1639,49 +1372,55 @@ class _BottomCenterEnquiryPageState extends State<BottomCenterEnquiryPage> with 
     );
   }
 
-  // void _onItemTapped(int index) {
-  //   if (index != 3) {
-  //     setState(() {
-  //       _bottomNavIndex = index;
-  //     });
-  //     print("BottomCenterEnquiryPage : $_bottomNavIndex");
-  //     if (_bottomNavIndex == 0) {
-  //       // Navigator.pop(context);
-  //         var route = ModalRoute.of(context);
-  //         if (route != null) {
-  //           Navigator.of(context).pushReplacement(MaterialPageRoute(
-  //               builder: (BuildContext context) =>
-  //                   MyBottomOnePage(
-  //                     aapbarVisibility: true,
-  //                   )));
-  //         }
-  //     } else if (_bottomNavIndex == 1) {
-  //       // Navigator.pop(context);
-  //       var route = ModalRoute.of(context);
-  //       if (route != null) {
-  //         Navigator.of(context).pushReplacement(MaterialPageRoute(
-  //             builder: (BuildContext context) => MyBottomTwoPage(
-  //                   aapbarVisibility: true,
-  //                 )));
-  //       }
-  //     } else if (_bottomNavIndex == 2) {
-  //       // Navigator.pop(context);
-  //       var route = ModalRoute.of(context);
-  //       if (route != null) {
-  //         Navigator.of(context).pushReplacement(MaterialPageRoute(
-  //             builder: (BuildContext context) => MyBottomThreePage(
-  //                   aapbarVisibility: true,
-  //                 )));
-  //       }
-  //     }
-  //   } else {
-  //     Navigator.of(context).push(
-  //       MaterialPageRoute(builder: (context) => const MyProfilePage()),
-  //     );
-  //   }
-  // }
-
   void _onItemTapped(int index) {
+    setState(() {
+      _bottomNavIndex = index;
+    });
+    Navigator.pop(context);
+    Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (BuildContext context) => HomePage(selectedIndex: _bottomNavIndex,)));
+    // if (index != 3) {
+    //   setState(() {
+    //     _bottomNavIndex = index;
+    //   });
+    //   print("BottomCenterEnquiryPage : $_bottomNavIndex");
+    //   if (_bottomNavIndex == 0) {
+    //     // Navigator.pop(context);
+    //       var route = ModalRoute.of(context);
+    //       if (route != null) {
+    //         Navigator.of(context).pushReplacement(MaterialPageRoute(
+    //             builder: (BuildContext context) =>
+    //                 BottomOnePage(
+    //                   aapbarVisibility: true,
+    //                 )));
+    //       }
+    //   } else if (_bottomNavIndex == 1) {
+    //     // Navigator.pop(context);
+    //     var route = ModalRoute.of(context);
+    //     if (route != null) {
+    //       Navigator.of(context).pushReplacement(MaterialPageRoute(
+    //           builder: (BuildContext context) => BottomTwoPage(
+    //                 aapbarVisibility: true,
+    //               )));
+    //     }
+    //   } else if (_bottomNavIndex == 2) {
+    //     // Navigator.pop(context);
+    //     var route = ModalRoute.of(context);
+    //     if (route != null) {
+    //       Navigator.of(context).pushReplacement(MaterialPageRoute(
+    //           builder: (BuildContext context) => BottomThreePage(
+    //                 aapbarVisibility: true,
+    //               )));
+    //     }
+    //   }
+    // } else {
+    //   Navigator.of(context).push(
+    //     MaterialPageRoute(builder: (context) => const ProfilePage()),
+    //   );
+    // }
+  }
+
+  void _onItemTappedData(int index) {
     if (index != 3) {
       setState(() {
         _bottomNavIndex = index;
@@ -1707,29 +1446,12 @@ class _BottomCenterEnquiryPageState extends State<BottomCenterEnquiryPage> with 
                     HomePage(selectedIndex: 0,)));
           }
         }
-      } else if (_bottomNavIndex == 1) {
-        // Navigator.pop(context);
-        var route = ModalRoute.of(context);
-        if (route != null) {
-          Navigator.of(context).pushReplacement(MaterialPageRoute(
-              builder: (BuildContext context) => BottomTwoPage(
-                aapbarVisibility: true,
-              )));
-        }
-      } else if (_bottomNavIndex == 2) {
-        // Navigator.pop(context);
-        var route = ModalRoute.of(context);
-        if (route != null) {
-          Navigator.of(context).pushReplacement(MaterialPageRoute(
-              builder: (BuildContext context) => BottomThreePage(
-                aapbarVisibility: true,
-              )));
-        }
       }
-    } else {
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => const ProfilePage()),
-      );
+      else if (_bottomNavIndex == 1) {
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => const ProfilePage()),
+        );
+      }
     }
   }
 

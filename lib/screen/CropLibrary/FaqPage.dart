@@ -24,20 +24,20 @@ class _MyFaqPageState extends State<MyFaqPage>
     with TickerProviderStateMixin {
   var _bottomNavIndex = 2; //default index of a first screen
 
-  late AnimationController _fabAnimationController;
-  late AnimationController _borderRadiusAnimationController;
-  late Animation<double> fabAnimation;
-  late Animation<double> borderRadiusAnimation;
-  late CurvedAnimation fabCurve;
-  late CurvedAnimation borderRadiusCurve;
-  late AnimationController _hideBottomBarAnimationController;
-
-  List<bottomCategory> iconList = [
-    bottomCategory(name: "Home", id: "1", icon: 'assets/images/bottom1.png'),
-    bottomCategory(name: "FRM", id: "2", icon: 'assets/images/bottom2.png'),
-    bottomCategory(name: "Crop", id: "3", icon: 'assets/images/bottom3.png'),
-    bottomCategory(name: "Profile", id: "4", icon: 'assets/images/bottom4.png'),
-  ];
+  // late AnimationController _fabAnimationController;
+  // late AnimationController _borderRadiusAnimationController;
+  // late Animation<double> fabAnimation;
+  // late Animation<double> borderRadiusAnimation;
+  // late CurvedAnimation fabCurve;
+  // late CurvedAnimation borderRadiusCurve;
+  // late AnimationController _hideBottomBarAnimationController;
+  //
+  // List<bottomCategory> iconList = [
+  //   bottomCategory(name: "Home", id: "1", icon: 'assets/images/bottom1.png'),
+  //   bottomCategory(name: "FRM", id: "2", icon: 'assets/images/bottom2.png'),
+  //   bottomCategory(name: "Crop", id: "3", icon: 'assets/images/bottom3.png'),
+  //   bottomCategory(name: "Profile", id: "4", icon: 'assets/images/bottom4.png'),
+  // ];
 
   bool firstCardVisible = false;
   bool secondCardVisible = false;
@@ -50,41 +50,41 @@ class _MyFaqPageState extends State<MyFaqPage>
   void initState() {
     super.initState();
 
-    _fabAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 500),
-      vsync: this,
-    );
-    _borderRadiusAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 500),
-      vsync: this,
-    );
-    fabCurve = CurvedAnimation(
-      parent: _fabAnimationController,
-      curve: const Interval(0.5, 1.0, curve: Curves.fastOutSlowIn),
-    );
-    borderRadiusCurve = CurvedAnimation(
-      parent: _borderRadiusAnimationController,
-      curve: const Interval(0.5, 1.0, curve: Curves.fastOutSlowIn),
-    );
-
-    fabAnimation = Tween<double>(begin: 1, end: 1).animate(fabCurve);
-    borderRadiusAnimation = Tween<double>(begin: 1, end: 1).animate(
-      borderRadiusCurve,
-    );
-
-    _hideBottomBarAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 200),
-      vsync: this,
-    );
-
-    Future.delayed(
-      const Duration(seconds: 1),
-          () => _fabAnimationController.forward(),
-    );
-    Future.delayed(
-      const Duration(seconds: 1),
-          () => _borderRadiusAnimationController.forward(),
-    );
+    // _fabAnimationController = AnimationController(
+    //   duration: const Duration(milliseconds: 500),
+    //   vsync: this,
+    // );
+    // _borderRadiusAnimationController = AnimationController(
+    //   duration: const Duration(milliseconds: 500),
+    //   vsync: this,
+    // );
+    // fabCurve = CurvedAnimation(
+    //   parent: _fabAnimationController,
+    //   curve: const Interval(0.5, 1.0, curve: Curves.fastOutSlowIn),
+    // );
+    // borderRadiusCurve = CurvedAnimation(
+    //   parent: _borderRadiusAnimationController,
+    //   curve: const Interval(0.5, 1.0, curve: Curves.fastOutSlowIn),
+    // );
+    //
+    // fabAnimation = Tween<double>(begin: 1, end: 1).animate(fabCurve);
+    // borderRadiusAnimation = Tween<double>(begin: 1, end: 1).animate(
+    //   borderRadiusCurve,
+    // );
+    //
+    // _hideBottomBarAnimationController = AnimationController(
+    //   duration: const Duration(milliseconds: 200),
+    //   vsync: this,
+    // );
+    //
+    // Future.delayed(
+    //   const Duration(seconds: 1),
+    //       () => _fabAnimationController.forward(),
+    // );
+    // Future.delayed(
+    //   const Duration(seconds: 1),
+    //       () => _borderRadiusAnimationController.forward(),
+    // );
   }
 
   @override
@@ -923,93 +923,93 @@ class _MyFaqPageState extends State<MyFaqPage>
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.white.withAlpha(0),
-        // add this line.
-        elevation: 0,
-        // also important, removes the shadow
-        heroTag: "floatingActionBtn",
-        shape: const RoundedRectangleBorder(
-          // <= Change BeveledRectangleBorder to RoundedRectangularBorder
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(30.0),
-            topRight: Radius.circular(30.0),
-            bottomLeft: Radius.circular(30.0),
-            bottomRight: Radius.circular(30.0),
-          ),
-        ),
-        child: InkWell(
-          highlightColor: Colors.transparent,
-          splashColor: Colors.transparent,
-          onTap: () {
-            setState(() {
-              _onItemTapped(4);
-            });
-          },
-          child: Image.asset(
-            'assets/images/bottomCenter.png',
-            // color: Colors.white,
-          ),
-        ),
-        onPressed: () {
-          _fabAnimationController.reset();
-          _borderRadiusAnimationController.reset();
-          _borderRadiusAnimationController.forward();
-          _fabAnimationController.forward();
-        },
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: AnimatedBottomNavigationBar.builder(
-        height: 70,
-        itemCount: iconList.length,
-        tabBuilder: (int index, bool isActive) {
-          final color = isActive ? Colors.green : Colors.grey;
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(
-                iconList[index].icon ?? "",
-                color: color,
-                width: 25,
-                height: 25,
-              ),
-              const SizedBox(height: 5),
-              Text(
-                iconList[index].name ?? "",
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                    color: Color(0xFF666666),
-                    fontSize: 13,
-                    fontFamily: 'poppins-regular'),
-              ),
-            ],
-          );
-        },
-        // backgroundColor: Colors.white,
-        activeIndex: _bottomNavIndex,
-        // splashColor: Colors.green,
-        notchAndCornersAnimation: borderRadiusAnimation,
-        splashSpeedInMilliseconds: 300,
-        notchSmoothness: NotchSmoothness.defaultEdge,
-        gapLocation: GapLocation.center,
-        leftCornerRadius: 32,
-        rightCornerRadius: 32,
-        notchMargin: 7,
-        onTap: (index) {
-          setState(() {
-            _onItemTapped(index);
-          });
-        },
-        // setState(() => _bottomNavIndex = index),
-        hideAnimationController: _hideBottomBarAnimationController,
-        shadow: const BoxShadow(
-          offset: Offset(0, 1),
-          blurRadius: 2,
-          spreadRadius: 0.2,
-          color: Colors.white,
-        ),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   backgroundColor: Colors.white.withAlpha(0),
+      //   // add this line.
+      //   elevation: 0,
+      //   // also important, removes the shadow
+      //   heroTag: "floatingActionBtn",
+      //   shape: const RoundedRectangleBorder(
+      //     // <= Change BeveledRectangleBorder to RoundedRectangularBorder
+      //     borderRadius: BorderRadius.only(
+      //       topLeft: Radius.circular(30.0),
+      //       topRight: Radius.circular(30.0),
+      //       bottomLeft: Radius.circular(30.0),
+      //       bottomRight: Radius.circular(30.0),
+      //     ),
+      //   ),
+      //   child: InkWell(
+      //     highlightColor: Colors.transparent,
+      //     splashColor: Colors.transparent,
+      //     onTap: () {
+      //       setState(() {
+      //         _onItemTapped(4);
+      //       });
+      //     },
+      //     child: Image.asset(
+      //       'assets/images/bottomCenter.png',
+      //       // color: Colors.white,
+      //     ),
+      //   ),
+      //   onPressed: () {
+      //     _fabAnimationController.reset();
+      //     _borderRadiusAnimationController.reset();
+      //     _borderRadiusAnimationController.forward();
+      //     _fabAnimationController.forward();
+      //   },
+      // ),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      // bottomNavigationBar: AnimatedBottomNavigationBar.builder(
+      //   height: 70,
+      //   itemCount: iconList.length,
+      //   tabBuilder: (int index, bool isActive) {
+      //     final color = isActive ? Colors.green : Colors.grey;
+      //     return Column(
+      //       mainAxisSize: MainAxisSize.min,
+      //       mainAxisAlignment: MainAxisAlignment.center,
+      //       children: [
+      //         Image.asset(
+      //           iconList[index].icon ?? "",
+      //           color: color,
+      //           width: 25,
+      //           height: 25,
+      //         ),
+      //         const SizedBox(height: 5),
+      //         Text(
+      //           iconList[index].name ?? "",
+      //           textAlign: TextAlign.center,
+      //           style: const TextStyle(
+      //               color: Color(0xFF666666),
+      //               fontSize: 13,
+      //               fontFamily: 'poppins-regular'),
+      //         ),
+      //       ],
+      //     );
+      //   },
+      //   // backgroundColor: Colors.white,
+      //   activeIndex: _bottomNavIndex,
+      //   // splashColor: Colors.green,
+      //   notchAndCornersAnimation: borderRadiusAnimation,
+      //   splashSpeedInMilliseconds: 300,
+      //   notchSmoothness: NotchSmoothness.defaultEdge,
+      //   gapLocation: GapLocation.center,
+      //   leftCornerRadius: 32,
+      //   rightCornerRadius: 32,
+      //   notchMargin: 7,
+      //   onTap: (index) {
+      //     setState(() {
+      //       _onItemTapped(index);
+      //     });
+      //   },
+      //   // setState(() => _bottomNavIndex = index),
+      //   hideAnimationController: _hideBottomBarAnimationController,
+      //   shadow: const BoxShadow(
+      //     offset: Offset(0, 1),
+      //     blurRadius: 2,
+      //     spreadRadius: 0.2,
+      //     color: Colors.white,
+      //   ),
+      // ),
     );
   }
 

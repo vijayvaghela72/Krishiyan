@@ -52,7 +52,7 @@ class MyApp extends StatelessWidget {
         Locale('hi'), // Hindi
       ],
       debugShowCheckedModeBanner: false,
-      home: SplashScreen(),
+      home: WelcomePage(),
       routes: const <String, WidgetBuilder>{},
     );
   }

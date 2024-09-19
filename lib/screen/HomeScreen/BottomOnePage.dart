@@ -52,13 +52,13 @@ class _BottomOnePageState extends State<BottomOnePage> with TickerProviderStateM
     Image.asset("assets/images/home_banner.png")
   ];
 
-  late AnimationController _fabAnimationController;
-  late AnimationController _borderRadiusAnimationController;
-  late Animation<double> fabAnimation;
-  late Animation<double> borderRadiusAnimation;
-  late CurvedAnimation fabCurve;
-  late CurvedAnimation borderRadiusCurve;
-  late AnimationController _hideBottomBarAnimationController;
+  // late AnimationController _fabAnimationController;
+  // late AnimationController _borderRadiusAnimationController;
+  // late Animation<double> fabAnimation;
+  // late Animation<double> borderRadiusAnimation;
+  // late CurvedAnimation fabCurve;
+  // late CurvedAnimation borderRadiusCurve;
+  // late AnimationController _hideBottomBarAnimationController;
   var _bottomNavIndex = 0; //default index of a first screen
   int currentIndex = 0;
   int selectedTopData = 0;
@@ -120,41 +120,41 @@ class _BottomOnePageState extends State<BottomOnePage> with TickerProviderStateM
   void initState() {
     super.initState();
 
-    _fabAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 500),
-      vsync: this,
-    );
-    _borderRadiusAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 500),
-      vsync: this,
-    );
-    fabCurve = CurvedAnimation(
-      parent: _fabAnimationController,
-      curve: const Interval(0.5, 1.0, curve: Curves.fastOutSlowIn),
-    );
-    borderRadiusCurve = CurvedAnimation(
-      parent: _borderRadiusAnimationController,
-      curve: const Interval(0.5, 1.0, curve: Curves.fastOutSlowIn),
-    );
-
-    fabAnimation = Tween<double>(begin: 1, end: 1).animate(fabCurve);
-    borderRadiusAnimation = Tween<double>(begin: 1, end: 1).animate(
-      borderRadiusCurve,
-    );
-
-    _hideBottomBarAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 200),
-      vsync: this,
-    );
-
-    Future.delayed(
-      const Duration(seconds: 1),
-          () => _fabAnimationController.forward(),
-    );
-    Future.delayed(
-      const Duration(seconds: 1),
-          () => _borderRadiusAnimationController.forward(),
-    );
+    // _fabAnimationController = AnimationController(
+    //   duration: const Duration(milliseconds: 500),
+    //   vsync: this,
+    // );
+    // _borderRadiusAnimationController = AnimationController(
+    //   duration: const Duration(milliseconds: 500),
+    //   vsync: this,
+    // );
+    // fabCurve = CurvedAnimation(
+    //   parent: _fabAnimationController,
+    //   curve: const Interval(0.5, 1.0, curve: Curves.fastOutSlowIn),
+    // );
+    // borderRadiusCurve = CurvedAnimation(
+    //   parent: _borderRadiusAnimationController,
+    //   curve: const Interval(0.5, 1.0, curve: Curves.fastOutSlowIn),
+    // );
+    //
+    // fabAnimation = Tween<double>(begin: 1, end: 1).animate(fabCurve);
+    // borderRadiusAnimation = Tween<double>(begin: 1, end: 1).animate(
+    //   borderRadiusCurve,
+    // );
+    //
+    // _hideBottomBarAnimationController = AnimationController(
+    //   duration: const Duration(milliseconds: 200),
+    //   vsync: this,
+    // );
+    //
+    // Future.delayed(
+    //   const Duration(seconds: 1),
+    //       () => _fabAnimationController.forward(),
+    // );
+    // Future.delayed(
+    //   const Duration(seconds: 1),
+    //       () => _borderRadiusAnimationController.forward(),
+    // );
 
     futureHomeNewsData = HomeDashboardController.getNewsDetails();
     getPrefValue();
@@ -225,13 +225,13 @@ class _BottomOnePageState extends State<BottomOnePage> with TickerProviderStateM
     }
   }
 
-  @override
-  void dispose() {
-    _fabAnimationController.dispose(); // Dispose the controller
-    _borderRadiusAnimationController.dispose(); // Dispose the controller
-    _hideBottomBarAnimationController.dispose(); // Dispose the controller
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   _fabAnimationController.dispose(); // Dispose the controller
+  //   _borderRadiusAnimationController.dispose(); // Dispose the controller
+  //   _hideBottomBarAnimationController.dispose(); // Dispose the controller
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -1793,153 +1793,153 @@ class _BottomOnePageState extends State<BottomOnePage> with TickerProviderStateM
             ],
           ),
         ),
-        floatingActionButton: widget.aapbarVisibility
-            ? FloatingActionButton(
-          backgroundColor: Colors.white.withAlpha(0),
-          // add this line.
-          elevation: 0,
-          // also important, removes the shadow
-          heroTag: "floatingActionBtn",
-          shape: const RoundedRectangleBorder(
-            // <= Change BeveledRectangleBorder to RoundedRectangularBorder
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(30.0),
-              topRight: Radius.circular(30.0),
-              bottomLeft: Radius.circular(30.0),
-              bottomRight: Radius.circular(30.0),
-            ),
-          ),
-          child: InkWell(
-            highlightColor: Colors.transparent,
-            splashColor: Colors.transparent,
-            onTap: () {
-              setState(() {
-                _onItemTapped(4);
-              });
-            },
-            child: Image.asset(
-              'assets/images/bottomCenter.png',
-              // color: Colors.white,
-            ),
-          ),
-          onPressed: () {
-            _fabAnimationController.reset();
-            _borderRadiusAnimationController.reset();
-            _borderRadiusAnimationController.forward();
-            _fabAnimationController.forward();
-          },
-        )
-            : null,
-        floatingActionButtonLocation: widget.aapbarVisibility
-            ? FloatingActionButtonLocation.centerDocked
-            : null,
-        bottomNavigationBar: widget.aapbarVisibility && typeOfOrganizationData == "Farmer groups"
-            ? AnimatedBottomNavigationBar.builder(
-          height: 70,
-          itemCount: iconList.length,
-          tabBuilder: (int index, bool isActive) {
-            final color = isActive ? Colors.green : Colors.grey;
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(
-                  iconList[index].icon ?? "",
-                  color: color,
-                  width: 25,
-                  height: 25,
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  iconList[index].name ?? "",
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                      color: Color(0xFF666666),
-                      fontSize: 13,
-                      fontFamily: 'poppins-regular'),
-                ),
-              ],
-            );
-          },
-          // backgroundColor: Colors.white,
-          activeIndex: _bottomNavIndex,
-          // splashColor: Colors.green,
-          notchAndCornersAnimation: borderRadiusAnimation,
-          splashSpeedInMilliseconds: 300,
-          notchSmoothness: NotchSmoothness.defaultEdge,
-          gapLocation: GapLocation.center,
-          leftCornerRadius: 32,
-          rightCornerRadius: 32,
-          notchMargin: 7,
-          onTap: (index) {
-            setState(() {
-              _onItemTapped(index);
-            });
-          },
-          // setState(() => _bottomNavIndex = index),
-          hideAnimationController: _hideBottomBarAnimationController,
-          shadow: const BoxShadow(
-            offset: Offset(0, 1),
-            blurRadius: 2,
-            spreadRadius: 0.2,
-            color: Colors.white,
-          ),
-        )
-            : widget.aapbarVisibility && typeOfOrganizationData != "Farmer groups" ?
-        AnimatedBottomNavigationBar.builder(
-          height: 70,
-          itemCount: iconList2.length,
-          tabBuilder: (int index, bool isActive) {
-            final color = isActive
-                ? Colors.green
-                : Colors.grey;
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(
-                  iconList2[index].icon ?? "",
-                  color: color,
-                  width: 25, height: 25,
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  iconList2[index].name ?? "",
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                      color: Color(0xFF666666),
-                      fontSize: 13,
-                      fontFamily: 'poppins-regular'),
-                ),
-              ],
-            );
-          },
-          // backgroundColor: Colors.white,
-          activeIndex: _bottomNavIndex,
-          // splashColor: Colors.green,
-          notchAndCornersAnimation: borderRadiusAnimation,
-          splashSpeedInMilliseconds: 300,
-          notchSmoothness: NotchSmoothness.defaultEdge,
-          gapLocation: GapLocation.center,
-          leftCornerRadius: 32,
-          rightCornerRadius: 32,
-          notchMargin: 7,
-          onTap: (index) {
-            setState(() {
-              print("Type 2 BottomOnePage: $index");
-              typeOfOrganizationData == "Farmer groups" ? _onItemTapped(index) : index == 0 ?_onItemTapped(index)
-                  : _onItemTapped(3);
-            });
-          },
-          hideAnimationController: _hideBottomBarAnimationController,
-          shadow: const BoxShadow(
-            offset: Offset(0, 1),
-            blurRadius: 2,
-            spreadRadius: 0.2,
-            color: Colors.white,
-          ),
-        )
-            : null
+        // floatingActionButton: widget.aapbarVisibility
+        //     ? FloatingActionButton(
+        //   backgroundColor: Colors.white.withAlpha(0),
+        //   // add this line.
+        //   elevation: 0,
+        //   // also important, removes the shadow
+        //   heroTag: "floatingActionBtn",
+        //   shape: const RoundedRectangleBorder(
+        //     // <= Change BeveledRectangleBorder to RoundedRectangularBorder
+        //     borderRadius: BorderRadius.only(
+        //       topLeft: Radius.circular(30.0),
+        //       topRight: Radius.circular(30.0),
+        //       bottomLeft: Radius.circular(30.0),
+        //       bottomRight: Radius.circular(30.0),
+        //     ),
+        //   ),
+        //   child: InkWell(
+        //     highlightColor: Colors.transparent,
+        //     splashColor: Colors.transparent,
+        //     onTap: () {
+        //       setState(() {
+        //         _onItemTapped(4);
+        //       });
+        //     },
+        //     child: Image.asset(
+        //       'assets/images/bottomCenter.png',
+        //       // color: Colors.white,
+        //     ),
+        //   ),
+        //   onPressed: () {
+        //     _fabAnimationController.reset();
+        //     _borderRadiusAnimationController.reset();
+        //     _borderRadiusAnimationController.forward();
+        //     _fabAnimationController.forward();
+        //   },
+        // )
+        //     : null,
+        // floatingActionButtonLocation: widget.aapbarVisibility
+        //     ? FloatingActionButtonLocation.centerDocked
+        //     : null,
+        // bottomNavigationBar: widget.aapbarVisibility && typeOfOrganizationData == "Farmer groups"
+        //     ? AnimatedBottomNavigationBar.builder(
+        //   height: 70,
+        //   itemCount: iconList.length,
+        //   tabBuilder: (int index, bool isActive) {
+        //     final color = isActive ? Colors.green : Colors.grey;
+        //     return Column(
+        //       mainAxisSize: MainAxisSize.min,
+        //       mainAxisAlignment: MainAxisAlignment.center,
+        //       children: [
+        //         Image.asset(
+        //           iconList[index].icon ?? "",
+        //           color: color,
+        //           width: 25,
+        //           height: 25,
+        //         ),
+        //         const SizedBox(height: 5),
+        //         Text(
+        //           iconList[index].name ?? "",
+        //           textAlign: TextAlign.center,
+        //           style: const TextStyle(
+        //               color: Color(0xFF666666),
+        //               fontSize: 13,
+        //               fontFamily: 'poppins-regular'),
+        //         ),
+        //       ],
+        //     );
+        //   },
+        //   // backgroundColor: Colors.white,
+        //   activeIndex: _bottomNavIndex,
+        //   // splashColor: Colors.green,
+        //   notchAndCornersAnimation: borderRadiusAnimation,
+        //   splashSpeedInMilliseconds: 300,
+        //   notchSmoothness: NotchSmoothness.defaultEdge,
+        //   gapLocation: GapLocation.center,
+        //   leftCornerRadius: 32,
+        //   rightCornerRadius: 32,
+        //   notchMargin: 7,
+        //   onTap: (index) {
+        //     setState(() {
+        //       _onItemTapped(index);
+        //     });
+        //   },
+        //   // setState(() => _bottomNavIndex = index),
+        //   hideAnimationController: _hideBottomBarAnimationController,
+        //   shadow: const BoxShadow(
+        //     offset: Offset(0, 1),
+        //     blurRadius: 2,
+        //     spreadRadius: 0.2,
+        //     color: Colors.white,
+        //   ),
+        // )
+        //     : widget.aapbarVisibility && typeOfOrganizationData != "Farmer groups" ?
+        // AnimatedBottomNavigationBar.builder(
+        //   height: 70,
+        //   itemCount: iconList2.length,
+        //   tabBuilder: (int index, bool isActive) {
+        //     final color = isActive
+        //         ? Colors.green
+        //         : Colors.grey;
+        //     return Column(
+        //       mainAxisSize: MainAxisSize.min,
+        //       mainAxisAlignment: MainAxisAlignment.center,
+        //       children: [
+        //         Image.asset(
+        //           iconList2[index].icon ?? "",
+        //           color: color,
+        //           width: 25, height: 25,
+        //         ),
+        //         const SizedBox(height: 5),
+        //         Text(
+        //           iconList2[index].name ?? "",
+        //           textAlign: TextAlign.center,
+        //           style: const TextStyle(
+        //               color: Color(0xFF666666),
+        //               fontSize: 13,
+        //               fontFamily: 'poppins-regular'),
+        //         ),
+        //       ],
+        //     );
+        //   },
+        //   // backgroundColor: Colors.white,
+        //   activeIndex: _bottomNavIndex,
+        //   // splashColor: Colors.green,
+        //   notchAndCornersAnimation: borderRadiusAnimation,
+        //   splashSpeedInMilliseconds: 300,
+        //   notchSmoothness: NotchSmoothness.defaultEdge,
+        //   gapLocation: GapLocation.center,
+        //   leftCornerRadius: 32,
+        //   rightCornerRadius: 32,
+        //   notchMargin: 7,
+        //   onTap: (index) {
+        //     setState(() {
+        //       print("Type 2 BottomOnePage: $index");
+        //       typeOfOrganizationData == "Farmer groups" ? _onItemTapped(index) : index == 0 ?_onItemTapped(index)
+        //           : _onItemTapped(3);
+        //     });
+        //   },
+        //   hideAnimationController: _hideBottomBarAnimationController,
+        //   shadow: const BoxShadow(
+        //     offset: Offset(0, 1),
+        //     blurRadius: 2,
+        //     spreadRadius: 0.2,
+        //     color: Colors.white,
+        //   ),
+        // )
+        //     : null
     );
   }
 

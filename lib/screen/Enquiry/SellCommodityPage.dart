@@ -7,9 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
-import 'package:krishiyan/localization/AppLocalizations.dart';
-import 'package:krishiyan/mvc/model/GetEnquiryByFilterData.dart';
+
 import '../../helper/AlertHelper.dart';
+import '../../localization/AppLocalizations.dart';
 import '../../mvc/controller/cropController.dart';
 import '../../mvc/controller/enquiryDashboardController.dart';
 import '../../mvc/model/CropLibraryData.dart';
@@ -17,17 +17,14 @@ import '../../mvc/model/SelectCropNamesData.dart';
 import '../../utils/AppGlobal.dart';
 import '../../utils/Constants.dart';
 
-class EditBuyCommodityPage extends StatefulWidget {
-
-  EnquiryByFilterData enquiryData;
-
-  EditBuyCommodityPage({super.key, required this.enquiryData,});
+class SellCommodityPage extends StatefulWidget {
+  const SellCommodityPage({super.key});
 
   @override
-  State<EditBuyCommodityPage> createState() => _EditBuyCommodityPageState();
+  State<SellCommodityPage> createState() => _SellCommodityPageState();
 }
 
-class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
+class _SellCommodityPageState extends State<SellCommodityPage> {
 
   TextEditingController varietyController = TextEditingController();
   TextEditingController quantityController = TextEditingController();
@@ -35,14 +32,13 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
   TextEditingController localGradeController = TextEditingController();
   TextEditingController sizeController = TextEditingController();
   TextEditingController countController = TextEditingController();
-  TextEditingController purchasePriceController = TextEditingController();
-  TextEditingController dateOfDeliveryController = TextEditingController();
+  TextEditingController supplyPriceController = TextEditingController();
+  TextEditingController dateOfShipmentController = TextEditingController();
   TextEditingController originCommodityController = TextEditingController();
-  TextEditingController deliveryLocationController = TextEditingController();
   TextEditingController commentsController = TextEditingController();
 
-  String? _selectedCrop;
-  SelectCropNamesData? _cropData;
+  // final List<String> commodityItems = ['Maize', 'Coriander', 'Soya'];
+  // String? selectedCommodityItemValue;
 
   final List<String> quantityItems = ['Ton', 'Kg', 'Qtl'];
   String? selectedQuantityItemValue;
@@ -53,28 +49,17 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
   final List<String> purchaseItems = ['Kg', 'Qtl', 'Ton'];
   String? selectedPurchaseItemValue;
 
+  late Future<List<CropLibraryData>?> futureCropData;
+  String? _selectedCrop;
+  SelectCropNamesData? _cropData;
+  String? contactNumber;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    futureCropData = CropController.fetchCrop();
     _fetchCropData();
-    getBuyCommoditiyValue();
-  }
-
-  void getBuyCommoditiyValue() {
-    _selectedCrop = widget.enquiryData.commodity ?? "";
-    varietyController.text = widget.enquiryData.variety ?? "";
-    quantityController.text = widget.enquiryData.quantity.toString() ?? "";
-    moistureController.text = widget.enquiryData.moisture.toString() ?? "";
-    localGradeController.text = widget.enquiryData.localGradeSpecification.toString() ?? "";
-    sizeController.text = widget.enquiryData.size.toString() ?? "";
-    countController.text = widget.enquiryData.count.toString() ?? "";
-    purchasePriceController.text = widget.enquiryData.price.toString() ?? "";
-
-    dateOfDeliveryController.text = AppGlobal.convertToCustomDateFormat(widget.enquiryData.date.toString());
-    originCommodityController.text = widget.enquiryData.origin.toString() ?? "";
-    deliveryLocationController.text = widget.enquiryData.location.toString() ?? "";
-    commentsController.text = widget.enquiryData.comments.toString() ?? "";
   }
 
   Future<void> _fetchCropData() async {
@@ -90,7 +75,7 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
         throw Exception('Failed to load crops');
       }
     } catch (e) {
-      print('Buy Commodity : Error fetching crop data: $e');
+      print('My SellCommodity : Error fetching crop data: $e');
     }
   }
 
@@ -115,7 +100,7 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
                 child: Image.asset('assets/images/back.png')),
             const SizedBox(width: 10,),
             Text(
-              buildTranslate("buyCommodity")!,
+              buildTranslate("sellCommodity")!,
               style: const TextStyle(color: Colors.white, fontFamily: 'poppins-semibold', fontSize: 20),
             ),
           ],
@@ -128,7 +113,7 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
           padding: const EdgeInsets.only(left: 25.0, right: 25.0),
           child: ElevatedButton(
             onPressed: () {
-              _buyEditCommodityApiCall();
+              _sellCommodityApiCall();
             },
             style: ElevatedButton.styleFrom(
               foregroundColor: Colors.white,
@@ -139,7 +124,8 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
                 borderRadius: BorderRadius.circular(12), // <-- Radius
               ),
             ),
-            child: Text(buildTranslate("buyCommodity")!, style: const TextStyle(fontSize: 15, fontFamily: 'poppins-medium'),),
+            child: Text(buildTranslate("sellCommodity")!,
+              style: const TextStyle(fontSize: 15, fontFamily: 'poppins-medium'),),
           ),
         ),
       ),
@@ -154,8 +140,8 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
             // Select Commodity
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-              child: Text(buildTranslate("selectCommodity")!, style: const TextStyle(fontSize: 15,
-                  color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
+              child: Text(buildTranslate("selectCommodity")!, style: const
+              TextStyle(fontSize: 15, color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
             ),
             const SizedBox(height: 10,),
             Padding(
@@ -230,12 +216,11 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: TextFormField(
-                // initialValue: widget.enquiryData.variety,
                 keyboardType: TextInputType.text,
                 controller: varietyController,
                 decoration: InputDecoration(
                   contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-                  hintText: buildTranslate('Enter name of variety'),
+                  hintText: buildTranslate('enterNameOfVariety')!,
                   hintStyle: const TextStyle(color: Colors.grey),
                   fillColor: Colors.white,
                   filled: true,
@@ -243,15 +228,13 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
                 ),
               ),
             ),
-
             const SizedBox(height: 20,),
 
             // Quantity
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: Text(buildTranslate("quantity")!,
-                style: const TextStyle(fontSize: 15,
-                    color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
+                style: const TextStyle(fontSize: 15, color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
             ),
             const SizedBox(height: 10,),
             Padding(
@@ -262,9 +245,8 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
                   Expanded(
                     flex: 2,
                     child: TextFormField(
-                      controller: quantityController,
-                      // initialValue: widget.enquiryData.quantity.toString(),
                       keyboardType: TextInputType.text,
+                      controller: quantityController,
                       decoration: InputDecoration(
                         contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                         hintText: buildTranslate('addYourQuantity'),
@@ -287,6 +269,10 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(4),
                               borderSide: BorderSide.none
+                            // borderSide: const BorderSide(
+                            //   color: Colors.grey,
+                            //   width: 1.0,
+                            // ),
                           ),
                           // Add more decoration..
                         ),
@@ -337,22 +323,20 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
                 ],
               ),
             ),
-
             const SizedBox(height: 20,),
 
-            // Moisture
+            // Moisture%
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-              child: Text(buildTranslate("moisture")!, style: const
-              TextStyle(fontSize: 15, color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
+              child: Text(buildTranslate("moisture")!, style: const TextStyle(fontSize: 15,
+                  color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
             ),
             const SizedBox(height: 10,),
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: TextFormField(
-                controller: moistureController,
-                // initialValue: widget.enquiryData.moisture,
                 keyboardType: TextInputType.text,
+                controller: moistureController,
                 decoration: const InputDecoration(
                   contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                   hintText: '__%',
@@ -363,22 +347,20 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
                 ),
               ),
             ),
-
             const SizedBox(height: 20,),
 
             // Any Local Grade Specification
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-              child: Text(buildTranslate("anyLocalGradeSpecification")!, style: const
-              TextStyle(fontSize: 15, color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
+              child: Text(buildTranslate("anyLocalGradeSpecification")!, style: const TextStyle(fontSize: 15,
+                  color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
             ),
             const SizedBox(height: 10,),
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: TextFormField(
-                controller: localGradeController,
-                // initialValue: widget.enquiryData.localGradeSpecification,
                 keyboardType: TextInputType.text,
+                controller: localGradeController,
                 decoration: InputDecoration(
                   contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                   hintText: buildTranslate("anyLocalGradeSpecification")!,
@@ -389,14 +371,13 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
                 ),
               ),
             ),
-
             const SizedBox(height: 20,),
 
             // size
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-              child: Text(buildTranslate("size")!, style: const
-              TextStyle(fontSize: 15, color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
+              child: Text(buildTranslate("size")!, style: const TextStyle(fontSize: 15,
+                  color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
             ),
             const SizedBox(height: 10,),
             Padding(
@@ -407,9 +388,8 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
                   Expanded(
                     flex: 2,
                     child: TextFormField(
-                      controller: sizeController,
-                      // initialValue: widget.enquiryData.size,
                       keyboardType: TextInputType.text,
+                      controller: sizeController,
                       decoration: const InputDecoration(
                         contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                         hintText: '',
@@ -486,7 +466,6 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
                 ],
               ),
             ),
-
             const SizedBox(height: 20,),
 
             // Count
@@ -499,9 +478,8 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: TextFormField(
-                controller: countController,
-                // initialValue: widget.enquiryData.count,
                 keyboardType: TextInputType.text,
+                controller: countController,
                 decoration: InputDecoration(
                   contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                   hintText: buildTranslate('enterCount')!,
@@ -512,13 +490,12 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
                 ),
               ),
             ),
-
             const SizedBox(height: 20,),
 
-            // purchase
+            // supply
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-              child: Text(buildTranslate("purchasePriceInRs")!, style: const TextStyle(fontSize: 15,
+              child: Text(buildTranslate("supplyPriceInRs")!, style: const TextStyle(fontSize: 15,
                   color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
             ),
             const SizedBox(height: 10,),
@@ -530,9 +507,8 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
                   Expanded(
                     flex: 2,
                     child: TextFormField(
-                      controller: purchasePriceController,
-                      // initialValue: widget.enquiryData.price.toString(),
                       keyboardType: TextInputType.text,
+                      controller: supplyPriceController,
                       decoration: const InputDecoration(
                         contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                         hintText: '',
@@ -555,7 +531,12 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(4),
                               borderSide: BorderSide.none
+                            // borderSide: const BorderSide(
+                            //   color: Colors.grey,
+                            //   width: 1.0,
+                            // ),
                           ),
+                          // Add more decoration..
                         ),
                         hint: const Text(
                           'Kg',
@@ -609,7 +590,7 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
             // date of delivery
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-              child: Text(buildTranslate("dateOfExpectedDelivery")!, style: const
+              child: Text(buildTranslate("dateOfExpectedShipmentLoading")!, style: const
               TextStyle(fontSize: 15, color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
             ),
             const SizedBox(height: 10,),
@@ -617,26 +598,24 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: TextFormField(
                 keyboardType: TextInputType.text,
-                controller: dateOfDeliveryController,
-                readOnly: true,
-                // initialValue: widget.enquiryData.date,
+                controller: dateOfShipmentController,
                 decoration: InputDecoration(
                   contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                   hintText: 'DD/MM/YYYY',
-                  hintStyle: const TextStyle(color: Colors.grey),
-                  fillColor: Colors.white,
-                  filled: true,
                   suffixIcon: IconButton(
                     icon: const Icon(Icons.calendar_today),
                     onPressed: () {
                       _selectDate(context);
                     }, // Open date picker on icon press
                   ),
+                  hintStyle: const TextStyle(color: Colors.grey),
+                  fillColor: Colors.white,
+                  filled: true,
                   border: InputBorder.none,
                 ),
+                readOnly: true,
               ),
             ),
-
             const SizedBox(height: 20,),
 
             // origin of commodity
@@ -649,9 +628,8 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: TextFormField(
+                keyboardType: TextInputType.text,
                 controller: originCommodityController,
-                // initialValue: widget.enquiryData.origin,
-                keyboardType: TextInputType.text,
                 decoration: const InputDecoration(
                   contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                   hintText: '',
@@ -663,31 +641,6 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
               ),
             ),
 
-            const SizedBox(height: 20,),
-
-            // delivery location
-            Padding(
-              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-              child: Text(buildTranslate("deliveryLocation")!, style: const
-              TextStyle(fontSize: 15, color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
-            ),
-            const SizedBox(height: 10,),
-            Padding(
-              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-              child: TextFormField(
-                controller: deliveryLocationController,
-                // initialValue: widget.enquiryData.location,
-                keyboardType: TextInputType.text,
-                decoration: const InputDecoration(
-                  contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-                  hintText: '',
-                  hintStyle: TextStyle(color: Colors.grey),
-                  fillColor: Colors.white,
-                  filled: true,
-                  border: InputBorder.none,
-                ),
-              ),
-            ),
             const SizedBox(height: 20,),
 
             Container(
@@ -706,7 +659,7 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
                     borderRadius: BorderRadius.circular(22), // <-- Radius
                   ),
                 ),
-                child: Text(buildTranslate('uploadImage')!,
+                child:Text(buildTranslate('uploadImage')!,
                   style: const TextStyle(fontSize: 15, fontFamily: 'poppins-medium'),),
               ),
             ),
@@ -722,9 +675,8 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: TextFormField(
-                controller: commentsController,
-                // initialValue: widget.enquiryData.comments,
                 keyboardType: TextInputType.text,
+                controller: commentsController,
                 maxLines: null,
                 minLines: 5,
                 decoration: const InputDecoration(
@@ -757,66 +709,49 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
     if (pickedDate != null) {
       setState(() {
         // Format the selected date and display it in the TextFormField
-        dateOfDeliveryController.text = DateFormat('dd-MM-yyyy').format(pickedDate);
+        dateOfShipmentController.text = DateFormat('dd-MM-yyyy').format(pickedDate);
       });
     }
   }
 
-  _buyEditCommodityApiCall() async {
-    if (varietyController.text.trim().isNotEmpty
-        && quantityController.text.trim().isNotEmpty
-        && moistureController.text.trim().isNotEmpty
-        && localGradeController.text.trim().isNotEmpty
-        && sizeController.text.trim().isNotEmpty
-        && countController.text.trim().isNotEmpty
-        && purchasePriceController.text.trim().isNotEmpty
-        && dateOfDeliveryController.text.trim().isNotEmpty
-        && originCommodityController.text.trim().isNotEmpty
-        && deliveryLocationController.text.trim().isNotEmpty
-        && commentsController.text.trim().isNotEmpty
-    ) {
+  _sellCommodityApiCall() async {
+    if (quantityController.text.trim().isNotEmpty
+        && _selectedCrop.toString().isNotEmpty){
 
-      String contactNumber = (await AppGlobal.getStringPreference('contactNumber'))!;
-      var headers = {
-        'Content-Type': 'application/json'
-      };
+      contactNumber = (await AppGlobal.getStringPreference('contactNumber'))!;
 
-      var data = json.encode({
-        "operation": widget.enquiryData.operation,
+      var body = json.encode({
+        "uid": contactNumber,
+        "operation": "Sell",
         "commodity": _selectedCrop,
-        "variety": varietyController.text.toString(),
-        "quantity": quantityController.text.toString(),
-        "moisture": moistureController.text.toString(),
-        "localGradeSpecification": localGradeController.text.toString(),
-        "size": sizeController.text.toString(),
-        "count": countController.text.toString(),
-        "price": purchasePriceController.text.toString(),
-        "date": dateOfDeliveryController.text.toString(),
-        "origin": originCommodityController.text.toString(),
-        "location": deliveryLocationController.text.toString(),
+        "variety": varietyController.text.toString() ?? "",
+        "quantity": quantityController.text.toString() ?? "",
+        "moisture": moistureController.text.toString() ?? "",
+        "localGradeSpecification": localGradeController.text.toString() ?? "",
+        "size": sizeController.text.toString() ?? "",
+        "count": countController.text.toString() ?? "",
+        "price": supplyPriceController.text.toString() ?? "",
+        "date": "${AppGlobal.convertToIsoFormat(dateOfShipmentController.text)}Z",
+        "origin": originCommodityController.text.toString() ??"",
+        "location": "",
         "photoVideoLink": "",
-        "comments": commentsController.text.toString(),
+        "comments": commentsController.text.toString() ?? "",
         "verified": true
       });
 
-      var dio = Dio();
-      var response = await dio.request(
-        "https://d1dv04h56lh39n.cloudfront.net/api/commodities/"
-            "$contactNumber/${widget.enquiryData.sId}",
-        options: Options(
-          method: 'PUT',
-          headers: headers,
-        ),
-        data: data,
-      );
+      var buyCommodity = EnquiryDashboardController.buySellCommodityData(body, context: context);
 
-      if (response.statusCode == 200) {
-        print("Enquiry details updated : " + json.encode(response.data));
+      if (buyCommodity.toString().isNotEmpty) {
+        Future.delayed(const Duration(seconds: 1), () {
+          print('Commodity created successfully');
 
-        showAlertDialog(context);
-      } else {
-        AlertHelper.showToast(response.statusMessage.toString(), context);
-        print(response.statusMessage);
+          // AlertHelper.showToast("Commodity created successfully",context);
+
+          showAlertDialog(context);
+        });
+      }
+      else {
+        print("Api error");
       }
     }
     else{
