@@ -751,18 +751,19 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
         "uid": contactNumber,
         "operation": "Buy",
         "commodity": _selectedCrop,
-        "variety": varietyController.text.toString() ?? "",
-        "quantity": quantityController.text.toString(),
-        "moisture": moistureController.text.toString() ?? "",
+        "variety": varietyController.text.toString().isNotEmpty ? varietyController.text.toString() : "",
+        "quantity": quantityController.text.toString().isNotEmpty ? quantityController.text.toString() : 0,
+        "moisture": moistureController.text.toString().isNotEmpty ? moistureController.text.toString() : 0,
         "localGradeSpecification": localGradeController.text.toString() ?? "",
         "size": sizeController.text.toString() ?? "",
-        "count": countController.text.toString() ?? "",
-        "price": purchasePriceController.text.toString() ?? "",
-        "date": "${AppGlobal.convertToIsoFormat(dateOfDeliveryController.text)}Z",
-        "origin": originCommodityController.text.toString() ?? "",
-        "location": deliveryLocationController.text.toString() ?? "",
+        "count": countController.text.toString().isNotEmpty ? countController.toString() : 0,
+        "price": purchasePriceController.text.toString().isNotEmpty ? purchasePriceController.text.toString() :0 ,
+        "date": dateOfDeliveryController.text.isNotEmpty ?
+                "${AppGlobal.convertToIsoFormat(dateOfDeliveryController.text)}Z" : "",
+        "origin": originCommodityController.text.toString().isNotEmpty ? originCommodityController.text : "",
+        "location": deliveryLocationController.text.toString().isNotEmpty ? deliveryLocationController.text.toString() : "",
         "photoVideoLink": "",
-        "comments": commentsController.text.toString() ?? "",
+        "comments": commentsController.text.toString().isNotEmpty ? commentsController.text.toString() : "",
         "verified": true
       });
 

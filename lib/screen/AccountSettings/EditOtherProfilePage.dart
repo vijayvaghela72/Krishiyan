@@ -3,10 +3,10 @@ import 'package:dio/dio.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:krishiyan/localization/AppLocalizations.dart';
-import 'package:krishiyan/mvc/model/GetFRMProfileData.dart';
 import 'package:krishiyan/screen/AccountSettings/ProfilePage.dart';
+import 'package:otp_text_field/otp_field.dart';
+import 'package:otp_text_field/style.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../helper/AlertHelper.dart';
 import '../../mvc/controller/accountSettingController.dart';
@@ -32,6 +32,7 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
   TextFormField? primaryContactPersonDesignationController;
   TextFormField? officeContactNumberController;
   TextFormField? emailIdController;
+  late OtpFieldController otpController = OtpFieldController();
 
   TextEditingController editNameOfEntityController = TextEditingController();
   TextEditingController editDateOfIncorporationController = TextEditingController();
@@ -727,15 +728,26 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                               : Container(),
                           Visibility(
                             visible: otpVisibleContactNumber,
-                            child: OtpTextField(
-                              numberOfFields: 4,
-                              borderColor: const Color(0xFF3dc33b),
-                              showFieldAsBox: true,
-                              filled: true,
-                              fieldWidth: 55,
-                              onCodeChanged: (String code) {},
-                              onSubmit:
-                                  (String verificationCode) {}, // end onSubmit
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+                              child: OTPTextField(
+                                  controller: otpController,
+                                  length: 4,
+                                  // borderColor: const Color(0xFF3dc33b),
+                                  // showFieldAsBox: true,
+                                  // filled: true,
+                                  width: MediaQuery.of(context).size.width,
+                                  textFieldAlignment: MainAxisAlignment.spaceAround,
+                                  fieldWidth: 55,
+                                  fieldStyle: FieldStyle.box,
+                                  outlineBorderRadius: 10,
+                                  style: TextStyle(fontSize: 17),
+                                  onChanged: (code) {
+                                    print("Changed: " + code);
+                                  },
+                                  onCompleted: (code) {
+                                    print("Completed: " + code);
+                                  }),
                             ),
                           ),
                           const SizedBox(
@@ -848,15 +860,26 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                               : Container(),
                           Visibility(
                             visible: otpVisibleEmailID,
-                            child: OtpTextField(
-                              numberOfFields: 4,
-                              borderColor: const Color(0xFF3dc33b),
-                              showFieldAsBox: true,
-                              filled: true,
-                              fieldWidth: 55,
-                              onCodeChanged: (String code) {},
-                              onSubmit:
-                                  (String verificationCode) {}, // end onSubmit
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+                              child: OTPTextField(
+                                  controller: otpController,
+                                  length: 4,
+                                  // borderColor: const Color(0xFF3dc33b),
+                                  // showFieldAsBox: true,
+                                  // filled: true,
+                                  width: MediaQuery.of(context).size.width,
+                                  textFieldAlignment: MainAxisAlignment.spaceAround,
+                                  fieldWidth: 55,
+                                  fieldStyle: FieldStyle.box,
+                                  outlineBorderRadius: 10,
+                                  style: TextStyle(fontSize: 17),
+                                  onChanged: (code) {
+                                    print("Changed: " + code);
+                                  },
+                                  onCompleted: (code) {
+                                    print("Completed: " + code);
+                                  }),
                             ),
                           ),
 
@@ -1448,16 +1471,24 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                           : Container(),
                       Visibility(
                         visible: otpVisibleContactNumber,
-                        child: OtpTextField(
-                          numberOfFields: 4,
-                          borderColor: const Color(0xFF3dc33b),
-                          showFieldAsBox: true,
-                          filled: true,
-                          fieldWidth: 55,
-                          onCodeChanged: (String code) {},
-                          onSubmit:
-                              (String verificationCode) {}, // end onSubmit
-                        ),
+                        child:OTPTextField(
+                            controller: otpController,
+                            length: 4,
+                            // borderColor: const Color(0xFF3dc33b),
+                            // showFieldAsBox: true,
+                            // filled: true,
+                            width: MediaQuery.of(context).size.width,
+                            textFieldAlignment: MainAxisAlignment.spaceAround,
+                            fieldWidth: 55,
+                            fieldStyle: FieldStyle.box,
+                            outlineBorderRadius: 10,
+                            style: TextStyle(fontSize: 17),
+                            onChanged: (code) {
+                              print("Changed: " + code);
+                            },
+                            onCompleted: (code) {
+                              print("Completed: " + code);
+                            }),
                       ),
                       const SizedBox(
                         height: 20,
@@ -1566,15 +1597,26 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                           : Container(),
                       Visibility(
                         visible: otpVisibleEmailID,
-                        child: OtpTextField(
-                          numberOfFields: 4,
-                          borderColor: const Color(0xFF3dc33b),
-                          showFieldAsBox: true,
-                          filled: true,
-                          fieldWidth: 55,
-                          onCodeChanged: (String code) {},
-                          onSubmit:
-                              (String verificationCode) {}, // end onSubmit
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+                          child: OTPTextField(
+                              controller: otpController,
+                              length: 4,
+                              // borderColor: const Color(0xFF3dc33b),
+                              // showFieldAsBox: true,
+                              // filled: true,
+                              width: MediaQuery.of(context).size.width,
+                              textFieldAlignment: MainAxisAlignment.spaceAround,
+                              fieldWidth: 55,
+                              fieldStyle: FieldStyle.box,
+                              outlineBorderRadius: 10,
+                              style: TextStyle(fontSize: 17),
+                              onChanged: (code) {
+                                print("Changed: " + code);
+                              },
+                              onCompleted: (code) {
+                                print("Completed: " + code);
+                              }),
                         ),
                       ),
 

@@ -7,6 +7,7 @@ import 'GetAllEnquiryData.dart';
 import 'GetBankDetails.dart';
 import 'GetFRMProfileData.dart';
 import 'GetOtherDetails.dart';
+import 'GetOtpDetails.dart';
 import 'GetProfileData.dart';
 import 'InsightData.dart';
 import 'LoginData.dart';
@@ -27,10 +28,12 @@ class APIResponse {
   InsightDetails? insightDetails;
   BankData? bankData;
   Address? addressData;
+  GetOtpData? getOtpData;
 
   APIResponse({this.data, this.message, this.success, this.token, this.buyCommodityData, this.farmerData,
     this.otherData, this.bankData, this.addressData,
-    this.frmRegistrationData, this.postOfficeData, this.profileData, this.frmProfileData, this.insightDetails});
+    this.frmRegistrationData, this.postOfficeData, this.profileData, this.frmProfileData,
+    this.insightDetails, this.getOtpData});
 
   factory APIResponse.fromJson(Map<String, dynamic> json) {
     return APIResponse(
@@ -45,6 +48,7 @@ class APIResponse {
       profileData: json['data'] != null ? GetProfileDetails.fromJson(json['data']) : null,
       frmProfileData: json['data'] != null ? GetFRMProfileDetails.fromJson(json['data']) : null,
       insightDetails: json['data'] != null ? InsightDetails.fromJson(json['data']) : null,
+      getOtpData: json['data'] != null ? GetOtpData.fromJson(json['data']) : null,
       message: json['message'] ?? "",
       success: json['success'] ?? false,
       token: json['token'] ?? "",
@@ -76,6 +80,9 @@ class APIResponse {
     }
     if (this.addressData != null) {
       data['data'] = this.addressData!.toJson();
+    }
+    if (this.getOtpData != null) {
+      data['data'] = this.getOtpData!.toJson();
     }
     if (this.postOfficeData != null) {
       data['data'] = this.postOfficeData!.toJson();

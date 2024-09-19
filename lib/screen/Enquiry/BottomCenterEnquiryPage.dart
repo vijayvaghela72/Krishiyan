@@ -6,7 +6,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:krishiyan/screen/HomeScreen/HomePage.dart';
 import 'package:page_transition/page_transition.dart';
 

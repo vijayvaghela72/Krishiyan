@@ -1,15 +1,15 @@
 import 'dart:convert';
 
-import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:dio/dio.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:krishiyan/mvc/model/FarmerDashboardData.dart';
 import 'package:krishiyan/mvc/model/InsightData.dart';
 import 'package:krishiyan/screen/AccountSettings/FarmerEditProfilePage.dart';
+import 'package:otp_text_field/otp_field.dart';
+import 'package:otp_text_field/style.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../helper/AlertHelper.dart';
@@ -118,6 +118,7 @@ class _BottomTwoPageState extends State<BottomTwoPage>
   TextEditingController geoLocationController = TextEditingController();
   TextEditingController areaInArcesController = TextEditingController();
   TextEditingController geoLinkAreaOnMapController = TextEditingController();
+  late OtpFieldController otpController = OtpFieldController();
 
   String? _selectedCrop;
 
@@ -1165,18 +1166,27 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                                 )
                               : Container(),
                           otpVisible
-                              ? OtpTextField(
-                                  numberOfFields: 4,
-                                  borderColor: const Color(0xFF3dc33b),
-                                  //set to true to show as box or false to show as dash
-                                  showFieldAsBox: true,
-                                  filled: true,
-                                  fieldWidth: 60,
-                                  //runs when a code is typed in
-                                  onCodeChanged: (String code) {},
-                                  onSubmit: (String
-                                      verificationCode) {}, // end onSubmit
-                                )
+                              ? Padding(
+                            padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+                                child: OTPTextField(
+                                controller: otpController,
+                                length: 4,
+                                // borderColor: const Color(0xFF3dc33b),
+                                // showFieldAsBox: true,
+                                // filled: true,
+                                width: MediaQuery.of(context).size.width,
+                                textFieldAlignment: MainAxisAlignment.spaceAround,
+                                fieldWidth: 55,
+                                fieldStyle: FieldStyle.box,
+                                outlineBorderRadius: 10,
+                                style: TextStyle(fontSize: 17),
+                                onChanged: (code) {
+                                  print("Changed: " + code);
+                                },
+                                onCompleted: (code) {
+                                  print("Completed: " + code);
+                                }),
+                              )
                               : Container(),
 
                           const SizedBox(

@@ -3,10 +3,11 @@ import 'package:dio/dio.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:krishiyan/localization/AppLocalizations.dart';
 import 'package:krishiyan/mvc/model/GetFRMProfileData.dart';
 import 'package:krishiyan/screen/AccountSettings/ProfilePage.dart';
+import 'package:otp_text_field/otp_field.dart';
+import 'package:otp_text_field/style.dart';
 import '../../helper/AlertHelper.dart';
 import '../../mvc/controller/accountSettingController.dart';
 import '../../mvc/model/GetProfileData.dart';
@@ -66,6 +67,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   String? yourDesignation;
   DateTime? selectedDate;
   final _formKey = GlobalKey<FormState>();
+  late OtpFieldController otpController = OtpFieldController();
 
   @override
   void initState() {
@@ -640,15 +642,26 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               : Container(),
                           Visibility(
                             visible: otpVisible,
-                            child: OtpTextField(
-                              numberOfFields: 4,
-                              borderColor: const Color(0xFF3dc33b),
-                              showFieldAsBox: true,
-                              filled: true,
-                              fieldWidth: 55,
-                              onCodeChanged: (String code) {},
-                              onSubmit:
-                                  (String verificationCode) {}, // end onSubmit
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+                              child: OTPTextField(
+                                  controller: otpController,
+                                  length: 4,
+                                  // borderColor: const Color(0xFF3dc33b),
+                                  // showFieldAsBox: true,
+                                  // filled: true,
+                                  width: MediaQuery.of(context).size.width,
+                                  textFieldAlignment: MainAxisAlignment.spaceAround,
+                                  fieldWidth: 55,
+                                  fieldStyle: FieldStyle.box,
+                                  outlineBorderRadius: 10,
+                                  style: TextStyle(fontSize: 17),
+                                  onChanged: (code) {
+                                    print("Changed: " + code);
+                                  },
+                                  onCompleted: (code) {
+                                    print("Completed: " + code);
+                                  }),
                             ),
                           ),
                           const SizedBox(
@@ -1233,15 +1246,26 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           : Container(),
                       Visibility(
                         visible: otpVisible,
-                        child: OtpTextField(
-                          numberOfFields: 4,
-                          borderColor: const Color(0xFF3dc33b),
-                          showFieldAsBox: true,
-                          filled: true,
-                          fieldWidth: 55,
-                          onCodeChanged: (String code) {},
-                          onSubmit:
-                              (String verificationCode) {}, // end onSubmit
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+                          child: OTPTextField(
+                              controller: otpController,
+                              length: 4,
+                              // borderColor: const Color(0xFF3dc33b),
+                              // showFieldAsBox: true,
+                              // filled: true,
+                              width: MediaQuery.of(context).size.width,
+                              textFieldAlignment: MainAxisAlignment.spaceAround,
+                              fieldWidth: 55,
+                              fieldStyle: FieldStyle.box,
+                              outlineBorderRadius: 10,
+                              style: TextStyle(fontSize: 17),
+                              onChanged: (code) {
+                                print("Changed: " + code);
+                              },
+                              onCompleted: (code) {
+                                print("Completed: " + code);
+                              }),
                         ),
                       ),
 

@@ -1,10 +1,11 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:krishiyan/localization/AppLocalizations.dart';
 import 'package:krishiyan/screen/Registration/MyRegistrationPage.dart';
 import 'package:intl/intl.dart';
+import 'package:otp_text_field/otp_field.dart';
+import 'package:otp_text_field/style.dart';
 import '../../helper/AlertHelper.dart';
 import 'FarmerGroupRegistrationPageTwo.dart';
 
@@ -33,6 +34,7 @@ class _FarmerGroupRegistrationPageOneState extends State<FarmerGroupRegistration
     'Co-operatives'
   ];
   String selectedFPOItemValue = "";
+  late OtpFieldController otpController = OtpFieldController();
 
   @override
   Widget build(BuildContext context) {
@@ -319,26 +321,26 @@ class _FarmerGroupRegistrationPageOneState extends State<FarmerGroupRegistration
             otpVisible ? const SizedBox(height: 15,) : Container(),
             Visibility(
               visible: otpVisible,
-              child: OtpTextField(
-                numberOfFields: 4,
-                borderColor: const Color(0xFF3dc33b),
-                //set to true to show as box or false to show as dash
-                showFieldAsBox: true,
-                filled: true,
-                fieldWidth: 55,
-                onCodeChanged: (String code) {
-                },
-                onSubmit: (String verificationCode){
-                  // showDialog(
-                  //     context: context,
-                  //     builder: (context){
-                  //       return AlertDialog(
-                  //         title: Text("Verification Code"),
-                  //         content: Text('Code entered is $verificationCode'),
-                  //       );
-                  //     }
-                  // );
-                }, // end onSubmit
+              child: Padding(
+                padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+                child: OTPTextField(
+                    controller: otpController,
+                    length: 4,
+                    // borderColor: const Color(0xFF3dc33b),
+                    // showFieldAsBox: true,
+                    // filled: true,
+                    width: MediaQuery.of(context).size.width,
+                    textFieldAlignment: MainAxisAlignment.spaceAround,
+                    fieldWidth: 55,
+                    fieldStyle: FieldStyle.box,
+                    outlineBorderRadius: 10,
+                    style: TextStyle(fontSize: 17),
+                    onChanged: (code) {
+                      print("Changed: " + code);
+                    },
+                    onCompleted: (code) {
+                      print("Completed: " + code);
+                    }),
               ),
             ),
 

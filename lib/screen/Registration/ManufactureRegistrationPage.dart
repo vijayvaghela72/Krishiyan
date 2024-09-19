@@ -3,14 +3,15 @@ import 'dart:convert';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:krishiyan/screen/Registration/MyRegistrationPage.dart';
+import 'package:otp_text_field/otp_field.dart';
+import 'package:otp_text_field/style.dart';
 
 import '../../helper/AlertHelper.dart';
 import '../../localization/AppLocalizations.dart';
 import '../../mvc/controller/farmerDashboardController.dart';
-import '../../mvc/controller/loginController.dart';
-import '../../mvc/model/LoginData.dart';
+import '../../mvc/controller/otpController.dart';
+import '../../mvc/model/GetOtpDetails.dart';
 import '../Login/LoginPage.dart';
 
 class ManufactureRegistrationPage extends StatefulWidget {
@@ -30,7 +31,6 @@ class _ManufactureRegistrationPageState extends State<ManufactureRegistrationPag
     'Dal Mills',
     'Processors',
   ];
-  bool otpVisible = false;
   List<String> selectedItems = [];
 
   TextEditingController nameOfEntityController = TextEditingController();
@@ -40,6 +40,8 @@ class _ManufactureRegistrationPageState extends State<ManufactureRegistrationPag
 
   bool _passwordVisible = false;
   bool _confirmPasswordVisible = false;
+  String otpData = "";
+  late OtpFieldController otpController = OtpFieldController();
 
   @override
   Widget build(BuildContext context) {
@@ -252,9 +254,12 @@ class _ManufactureRegistrationPageState extends State<ManufactureRegistrationPag
                       ),
                       child: Text(buildTranslate("getOtp")!),
                       onPressed: () {
-                        setState(() {
-                          otpVisible = true;
-                        });
+                        if (mobileNumberController.text.isNotEmpty) {
+                          getOtpApiCall();
+                        } else {
+                          AlertHelper.showToast(
+                              "Please enter details", context);
+                        }
                       },
                     ),
                   ),
@@ -264,44 +269,38 @@ class _ManufactureRegistrationPageState extends State<ManufactureRegistrationPag
               ),
             ),
 
-            otpVisible ? const SizedBox(height: 15,) : Container(),
+            otpData.isNotEmpty ? const SizedBox(height: 15,) : Container(),
 
             // verify otp
             Visibility(
-              visible: otpVisible,
+              visible: otpData.isNotEmpty,
               child: Padding(
                 padding: const EdgeInsets.only(left: 25.0, right: 25.0),
                 child: Text(buildTranslate("verifyOtp")!, style: const TextStyle(fontSize: 15,
                     color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
               ),
             ),
-            otpVisible ? const SizedBox(height: 15,) : Container(),
+            otpData.isNotEmpty ? const SizedBox(height: 15,) : Container(),
 
             Visibility(
-              visible: otpVisible,
-              child: OtpTextField(
-                numberOfFields: 4,
-                borderColor: const Color(0xFF3dc33b),
-                //set to true to show as box or false to show as dash
-                showFieldAsBox: true,
-                filled: true,
-                fieldWidth: 55,
-                //runs when a code is typed in
-                onCodeChanged: (String code) {
-                  //handle validation or checks here
-                },
-                //runs when every textfield is filled
-                onSubmit: (String verificationCode){
-                  // showDialog(
-                  //     context: context,
-                  //     builder: (context){
-                  //       return AlertDialog(
-                  //         title: Text("Verification Code"),
-                  //         content: Text('Code entered is $verificationCode'),
-                  //       );
-                  //     }
-                  // );
-                }, // end onSubmit
+              visible: otpData.isNotEmpty,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+                child: OTPTextField(
+                    controller: otpController,
+                    length: 4,
+                    width: MediaQuery.of(context).size.width,
+                    textFieldAlignment: MainAxisAlignment.spaceAround,
+                    fieldWidth: 55,
+                    fieldStyle: FieldStyle.box,
+                    outlineBorderRadius: 10,
+                    style: TextStyle(fontSize: 17),
+                    onChanged: (code) {
+                      print("Changed: " + code);
+                    },
+                    onCompleted: (code) {
+                      print("Completed: " + code);
+                    }),
               ),
             ),
             const SizedBox(height: 15,),
@@ -539,6 +538,23 @@ class _ManufactureRegistrationPageState extends State<ManufactureRegistrationPag
         ),
       ),
     );
+  }
+
+  Future<void> getOtpApiCall() async {
+    var body =
+    json.encode({"phoneNumber": mobileNumberController.text.toString()});
+
+    GetOtpData? userOtp = await OtpController.getOtp(body, context: context);
+    print("otpData : ${userOtp!.otp}");
+    otpData = userOtp.otp ?? "";
+    setState(() {
+      otpData = otpData;
+    });
+    List<String> stringList = otpData.split('');
+    // Setting OTP in the OtpTextField after widget build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      otpController.set(stringList);
+    });
   }
 
   _registrationApiCall(String name, String type, String number, String password,) async {

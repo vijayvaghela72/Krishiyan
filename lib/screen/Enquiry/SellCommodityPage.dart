@@ -724,18 +724,20 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
         "uid": contactNumber,
         "operation": "Sell",
         "commodity": _selectedCrop,
-        "variety": varietyController.text.toString() ?? "",
-        "quantity": quantityController.text.toString() ?? "",
-        "moisture": moistureController.text.toString() ?? "",
-        "localGradeSpecification": localGradeController.text.toString() ?? "",
-        "size": sizeController.text.toString() ?? "",
-        "count": countController.text.toString() ?? "",
-        "price": supplyPriceController.text.toString() ?? "",
-        "date": "${AppGlobal.convertToIsoFormat(dateOfShipmentController.text)}Z",
-        "origin": originCommodityController.text.toString() ??"",
+        "variety": varietyController.text.toString().isNotEmpty ? varietyController.text.toString() : "",
+        "quantity": quantityController.text.toString().isNotEmpty ? quantityController.text.toString() : 0,
+        "moisture": moistureController.text.toString().isNotEmpty ? moistureController.text.toString() : 0,
+        "localGradeSpecification": localGradeController.text.toString().isNotEmpty ?
+                localGradeController.text.toString() : "",
+        "size": sizeController.text.toString().isNotEmpty ? sizeController.text.toString() : "",
+        "count": countController.text.toString().isNotEmpty ? countController.text.toString() : 0,
+        "price": supplyPriceController.text.toString().isNotEmpty ? supplyPriceController.text.toString() : 0,
+        "date": dateOfShipmentController.text.isNotEmpty ?
+                "${AppGlobal.convertToIsoFormat(dateOfShipmentController.text)}Z" : "",
+        "origin": originCommodityController.text.toString().isNotEmpty ? originCommodityController.text : "",
         "location": "",
         "photoVideoLink": "",
-        "comments": commentsController.text.toString() ?? "",
+        "comments": commentsController.text.toString().isNotEmpty ? commentsController.text : "",
         "verified": true
       });
 

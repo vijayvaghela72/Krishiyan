@@ -67,5 +67,4 @@ const String FARMER_GROUP_REGISTRATION = "${baseUrl}api/sign-in";
 
 const String CROP_CULTIVATION_REGISTR = "${baseUrl}api/appFarmer/crop/register";
 
-// const String GET_FARMER_BY_VILLAGE_FILTER = "${baseUrl}api/appFarmer/data/1";
-// const String SEARCH_NUMBER_INSIGHT = "${baseUrl}api/appFarmer/farmer/search?";
+const String GET_OTP = "https://krishiyanback.vercel.app/api/whatsapp/send-otp/";
