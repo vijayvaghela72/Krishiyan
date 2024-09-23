@@ -10,7 +10,6 @@ import '../../mvc/controller/farmerDashboardController.dart';
 import '../Login/LoginPage.dart';
 import 'package:krishiyan/mvc/model/GetOtpDetails.dart';
 import '../../mvc/controller/otpController.dart';
-
 import 'package:dio/dio.dart';
  // Ensure you have Flutter imports for AlertHelper and setState usage
 import 'dart:convert'; // For json.encode
@@ -597,7 +596,7 @@ Future<bool> verifyOtp(String number, String enteredOtp, BuildContext context) a
   } catch (e) {
     // Handle errors
     print("Error during OTP verification: $e");
-    AlertHelper.showToast("Error occurred. Please try again.", context);
+    AlertHelper.showToast("OTP verification failed!", context);
     return false; // Return false for errors
   }
 }

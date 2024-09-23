@@ -683,7 +683,7 @@ bool isOtpVerified = await verifyOtp(mobileNumberController.text, enteredOtp, co
   } catch (e) {
     // Handle errors
     print("Error during OTP verification: $e");
-    AlertHelper.showToast("Error occurred. Please try again.", context);
+    AlertHelper.showToast("OTP verification failed!", context);
     return false; // Return false for errors
   }
 }

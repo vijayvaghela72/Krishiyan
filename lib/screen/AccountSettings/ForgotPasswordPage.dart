@@ -13,6 +13,9 @@ import 'package:otp_text_field/style.dart';
 import '../../helper/AlertHelper.dart';
 import '../../mvc/controller/otpController.dart';
 import '../../utils/AppColor.dart';
+import 'package:dio/dio.dart';
+ // Ensure you have Flutter imports for AlertHelper and setState usage
+import 'dart:convert'; // For json.encode
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -348,15 +351,26 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   }
 
   Future<void> getOtpApiCall() async {
-    var body =
-    json.encode({"phoneNumber": mobileNumberController.text.toString()});
+String phoneNumber = mobileNumberController.text.toString();
 
+  // Check if the phone number exists
+  bool exists = await checkPhoneNumber(phoneNumber);
+
+  if (exists) {
+    // Phone number exists, proceed to get OTP
+    var body = json.encode({"phoneNumber": phoneNumber});
+    
     GetOtpData? userOtp = await OtpController.getOtp(body, context: context);
-    print("otpData : ${userOtp!.otp}");
+    print("otpData: ${userOtp!.otp}");
     otpData = userOtp.otp ?? "";
+    
     setState(() {
       otpData = otpData;
     });
+  } else {
+    // Phone number does not exist, show a prompt
+    AlertHelper.showToast("Phone number does not exist. Please check and try again.", context);
+  }
     // List<String> stringList = otpData.split('');
     // // Setting OTP in the OtpTextField after widget build
     // WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -414,9 +428,42 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   } catch (e) {
     // Handle errors
     print("Error during OTP verification: $e");
-    AlertHelper.showToast("Error occurred. Please try again.", context);
+    AlertHelper.showToast("OTP verification failed!", context);
   }
 }
+
+  Future<bool> checkPhoneNumber(String number) async {
+  final dio = Dio(); // Create an instance of Dio
+
+  // Define the URL for your API endpoint, appending the number directly
+  final url = "https://krishiyanback.vercel.app/api/check-contact/$number";
+
+  try {
+    // Make the GET request to check the phone number
+    final response = await dio.get(url, options: Options(
+      headers: {'Content-Type': 'application/json'},
+    ));
+
+    // Check the response from the server
+    if (response.statusCode == 200) {
+      // Phone number exists
+      print("Phone number exists!");
+      AlertHelper.showToast("Phone number is valid.", context);
+      return true; // Return true if the number exists
+    } else {
+      // Phone number does not exist
+      print("Phone number does not exist!");
+      AlertHelper.showToast("Phone number does not exist. Please check and try again.", context);
+      return false; // Return false if the number does not exist
+    }
+  } catch (e) {
+    // Handle errors
+    print("Error during phone number check: $e");
+    AlertHelper.showToast("Error occurred. Please try again.", context);
+    return false; // Return false in case of an error
+  }
+}
+
 
   Future<void> resetPassword(String number, String password) async {
     final dio = Dio(); // Create an instance of Dio
