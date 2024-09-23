@@ -14,6 +14,12 @@ import '../../mvc/model/GetProfileData.dart';
 import '../../utils/AppGlobal.dart';
 import '../../utils/Constants.dart';
 import 'package:intl/intl.dart'; // Required for date formatting
+import 'package:krishiyan/mvc/model/GetOtpDetails.dart';
+import '../../mvc/controller/otpController.dart';
+
+import 'package:dio/dio.dart';
+ // Ensure you have Flutter imports for AlertHelper and setState usage
+import 'dart:convert'; // For json.encode
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
@@ -68,6 +74,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
   DateTime? selectedDate;
   final _formKey = GlobalKey<FormState>();
   late OtpFieldController otpController = OtpFieldController();
+       String enteredOtp = '';
+   String otpData = "";
 
   @override
   void initState() {
@@ -604,6 +612,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                       setState(() {
                                         otpVisible = true;
                                       });
+                                      
                                     },
                                   ),
                                 ),

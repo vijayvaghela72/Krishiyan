@@ -30,6 +30,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   String? _passwordErrorText;
   late OtpFieldController otpController = OtpFieldController();
   String otpData = "";
+  String enteredOtp = '';
 
   @override
   Widget build(BuildContext context) {
@@ -192,7 +193,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                       print("Changed: " + code);
                     },
                     onCompleted: (code) {
-                      print("Completed: " + code);
+                       enteredOtp = code;
+                      print("Completed: " + enteredOtp);
                     }),
               ),
             ),
@@ -320,7 +322,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: ElevatedButton(
                 onPressed: () {
-                  verifyOtp(mobileNumberController.text, otpData);
+                  verifyOtp(mobileNumberController.text);
+                  print(otpData);
                 },
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
@@ -354,11 +357,11 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     setState(() {
       otpData = otpData;
     });
-    List<String> stringList = otpData.split('');
-    // Setting OTP in the OtpTextField after widget build
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      otpController.set(stringList);
-    });
+    // List<String> stringList = otpData.split('');
+    // // Setting OTP in the OtpTextField after widget build
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   otpController.set(stringList);
+    // });
   }
 
   void _submit() {
@@ -372,46 +375,48 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     }
   }
 
-  Future<void> verifyOtp(String number, String otp) async {
-    final dio = Dio(); // Create an instance of Dio
+  Future<void> verifyOtp(String number) async {
+  final dio = Dio(); // Create an instance of Dio
 
-    // Define the URL for your API endpoint
-    final url = "https://krishiyanback.vercel.app/api/whatsapp/check-otp/";
+  // Define the URL for your API endpoint
+  final url = "https://krishiyanback.vercel.app/api/whatsapp/check-otp/";
 
-    // Create the payload data
-    final data = {"phoneNumber": number, "otp": otp};
+  // Create the payload data
+  final data = {
+    "phoneNumber": number,
+    "otp": enteredOtp // Use the entered OTP from the onCompleted callback
+  };
 
-    try {
-      // Make the POST request
-      final response = await dio.request(
-        url,
-        data: data,
-        options: Options(
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-        ),
-      );
+  try {
+    // Make the POST request to the server to verify the OTP
+    final response = await dio.request(
+      url,
+      data: data,
+      options: Options(
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+      ),
+    );
 
-      // Check the response
-      if (response.statusCode == 200) {
-        AlertHelper.showToast("Otp verify successfully", "");
-        print('Otp verify successfully');
-        setState(() {
-          passwordFieldVisible = true;
-        });
-      } else {
-        AlertHelper.showToast("The provided phone number and OTP combination does not exist.", "");
-        print('Failed to verify otp');
-        print('Response code: ${response.statusCode}');
-        print('Response body: ${response.data}');
-        setState(() {
-          passwordFieldVisible = false;
-        });
-      }
-    } catch (e) {
-      print('Error: $e'); // Print error if something goes wrong
+    // Check the response from the server
+    if (response.statusCode == 200) {
+      // Successfully verified OTP
+      print("OTP verified successfully!");
+        AlertHelper.showToast("OTP verified successfully", "");
+      setState(() {
+        passwordFieldVisible = true; // Make the password field visible
+      });
+    } else {
+      // Handle OTP verification failure
+      print("OTP verification failed!");
+      AlertHelper.showToast("Invalid OTP. Please try again.", context);
     }
+  } catch (e) {
+    // Handle errors
+    print("Error during OTP verification: $e");
+    AlertHelper.showToast("Error occurred. Please try again.", context);
   }
+}
 
   Future<void> resetPassword(String number, String password) async {
     final dio = Dio(); // Create an instance of Dio

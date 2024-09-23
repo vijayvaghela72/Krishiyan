@@ -14,6 +14,12 @@ import '../../mvc/model/GetProfileData.dart';
 import '../../utils/AppGlobal.dart';
 import '../../utils/Constants.dart';
 import 'package:intl/intl.dart'; // Required for date formatting
+import 'package:krishiyan/mvc/model/GetOtpDetails.dart';
+import '../../mvc/controller/otpController.dart';
+
+import 'package:dio/dio.dart';
+ // Ensure you have Flutter imports for AlertHelper and setState usage
+import 'dart:convert'; // For json.encode
 
 class EditOtherProfilePage extends StatefulWidget {
   const EditOtherProfilePage({super.key});
@@ -50,6 +56,7 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
 
   bool otpVisibleContactNumber = false;
   bool otpVisibleEmailID = false;
+  
 
   Future<GetProfileDetails?>? futureProfileDetails;
 

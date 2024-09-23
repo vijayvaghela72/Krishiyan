@@ -8,6 +8,12 @@ import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/style.dart';
 import '../../helper/AlertHelper.dart';
 import 'FarmerGroupRegistrationPageTwo.dart';
+import 'package:krishiyan/mvc/model/GetOtpDetails.dart';
+import '../../mvc/controller/otpController.dart';
+
+import 'package:dio/dio.dart';
+ // Ensure you have Flutter imports for AlertHelper and setState usage
+import 'dart:convert'; // For json.encode
 
 class FarmerGroupRegistrationPageOne extends StatefulWidget {
   const FarmerGroupRegistrationPageOne({super.key});
@@ -23,6 +29,8 @@ class _FarmerGroupRegistrationPageOneState extends State<FarmerGroupRegistration
   TextEditingController organizationMailIDController = TextEditingController();
   TextEditingController contactNumberController = TextEditingController();
   TextEditingController nameOfPromoterController = TextEditingController();
+   String enteredOtp = '';
+   String otpData = "";
 
   bool otpVisible = false;
 
@@ -297,6 +305,12 @@ class _FarmerGroupRegistrationPageOneState extends State<FarmerGroupRegistration
                         setState(() {
                           otpVisible = true;
                         });
+                        if (contactNumberController.text.isNotEmpty) {
+                          getOtpApiCall();
+                        } else {
+                          AlertHelper.showToast(
+                              "Please enter details", context);
+                        }
                       },
                     ),
                   ),
@@ -339,7 +353,8 @@ class _FarmerGroupRegistrationPageOneState extends State<FarmerGroupRegistration
                       print("Changed: " + code);
                     },
                     onCompleted: (code) {
-                      print("Completed: " + code);
+                       enteredOtp = code;
+                      print("Completed: " + enteredOtp);
                     }),
               ),
             ),
@@ -350,26 +365,38 @@ class _FarmerGroupRegistrationPageOneState extends State<FarmerGroupRegistration
               width: MediaQuery.of(context).size.width,
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: ElevatedButton(
-                onPressed: () {
-                  if(nameOfOrganizationController.text.trim().isNotEmpty &&
-                      selectedFPOItemValue.trim().isNotEmpty
-                      && contactNumberController.text.trim().isNotEmpty) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) =>
-                          FarmerGroupRegistrationPageTwo(
-                            name: nameOfOrganizationController.text,
-                            type: selectedFPOItemValue,
-                            date: dateOfOrganizationController.text,
-                            email: organizationMailIDController.text,
-                            contactNumber: contactNumberController.text,
-                          )),
-                    );
-                  }
-                  else{
-                    AlertHelper.showToast("Please enter details.",context);
-                  }
-                },
+                onPressed: () async {
+      // Check if the input fields are filled
+      if (nameOfOrganizationController.text.trim().isNotEmpty &&
+          selectedFPOItemValue.trim().isNotEmpty &&
+          contactNumberController.text.isNotEmpty) {
+        
+        // Call verifyOtp and wait for the result
+        bool isOtpVerified = await verifyOtp(contactNumberController.text, enteredOtp, context);
+        
+        if (isOtpVerified) {
+          // If OTP is verified, navigate to the next page
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => FarmerGroupRegistrationPageTwo(
+                name: nameOfOrganizationController.text,
+                type: selectedFPOItemValue,
+                date: dateOfOrganizationController.text,
+                email: organizationMailIDController.text,
+                contactNumber: contactNumberController.text,
+              ),
+            ),
+          );
+        } else {
+          // Show error if OTP is not verified
+          AlertHelper.showToast("OTP verification failed. Please try again.", context);
+        }
+      } else {
+        // Show error if required fields are not filled
+        AlertHelper.showToast("Please enter all details.", context);
+      }
+    },
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.all(12),
@@ -470,4 +497,68 @@ class _FarmerGroupRegistrationPageOneState extends State<FarmerGroupRegistration
     }
   }
 
+Future<bool> verifyOtp(String number, String enteredOtp, BuildContext context) async {
+  final dio = Dio(); // Create an instance of Dio
+
+  // Define the URL for your API endpoint
+  final url = "https://krishiyanback.vercel.app/api/whatsapp/check-otp/";
+
+  // Create the payload data
+  final data = json.encode({
+    "phoneNumber": number,
+    "otp": enteredOtp, // Use the entered OTP from the input
+  });
+
+  try {
+    // Make the POST request to verify the OTP
+    final response = await dio.post(
+      url,
+      data: data,
+      options: Options(
+        headers: {'Content-Type': 'application/json'},
+      ),
+    );
+
+    // Check the response from the server
+    if (response.statusCode == 200) {
+      // Successfully verified OTP
+      print("OTP verified successfully!");
+      AlertHelper.showToast("OTP verified successfully", context);
+      return true; // Return true for successful verification
+    } else {
+      // Handle OTP verification failure
+      print("OTP verification failed!");
+      AlertHelper.showToast("Invalid OTP. Please try again.", context);
+      return false; // Return false for failure
+    }
+  } catch (e) {
+    // Handle errors
+    print("Error during OTP verification: $e");
+    AlertHelper.showToast("Error occurred. Please try again.", context);
+    return false; // Return false for errors
+  }
+}
+
+Future<void> getOtpApiCall() async {
+  final body = json.encode({"phoneNumber": contactNumberController.text.toString()});
+
+  try {
+    // Get OTP data from the API
+    GetOtpData? userOtp = await OtpController.getOtp(body, context: context);
+    
+    if (userOtp != null) {
+      print("otpData : ${userOtp.otp}");
+      otpData = userOtp.otp ?? "";
+      
+      // You can add any additional handling here if needed
+    } else {
+      print("Failed to get OTP data.");
+      AlertHelper.showToast("Failed to retrieve OTP. Please try again.", context);
+    }
+  } catch (e) {
+    print("Error during OTP request: $e");
+    AlertHelper.showToast("Error occurred. Please try again.", context);
+  }
+}
+  
 }

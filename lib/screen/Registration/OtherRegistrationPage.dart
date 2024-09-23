@@ -8,6 +8,12 @@ import '../../helper/AlertHelper.dart';
 import '../../localization/AppLocalizations.dart';
 import '../../mvc/controller/farmerDashboardController.dart';
 import '../Login/LoginPage.dart';
+import 'package:krishiyan/mvc/model/GetOtpDetails.dart';
+import '../../mvc/controller/otpController.dart';
+
+import 'package:dio/dio.dart';
+ // Ensure you have Flutter imports for AlertHelper and setState usage
+import 'dart:convert'; // For json.encode
 
 class OtherRegistrationPage extends StatefulWidget {
   const OtherRegistrationPage({super.key});
@@ -28,7 +34,8 @@ class _OtherRegistrationPageState extends State<OtherRegistrationPage> {
   TextEditingController mobileNumberController = TextEditingController();
   TextEditingController userPasswordController = TextEditingController();
   TextEditingController userConfirmPasswordController = TextEditingController();
-
+     String enteredOtp = '';
+   String otpData = "";
   bool _passwordVisible = false;
   bool _confirmPasswordVisible = false;
   late OtpFieldController otpController = OtpFieldController();
@@ -178,6 +185,12 @@ class _OtherRegistrationPageState extends State<OtherRegistrationPage> {
                         setState(() {
                           otpVisible = true;
                         });
+                        if (mobileNumberController.text.isNotEmpty) {
+                          getOtpApiCall();
+                        } else {
+                          AlertHelper.showToast(
+                              "Please enter details", context);
+                        }
                       },
                     ),
                   ),
@@ -219,7 +232,8 @@ class _OtherRegistrationPageState extends State<OtherRegistrationPage> {
                       print("Changed: " + code);
                     },
                     onCompleted: (code) {
-                      print("Completed: " + code);
+                      enteredOtp = code;
+                      print("Completed: " + enteredOtp);
                     }),
               ),
             ),
@@ -363,16 +377,24 @@ class _OtherRegistrationPageState extends State<OtherRegistrationPage> {
               width: MediaQuery.of(context).size.width,
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: ElevatedButton(
-                onPressed: () {
+                onPressed: () async{
                   // showAlertDialog(context);
                   if(nameOfEntityController.text.isNotEmpty
                       && typeOfEntityController.text.isNotEmpty
                       && mobileNumberController.text.isNotEmpty
                       && userPasswordController.text.isNotEmpty){
 
+                        bool isOtpVerified = await verifyOtp(mobileNumberController.text, enteredOtp, context);
+        
+                       if (isOtpVerified) {
                     _registrationApiCall(nameOfEntityController.text,
                       typeOfEntityController.text, mobileNumberController.text, userPasswordController.text.toString(),
                     );
+                       }
+                       else {
+          // Show error if OTP is not verified
+          AlertHelper.showToast("OTP verification failed. Please try again.", context);
+        }
                   }
                   else{
                     AlertHelper.showToast("Please enter details.",context);
@@ -538,5 +560,70 @@ class _OtherRegistrationPageState extends State<OtherRegistrationPage> {
       },
     );
   }
+Future<bool> verifyOtp(String number, String enteredOtp, BuildContext context) async {
+  final dio = Dio(); // Create an instance of Dio
+
+  // Define the URL for your API endpoint
+  final url = "https://krishiyanback.vercel.app/api/whatsapp/check-otp/";
+
+  // Create the payload data
+  final data = json.encode({
+    "phoneNumber": number,
+    "otp": enteredOtp, // Use the entered OTP from the input
+  });
+
+  try {
+    // Make the POST request to verify the OTP
+    final response = await dio.post(
+      url,
+      data: data,
+      options: Options(
+        headers: {'Content-Type': 'application/json'},
+      ),
+    );
+
+    // Check the response from the server
+    if (response.statusCode == 200) {
+      // Successfully verified OTP
+      print("OTP verified successfully!");
+      AlertHelper.showToast("OTP verified successfully", context);
+      return true; // Return true for successful verification
+    } else {
+      // Handle OTP verification failure
+      print("OTP verification failed!");
+      AlertHelper.showToast("Invalid OTP. Please try again.", context);
+      return false; // Return false for failure
+    }
+  } catch (e) {
+    // Handle errors
+    print("Error during OTP verification: $e");
+    AlertHelper.showToast("Error occurred. Please try again.", context);
+    return false; // Return false for errors
+  }
+}
+
+  
+Future<void> getOtpApiCall() async {
+  final body = json.encode({"phoneNumber": mobileNumberController.text.toString()});
+
+  try {
+    // Get OTP data from the API
+    GetOtpData? userOtp = await OtpController.getOtp(body, context: context);
+    
+    if (userOtp != null) {
+      print("otpData : ${userOtp.otp}");
+      otpData = userOtp.otp ?? "";
+      
+      // You can add any additional handling here if needed
+    } else {
+      print("Failed to get OTP data.");
+      AlertHelper.showToast("Failed to retrieve OTP. Please try again.", context);
+    }
+  } catch (e) {
+    print("Error during OTP request: $e");
+    AlertHelper.showToast("Error occurred. Please try again.", context);
+  }
+}
+ 
 
 }
