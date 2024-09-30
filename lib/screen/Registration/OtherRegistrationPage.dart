@@ -603,6 +603,12 @@ Future<bool> verifyOtp(String number, String enteredOtp, BuildContext context) a
 
   
 Future<void> getOtpApiCall() async {
+  String phoneNumber = mobileNumberController.text.toString();
+
+  // Check if the phone number exists
+  bool exists = await checkPhoneNumber(phoneNumber);
+
+   if(!exists){
   final body = json.encode({"phoneNumber": mobileNumberController.text.toString()});
 
   try {
@@ -621,8 +627,50 @@ Future<void> getOtpApiCall() async {
   } catch (e) {
     print("Error during OTP request: $e");
     AlertHelper.showToast("Error occurred. Please try again.", context);
+  }}else{
+    
+    AlertHelper.showToast("Phone number exists. Please check and try again.", context);
+        // Navigate to the login page
+    Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const LoginPage()),
+                          );
+
   }
 }
+
+  Future<bool> checkPhoneNumber(String number) async {
+  final dio = Dio(); // Create an instance of Dio
+
+  // Define the URL for your API endpoint, appending the number directly
+  final url = "https://krishiyanback.vercel.app/api/check-contact/$number";
+
+  try {
+    // Make the GET request to check the phone number
+    final response = await dio.get(url, options: Options(
+      headers: {'Content-Type': 'application/json'},
+    ));
+
+    // Check the response from the server
+    if (response.statusCode == 200) {
+      // Phone number exists
+      print("Phone number exists!");
+      // AlertHelper.showToast("Phone number is valid.", context);
+      return true; // Return true if the number exists
+    } else {
+      // Phone number does not exist
+      print("Phone number does not exist!");
+      AlertHelper.showToast("Phone number does not exist. Please check and try again.", context);
+      return false; // Return false if the number does not exist
+    }
+  } catch (e) {
+    // Handle errors
+    print("Error during phone number check: $e");
+    AlertHelper.showToast("Error occurred. Please try again.", context);
+    return false; // Return false in case of an error
+  }
+}
+
  
 
 }

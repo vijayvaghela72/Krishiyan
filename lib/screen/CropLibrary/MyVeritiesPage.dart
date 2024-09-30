@@ -17,8 +17,9 @@ import '../Language/SelectLanguagePage.dart';
 
 class MyVeritiesPage extends StatefulWidget {
   bool aapbarVisibility;
+  String? selectedcrop;
 
-  MyVeritiesPage({super.key, required this.aapbarVisibility});
+  MyVeritiesPage({super.key, required this.aapbarVisibility, required this.selectedcrop});
 
   @override
   State<MyVeritiesPage> createState() => _MyVeritiesPageState();

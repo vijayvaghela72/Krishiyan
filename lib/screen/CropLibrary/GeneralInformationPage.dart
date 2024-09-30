@@ -16,8 +16,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 class GeneralInformationPage extends StatefulWidget {
   bool aapbarVisibility;
   Future<List<CropLibraryData>?> cropData;
+  String? selectedcrop;
 
-  GeneralInformationPage({super.key, required this.aapbarVisibility, required this.cropData});
+
+  GeneralInformationPage({super.key, required this.aapbarVisibility, required this.cropData, required this.selectedcrop});
 
   @override
   State<GeneralInformationPage> createState() => _GeneralInformationPageState();
@@ -226,96 +228,107 @@ class _GeneralInformationPageState extends State<GeneralInformationPage>
               height: 10,
             ),
             FutureBuilder<List<CropLibraryData>?>(
-              future: widget.cropData,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10.0, right: 10.0),
-                      child: Container(
-                        margin: const EdgeInsets.all(15),
-                        child: Table(
-                          border: TableBorder.all(),
-                          children: [
-                            //1st
-                            const TableRow(
-                                decoration: BoxDecoration(color: Color(0xFF73C187)),
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.all(8.0),
-                                    child: Center(
-                                      child: Text('Parameter',
-                                          softWrap: true,
-                                          style: TextStyle(
-                                              fontSize: 14.0,
-                                              color: Colors.white,
-                                              fontFamily: "poppins-semibold")),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.all(8.0),
-                                    child: Center(
-                                      child: Text('Specifications',
-                                          softWrap: true,
-                                          style: TextStyle(
-                                              fontSize: 14.0,
-                                              color: Colors.white,
-                                              fontFamily: "poppins-semibold")),
-                                    ),
-                                  ),
-                                ]),
+  future: widget.cropData,
+  builder: (context, snapshot) {
+    if (snapshot.hasData) {
+      // Filter the data based on selected crop (localName)
+      List<CropLibraryData>? filteredData = snapshot.data?.where((data) {
+        return data.localName == widget.selectedcrop; // Filter by selected crop
+      }).toList();
 
-                            //2nd
-                            TableRow(children: [
-                              const Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text('Kharif(Sowing Mouth)',
-                                    softWrap: true,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        fontSize: 11.0,
-                                        color: Colors.black,
-                                        fontFamily: "poppins-semibold")),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                    snapshot.data![0].generalInformation!.kharif ?? "",
-                                    softWrap: true,
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(
-                                        fontSize: 11.0,
-                                        color: Colors.black,
-                                        fontFamily: "poppins-regular")),
-                              ),
-                            ]),
+      // Check if filteredData has any results
+      if (filteredData == null || filteredData.isEmpty) {
+        return const Text('No data available for the selected crop.');
+      }
 
-                            // 3rd
-                            TableRow(children: [
-                              const Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text('Rabi(Sowing Mouth)',
-                                    softWrap: true,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        fontSize: 11.0,
-                                        color: Colors.black,
-                                        fontFamily: "poppins-semibold")),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                    snapshot.data![0].generalInformation!.rabi ?? "",
-                                    softWrap: true,
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(
-                                        fontSize: 11.0,
-                                        color: Colors.black,
-                                        fontFamily: "poppins-regular")),
-                              ),
-                            ]),
+      // Continue with building the table with filtered data
+      return Padding(
+        padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+        child: Container(
+          margin: const EdgeInsets.all(15),
+          child: Table(
+            border: TableBorder.all(),
+            children: [
+              // Table Header
+              const TableRow(
+                decoration: BoxDecoration(color: Color(0xFF73C187)),
+                children: [
+                  Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Center(
+                      child: Text('Parameter',
+                        softWrap: true,
+                        style: TextStyle(
+                          fontSize: 14.0,
+                          color: Colors.white,
+                          fontFamily: "poppins-semibold")),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Center(
+                      child: Text('Specifications',
+                        softWrap: true,
+                        style: TextStyle(
+                          fontSize: 14.0,
+                          color: Colors.white,
+                          fontFamily: "poppins-semibold")),
+                    ),
+                  ),
+                ],
+              ),
+              
+              // Table Rows for filtered crop data
+              TableRow(children: [
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text('Kharif(Sowing Month)',
+                    softWrap: true,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 11.0,
+                      color: Colors.black,
+                      fontFamily: "poppins-semibold")),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    filteredData[0].generalInformation!.kharif ?? "",
+                    softWrap: true,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 11.0,
+                      color: Colors.black,
+                      fontFamily: "poppins-regular")),
+                ),
+              ]),
 
-                            // 4th
+              // Repeat for other parameters like Rabi, Zaid, etc.
+              TableRow(children: [
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text('Rabi(Sowing Month)',
+                    softWrap: true,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 11.0,
+                      color: Colors.black,
+                      fontFamily: "poppins-semibold")),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    filteredData[0].generalInformation!.rabi ?? "",
+                    softWrap: true,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 11.0,
+                      color: Colors.black,
+                      fontFamily: "poppins-regular")),
+                ),
+              ]),
+
+              // 4th
                             TableRow(children: [
                               const Padding(
                                 padding: EdgeInsets.all(8.0),
@@ -330,7 +343,7 @@ class _GeneralInformationPageState extends State<GeneralInformationPage>
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
-                                    snapshot.data![0].generalInformation!.zaid ?? "",
+                                    filteredData[0].generalInformation!.zaid ?? "",
                                     softWrap: true,
                                     textAlign: TextAlign.center,
                                     style: const TextStyle(
@@ -340,7 +353,7 @@ class _GeneralInformationPageState extends State<GeneralInformationPage>
                               ),
                             ]),
 
-                            // 5th
+                             // 5th
                             TableRow(children: [
                               const Padding(
                                 padding: EdgeInsets.all(8.0),
@@ -354,7 +367,7 @@ class _GeneralInformationPageState extends State<GeneralInformationPage>
                               ),
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: Text( snapshot.data![0].generalInformation!.optimumTemperature ?? "",
+                                child: Text( filteredData[0].generalInformation!.optimumTemperature ?? "",
                                     softWrap: true,
                                     textAlign: TextAlign.center,
                                     style: const TextStyle(
@@ -378,7 +391,7 @@ class _GeneralInformationPageState extends State<GeneralInformationPage>
                               ),
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: Text( snapshot.data![0].generalInformation!.rainfallRequirement ?? "",
+                                child: Text( filteredData[0].generalInformation!.rainfallRequirement ?? "",
                                     softWrap: true,
                                     textAlign: TextAlign.center,
                                     style: const TextStyle(
@@ -402,7 +415,7 @@ class _GeneralInformationPageState extends State<GeneralInformationPage>
                               ),
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: Text( snapshot.data![0].generalInformation!.recommendedSoil ?? "",
+                                child: Text( filteredData[0].generalInformation!.recommendedSoil ?? "",
                                     softWrap: true,
                                     textAlign: TextAlign.center,
                                     style: const TextStyle(
@@ -426,7 +439,7 @@ class _GeneralInformationPageState extends State<GeneralInformationPage>
                               ),
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: Text( snapshot.data![0].generalInformation!.pHSoil ?? "",
+                                child: Text( filteredData[0].generalInformation!.pHSoil ?? "",
                                     softWrap: true,
                                     textAlign: TextAlign.center,
                                     style: const TextStyle(
@@ -450,7 +463,7 @@ class _GeneralInformationPageState extends State<GeneralInformationPage>
                               ),
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: Text( snapshot.data![0].generalInformation!.spacing ?? "",
+                                child: Text( filteredData[0].generalInformation!.spacing ?? "",
                                     softWrap: true,
                                     textAlign: TextAlign.center,
                                     style: const TextStyle(
@@ -475,7 +488,7 @@ class _GeneralInformationPageState extends State<GeneralInformationPage>
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
-                                    snapshot.data![0].generalInformation!.seedRate ?? "",
+                                    filteredData[0].generalInformation!.seedRate ?? "",
                                     softWrap: true,
                                     textAlign: TextAlign.center,
                                     style: const TextStyle(
@@ -499,7 +512,7 @@ class _GeneralInformationPageState extends State<GeneralInformationPage>
                               ),
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: Text( snapshot.data![0].generalInformation!.averageYield ?? "",
+                                child: Text( filteredData[0].generalInformation!.averageYield ?? "",
                                     softWrap: true,
                                     textAlign: TextAlign.center,
                                     style: const TextStyle(
@@ -523,7 +536,7 @@ class _GeneralInformationPageState extends State<GeneralInformationPage>
                               ),
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: Text( snapshot.data![0].generalInformation!.intercrop ?? "",
+                                child: Text( filteredData[0].generalInformation!.intercrop ?? "",
                                     softWrap: true,
                                     textAlign: TextAlign.center,
                                     style: const TextStyle(
@@ -532,18 +545,22 @@ class _GeneralInformationPageState extends State<GeneralInformationPage>
                                         fontFamily: "poppins-regular")),
                               ),
                             ]),
-                          ],
-                        ),
-                      ),
-                    );
-                } else if (snapshot.hasError) {
-                  return Text('${snapshot.error}');
-                }
 
-                // By default, show a loading spinner.
-                return const CircularProgressIndicator();
-              },
-            ),
+
+
+              // Continue adding rows similarly for other fields...
+            ],
+          ),
+        ),
+      );
+    } else if (snapshot.hasError) {
+      return Text('${snapshot.error}');
+    }
+
+    // By default, show a loading spinner.
+    return const CircularProgressIndicator();
+  },
+),
             const SizedBox(
               height: 25,
             ),
@@ -646,169 +663,95 @@ class _GeneralInformationPageState extends State<GeneralInformationPage>
     );
   }
 
-  Widget listWidget() {
-    return
-      FutureBuilder<List<CropLibraryData>?>(
-        future: widget.cropData,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return Padding(
-                padding: const EdgeInsets.only(left: 12.0, right: 12.0),
-                child: ListView.builder(
-                    itemCount: snapshot.data!.length,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemBuilder: (context, parentIndex) {
-                      return
-                        GridView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: snapshot.data![parentIndex].stages!.length,
-                          itemBuilder: (_, index) {
-                            return Padding(
+ Widget listWidget() {
+  return FutureBuilder<List<CropLibraryData>?>(
+    future: widget.cropData,
+    builder: (context, snapshot) {
+      if (snapshot.hasData) {
+        // Filter data based on selectedcrop (localName)
+        List<CropLibraryData>? filteredData = snapshot.data?.where((data) {
+          return data.localName == widget.selectedcrop; 
+        }).toList();
+
+        return Padding(
+          padding: const EdgeInsets.only(left: 12.0, right: 12.0),
+          child: ListView.builder(
+            itemCount: filteredData?.length ?? 0,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemBuilder: (context, parentIndex) {
+              return GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: filteredData![parentIndex].stages!.length,
+                itemBuilder: (_, index) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(color: const Color(0xFFd3d3d3), width: 1),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color(0xFFd3d3d3),
+                          )
+                        ],
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: InkWell(
+                        highlightColor: Colors.transparent,
+                        splashColor: Colors.transparent,
+                        onTap: () {},
+                        child: Column(
+                          children: <Widget>[
+                            Container(
                               padding: const EdgeInsets.all(8.0),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border: Border.all(
-                                        color: const Color(0xFFd3d3d3), width: 1),
-                                    boxShadow: const [
-                                      BoxShadow(
-                                        color: Color(0xFFd3d3d3),
-                                      )
-                                    ],
-                                    borderRadius: BorderRadius.circular(15)),
-                                child: InkWell(
-                                  highlightColor: Colors.transparent,
-                                  splashColor: Colors.transparent,
-                                  onTap: () {},
-                                  child: Column(
-                                    // mainAxisAlignment: MainAxisAlignment.center,
-                                    // crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: <Widget>[
-                                      Container(
-                                        padding: const EdgeInsets.all(8.0),
-                                        decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(
-                                                15)),
-                                        child:
-                                        // CachedNetworkImage(
-                                        //   imageUrl: AppGlobal.extractFileId(
-                                        //     snapshot.data![parentIndex].stages![index].images![0] ?? ""),
-                                        //   // Some widget to display while the network widget is loading
-                                        //   //It could be any widget
-                                        //   placeholder: (context, url) => Image.asset('assets/images/g1.png'),
-                                        //   // Some widget to display if the network image was unable to load
-                                        //   // This could be because of loss of internet connection
-                                        //   errorWidget: (context, url, error) => Icon(Icons.error),
-                                        // ),
-                                        DriveImage(imageUrlData:
-                                        snapshot.data![parentIndex].stages![index].images![0] ?? ""),
-                                      ),
-                                      Flexible(
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(5.0),
-                                          child: Text(
-                                            textAlign: TextAlign.center,
-                                            snapshot.data![parentIndex].stages![index].name ?? "",
-                                            maxLines: 3,
-                                            softWrap: true,
-                                            style: const TextStyle(
-                                                color: Color(0xFF666666),
-                                                fontSize: 13,
-                                                fontFamily: 'poppins-semibold'),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: DriveImage(
+                                imageUrlData: filteredData[parentIndex].stages![index].images![0] ?? "",
+                              ),
+                            ),
+                            Flexible(
+                              child: Padding(
+                                padding: const EdgeInsets.all(5.0),
+                                child: Text(
+                                  textAlign: TextAlign.center,
+                                  filteredData[parentIndex].stages![index].name ?? "",
+                                  maxLines: 3,
+                                  softWrap: true,
+                                  style: const TextStyle(
+                                    color: Color(0xFF666666),
+                                    fontSize: 13,
+                                    fontFamily: 'poppins-semibold',
                                   ),
                                 ),
                               ),
-                            );
-                          },
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            childAspectRatio: MediaQuery
-                                .of(context)
-                                .size
-                                .width /
-                                (MediaQuery
-                                    .of(context)
-                                    .size
-                                    .height / 2),
-                          ),
-                        );
-                    }));
-          } else if (snapshot.hasError) {
-            return Text('${snapshot.error}');
-          }
-          // By default, show a loading spinner.
-          return const CircularProgressIndicator();
-        },
-      );
-    // Padding(
-    // padding: const EdgeInsets.only(left: 12.0, right: 12.0),
-    // child: GridView.builder(
-    //   shrinkWrap: true,
-    //   physics: const NeverScrollableScrollPhysics(),
-    //   itemCount: ORG_Entity.length,
-    //   itemBuilder: (_, index) {
-    //     return Padding(
-    //       padding: const EdgeInsets.all(8.0),
-    //       child: Container(
-    //         decoration: BoxDecoration(
-    //             color: Colors.white,
-    //             border: Border.all(color: const Color(0xFFd3d3d3), width: 1),
-    //             boxShadow: const [
-    //               BoxShadow(
-    //                 color: Color(0xFFd3d3d3),
-    //               )
-    //             ],
-    //             borderRadius: BorderRadius.circular(15)),
-    //         child: InkWell(
-    //           highlightColor: Colors.transparent,
-    //           splashColor: Colors.transparent,
-    //           onTap: () {},
-    //           child: Column(
-    //             // mainAxisAlignment: MainAxisAlignment.center,
-    //             // crossAxisAlignment: CrossAxisAlignment.center,
-    //             children: <Widget>[
-    //               Container(
-    //                   padding: const EdgeInsets.all(8.0),
-    //                   decoration: BoxDecoration(
-    //                       borderRadius: BorderRadius.circular(15)),
-    //                   child: Image.asset(ORG_Entity[index].image ?? "")),
-    //               Flexible(
-    //                 child: Padding(
-    //                   padding: const EdgeInsets.all(5.0),
-    //                   child: Text(
-    //                     textAlign: TextAlign.center,
-    //                     ORG_Entity[index].name ?? "",
-    //                     maxLines: 3,
-    //                     softWrap: true,
-    //                     style: const TextStyle(
-    //                         color: Color(0xFF666666),
-    //                         fontSize: 13,
-    //                         fontFamily: 'poppins-semibold'),
-    //                   ),
-    //                 ),
-    //               ),
-    //             ],
-    //           ),
-    //         ),
-    //       ),
-    //     );
-    //   },
-    //   // gridDelegate:
-    //   //     const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-    //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-    //     crossAxisCount: 2,
-    //     childAspectRatio: MediaQuery.of(context).size.width /
-    //         (MediaQuery.of(context).size.height / 2),
-    //   ),
-    // ),
-    // );
-  }
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: MediaQuery.of(context).size.width /
+                      (MediaQuery.of(context).size.height / 2),
+                ),
+              );
+            },
+          ),
+        );
+      } else if (snapshot.hasError) {
+        return Text('${snapshot.error}');
+      }
+      // By default, show a loading spinner.
+      return const CircularProgressIndicator();
+    },
+  );
+}
 
   void _onItemTapped(int index) {
     if (index == 0) {

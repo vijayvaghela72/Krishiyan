@@ -13,8 +13,9 @@ class NutrientManagmentPage extends StatefulWidget {
 
   bool aapbarVisibility;
   Future<List<CropLibraryData>?> cropData;
+  String? selectedcrop;
 
-  NutrientManagmentPage({super.key, required this.aapbarVisibility, required this.cropData});
+  NutrientManagmentPage({super.key, required this.aapbarVisibility, required this.cropData, required this.selectedcrop});
 
   @override
   State<NutrientManagmentPage> createState() => _NutrientManagmentPageState();
@@ -39,36 +40,36 @@ class _NutrientManagmentPageState extends State<NutrientManagmentPage> with Tick
   //   bottomCategory(name: "Profile", id: "4", icon: 'assets/images/bottom4.png'),
   // ];
 
-  List<Nutrient> ORG_Nutrient = [
-    Nutrient(
-        id: "1",
-        name: "NITROGEN",
-        dosage: "Dosage: 60-70 kg/acre",
-        description: "Applied in 3 Stages: \n1. At Sowing \n2. At Knee-high \n3. At Tasselling",
-        methodOfApplication: "    Applied in furrow at different stages Neem oil coated urea (NOCU) recommended for highly yield.return and nitrogen use efficiency in kharif maize."
-    ),
-    Nutrient(
-        id: "2",
-        name: "PHOSPHORUS",
-        dosage: "Dosage: 24-25 kg/acre",
-        description: "100% basal at the time of sowing",
-        methodOfApplication: "    Entire dosage is applied at root zone."
-    ),
-    Nutrient(
-        id: "3",
-        name: "POTASH",
-        dosage: "Dosage: 16-17 kg/acre",
-        description: "100% basal at the time of sowing",
-        methodOfApplication: "    Entire dosage is applied at root zone."
-    ),
-    Nutrient(
-        id: "4",
-        name: "ZINC",
-        dosage: "Dosage: 12-13 kg/acre",
-        description: "100% basal at the time of sowing",
-        methodOfApplication: "    Entire dosage is applied at root zone."
-    ),
-  ];
+  // List<Nutrient> ORG_Nutrient = [
+  //   Nutrient(
+  //       id: "1",
+  //       name: "NITROGEN",
+  //       dosage: "Dosage: 60-70 kg/acre",
+  //       description: "Applied in 3 Stages: \n1. At Sowing \n2. At Knee-high \n3. At Tasselling",
+  //       methodOfApplication: "    Applied in furrow at different stages Neem oil coated urea (NOCU) recommended for highly yield.return and nitrogen use efficiency in kharif maize."
+  //   ),
+  //   Nutrient(
+  //       id: "2",
+  //       name: "PHOSPHORUS",
+  //       dosage: "Dosage: 24-25 kg/acre",
+  //       description: "100% basal at the time of sowing",
+  //       methodOfApplication: "    Entire dosage is applied at root zone."
+  //   ),
+  //   Nutrient(
+  //       id: "3",
+  //       name: "POTASH",
+  //       dosage: "Dosage: 16-17 kg/acre",
+  //       description: "100% basal at the time of sowing",
+  //       methodOfApplication: "    Entire dosage is applied at root zone."
+  //   ),
+  //   Nutrient(
+  //       id: "4",
+  //       name: "ZINC",
+  //       dosage: "Dosage: 12-13 kg/acre",
+  //       description: "100% basal at the time of sowing",
+  //       methodOfApplication: "    Entire dosage is applied at root zone."
+  //   ),
+  // ];
 
   @override
   void initState() {
@@ -216,170 +217,200 @@ class _NutrientManagmentPageState extends State<NutrientManagmentPage> with Tick
               height: 20,
             ),
 
-            ListView.builder(
-              itemCount: ORG_Nutrient.length,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemBuilder: (context, index) {
-                return
-                  Padding(
-                    padding: const EdgeInsets.only(left: 15.0, right: 15.0, bottom: 15.0),
-                    child: Container(
-                      decoration: BoxDecoration(
+           FutureBuilder<List<CropLibraryData>?>(
+            future: widget.cropData, // Assuming cropData is passed via widget
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                // Filter data based on the selected crop (localName)
+                List<CropLibraryData>? filteredData = snapshot.data?.where((data) {
+                  return data.localName == widget.selectedcrop; // Assuming selectedCrop is passed via widget
+                }).toList();
+
+                // If no data matches the selected crop, show a message
+                if (filteredData == null || filteredData.isEmpty) {
+                  return const Text('No data available for the selected crop');
+                }
+
+                return ListView.builder(
+                  itemCount: filteredData.length,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    // Get the current crop's nutrient list
+                    var nutrients = filteredData[index].nutrient;
+                    
+                    // If no nutrients are available, display a message
+                    if (nutrients == null || nutrients.isEmpty) {
+                      return const Text('No nutrient information available.');
+                    }
+
+                    return Padding(
+                      padding: const EdgeInsets.only(left: 15.0, right: 15.0, bottom: 15.0),
+                      child: Container(
+                        decoration: BoxDecoration(
                           color: Colors.white,
                           border: Border.all(color: const Color(0xFFd3d3d3), width: 1),
-                          boxShadow: const [BoxShadow(color: Color(0xFFd3d3d3),)],
-                          borderRadius: BorderRadius.circular(15)),
-                      child: InkWell(
-                        highlightColor: Colors.transparent,
-                        splashColor: Colors.transparent,
-                        onTap: () {
-
-                        },
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Container(
-                                width: MediaQuery.of(context).size.width,
-                                padding: const EdgeInsets.only(
-                                  left: 15.0, right: 15.0, top: 20.0, ),
-                                child: ElevatedButton(
-                                  onPressed: () {},
-                                  style: ElevatedButton.styleFrom(
-                                    foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.all(12),
-                                    textStyle: const TextStyle(fontSize: 18),
-                                    backgroundColor: const Color(0xFF1E8E27),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      Image.asset("assets/images/growing_seed.png", width: 20, height: 20,),
-                                      const SizedBox(width: 10,),
-                                      Text(
-                                        ORG_Nutrient[index].name ?? "",
-                                        style: const TextStyle(
-                                            fontSize: 14,
-                                            fontFamily: 'poppins-regular'),
-                                      ),
-                                    ],
-                                  ),
-                                )),
-
-                            Flexible(
-                              child: Padding(
-                                padding: const EdgeInsets.only(top: 20.0,),
-                                child: Center(
-                                  child: Text(
-                                    ORG_Nutrient[index].dosage ?? "",
-                                    textAlign: TextAlign.center,
-                                    softWrap: true,
-                                    style: const TextStyle(
-                                      // color: Color(0xFF666666),
-                                        color: Colors.black,
-                                        fontSize: 14,
-                                        fontFamily: 'poppins-semibold'),
-                                  ),
-                                ),
-                              ),
-                            ),
-
-                            Container(
-                                width: MediaQuery.of(context).size.width,
-                                padding: const EdgeInsets.only(
-                                    left: 15.0, right: 15.0, top: 20.0),
-                                child: ElevatedButton(
-                                  onPressed: () {},
-                                  style: ElevatedButton.styleFrom(
-                                    foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.all(12),
-                                    textStyle: const TextStyle(fontSize: 18),
-                                    backgroundColor: const Color(0xFF1E8E27),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      Align(
-                                        alignment: Alignment.topLeft,
-                                        child: Row(
-                                          children: [
-                                            Image.asset("assets/images/age.png", width: 20, height: 20,),
-                                            const SizedBox(width: 5,),
-                                            const Text(
-                                              'Age of Crops ',
-                                              textAlign: TextAlign.start,
-                                              style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontFamily: 'poppins-regular'),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      const SizedBox(height: 10,),
-                                      Align(
-                                        alignment: Alignment.topLeft,
-                                        child: Text(
-                                          ORG_Nutrient[index].description ?? "",
-                                          textAlign: TextAlign.start,
-                                          style: const TextStyle(
-                                              fontSize: 10,
-                                              fontFamily: 'poppins-regular'),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 5,),
-                                    ],
-                                  ),
-                                )),
-
-                            const SizedBox(height: 20.0,),
-                            const Flexible(
-                              child: Padding(
-                                padding: EdgeInsets.only(top: 10.0, right: 15.0, left: 15.0),
-                                child: Text(
-                                  "Method of Application",
-                                  softWrap: true,
-                                  style: TextStyle(
-                                    // color: Color(0xFF666666),
-                                      color: Colors.black,
-                                      fontSize: 14,
-                                      fontFamily: 'poppins-semibold'),
-                                ),
-                              ),
-                            ),
-
-                            Flexible(
-                              child: Padding(
-                                padding: const EdgeInsets.only(top: 10.0, right: 15.0, left: 15.0),
-                                child: Text(
-                                  ORG_Nutrient[index].methodOfApplication ?? "",
-                                  textAlign: TextAlign.justify,
-                                  softWrap: true,
-                                  style: const TextStyle(
-                                    // color: Color(0xFF666666),
-                                      color: Colors.black,
-                                      fontSize: 13,
-                                      fontFamily: 'poppins-regular'),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
+                          boxShadow: const [
+                            BoxShadow(color: Color(0xFFd3d3d3)),
                           ],
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: InkWell(
+                          highlightColor: Colors.transparent,
+                          splashColor: Colors.transparent,
+                          onTap: () {},
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              // Use a ListView.builder to show all nutrients for the current crop
+                              ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: nutrients.length,
+                                itemBuilder: (context, nutrientIndex) {
+                                  return Padding(
+                                    padding: const EdgeInsets.only(top: 10.0),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        // Nutrient Button
+                                        Container(
+                                          width: MediaQuery.of(context).size.width,
+                                          padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
+                                          child: ElevatedButton(
+                                            onPressed: () {},
+                                            style: ElevatedButton.styleFrom(
+                                              foregroundColor: Colors.white,
+                                              padding: const EdgeInsets.all(12),
+                                              textStyle: const TextStyle(fontSize: 18),
+                                              backgroundColor: const Color(0xFF1E8E27),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(10),
+                                              ),
+                                            ),
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                Image.asset("assets/images/growing_seed.png", width: 20, height: 20),
+                                                const SizedBox(width: 10),
+                                                Text(
+                                                  nutrients[nutrientIndex].name ?? "",
+                                                  style: const TextStyle(fontSize: 14, fontFamily: 'poppins-regular'),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+
+                                        // Dosage
+                                        Flexible(
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(top: 20.0),
+                                            child: Center(
+                                              child: Text(
+                                                nutrients[nutrientIndex].dosage ?? "",
+                                                textAlign: TextAlign.center,
+                                                style: const TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 14,
+                                                  fontFamily: 'poppins-semibold',
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+
+                                        // Age of Crops Button
+                                        Container(
+                                          width: MediaQuery.of(context).size.width,
+                                          padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 20.0),
+                                          child: ElevatedButton(
+                                            onPressed: () {},
+                                            style: ElevatedButton.styleFrom(
+                                              foregroundColor: Colors.white,
+                                              padding: const EdgeInsets.all(12),
+                                              textStyle: const TextStyle(fontSize: 18),
+                                              backgroundColor: const Color(0xFF1E8E27),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(10),
+                                              ),
+                                            ),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    Image.asset("assets/images/age.png", width: 20, height: 20),
+                                                    const SizedBox(width: 5),
+                                                    const Text(
+                                                      'Age of Crops',
+                                                      textAlign: TextAlign.start,
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontFamily: 'poppins-regular',
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                const SizedBox(height: 10),
+                                                Text(
+                                                  nutrients[nutrientIndex].age ?? "",
+                                                  textAlign: TextAlign.start,
+                                                  style: const TextStyle(
+                                                    fontSize: 10,
+                                                    fontFamily: 'poppins-regular',
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+
+                                        const SizedBox(height: 10.0),
+
+                                        // Method of Application
+                                        const Padding(
+                                          padding: EdgeInsets.only(top: 10.0),
+                                          child: Text(
+                                            "Method of Application",
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 14,
+                                              fontFamily: 'poppins-semibold',
+                                            ),
+                                          ),
+                                        ),
+                                        Text(
+                                          nutrients[nutrientIndex].methodApplication ?? "",
+                                          textAlign: TextAlign.justify,
+                                          style: const TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 13,
+                                            fontFamily: 'poppins-regular',
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  );
-              },
-            ),
+                    );
+                  },
+                );
+              } else if (snapshot.hasError) {
+                return Text('${snapshot.error}');
+              }
+
+              // By default, show a loading spinner
+              return const CircularProgressIndicator();
+            },
+          ),
             const SizedBox(
               height: 25,
             ),

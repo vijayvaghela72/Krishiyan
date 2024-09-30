@@ -2,6 +2,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:krishiyan/localization/AppLocalizations.dart';
+import 'package:krishiyan/screen/Login/LoginPage.dart';
 import 'package:krishiyan/screen/Registration/MyRegistrationPage.dart';
 import 'package:intl/intl.dart';
 import 'package:otp_text_field/otp_field.dart';
@@ -302,9 +303,7 @@ class _FarmerGroupRegistrationPageOneState extends State<FarmerGroupRegistration
                       ),
                       child: Text(buildTranslate("getOtp")!),
                       onPressed: () {
-                        setState(() {
-                          otpVisible = true;
-                        });
+
                         if (contactNumberController.text.isNotEmpty) {
                           getOtpApiCall();
                         } else {
@@ -540,7 +539,17 @@ Future<bool> verifyOtp(String number, String enteredOtp, BuildContext context) a
 }
 
 Future<void> getOtpApiCall() async {
+  String phoneNumber = contactNumberController.text.toString();
+
+  // Check if the phone number exists
+  bool exists = await checkPhoneNumber(phoneNumber);
+
+  if(!exists){
+
   final body = json.encode({"phoneNumber": contactNumberController.text.toString()});
+                          setState(() {
+                          otpVisible = true;
+                        });
 
   try {
     // Get OTP data from the API
@@ -559,6 +568,49 @@ Future<void> getOtpApiCall() async {
     print("Error during OTP request: $e");
     AlertHelper.showToast("Error occurred. Please try again.", context);
   }
+  }else{
+    
+    AlertHelper.showToast("Phone number exists. Please check and try again.", context);
+    // Navigate to the login page
+    Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const LoginPage()),
+                          );
+
+  }
 }
+
+  Future<bool> checkPhoneNumber(String number) async {
+  final dio = Dio(); // Create an instance of Dio
+
+  // Define the URL for your API endpoint, appending the number directly
+  final url = "https://krishiyanback.vercel.app/api/check-contact/$number";
+
+  try {
+    // Make the GET request to check the phone number
+    final response = await dio.get(url, options: Options(
+      headers: {'Content-Type': 'application/json'},
+    ));
+
+    // Check the response from the server
+    if (response.statusCode == 200) {
+      // Phone number exists
+      print("Phone number exists!");
+      // AlertHelper.showToast("Phone number is valid.", context);
+      return true; // Return true if the number exists
+    } else {
+      // Phone number does not exist
+      print("Phone number does not exist!");
+      AlertHelper.showToast("Phone number does not exist. Please check and try again.", context);
+      return false; // Return false if the number does not exist
+    }
+  } catch (e) {
+    // Handle errors
+    print("Error during phone number check: $e");
+    AlertHelper.showToast("Error occurred. Please try again.", context);
+    return false; // Return false in case of an error
+  }
+}
+
   
 }

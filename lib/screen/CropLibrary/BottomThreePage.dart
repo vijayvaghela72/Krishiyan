@@ -542,24 +542,24 @@ class _BottomThreePageState extends State<BottomThreePage> with TickerProviderSt
                   if(ORG_Entity[index].id == "1"){
                     Navigator.of(context).push(
                       MaterialPageRoute(builder: (context) =>
-                          GeneralInformationPage(aapbarVisibility: true, cropData : futureCropData)),
+                          GeneralInformationPage(aapbarVisibility: true, cropData : futureCropData, selectedcrop: _selectedCrop ?? '' )),
                     );
                   }
                   else if(ORG_Entity[index].id == "2"){
                     Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => MyVeritiesPage(aapbarVisibility: true,)),
+                      MaterialPageRoute(builder: (context) => MyVeritiesPage(aapbarVisibility: true, selectedcrop: _selectedCrop ?? '' )),
                     );
                   }
                   else if(ORG_Entity[index].id == "3"){
                     Navigator.of(context).push(
                       MaterialPageRoute(builder: (context) =>
-                          MyProSawingPracticesPage(aapbarVisibility: true, cropData : futureCropData)),
+                          MyProSawingPracticesPage(aapbarVisibility: true, cropData : futureCropData, selectedcrop: _selectedCrop ?? '')),
                     );
                   }
                   else if(ORG_Entity[index].id == "4"){
                     Navigator.of(context).push(
                       MaterialPageRoute(builder: (context) =>
-                          NutrientManagmentPage(aapbarVisibility: true, cropData : futureCropData)),
+                          NutrientManagmentPage(aapbarVisibility: true, cropData : futureCropData, selectedcrop: _selectedCrop ?? '')),
                     );
                   }
                   else if(ORG_Entity[index].id == "5"){

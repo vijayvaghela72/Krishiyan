@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:krishiyan/mvc/model/FarmerDashboardData.dart';
 import 'package:krishiyan/mvc/model/InsightData.dart';
 import 'package:krishiyan/screen/AccountSettings/FarmerEditProfilePage.dart';
+import 'package:krishiyan/screen/Login/LoginPage.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/style.dart';
 import 'package:page_transition/page_transition.dart';
@@ -2605,9 +2606,47 @@ class _BottomTwoPageState extends State<BottomTwoPage>
     return false; // Return false for errors
   }
 }
+    Future<bool> checkPhoneNumber(String number) async {
+  final dio = Dio(); // Create an instance of Dio
+
+  // Define the URL for your API endpoint, appending the number directly
+  final url = "https://krishiyanback.vercel.app/api/check-contact/$number";
+
+  try {
+    // Make the GET request to check the phone number
+    final response = await dio.get(url, options: Options(
+      headers: {'Content-Type': 'application/json'},
+    ));
+
+    // Check the response from the server
+    if (response.statusCode == 200) {
+      // Phone number exists
+      print("Phone number exists!");
+      // AlertHelper.showToast("Phone number is valid.", context);
+      return true; // Return true if the number exists
+    } else {
+      // Phone number does not exist
+      print("Phone number does not exist!");
+      AlertHelper.showToast("Phone number does not exist. Please check and try again.", context);
+      return false; // Return false if the number does not exist
+    }
+  } catch (e) {
+    // Handle errors
+    print("Error during phone number check: $e");
+    AlertHelper.showToast("Error occurred. Please try again.", context);
+    return false; // Return false in case of an error
+  }
+}
 
 
-Future<void> getOtpApiCall() async {
+  Future<void> getOtpApiCall() async {
+    String phoneNumber = whatsAppNumberController.text.toString();
+
+  // Check if the phone number exists
+  bool exists = await checkPhoneNumber(phoneNumber);
+
+  if(!exists){
+
   final body = json.encode({"phoneNumber": whatsAppNumberController.text.toString()});
 
   try {
@@ -2626,8 +2665,18 @@ Future<void> getOtpApiCall() async {
   } catch (e) {
     print("Error during OTP request: $e");
     AlertHelper.showToast("Error occurred. Please try again.", context);
+  }}else{
+    
+    AlertHelper.showToast("Phone number exists. Please check and try again.", context);
+    // Navigate to the login page
+    Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const LoginPage()),
+                          );
+
   }
 }
+
  
 
   // Future<void> _fetchCropData() async {

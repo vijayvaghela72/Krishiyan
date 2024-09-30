@@ -19,8 +19,9 @@ import '../Language/SelectLanguagePage.dart';
 class MyProSawingPracticesPage extends StatefulWidget {
   bool aapbarVisibility;
   Future<List<CropLibraryData>?> cropData;
+  String? selectedcrop;
 
-  MyProSawingPracticesPage({super.key, required this.aapbarVisibility, required this.cropData});
+  MyProSawingPracticesPage({super.key, required this.aapbarVisibility, required this.cropData,  required this.selectedcrop});
 
   @override
   State<MyProSawingPracticesPage> createState() => _MyProSawingPracticesPageState();
@@ -201,199 +202,150 @@ class _MyProSawingPracticesPageState extends State<MyProSawingPracticesPage>
               future: widget.cropData,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
+                  // Filter data based on the selected crop (localName)
+                  List<CropLibraryData>? filteredData = snapshot.data?.where((data) {
+                    return data.localName == widget.selectedcrop; // Assuming selectedCrop is passed via widget
+                  }).toList();
+
+                  // If no data matches the selected crop, show a message
+                  if (filteredData == null || filteredData.isEmpty) {
+                    return const Text('No data available for the selected crop');
+                  }
+
                   return Column(
                     children: [
+                      // Elevated button for toggling visibility of the first card
                       Container(
-                          width: MediaQuery.of(context).size.width,
-                          padding: const EdgeInsets.only(
-                              left: 15.0, right: 15.0, top: 20.0),
-                          child: ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                if (firstCardVisible) {
-                                  firstCardVisible = false;
-                                } else {
-                                  firstCardVisible = true;
-                                }
-                              });
-                            },
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              shadowColor: Colors.transparent,
-                              padding: const EdgeInsets.all(17),
-                              textStyle: const TextStyle(fontSize: 18),
-                              backgroundColor: const Color(0xFF02792A),
-                              shape:
-                              firstCardVisible ?
-                              const RoundedRectangleBorder(borderRadius:
-                              BorderRadius.only(topLeft: Radius.circular(17), topRight: Radius.circular(17),
-                              )) :
-                              const RoundedRectangleBorder(borderRadius:
-                              BorderRadius.all(Radius.circular(17),)),
-                            ),
-                            child: Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    const Expanded(
-                                      child: Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          'Land Preparation',
-                                          textAlign: TextAlign.start,
-                                          style: TextStyle(
-                                              fontSize: 14,
-                                              fontFamily: 'poppins-medium'),
-                                        ),
-                                      ),
+                        width: MediaQuery.of(context).size.width,
+                        padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 20.0),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              firstCardVisible = !firstCardVisible;
+                            });
+                          },
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            shadowColor: Colors.transparent,
+                            padding: const EdgeInsets.all(17),
+                            textStyle: const TextStyle(fontSize: 18),
+                            backgroundColor: const Color(0xFF02792A),
+                            shape: firstCardVisible
+                                ? const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(17),
+                                      topRight: Radius.circular(17),
                                     ),
-                                    Expanded(
-                                      child: Align(
-                                        alignment: Alignment.centerRight,
-                                        child: Image.asset(
-                                          'assets/images/down_arrow_white.png',
-                                          height: 20, width: 20,
-                                          // color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          )),
-                      firstCardVisible ?
-                      Padding(
-                        padding: const EdgeInsets.only(left: 15.0, right: 15.0,),
-                        child: Container(
-                          decoration: const BoxDecoration(
-                              color: Color(0xFF02792A),
-                              borderRadius: BorderRadius.only(bottomLeft: Radius.circular(17.0), bottomRight: Radius.circular(17.0))
+                                  )
+                                : const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.all(Radius.circular(17)),
+                                  ),
                           ),
-                          child: ListView.builder(
-                              shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
-                              itemCount: snapshot.data!.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return Padding(
-                                  padding: const EdgeInsets.only(left: 15.0, right: 15.0,),
-                                  child: Container(
-                                      width: MediaQuery.of(context).size.width,
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(left: 5.0, right: 5.0, bottom: 20.0),
-                                        child: Container(
-                                          width: MediaQuery.of(context)
-                                              .size
-                                              .width,
-                                          decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              border: Border.all(
-                                                  color: const Color(
-                                                      0xFFd3d3d3),
-                                                  width: 1),
-                                              boxShadow: const [
-                                                BoxShadow(
-                                                  color: Color(0xFFd3d3d3),
-                                                )
-                                              ],
-                                              borderRadius:
-                                              BorderRadius.circular(
-                                                  15)),
-                                          child: Column(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: <Widget>[
-                                              Flexible(
-                                                child: Padding(
-                                                  padding:
-                                                  const EdgeInsets.only(
-                                                      top: 20.0,
-                                                      right: 10.0,
-                                                      left: 10.0),
-                                                  child: Text(
-                                                    snapshot
-                                                        .data![index]
-                                                        .presowingPractices!
-                                                        .landPreparation ??
-                                                        "",
-                                                    softWrap: true,
-                                                    style: const TextStyle(
-                                                      // color: Color(0xFF666666),
-                                                        color: Colors.black,
-                                                        fontSize: 11,
-                                                        fontFamily:
-                                                        'poppins-regular'),
+                          child: Column(
+                            children: [
+                              Row(
+                                children: [
+                                  const Expanded(
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        'Land Preparation',
+                                        textAlign: TextAlign.start,
+                                        style: TextStyle(
+                                            fontSize: 14, fontFamily: 'poppins-medium'),
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Align(
+                                      alignment: Alignment.centerRight,
+                                      child: Image.asset(
+                                        'assets/images/down_arrow_white.png',
+                                        height: 20,
+                                        width: 20,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      // Display the filtered crop data when the first card is visible
+                      firstCardVisible
+                          ? Padding(
+                              padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                    color: Color(0xFF02792A),
+                                    borderRadius: BorderRadius.only(
+                                        bottomLeft: Radius.circular(17.0),
+                                        bottomRight: Radius.circular(17.0))),
+                                child: ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: filteredData!.length,
+                                  itemBuilder: (BuildContext context, int index) {
+                                    return Padding(
+                                      padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+                                      child: Container(
+                                        width: MediaQuery.of(context).size.width,
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 5.0, right: 5.0, bottom: 20.0),
+                                          child: Container(
+                                            width: MediaQuery.of(context).size.width,
+                                            decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                border: Border.all(
+                                                    color: const Color(0xFFd3d3d3), width: 1),
+                                                boxShadow: const [
+                                                  BoxShadow(
+                                                    color: Color(0xFFd3d3d3),
+                                                  )
+                                                ],
+                                                borderRadius: BorderRadius.circular(15)),
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: <Widget>[
+                                                Flexible(
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.only(
+                                                        top: 20.0, right: 10.0, left: 10.0),
+                                                    child: Text(
+                                                      filteredData[index].presowingPractices!
+                                                              .landPreparation ??
+                                                          "",
+                                                      softWrap: true,
+                                                      style: const TextStyle(
+                                                          color: Colors.black,
+                                                          fontSize: 11,
+                                                          fontFamily: 'poppins-regular'),
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                              // SizedBox(
-                                              //   height: 10.0,
-                                              // ),
-                                              // Flexible(
-                                              //   child: Padding(
-                                              //     padding: EdgeInsets.only(right: 10.0, left: 10.0),
-                                              //     child: Text(
-                                              //       "2. 4-5 deep plaughing is recommended before sowing.",
-                                              //       softWrap: true,
-                                              //       style: TextStyle(
-                                              //         // color: Color(0xFF666666),
-                                              //           color: Colors.black,
-                                              //           fontSize: 11,
-                                              //           fontFamily: 'poppins-regular'),
-                                              //     ),
-                                              //   ),
-                                              // ),
-                                              // Flexible(
-                                              //   child: Padding(
-                                              //     padding: EdgeInsets.only(
-                                              //         top: 10.0, right: 10.0, left: 10.0),
-                                              //     child: Text(
-                                              //       "3. Apply Farmyard Manure @ 6-7 q/acre 1 day Prior to Showing",
-                                              //       softWrap: true,
-                                              //       style: TextStyle(
-                                              //         // color: Color(0xFF666666),
-                                              //           color: Colors.black,
-                                              //           fontSize: 11,
-                                              //           fontFamily: 'poppins-regular'),
-                                              //     ),
-                                              //   ),
-                                              // ),
-                                              // Flexible(
-                                              //   child: Padding(
-                                              //     padding: EdgeInsets.only(
-                                              //         top: 10.0, right: 10.0, left: 10.0),
-                                              //     child: Text(
-                                              //       "4. Apply NPK- 50-25-20 in ratio and zinc 10kg/acre",
-                                              //       softWrap: true,
-                                              //       style: TextStyle(
-                                              //         // color: Color(0xFF666666),
-                                              //           color: Colors.black,
-                                              //           fontSize: 11,
-                                              //           fontFamily: 'poppins-regular'),
-                                              //     ),
-                                              //   ),
-                                              // ),
-                                              SizedBox(
-                                                height: 20.0,
-                                              ),
-                                            ],
+                                                const SizedBox(height: 20.0),
+                                              ],
+                                            ),
                                           ),
                                         ),
-                                      )),
-                                );
-                              }),
-                        ),
-                      ) : Container(),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            )
+                          : Container(),
                     ],
                   );
                 } else if (snapshot.hasError) {
                   return Text('${snapshot.error}');
                 }
 
-                // By default, show a loading spinner.
+                // By default, show a loading spinner
                 return const CircularProgressIndicator();
               },
             ),
@@ -406,6 +358,15 @@ class _MyProSawingPracticesPageState extends State<MyProSawingPracticesPage>
               future: widget.cropData,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
+                  // Filter data based on the selected crop (localName)
+                  List<CropLibraryData>? filteredData = snapshot.data?.where((data) {
+                    return data.localName == widget.selectedcrop; // Assuming selectedCrop is passed via widget
+                  }).toList();
+
+                  // If no data matches the selected crop, show a message
+                  if (filteredData == null || filteredData.isEmpty) {
+                    return const Text('No data available for the selected crop');
+                  }
                   return Column(
                     children: [
                       Container(
@@ -415,11 +376,7 @@ class _MyProSawingPracticesPageState extends State<MyProSawingPracticesPage>
                           child: ElevatedButton(
                             onPressed: () {
                               setState(() {
-                                if (secondCardVisible) {
-                                  secondCardVisible = false;
-                                } else {
-                                  secondCardVisible = true;
-                                }
+                                secondCardVisible = !secondCardVisible;
                               });
                             },
                             style: ElevatedButton.styleFrom(
@@ -478,7 +435,7 @@ class _MyProSawingPracticesPageState extends State<MyProSawingPracticesPage>
                           child: ListView.builder(
                               shrinkWrap: true,
                               physics: NeverScrollableScrollPhysics(),
-                              itemCount: snapshot.data!.length,
+                              itemCount: filteredData!.length,
                               itemBuilder: (BuildContext context, int index) {
                                 return Padding(
                                   padding: const EdgeInsets.only(left: 15.0, right: 15.0,),
@@ -531,7 +488,7 @@ class _MyProSawingPracticesPageState extends State<MyProSawingPracticesPage>
                                                 child: Padding(
                                                   padding: const EdgeInsets.only(right: 10.0, left: 10.0),
                                                   child: Text(
-                                                    snapshot.data![index].presowingPractices!.
+                                                    filteredData[index].presowingPractices!.
                                                     seedTreatment!.nameOfChemical ?? "",
                                                     softWrap: true,
                                                     style: const TextStyle(
@@ -601,6 +558,15 @@ class _MyProSawingPracticesPageState extends State<MyProSawingPracticesPage>
               future: widget.cropData,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
+                  // Filter data based on the selected crop (localName)
+                  List<CropLibraryData>? filteredData = snapshot.data?.where((data) {
+                    return data.localName == widget.selectedcrop; // Assuming selectedCrop is passed via widget
+                  }).toList();
+
+                  // If no data matches the selected crop, show a message
+                  if (filteredData == null || filteredData.isEmpty) {
+                    return const Text('No data available for the selected crop');
+                  }
                   return Column(
                     children: [
                       Container(
@@ -673,9 +639,9 @@ class _MyProSawingPracticesPageState extends State<MyProSawingPracticesPage>
                           child: ListView.builder(
                               shrinkWrap: true,
                               physics: NeverScrollableScrollPhysics(),
-                              itemCount: snapshot.data!.length,
+                              itemCount: filteredData!.length,
                               itemBuilder: (BuildContext context, int index) {
-                                String interculturalOperations =  snapshot.data![index].presowingPractices!.
+                                String interculturalOperations =  filteredData[index].presowingPractices!.
                                 interculturalOperations.toString();
 
                                 return Padding(
@@ -752,6 +718,15 @@ class _MyProSawingPracticesPageState extends State<MyProSawingPracticesPage>
               future: widget.cropData,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
+                  // Filter data based on the selected crop (localName)
+                  List<CropLibraryData>? filteredData = snapshot.data?.where((data) {
+                    return data.localName == widget.selectedcrop; // Assuming selectedCrop is passed via widget
+                  }).toList();
+
+                  // If no data matches the selected crop, show a message
+                  if (filteredData == null || filteredData.isEmpty) {
+                    return const Text('No data available for the selected crop');
+                  }
                   return Column(
                     children: [
                       Container(
@@ -824,7 +799,7 @@ class _MyProSawingPracticesPageState extends State<MyProSawingPracticesPage>
                           child: ListView.builder(
                               shrinkWrap: true,
                               physics: NeverScrollableScrollPhysics(),
-                              itemCount: snapshot.data!.length,
+                              itemCount: filteredData!.length,
                               itemBuilder: (BuildContext context, int index) {
                                 return Padding(
                                   padding: const EdgeInsets.only(left: 15.0, right: 15.0,),
@@ -860,7 +835,7 @@ class _MyProSawingPracticesPageState extends State<MyProSawingPracticesPage>
                                                   padding: const EdgeInsets.only(
                                                       top: 20.0, right: 10.0, left: 10.0),
                                                   child: Text(
-                                                    snapshot.data![index].presowingPractices!.
+                                                    filteredData[index].presowingPractices!.
                                                     soilConditions ?? "",
                                                     softWrap: true,
                                                     style: const TextStyle(
