@@ -1,6 +1,10 @@
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:krishiyan/mvc/model/CropLibraryData.dart';
+import 'package:krishiyan/mvc/model/VarietyData.dart';
+import 'package:krishiyan/mvc/model/variet_model.dart';
 import '../../localization/AppLocalizations.dart';
 import '../Enquiry/BottomCenterEnquiryPage.dart';
 import '../HomeScreen/BottomOnePage.dart';
@@ -18,8 +22,11 @@ import '../Language/SelectLanguagePage.dart';
 class MyVeritiesPage extends StatefulWidget {
   bool aapbarVisibility;
   String? selectedcrop;
+   Future<List<CropLibraryData>?> cropData;
+  
 
-  MyVeritiesPage({super.key, required this.aapbarVisibility, required this.selectedcrop});
+
+  MyVeritiesPage({super.key, required this.aapbarVisibility, required this.selectedcrop, required this.cropData});
 
   @override
   State<MyVeritiesPage> createState() => _MyVeritiesPageState();
@@ -28,31 +35,9 @@ class MyVeritiesPage extends StatefulWidget {
 class _MyVeritiesPageState extends State<MyVeritiesPage>
     with TickerProviderStateMixin {
   var _bottomNavIndex = 2; //default index of a first screen
-
-  // late AnimationController _fabAnimationController;
-  // late AnimationController _borderRadiusAnimationController;
-  // late Animation<double> fabAnimation;
-  // late Animation<double> borderRadiusAnimation;
-  // late CurvedAnimation fabCurve;
-  // late CurvedAnimation borderRadiusCurve;
-  // late AnimationController _hideBottomBarAnimationController;
-  //
-  // List<bottomCategory> iconList = [
-  //   bottomCategory(
-  //       name: buildTranslate("home")!, id: "1", icon: 'assets/images/bottom1.png'),
-  //   bottomCategory(
-  //       name: buildTranslate("frm")!,
-  //       id: "2",
-  //       icon: 'assets/images/bottom2.png'),
-  //   bottomCategory(
-  //       name: buildTranslate("crop")!,
-  //       id: "3",
-  //       icon: 'assets/images/bottom3.png'),
-  //   bottomCategory(
-  //       name: buildTranslate("profile")!,
-  //       id: "4",
-  //       icon: 'assets/images/bottom4.png'),
-  // ];
+  final Dio _dio = Dio(); // Initialize Dio
+  String? currentCrop; // To hold the current crop
+  List<Verities>? varieties; // To hold the fetched varieties
 
   List<Verities> ORG_Verities = [
     Verities(
@@ -118,42 +103,6 @@ class _MyVeritiesPageState extends State<MyVeritiesPage>
   @override
   void initState() {
     super.initState();
-
-    // _fabAnimationController = AnimationController(
-    //   duration: const Duration(milliseconds: 500),
-    //   vsync: this,
-    // );
-    // _borderRadiusAnimationController = AnimationController(
-    //   duration: const Duration(milliseconds: 500),
-    //   vsync: this,
-    // );
-    // fabCurve = CurvedAnimation(
-    //   parent: _fabAnimationController,
-    //   curve: const Interval(0.5, 1.0, curve: Curves.fastOutSlowIn),
-    // );
-    // borderRadiusCurve = CurvedAnimation(
-    //   parent: _borderRadiusAnimationController,
-    //   curve: const Interval(0.5, 1.0, curve: Curves.fastOutSlowIn),
-    // );
-    //
-    // fabAnimation = Tween<double>(begin: 1, end: 1).animate(fabCurve);
-    // borderRadiusAnimation = Tween<double>(begin: 1, end: 1).animate(
-    //   borderRadiusCurve,
-    // );
-    //
-    // _hideBottomBarAnimationController = AnimationController(
-    //   duration: const Duration(milliseconds: 200),
-    //   vsync: this,
-    // );
-    //
-    // Future.delayed(
-    //   const Duration(seconds: 1),
-    //       () => _fabAnimationController.forward(),
-    // );
-    // Future.delayed(
-    //   const Duration(seconds: 1),
-    //       () => _borderRadiusAnimationController.forward(),
-    // );
   }
 
   @override
@@ -254,140 +203,148 @@ class _MyVeritiesPageState extends State<MyVeritiesPage>
               height: 25,
             ),
 
-            ListView.builder(
-              itemCount: ORG_Verities.length,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.only(
-                      left: 15.0, right: 15.0, bottom: 15.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(
-                            color: const Color(0xFFd3d3d3), width: 1),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color(0xFFd3d3d3),
-                          )
-                        ],
-                        borderRadius: BorderRadius.circular(15)),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Flexible(
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                                top: 20.0, right: 10.0, left: 10.0),
-                            child: Text(
-                              ORG_Verities[index].name ?? "",
-                              softWrap: true,
-                              style: const TextStyle(
-                                // color: Color(0xFF666666),
-                                  color: Colors.black,
-                                  fontSize: 14,
-                                  fontFamily: 'poppins-semibold'),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 20.0,
-                        ),
-                        Flexible(
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                                top: 10.0, right: 10.0, left: 10.0),
-                            child: Text(
-                              ORG_Verities[index].productCondition ?? "",
-                              softWrap: true,
-                              style: const TextStyle(
-                                // color: Color(0xFF666666),
-                                  color: Colors.black,
-                                  fontSize: 10,
-                                  fontFamily: 'poppins-semibold'),
-                            ),
-                          ),
-                        ),
-                        Flexible(
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                                top: 10.0, right: 10.0, left: 10.0),
-                            child: Text(
-                              ORG_Verities[index].area ?? "",
-                              softWrap: true,
-                              style: const TextStyle(
-                                // color: Color(0xFF666666),
-                                  color: Colors.black,
-                                  fontSize: 10,
-                                  fontFamily: 'poppins-semibold'),
-                            ),
-                          ),
-                        ),
-                        Flexible(
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                                top: 10.0, right: 10.0, left: 10.0),
-                            child: Text(
-                              ORG_Verities[index].cropCycle ?? "",
-                              softWrap: true,
-                              style: const TextStyle(
-                                // color: Color(0xFF666666),
-                                  color: Colors.black,
-                                  fontSize: 10,
-                                  fontFamily: 'poppins-semibold'),
-                            ),
-                          ),
-                        ),
-                        Container(
-                            width: MediaQuery.of(context).size.width,
-                            padding: const EdgeInsets.only(
-                                left: 15.0, right: 15.0, top: 20.0),
-                            child: ElevatedButton(
-                              onPressed: () {},
-                              style: ElevatedButton.styleFrom(
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.all(12),
-                                textStyle: const TextStyle(fontSize: 18),
-                                backgroundColor: const Color(0xFF1E8E27),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                              child: Column(children: [
-                                const Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    'Speciality:',
-                                    textAlign: TextAlign.start,
-                                    style: TextStyle(
-                                        fontSize: 12,
-                                        fontFamily: 'poppins-regular'),
-                                  ),
-                                ),
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    ORG_Verities[index].spaciality ?? "",
-                                    textAlign: TextAlign.start,
-                                    style: const TextStyle(
-                                        fontSize: 12,
-                                        fontFamily: 'poppins-regular'),
-                                  ),
-                                ),
-                              ]),
-                            )),
-                        const SizedBox(
-                          height: 20.0,
-                        ),
-                      ],
+FutureBuilder<List<VarietyData>>(
+  future: fetchVarieties(widget.selectedcrop!), // Fetch varieties based on the selected crop
+  builder: (context, snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return const Center(child: CircularProgressIndicator());
+    } else if (snapshot.hasError) {
+      return Center(child: Text('Error: ${snapshot.error}'));
+    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+      return const Center(child: Text('No varieties available for the selected crop'));
+    }
+
+    final varieties = snapshot.data!;
+
+    return ListView.builder(
+      itemCount: varieties.length,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemBuilder: (context, index) {
+        return Padding(
+          padding: const EdgeInsets.only(
+              left: 15.0, right: 15.0, bottom: 15.0),
+          child: Container(
+            decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(
+                    color: const Color(0xFFd3d3d3), width: 1),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0xFFd3d3d3),
+                  )
+                ],
+                borderRadius: BorderRadius.circular(15)),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Flexible(
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        top: 20.0, right: 10.0, left: 10.0),
+                    child: Text(
+                      varieties[index].nameOfVariety, // Use nameOfVariety from VarietyData
+                      softWrap: true,
+                      style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 14,
+                          fontFamily: 'poppins-semibold'),
                     ),
                   ),
-                );
-              },
+                ),
+                const SizedBox(height: 20.0),
+                Flexible(
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        top: 10.0, right: 10.0, left: 10.0),
+                    child: Text(
+                      varieties[index].productCondition,
+                      softWrap: true,
+                      style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 10,
+                          fontFamily: 'poppins-semibold'),
+                    ),
+                  ),
+                ),
+                Flexible(
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        top: 10.0, right: 10.0, left: 10.0),
+                    child: Text(
+                      varieties[index].areaOfAdoption, // Use areaOfAdoption from VarietyData
+                      softWrap: true,
+                      style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 10,
+                          fontFamily: 'poppins-semibold'),
+                    ),
+                  ),
+                ),
+                Flexible(
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        top: 10.0, right: 10.0, left: 10.0),
+                    child: Text(
+                      varieties[index].cropCycle,
+                      softWrap: true,
+                      style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 10,
+                          fontFamily: 'poppins-semibold'),
+                    ),
+                  ),
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  padding: const EdgeInsets.only(
+                      left: 15.0, right: 15.0, top: 20.0),
+                  child: ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.all(12),
+                      textStyle: const TextStyle(fontSize: 18),
+                      backgroundColor: const Color(0xFF1E8E27),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: Column(children: [
+                      const Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Speciality:',
+                          textAlign: TextAlign.start,
+                          style: TextStyle(
+                              fontSize: 12,
+                              fontFamily: 'poppins-regular'),
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          varieties[index].salientFeatures, // Use salientFeatures from VarietyData
+                          textAlign: TextAlign.start,
+                          style: const TextStyle(
+                              fontSize: 12,
+                              fontFamily: 'poppins-regular'),
+                        ),
+                      ),
+                    ]),
+                  ),
+                ),
+                const SizedBox(height: 20.0),
+              ],
             ),
+          ),
+        );
+      },
+    );
+  },
+),
 
             const SizedBox(
               height: 20,
@@ -395,99 +352,6 @@ class _MyVeritiesPageState extends State<MyVeritiesPage>
           ],
         ),
       ),
-      // floatingActionButton: widget.aapbarVisibility
-      //     ? FloatingActionButton(
-      //   backgroundColor: Colors.white.withAlpha(0),
-      //   // add this line.
-      //   elevation: 0,
-      //   // also important, removes the shadow
-      //   heroTag: "floatingActionBtn",
-      //   shape: const RoundedRectangleBorder(
-      //     // <= Change BeveledRectangleBorder to RoundedRectangularBorder
-      //     borderRadius: BorderRadius.only(
-      //       topLeft: Radius.circular(30.0),
-      //       topRight: Radius.circular(30.0),
-      //       bottomLeft: Radius.circular(30.0),
-      //       bottomRight: Radius.circular(30.0),
-      //     ),
-      //   ),
-      //   child: InkWell(
-      //     highlightColor: Colors.transparent,
-      //     splashColor: Colors.transparent,
-      //     onTap: () {
-      //       setState(() {
-      //         _onItemTapped(4);
-      //       });
-      //     },
-      //     child: Image.asset(
-      //       'assets/images/bottomCenter.png',
-      //       // color: Colors.white,
-      //     ),
-      //   ),
-      //   onPressed: () {
-      //     _fabAnimationController.reset();
-      //     _borderRadiusAnimationController.reset();
-      //     _borderRadiusAnimationController.forward();
-      //     _fabAnimationController.forward();
-      //   },
-      // )
-      //     : null,
-      // floatingActionButtonLocation: widget.aapbarVisibility
-      //     ? FloatingActionButtonLocation.centerDocked
-      //     : null,
-      // bottomNavigationBar: widget.aapbarVisibility
-      //     ? AnimatedBottomNavigationBar.builder(
-      //   height: 70,
-      //   itemCount: iconList.length,
-      //   tabBuilder: (int index, bool isActive) {
-      //     final color = isActive ? Colors.green : Colors.grey;
-      //     return Column(
-      //       mainAxisSize: MainAxisSize.min,
-      //       mainAxisAlignment: MainAxisAlignment.center,
-      //       children: [
-      //         Image.asset(
-      //           iconList[index].icon ?? "",
-      //           color: color,
-      //           width: 25,
-      //           height: 25,
-      //         ),
-      //         const SizedBox(height: 5),
-      //         Text(
-      //           iconList[index].name ?? "",
-      //           textAlign: TextAlign.center,
-      //           style: const TextStyle(
-      //               color: Color(0xFF666666),
-      //               fontSize: 13,
-      //               fontFamily: 'poppins-regular'),
-      //         ),
-      //       ],
-      //     );
-      //   },
-      //   // backgroundColor: Colors.white,
-      //   activeIndex: _bottomNavIndex,
-      //   // splashColor: Colors.green,
-      //   notchAndCornersAnimation: borderRadiusAnimation,
-      //   splashSpeedInMilliseconds: 300,
-      //   notchSmoothness: NotchSmoothness.defaultEdge,
-      //   gapLocation: GapLocation.center,
-      //   leftCornerRadius: 32,
-      //   rightCornerRadius: 32,
-      //   notchMargin: 7,
-      //   onTap: (index) {
-      //     setState(() {
-      //       _onItemTapped(index);
-      //     });
-      //   },
-      //   // setState(() => _bottomNavIndex = index),
-      //   hideAnimationController: _hideBottomBarAnimationController,
-      //   shadow: const BoxShadow(
-      //     offset: Offset(0, 1),
-      //     blurRadius: 2,
-      //     spreadRadius: 0.2,
-      //     color: Colors.white,
-      //   ),
-      // )
-      //     : null,
     );
   }
 }
@@ -520,4 +384,33 @@ class bottomCategory {
     required this.icon,
     required this.id,
   });
+}
+
+class Variety {
+  final String id;
+  final String name;
+  final String productCondition;
+  final String area;
+  final String cropCycle;
+  final String speciality;
+
+  Variety({
+    required this.id,
+    required this.name,
+    required this.productCondition,
+    required this.area,
+    required this.cropCycle,
+    required this.speciality,
+  });
+
+  factory Variety.fromJson(Map<String, dynamic> json) {
+    return Variety(
+      id: json['id'],
+      name: json['name'],
+      productCondition: json['productCondition'],
+      area: json['area'],
+      cropCycle: json['cropCycle'],
+      speciality: json['speciality'],
+    );
+  }
 }

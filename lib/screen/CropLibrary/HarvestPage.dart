@@ -21,8 +21,10 @@ import '../Language/SelectLanguagePage.dart';
 class HarvestPage extends StatefulWidget {
   bool aapbarVisibility;
   Future<List<CropLibraryData>?> cropData;
+   String? selectedcrop;
 
-  HarvestPage({super.key, required this.aapbarVisibility, required this.cropData});
+
+  HarvestPage({super.key, required this.aapbarVisibility, required this.cropData,required this.selectedcrop });
 
   @override
   State<HarvestPage> createState() => _HarvestPageState();
@@ -32,60 +34,9 @@ class _HarvestPageState extends State<HarvestPage>
     with TickerProviderStateMixin {
   var _bottomNavIndex = 2; //default index of a first screen
 
-  // late AnimationController _fabAnimationController;
-  // late AnimationController _borderRadiusAnimationController;
-  // late Animation<double> fabAnimation;
-  // late Animation<double> borderRadiusAnimation;
-  // late CurvedAnimation fabCurve;
-  // late CurvedAnimation borderRadiusCurve;
-  // late AnimationController _hideBottomBarAnimationController;
-  //
-  // List<bottomCategory> iconList = [
-  //   bottomCategory(name: "Home", id: "1", icon: 'assets/images/bottom1.png'),
-  //   bottomCategory(name: "FRM", id: "2", icon: 'assets/images/bottom2.png'),
-  //   bottomCategory(name: "Crop", id: "3", icon: 'assets/images/bottom3.png'),
-  //   bottomCategory(name: "Profile", id: "4", icon: 'assets/images/bottom4.png'),
-  // ];
-
   @override
   void initState() {
     super.initState();
-
-    // _fabAnimationController = AnimationController(
-    //   duration: const Duration(milliseconds: 500),
-    //   vsync: this,
-    // );
-    // _borderRadiusAnimationController = AnimationController(
-    //   duration: const Duration(milliseconds: 500),
-    //   vsync: this,
-    // );
-    // fabCurve = CurvedAnimation(
-    //   parent: _fabAnimationController,
-    //   curve: const Interval(0.5, 1.0, curve: Curves.fastOutSlowIn),
-    // );
-    // borderRadiusCurve = CurvedAnimation(
-    //   parent: _borderRadiusAnimationController,
-    //   curve: const Interval(0.5, 1.0, curve: Curves.fastOutSlowIn),
-    // );
-    //
-    // fabAnimation = Tween<double>(begin: 1, end: 1).animate(fabCurve);
-    // borderRadiusAnimation = Tween<double>(begin: 1, end: 1).animate(
-    //   borderRadiusCurve,
-    // );
-    //
-    // _hideBottomBarAnimationController = AnimationController(
-    //   duration: const Duration(milliseconds: 200),
-    //   vsync: this,
-    // );
-    //
-    // Future.delayed(
-    //   const Duration(seconds: 1),
-    //       () => _fabAnimationController.forward(),
-    // );
-    // Future.delayed(
-    //   const Duration(seconds: 1),
-    //       () => _borderRadiusAnimationController.forward(),
-    // );
 
   }
 
@@ -190,14 +141,31 @@ class _HarvestPageState extends State<HarvestPage>
             FutureBuilder<List<CropLibraryData>?>(
               future: widget.cropData,
               builder: (context, snapshot) {
+                 if (snapshot.connectionState == ConnectionState.waiting) {
+      return const Center(child: CircularProgressIndicator());
+    } else if (snapshot.hasError) {
+      return Center(child: Text('Error: ${snapshot.error}'));
+    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+      return const Center(child: Text('No data available'));
+    }
+
+    // Filter data based on the selected crop (localName)
+    List<CropLibraryData>? filteredData = snapshot.data?.where((data) {
+      return data.localName == widget.selectedcrop; // Assuming selectedCrop is passed via widget
+    }).toList();
+
+    // If no data matches the selected crop, show a message
+    if (filteredData == null || filteredData.isEmpty) {
+      return const Center(child: Text('No data available for the selected crop'));
+    }
                 if (snapshot.hasData) {
                   return ListView.builder(
-                      itemCount: snapshot.data!.length,
+                      itemCount: filteredData.length,
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       itemBuilder: (context, parentIndex) {
                         return ListView.builder(
-                          itemCount: snapshot.data![parentIndex].irrigation!.length,
+                          itemCount: 1,
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
                           itemBuilder: (context, index) {
@@ -243,8 +211,8 @@ class _HarvestPageState extends State<HarvestPage>
                                                 ),
                                               ),
                                               child: Text(
-                                                snapshot.data![parentIndex].newHarvest!.index ??
-                                                    "",
+                                                filteredData[parentIndex].newHarvest!.index ?? "",
+                                                    
                                                 textAlign: TextAlign.center,
                                                 softWrap: true,
                                                 style: const TextStyle(
@@ -271,7 +239,7 @@ class _HarvestPageState extends State<HarvestPage>
                                               child: Align(
                                                 alignment: Alignment.topLeft,
                                                 child: Text(
-                                                  snapshot.data![parentIndex].newHarvest!.conditionsDuring ?? "",
+                                                  filteredData[parentIndex].newHarvest!.conditionsDuring ?? "",
                                                   textAlign: TextAlign.start,
                                                   style: const TextStyle(
                                                       fontSize: 11,
@@ -285,7 +253,7 @@ class _HarvestPageState extends State<HarvestPage>
                                           child: Padding(
                                             padding: const EdgeInsets.only(top: 10.0, right: 15.0, left: 15.0),
                                             child: Text(
-                                              snapshot.data![parentIndex].newHarvest!.prevent ??"",
+                                             filteredData[parentIndex].newHarvest!.prevent ?? "",
                                               softWrap: true,
                                               style: const TextStyle(
                                                 // color: Color(0xFF666666),
@@ -304,159 +272,6 @@ class _HarvestPageState extends State<HarvestPage>
                           },
                         );
                       });
-                  // Padding(
-                  //   padding: const EdgeInsets.only(left: 15.0, right: 15.0),
-                  //   child: Container(
-                  //     decoration: BoxDecoration(
-                  //         color: Colors.white,
-                  //         border: Border.all(color: const Color(0xFFd3d3d3), width: 1),
-                  //         boxShadow: const [BoxShadow(color: Color(0xFFd3d3d3),)],
-                  //         borderRadius: BorderRadius.circular(15)),
-                  //     child: InkWell(
-                  //       highlightColor: Colors.transparent,
-                  //       splashColor: Colors.transparent,
-                  //       onTap: () {
-                  //
-                  //       },
-                  //       child: Column(
-                  //         mainAxisAlignment: MainAxisAlignment.start,
-                  //         crossAxisAlignment: CrossAxisAlignment.start,
-                  //         mainAxisSize: MainAxisSize.min,
-                  //         children: <Widget>[
-                  //           Container(
-                  //               width: MediaQuery.of(context).size.width,
-                  //               padding: const EdgeInsets.only(
-                  //                   left: 15.0, right: 15.0, top: 20.0),
-                  //               child: ElevatedButton(
-                  //                 onPressed: () {},
-                  //                 style: ElevatedButton.styleFrom(
-                  //                   foregroundColor: Colors.white,
-                  //                   padding: const EdgeInsets.all(12),
-                  //                   textStyle: const TextStyle(fontSize: 18),
-                  //                   backgroundColor: const Color(0xFF1E8E27),
-                  //                   shape: RoundedRectangleBorder(
-                  //                     borderRadius: BorderRadius.circular(10),
-                  //                   ),
-                  //                 ),
-                  //                 child: Row(
-                  //                   mainAxisAlignment: MainAxisAlignment.center,
-                  //                   crossAxisAlignment: CrossAxisAlignment.center,
-                  //                   children: [
-                  //                     Image.asset("assets/images/clock.png", width: 20, height: 20,),
-                  //                     const SizedBox(width: 10,),
-                  //                     Text(
-                  //                       snapshot.data![0].irrigation![0].age ?? "",
-                  //                       style: const TextStyle(
-                  //                           fontSize: 14,
-                  //                           fontFamily: 'poppins-medium'),
-                  //                     ),
-                  //                   ],
-                  //                 ),
-                  //               )),
-                  //
-                  //           const SizedBox(height: 10,),
-                  //
-                  //           Flexible(
-                  //             child: Padding(
-                  //               padding: const EdgeInsets.only(top: 20.0, left: 10.0, right: 10.0),
-                  //               child: Center(
-                  //                 child: Text(
-                  //                   snapshot.data![0].irrigation![0].criticalStage ?? "",
-                  //                   textAlign: TextAlign.center,
-                  //                   softWrap: true,
-                  //                   style: const TextStyle(
-                  //                     // color: Color(0xFF666666),
-                  //                       color: Colors.black,
-                  //                       fontSize: 14,
-                  //                       fontFamily: 'poppins-semibold'),
-                  //                 ),
-                  //               ),
-                  //             ),
-                  //           ),
-                  //
-                  //           const SizedBox(height: 10,),
-                  //
-                  //           Container(
-                  //               width: MediaQuery.of(context).size.width,
-                  //               padding: const EdgeInsets.only(
-                  //                   left: 15.0, right: 15.0, top: 20.0),
-                  //               child: ElevatedButton(
-                  //                 onPressed: () {},
-                  //                 style: ElevatedButton.styleFrom(
-                  //                   foregroundColor: Colors.white,
-                  //                   padding: const EdgeInsets.all(12),
-                  //                   textStyle: const TextStyle(fontSize: 18),
-                  //                   backgroundColor: const Color(0xFF1E8E27),
-                  //                   shape: RoundedRectangleBorder(
-                  //                     borderRadius: BorderRadius.circular(10),
-                  //                   ),
-                  //                 ),
-                  //                 child: Column(
-                  //                   children: [
-                  //                     const Align(
-                  //                       alignment: Alignment.topLeft,
-                  //                       child: Text(
-                  //                         'Methodology',
-                  //                         textAlign: TextAlign.start,
-                  //                         style: TextStyle(
-                  //                             fontSize: 17,
-                  //                             fontFamily: 'poppins-regular'),
-                  //                       ),
-                  //                     ),
-                  //                     const SizedBox(height: 10,),
-                  //                     Align(
-                  //                       alignment: Alignment.topLeft,
-                  //                       child: Text(
-                  //                         snapshot.data![0].irrigation![0].methodology ?? "",
-                  //                         textAlign: TextAlign.start,
-                  //                         style: const TextStyle(
-                  //                             fontSize: 11,
-                  //                             fontFamily: 'poppins-medium'),
-                  //                       ),
-                  //                     ),
-                  //                   ],
-                  //                 ),
-                  //               )),
-                  //
-                  //           const SizedBox(height: 20.0,),
-                  //           const Flexible(
-                  //             child: Padding(
-                  //               padding: EdgeInsets.only(top: 10.0, right: 15.0, left: 15.0),
-                  //               child: Text(
-                  //                 "Operations:",
-                  //                 softWrap: true,
-                  //                 style: TextStyle(
-                  //                   // color: Color(0xFF666666),
-                  //                     color: Colors.black,
-                  //                     fontSize: 15,
-                  //                     fontFamily: 'poppins-semibold'),
-                  //               ),
-                  //             ),
-                  //           ),
-                  //
-                  //           const SizedBox(height: 10.0,),
-                  //           Flexible(
-                  //             child: Padding(
-                  //               padding: const EdgeInsets.only(top: 10.0, right: 15.0, left: 15.0),
-                  //               child: Text(snapshot.data![0].irrigation![0].operations ?? "",
-                  //                 textAlign: TextAlign.justify,
-                  //                 softWrap: true,
-                  //                 style: const TextStyle(
-                  //                   // color: Color(0xFF666666),
-                  //                     color: Colors.black,
-                  //                     fontSize: 13,
-                  //                     fontFamily: 'poppins-regular'),
-                  //               ),
-                  //             ),
-                  //           ),
-                  //           const SizedBox(
-                  //             height: 20,
-                  //           ),
-                  //         ],
-                  //       ),
-                  //     ),
-                  //   ),
-                  // );
                 } else if (snapshot.hasError) {
                   return Text('${snapshot.error}');
                 }
@@ -466,220 +281,14 @@ class _HarvestPageState extends State<HarvestPage>
               },
             ),
 
-            // 1st
-            Padding(
-              padding: const EdgeInsets.only(left: 15.0, right: 15.0),
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                height: 300,
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(color: const Color(0xFFd3d3d3), width: 1),
-                    boxShadow: const [BoxShadow(color: Color(0xFFd3d3d3),)],
-                    borderRadius: BorderRadius.circular(15)),
-                child: InkWell(
-                  highlightColor: Colors.transparent,
-                  splashColor: Colors.transparent,
-                  onTap: () {
-
-                  },
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Container(
-                          width: MediaQuery.of(context).size.width,
-                          padding: const EdgeInsets.only(
-                              left: 15.0, right: 15.0, top: 20.0),
-                          child: ElevatedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.all(12),
-                              textStyle: const TextStyle(fontSize: 18),
-                              backgroundColor: const Color(0xFF1E8E27),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            child: const Text(
-                              '0.6 kg of maize grains per kg of cob',
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  fontFamily: 'poppins-regular'),
-                            ),
-                          )),
-
-                      Container(
-                          width: MediaQuery.of(context).size.width,
-                          padding: const EdgeInsets.only(
-                              left: 15.0, right: 15.0, top: 10.0),
-                          child: ElevatedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.all(12),
-                              textStyle: const TextStyle(fontSize: 18),
-                              backgroundColor: const Color(0xFF1E8E27),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            child: const Column(
-                              children: [
-                                Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Text(
-                                    'The optimum temperature of harvesting is 20-25 C '
-                                        'harvesting should be done in clear weather to prevent losses.',
-                                    textAlign: TextAlign.start,
-                                    style: TextStyle(
-                                        fontSize: 11,
-                                        fontFamily: 'poppins-regular'),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )),
-
-                      const SizedBox(height: 20.0,),
-                      const Flexible(
-                        child: Padding(
-                          padding: EdgeInsets.only(top: 10.0, right: 15.0, left: 15.0),
-                          child: Text(
-                            "1. Seed drying should be done till the moisture content of seed is reduced to 8%.",
-                            softWrap: true,
-                            style: TextStyle(
-                              // color: Color(0xFF666666),
-                                color: Colors.black,
-                                fontSize: 13,
-                                fontFamily: 'poppins-semibold'),
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(height: 10.0,),
-                      const Flexible(
-                        child: Padding(
-                          padding: EdgeInsets.only(top: 10.0, right: 15.0, left: 15.0),
-                          child: Text(
-                            "2. Seed should be stored in a cool and dry place preferably in cold storage.",
-                            textAlign: TextAlign.justify,
-                            softWrap: true,
-                            style: TextStyle(
-                              // color: Color(0xFF666666),
-                                color: Colors.black,
-                                fontSize: 13,
-                                fontFamily: 'poppins-semibold'),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(
+   const SizedBox(
               height: 20,
             ),
 
           ],
         ),
       ),
-      // floatingActionButton: widget.aapbarVisibility
-      //     ? FloatingActionButton(
-      //   backgroundColor: Colors.white.withAlpha(0),
-      //   // add this line.
-      //   elevation: 0,
-      //   // also important, removes the shadow
-      //   heroTag: "floatingActionBtn",
-      //   shape: const RoundedRectangleBorder(
-      //     // <= Change BeveledRectangleBorder to RoundedRectangularBorder
-      //     borderRadius: BorderRadius.only(
-      //       topLeft: Radius.circular(30.0),
-      //       topRight: Radius.circular(30.0),
-      //       bottomLeft: Radius.circular(30.0),
-      //       bottomRight: Radius.circular(30.0),
-      //     ),
-      //   ),
-      //   child: InkWell(
-      //     highlightColor: Colors.transparent,
-      //     splashColor: Colors.transparent,
-      //     onTap: () {
-      //       setState(() {
-      //         _onItemTapped(4);
-      //       });
-      //     },
-      //     child: Image.asset(
-      //       'assets/images/bottomCenter.png',
-      //       // color: Colors.white,
-      //     ),
-      //   ),
-      //   onPressed: () {
-      //     _fabAnimationController.reset();
-      //     _borderRadiusAnimationController.reset();
-      //     _borderRadiusAnimationController.forward();
-      //     _fabAnimationController.forward();
-      //   },
-      // )
-      //     : null,
-      // floatingActionButtonLocation: widget.aapbarVisibility
-      //     ? FloatingActionButtonLocation.centerDocked
-      //     : null,
-      // bottomNavigationBar: widget.aapbarVisibility
-      //     ? AnimatedBottomNavigationBar.builder(
-      //   height: 70,
-      //   itemCount: iconList.length,
-      //   tabBuilder: (int index, bool isActive) {
-      //     final color = isActive ? Colors.green : Colors.grey;
-      //     return Column(
-      //       mainAxisSize: MainAxisSize.min,
-      //       mainAxisAlignment: MainAxisAlignment.center,
-      //       children: [
-      //         Image.asset(
-      //           iconList[index].icon ?? "",
-      //           color: color,
-      //           width: 25,
-      //           height: 25,
-      //         ),
-      //         const SizedBox(height: 5),
-      //         Text(
-      //           iconList[index].name ?? "",
-      //           textAlign: TextAlign.center,
-      //           style: const TextStyle(
-      //               color: Color(0xFF666666),
-      //               fontSize: 13,
-      //               fontFamily: 'poppins-regular'),
-      //         ),
-      //       ],
-      //     );
-      //   },
-      //   // backgroundColor: Colors.white,
-      //   activeIndex: _bottomNavIndex,
-      //   // splashColor: Colors.green,
-      //   notchAndCornersAnimation: borderRadiusAnimation,
-      //   splashSpeedInMilliseconds: 300,
-      //   notchSmoothness: NotchSmoothness.defaultEdge,
-      //   gapLocation: GapLocation.center,
-      //   leftCornerRadius: 32,
-      //   rightCornerRadius: 32,
-      //   notchMargin: 7,
-      //   onTap: (index) {
-      //     setState(() {
-      //       _onItemTapped(index);
-      //     });
-      //   },
-      //   // setState(() => _bottomNavIndex = index),
-      //   hideAnimationController: _hideBottomBarAnimationController,
-      //   shadow: const BoxShadow(
-      //     offset: Offset(0, 1),
-      //     blurRadius: 2,
-      //     spreadRadius: 0.2,
-      //     color: Colors.white,
-      //   ),
-      // )
-      //     : null,
-    );
+ );
   }
 
   void _onItemTapped(int index) {

@@ -30,73 +30,8 @@ class _NutrientManagmentPageState extends State<NutrientManagmentPage> with Tick
   var _bottomNavIndex = 2; //default index of a first screen
 
 
-
-  List<Nutrient> ORG_Nutrient = [
-    Nutrient(
-        id: "1",
-        name: "NITROGEN",
-        dosage: "Dosage: 60-70 kg/acre",
-        description: "Applied in 3 Stages: \n1. At Sowing \n2. At Knee-high \n3. At Tasselling",
-        methodOfApplication: "    Applied in furrow at different stages Neem oil coated urea (NOCU) recommended for highly yield.return and nitrogen use efficiency in kharif maize."
-    ),
-    Nutrient(
-        id: "2",
-        name: "PHOSPHORUS",
-        dosage: "Dosage: 24-25 kg/acre",
-        description: "100% basal at the time of sowing",
-        methodOfApplication: "    Entire dosage is applied at root zone."
-    ),
-    Nutrient(
-        id: "3",
-        name: "POTASH",
-        dosage: "Dosage: 16-17 kg/acre",
-        description: "100% basal at the time of sowing",
-        methodOfApplication: "    Entire dosage is applied at root zone."
-    ),
-    Nutrient(
-        id: "4",
-        name: "ZINC",
-        dosage: "Dosage: 12-13 kg/acre",
-        description: "100% basal at the time of sowing",
-        methodOfApplication: "    Entire dosage is applied at root zone."
-    ),
-  ];
-
   List<dynamic> nutrients = [];
   bool isLoading = true;
-
-   Future<void> fetchNutrients() async {
-    if (widget.selectedcrop == null || widget.selectedcrop!.isEmpty) {
-      // Handle case where selected crop is null or empty
-      setState(() {
-        isLoading = false;
-      });
-      return;
-    }
-
-    try {
-      // Construct the API URL using the selected crop
-      final response = await _dio.get(
-        'https://d1dv04h56lh39n.cloudfront.net/api/crops/${widget.selectedcrop}',
-      );
-
-      if (response.statusCode == 200) {
-        final jsonResponse = response.data; // Dio parses JSON automatically
-        setState(() {
-          nutrients = jsonResponse['nutrients']; // Adjust based on actual API response structure
-          isLoading = false;
-        });
-      } else {
-        throw Exception('Failed to load nutrients');
-      }
-    } catch (e) {
-      // Handle errors appropriately
-      print(e);
-      setState(() {
-        isLoading = false; // Stop loading on error
-      });
-    }
-  }
 
   @override
   void initState() {

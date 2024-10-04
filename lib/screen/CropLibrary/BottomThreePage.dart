@@ -547,7 +547,7 @@ class _BottomThreePageState extends State<BottomThreePage> with TickerProviderSt
                   }
                   else if(ORG_Entity[index].id == "2"){
                     Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => MyVeritiesPage(aapbarVisibility: true, selectedcrop: _selectedCrop ?? '' )),
+                      MaterialPageRoute(builder: (context) => MyVeritiesPage(aapbarVisibility: true, cropData : futureCropData, selectedcrop: _selectedCrop ?? '' )),
                     );
                   }
                   else if(ORG_Entity[index].id == "3"){
@@ -576,7 +576,7 @@ class _BottomThreePageState extends State<BottomThreePage> with TickerProviderSt
                   }
                   else if(ORG_Entity[index].id == "7"){
                     Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => HarvestPage(aapbarVisibility: true, cropData : futureCropData)),
+                      MaterialPageRoute(builder: (context) => HarvestPage(aapbarVisibility: true, cropData : futureCropData, selectedcrop: _selectedCrop ?? '')),
                     );
                   }
                   else if(ORG_Entity[index].id == "8"){
