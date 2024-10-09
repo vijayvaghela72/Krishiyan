@@ -18,8 +18,9 @@ import '../Language/SelectLanguagePage.dart';
 class IrrigationManagementPage extends StatefulWidget {
   bool aapbarVisibility;
   Future<List<CropLibraryData>?> cropData;
+  String? selectedcrop;
 
-  IrrigationManagementPage({super.key, required this.aapbarVisibility, required this.cropData});
+  IrrigationManagementPage({super.key, required this.aapbarVisibility,required this.selectedcrop, required this.cropData});
 
   @override
   State<IrrigationManagementPage> createState() => _IrrigationManagementPageState();
@@ -29,60 +30,10 @@ class _IrrigationManagementPageState extends State<IrrigationManagementPage>
     with TickerProviderStateMixin {
   var _bottomNavIndex = 2; //default index of a first screen
 
-  // late AnimationController _fabAnimationController;
-  // late AnimationController _borderRadiusAnimationController;
-  // late Animation<double> fabAnimation;
-  // late Animation<double> borderRadiusAnimation;
-  // late CurvedAnimation fabCurve;
-  // late CurvedAnimation borderRadiusCurve;
-  // late AnimationController _hideBottomBarAnimationController;
-  //
-  // List<bottomCategory> iconList = [
-  //   bottomCategory(name: "Home", id: "1", icon: 'assets/images/bottom1.png'),
-  //   bottomCategory(name: "FRM", id: "2", icon: 'assets/images/bottom2.png'),
-  //   bottomCategory(name: "Crop", id: "3", icon: 'assets/images/bottom3.png'),
-  //   bottomCategory(name: "Profile", id: "4", icon: 'assets/images/bottom4.png'),
-  // ];
-
   @override
   void initState() {
     super.initState();
 
-    // _fabAnimationController = AnimationController(
-    //   duration: const Duration(milliseconds: 500),
-    //   vsync: this,
-    // );
-    // _borderRadiusAnimationController = AnimationController(
-    //   duration: const Duration(milliseconds: 500),
-    //   vsync: this,
-    // );
-    // fabCurve = CurvedAnimation(
-    //   parent: _fabAnimationController,
-    //   curve: const Interval(0.5, 1.0, curve: Curves.fastOutSlowIn),
-    // );
-    // borderRadiusCurve = CurvedAnimation(
-    //   parent: _borderRadiusAnimationController,
-    //   curve: const Interval(0.5, 1.0, curve: Curves.fastOutSlowIn),
-    // );
-    //
-    // fabAnimation = Tween<double>(begin: 1, end: 1).animate(fabCurve);
-    // borderRadiusAnimation = Tween<double>(begin: 1, end: 1).animate(
-    //   borderRadiusCurve,
-    // );
-    //
-    // _hideBottomBarAnimationController = AnimationController(
-    //   duration: const Duration(milliseconds: 200),
-    //   vsync: this,
-    // );
-    //
-    // Future.delayed(
-    //   const Duration(seconds: 1),
-    //       () => _fabAnimationController.forward(),
-    // );
-    // Future.delayed(
-    //   const Duration(seconds: 1),
-    //       () => _borderRadiusAnimationController.forward(),
-    // );
   }
 
   @override
@@ -192,14 +143,34 @@ class _IrrigationManagementPageState extends State<IrrigationManagementPage>
             FutureBuilder<List<CropLibraryData>?>(
               future: widget.cropData,
               builder: (context, snapshot) {
+                
                 if (snapshot.hasData) {
+                  List<CropLibraryData>? filteredData = snapshot.data?.where((data) {
+        return data.localName == widget.selectedcrop; // Filter by selected crop
+      }).toList();
+
+      // Check if filteredData has any results
+      if (filteredData == null || filteredData.isEmpty) {
+        return const Text('No data available for the selected crop.');
+      }
+
+      // Filter out irrigation entries that have only '_id' without additional data
+      filteredData?.forEach((cropData) {
+        cropData.irrigation?.removeWhere((irrigation) =>
+          irrigation.criticalStage == null &&
+          irrigation.age == null &&
+          irrigation.methodology == null &&
+          irrigation.operations == null
+        );
+      });
+
                   return ListView.builder(
-                      itemCount: snapshot.data!.length,
+                      itemCount: filteredData.length,
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       itemBuilder: (context, parentIndex) {
                         return ListView.builder(
-                          itemCount: snapshot.data![parentIndex].irrigation!.length,
+                          itemCount: filteredData![parentIndex].irrigation!.length,
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
                           itemBuilder: (context, index) {
@@ -263,7 +234,7 @@ class _IrrigationManagementPageState extends State<IrrigationManagementPage>
                                                   width: 10,
                                                 ),
                                                 Text(
-                                                  snapshot.data![parentIndex].irrigation![index].age ??
+                                                  filteredData[parentIndex].irrigation![index].age ??
                                                       "",
                                                   style: const TextStyle(
                                                       fontSize: 14,
@@ -285,8 +256,7 @@ class _IrrigationManagementPageState extends State<IrrigationManagementPage>
                                               right: 10.0),
                                           child: Center(
                                             child: Text(
-                                              snapshot
-                                                  .data![parentIndex]
+                                              filteredData[parentIndex]
                                                   .irrigation![index]
                                                   .criticalStage ??
                                                   "",
@@ -345,8 +315,7 @@ class _IrrigationManagementPageState extends State<IrrigationManagementPage>
                                                 Align(
                                                   alignment: Alignment.topLeft,
                                                   child: Text(
-                                                    snapshot
-                                                        .data![parentIndex]
+                                                    filteredData[parentIndex]
                                                         .irrigation![index]
                                                         .methodology ??
                                                         "",
@@ -390,8 +359,7 @@ class _IrrigationManagementPageState extends State<IrrigationManagementPage>
                                               right: 15.0,
                                               left: 15.0),
                                           child: Text(
-                                            snapshot
-                                                .data![parentIndex]
+                                            filteredData[parentIndex]
                                                 .irrigation![index]
                                                 .operations ??
                                                 "",

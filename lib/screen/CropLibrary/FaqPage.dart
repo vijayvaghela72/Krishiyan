@@ -13,8 +13,9 @@ import '../Language/SelectLanguagePage.dart';
 class MyFaqPage extends StatefulWidget {
   bool aapbarVisibility;
   Future<List<CropLibraryData>?> cropData;
+  String? selectedcrop;
 
-  MyFaqPage({super.key, required this.aapbarVisibility, required this.cropData});
+  MyFaqPage({super.key, required this.aapbarVisibility,required this.selectedcrop, required this.cropData});
 
   @override
   State<MyFaqPage> createState() => _MyFaqPageState();
@@ -23,21 +24,7 @@ class MyFaqPage extends StatefulWidget {
 class _MyFaqPageState extends State<MyFaqPage>
     with TickerProviderStateMixin {
   var _bottomNavIndex = 2; //default index of a first screen
-
-  // late AnimationController _fabAnimationController;
-  // late AnimationController _borderRadiusAnimationController;
-  // late Animation<double> fabAnimation;
-  // late Animation<double> borderRadiusAnimation;
-  // late CurvedAnimation fabCurve;
-  // late CurvedAnimation borderRadiusCurve;
-  // late AnimationController _hideBottomBarAnimationController;
-  //
-  // List<bottomCategory> iconList = [
-  //   bottomCategory(name: "Home", id: "1", icon: 'assets/images/bottom1.png'),
-  //   bottomCategory(name: "FRM", id: "2", icon: 'assets/images/bottom2.png'),
-  //   bottomCategory(name: "Crop", id: "3", icon: 'assets/images/bottom3.png'),
-  //   bottomCategory(name: "Profile", id: "4", icon: 'assets/images/bottom4.png'),
-  // ];
+  List<bool> _expandedStates = [];
 
   bool firstCardVisible = false;
   bool secondCardVisible = false;
@@ -185,13 +172,32 @@ class _MyFaqPageState extends State<MyFaqPage>
               future: widget.cropData,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
+                   List<CropLibraryData>? filteredData = snapshot.data?.where((data) {
+        return data.localName == widget.selectedcrop; // Filter by selected crop
+      }).toList();
+
+      // Check if filteredData has any results
+      if (filteredData == null || filteredData.isEmpty) {
+        return const Text('No data available for the selected crop.');
+      }
+      // Filter out irrigation entries that have only '_id' without additional data
+      filteredData?.forEach((cropData) {
+        cropData.faq?.removeWhere((faq) =>
+          faq.answer == null &&
+          faq.question == null
+        );
+      });
+      // Initialize expanded states list if not already initialized
+          if (_expandedStates.length != filteredData.first.faq!.length) {
+            _expandedStates = List.filled(filteredData.first.faq!.length, false);
+          }
                   return ListView.builder(
-                      itemCount: snapshot.data!.length,
+                      itemCount: filteredData.length,
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       itemBuilder: (context, parentIndex) {
                         return ListView.builder(
-                          itemCount: snapshot.data![parentIndex].faq!.length,
+                          itemCount: filteredData![parentIndex].faq!.length,
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
                           itemBuilder: (context, index) {
@@ -203,13 +209,8 @@ class _MyFaqPageState extends State<MyFaqPage>
                                   child: ElevatedButton(
                                     onPressed: () {
                                       setState(() {
-                                        if(firstCardVisible){
-                                          firstCardVisible = false;
-                                        }
-                                        else {
-                                          firstCardVisible = true;
-                                        }
-                                      });
+                          _expandedStates[index] = !_expandedStates[index];
+                        });
                                     },
                                     style: ElevatedButton.styleFrom(
                                       foregroundColor: Colors.white,
@@ -229,7 +230,7 @@ class _MyFaqPageState extends State<MyFaqPage>
                                               child: Align(
                                                 alignment: Alignment.centerLeft,
                                                 child: Text(
-                                                  snapshot.data![parentIndex].faq![index].question ?? "",
+                                                  filteredData![parentIndex].faq![index].question ?? "",
                                                   textAlign: TextAlign.start,
                                                   style: const TextStyle(
                                                       fontSize: 14,
@@ -249,8 +250,7 @@ class _MyFaqPageState extends State<MyFaqPage>
                                             ),
                                           ],
                                         ),
-                                        firstCardVisible ? const SizedBox(height: 20,) : Container(),
-                                        firstCardVisible ?
+                                       _expandedStates[index]? 
                                         Container(
                                           decoration: BoxDecoration(
                                               color: Colors.white,
@@ -273,7 +273,7 @@ class _MyFaqPageState extends State<MyFaqPage>
                                                 child: Align(
                                                   alignment: Alignment.centerLeft,
                                                   child: Text(
-                                                    snapshot.data![parentIndex].faq![index].answer ?? "",
+                                                    filteredData![parentIndex].faq![index].answer ?? "",
                                                     softWrap: true,
                                                     textAlign: TextAlign.start,
                                                     style: const TextStyle(
@@ -285,10 +285,11 @@ class _MyFaqPageState extends State<MyFaqPage>
                                                 ),
                                               ),
                                               const SizedBox(
-                                                height: 20.0,
+                                                height: 40.0,
                                               ),
                                             ],
                                           ),
+                                          
                                         )
                                             : Container(),
                                       ],

@@ -166,6 +166,14 @@ class _NutrientManagmentPageState extends State<NutrientManagmentPage> with Tick
       return const Center(child: Text('No data available for the selected crop'));
     }
 
+    filteredData?.forEach((cropData) {
+        cropData.nutrient?.removeWhere((nutrient) =>
+          nutrient.dosage == null &&
+          nutrient.methodApplication == null &&
+          nutrient.age == null
+        );
+      });
+
               return ListView.builder(
   itemCount: filteredData.length,
   shrinkWrap: true,

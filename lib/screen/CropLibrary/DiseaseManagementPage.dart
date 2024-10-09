@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import '../../mvc/model/CropLibraryData.dart';
+import '../../utils/DriveImage.dart';
 import '../Enquiry/BottomCenterEnquiryPage.dart';
 import '../HomeScreen/BottomOnePage.dart';
 import 'BottomThreePage.dart';
@@ -20,8 +21,9 @@ import '../Language/SelectLanguagePage.dart';
 class DiseaseManagementPage extends StatefulWidget {
   bool aapbarVisibility;
   Future<List<CropLibraryData>?> cropData;
+  String? selectedcrop;
 
-  DiseaseManagementPage({super.key, required this.aapbarVisibility, required this.cropData});
+  DiseaseManagementPage({super.key, required this.aapbarVisibility, required this.cropData, required this.selectedcrop});
 
   @override
   State<DiseaseManagementPage> createState() => _DiseaseManagementPageState();
@@ -306,141 +308,161 @@ class _DiseaseManagementPageState extends State<DiseaseManagementPage>
         future: widget.cropData,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
+             List<CropLibraryData>? filteredData = snapshot.data?.where((data) {
+        return data.localName == widget.selectedcrop; // Filter by selected crop
+      }).toList();
+
+      // Check if filteredData has any results
+      if (filteredData == null || filteredData.isEmpty) {
+        return const Text('No data available for the selected crop.');
+      }
+
+          filteredData?.forEach((cropData) {
+        cropData.diseaseManagement?.removeWhere((diseaseManagement) =>
+          diseaseManagement.causal == null &&
+          diseaseManagement.solutions == null
+        );
+      });
             return ListView.builder(
-                itemCount: snapshot.data!.length,
+                itemCount: filteredData.length,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemBuilder: (context, parentIndex) {
                   return
-                    ListView.builder(
-                      shrinkWrap: true,
-                      scrollDirection: Axis.vertical,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: snapshot.data![parentIndex].diseaseManagement!.length,
-                      itemBuilder: (_, index) {
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                border: Border.all(color: const Color(0xFFd3d3d3), width: 1),
-                                boxShadow: const [
-                                  BoxShadow(
-                                    color: Color(0xFFd3d3d3),
-                                  )
-                                ],
-                                borderRadius: BorderRadius.circular(15)),
-                            child: InkWell(
-                              highlightColor: Colors.transparent,
-                              splashColor: Colors.transparent,
-                              onTap: () {},
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  Container(
-                                      padding: const EdgeInsets.all(8.0),
-                                      decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(15)),
-                                      child: Image.asset(snapshot.data![parentIndex].diseaseManagement![index].images![0] ?? "",
+                    Padding(
+                      padding: const EdgeInsets.only(left: 12.0, right: 12.0),
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        scrollDirection: Axis.vertical,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: filteredData[parentIndex].diseaseManagement!.length,
+                        itemBuilder: (_, index) {
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  border: Border.all(color: const Color(0xFFd3d3d3), width: 1),
+                                  boxShadow: const [
+                                    BoxShadow(
+                                      color: Color(0xFFd3d3d3),
+                                    )
+                                  ],
+                                  borderRadius: BorderRadius.circular(15)),
+                              child: InkWell(
+                                highlightColor: Colors.transparent,
+                                splashColor: Colors.transparent,
+                                onTap: () {},
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    Container(
+                                        padding: const EdgeInsets.all(8.0),
+                                        decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(15)),
+                                        child:  filteredData[parentIndex]
+                                          .diseaseManagement![index].images!.isNotEmpty ?
+                                      DriveImage(imageUrlData:
+                                      filteredData[parentIndex].
+                                      diseaseManagement![index].images![0] ?? ""):Container(),),
+                                    Flexible(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(5.0),
+                                        child: Center(
+                                          child: Text(
+                                            textAlign: TextAlign.center,
+                                            filteredData[parentIndex].diseaseManagement![index].name ?? "",
+                                            softWrap: true,
+                                            style: const TextStyle(
+                                                color: Color(0xFF111111),
+                                                fontSize: 14,
+                                                fontFamily: 'poppins-semibold'),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Flexible(
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 5.0),
+                                        child: Center(
+                                          child: Text(
+                                            textAlign: TextAlign.justify,
+                                            filteredData[parentIndex].diseaseManagement![index].causal ?? "",
+                                            softWrap: true,
+                                            style: const TextStyle(
+                                                color: Color(0xFF808080),
+                                                fontSize: 11,
+                                                fontFamily: 'poppins-semibold'),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
                                         width: MediaQuery.of(context).size.width,
-                                        fit: BoxFit.cover,)),
-                                  Flexible(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(5.0),
-                                      child: Center(
-                                        child: Text(
-                                          textAlign: TextAlign.center,
-                                          snapshot.data![parentIndex].diseaseManagement![index].name ?? "",
-                                          softWrap: true,
-                                          style: const TextStyle(
-                                              color: Color(0xFF111111),
-                                              fontSize: 14,
-                                              fontFamily: 'poppins-semibold'),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Flexible(
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 5.0),
-                                      child: Center(
-                                        child: Text(
-                                          textAlign: TextAlign.justify,
-                                          snapshot.data![parentIndex].diseaseManagement![index].solutions ?? "",
-                                          softWrap: true,
-                                          style: const TextStyle(
-                                              color: Color(0xFF808080),
-                                              fontSize: 11,
-                                              fontFamily: 'poppins-semibold'),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                      width: MediaQuery.of(context).size.width,
-                                      padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 5.0, bottom: 5.0),
-                                      child: Row(
-                                        children: [
-                                          Expanded(
-                                            child: ElevatedButton(
-                                              onPressed: () {
-                                                showSymptomsAlertDialog(context);
-                                              },
-                                              style: ElevatedButton.styleFrom(
-                                                foregroundColor: Colors.white,
-                                                minimumSize: Size.zero,
-                                                textStyle: const TextStyle(fontSize: 14),
-                                                padding: const EdgeInsets.all(5),
-                                                backgroundColor: const Color(0xFF278115),
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(17),
+                                        padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 5.0, bottom: 5.0),
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: ElevatedButton(
+                                                onPressed: () {
+                                                  showSymptomsAlertDialog(context, filteredData[parentIndex].diseaseManagement![index].symptoms!);
+                                                },
+                                                style: ElevatedButton.styleFrom(
+                                                  foregroundColor: Colors.white,
+                                                  minimumSize: Size.zero,
+                                                  textStyle: const TextStyle(fontSize: 14),
+                                                  padding: const EdgeInsets.all(5),
+                                                  backgroundColor: const Color(0xFF278115),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.circular(17),
+                                                  ),
+                                                ),
+                                                child: const Text(
+                                                  'SYMPTOMS',
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                      fontSize: 14,
+                                                      fontFamily: 'poppins-regular'),
                                                 ),
                                               ),
-                                              child: const Text(
-                                                'SYMPTOMS',
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                    fontSize: 14,
-                                                    fontFamily: 'poppins-regular'),
-                                              ),
                                             ),
-                                          ),
-                                          const SizedBox(width: 10,),
-                                          Expanded(
-                                            child: ElevatedButton(
-                                              onPressed: () {
-                                                showSolutionAlertDialog(context);
-                                              },
-                                              style: ElevatedButton.styleFrom(
-                                                foregroundColor: Colors.white,
-                                                minimumSize: Size.zero,
-                                                textStyle: const TextStyle(fontSize: 14),
-                                                padding: const EdgeInsets.all(5),
-                                                backgroundColor: const Color(0xFF3FC041),
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(17),
+                                            const SizedBox(width: 10,),
+                                            Expanded(
+                                              child: ElevatedButton(
+                                                onPressed: () {
+                                                  showSolutionAlertDialog(context, filteredData[parentIndex].diseaseManagement![index].solutions!);
+                                                },
+                                                style: ElevatedButton.styleFrom(
+                                                  foregroundColor: Colors.white,
+                                                  minimumSize: Size.zero,
+                                                  textStyle: const TextStyle(fontSize: 14),
+                                                  padding: const EdgeInsets.all(5),
+                                                  backgroundColor: const Color(0xFF3FC041),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.circular(17),
+                                                  ),
+                                                ),
+                                                child: const Text(
+                                                  'SOLUTION',
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                      fontSize: 14,
+                                                      fontFamily: 'poppins-regular'),
                                                 ),
                                               ),
-                                              child: const Text(
-                                                'SOLUTION',
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                    fontSize: 14,
-                                                    fontFamily: 'poppins-regular'),
-                                              ),
                                             ),
-                                          ),
-                                        ],
-                                      )),
-                                  const SizedBox(height: 10,)
-                                ],
+                                          ],
+                                        )),
+                                    const SizedBox(height: 10,)
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     );
                 });
             // Padding(
@@ -606,7 +628,7 @@ class _DiseaseManagementPageState extends State<DiseaseManagementPage>
       );
   }
 
-  showSolutionAlertDialog(BuildContext context) {
+  showSolutionAlertDialog(BuildContext context, String solution) {
     AlertDialog alert = AlertDialog(
       backgroundColor: Colors.white,
       contentPadding: EdgeInsets.zero,
@@ -652,12 +674,9 @@ class _DiseaseManagementPageState extends State<DiseaseManagementPage>
           ),
           const SizedBox(height: 5,),
 
-          const Padding(
+           Padding(
             padding: EdgeInsets.only(left: 15.0, right: 15.0,),
-            child: Text("To control the disease: - Apply P. fluorescens or T. viride"
-                " @ 2.5 kg/ha + 50 kg well-decomposed Farm Yard Manure (mix 10 days before) or sand 30 days"
-                "after sowing. - Spray Metalaxyl 1000 g / Mancozeb 2 g/liter at 10-day"
-                " intervals after the disease appears.", softWrap: true,
+            child: Text(solution, softWrap: true,
               textAlign: TextAlign.justify,
               style: TextStyle(fontFamily: "poppins-regular", fontSize: 13.0, color: Color(0xFF666666)),),
           ),
@@ -676,7 +695,7 @@ class _DiseaseManagementPageState extends State<DiseaseManagementPage>
     );
   }
 
-  showSymptomsAlertDialog(BuildContext context) {
+  showSymptomsAlertDialog(BuildContext context, String symptom) {
     AlertDialog alert = AlertDialog(
       backgroundColor: Colors.white,
       contentPadding: EdgeInsets.zero,
@@ -722,13 +741,9 @@ class _DiseaseManagementPageState extends State<DiseaseManagementPage>
           ),
           const SizedBox(height: 5,),
 
-          const Padding(
+           Padding(
             padding: EdgeInsets.only(left: 15.0, right: 15.0,),
-            child: Text("Turcicum Leaf Blight: Initial signs: oval water-soaked leaf spots."
-                " Later, cigar-shaped tan lesions form, 3-15 cm long. Dark areas "
-                "develop with fungal infection. Maydis Leaf Blight: At first, oval "
-                "water-soaked leaf spots. Later, small round/oval yellowish spots grow elliptical,"
-                " with straw-colored centers, and reddish-brown edges.", softWrap: true,
+            child: Text(symptom, softWrap: true,
               textAlign: TextAlign.justify,
               style: TextStyle(fontFamily: "poppins-regular", fontSize: 13.0, color: Color(0xFF666666)),),
           ),

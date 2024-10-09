@@ -1,7 +1,10 @@
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../mvc/model/CropLibraryData.dart';
+import 'package:flutter/widgets.dart';
+import '../../utils/DriveImage.dart';
 import '../Enquiry/BottomCenterEnquiryPage.dart';
 import '../HomeScreen/BottomOnePage.dart';
 import 'BottomThreePage.dart';
@@ -18,8 +21,9 @@ import '../Language/SelectLanguagePage.dart';
 class MyWeedManagementPage extends StatefulWidget {
   bool aapbarVisibility;
   Future<List<CropLibraryData>?> cropData;
+  String? selectedcrop;
 
-  MyWeedManagementPage({super.key, required this.aapbarVisibility, required this.cropData});
+  MyWeedManagementPage({super.key, required this.aapbarVisibility, required this.cropData, required this.selectedcrop});
 
   @override
   State<MyWeedManagementPage> createState() => _MyWeedManagementPageState();
@@ -30,20 +34,6 @@ class _MyWeedManagementPageState extends State<MyWeedManagementPage>
 
   var _bottomNavIndex = 2; //default index of a first screen
 
-  // late AnimationController _fabAnimationController;
-  // late AnimationController _borderRadiusAnimationController;
-  // late Animation<double> fabAnimation;
-  // late Animation<double> borderRadiusAnimation;
-  // late CurvedAnimation fabCurve;
-  // late CurvedAnimation borderRadiusCurve;
-  // late AnimationController _hideBottomBarAnimationController;
-  //
-  // List<bottomCategory> iconList = [
-  //   bottomCategory(name: "Home", id: "1", icon: 'assets/images/bottom1.png'),
-  //   bottomCategory(name: "FRM", id: "2", icon: 'assets/images/bottom2.png'),
-  //   bottomCategory(name: "Crop", id: "3", icon: 'assets/images/bottom3.png'),
-  //   bottomCategory(name: "Profile", id: "4", icon: 'assets/images/bottom4.png'),
-  // ];
   TextEditingController? controller;
 
   @override
@@ -304,8 +294,17 @@ class _MyWeedManagementPageState extends State<MyWeedManagementPage>
         future: widget.cropData,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
+             List<CropLibraryData>? filteredData = snapshot.data?.where((data) {
+        return data.localName == widget.selectedcrop; // Filter by selected crop
+      }).toList();
+
+      // Check if filteredData has any results
+      if (filteredData == null || filteredData.isEmpty) {
+        return const Text('No data available for the selected crop.');
+      }
+      
             return ListView.builder(
-                itemCount: snapshot.data!.length,
+                itemCount: filteredData.length,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemBuilder: (context, parentIndex) {
@@ -316,7 +315,7 @@ class _MyWeedManagementPageState extends State<MyWeedManagementPage>
                         shrinkWrap: true,
                         scrollDirection: Axis.vertical,
                         physics: const NeverScrollableScrollPhysics(),
-                        itemCount: snapshot.data![parentIndex].weedManagement!.length,
+                        itemCount: filteredData[parentIndex].weedManagement!.length,
                         itemBuilder: (_, index) {
                           return Padding(
                             padding: const EdgeInsets.all(5.0),
@@ -343,16 +342,18 @@ class _MyWeedManagementPageState extends State<MyWeedManagementPage>
                                         padding: const EdgeInsets.all(8.0),
                                         decoration: BoxDecoration(
                                             borderRadius: BorderRadius.circular(15)),
-                                        child: Image.asset("",
-                                          width: MediaQuery.of(context).size.width,
-                                          fit: BoxFit.cover,)),
+                                        child: filteredData[parentIndex]
+                                          .weedManagement![index].image!.isNotEmpty ?
+                                      DriveImage(imageUrlData:
+                                      filteredData[parentIndex].
+                                      weedManagement![index].image! ?? ""):Container(),),
                                     Flexible(
                                       child: Padding(
                                         padding: const EdgeInsets.all(3.0),
                                         child: Center(
                                           child: Text(
                                             textAlign: TextAlign.center,
-                                            snapshot.data![parentIndex].weedManagement![index].name ?? "",
+                                            filteredData[parentIndex].weedManagement![index].name ?? "",
                                             softWrap: true,
                                             style: const TextStyle(
                                                 color: Color(0xFF111111),
@@ -368,7 +369,7 @@ class _MyWeedManagementPageState extends State<MyWeedManagementPage>
                                         child: Center(
                                           child: Text(
                                             textAlign: TextAlign.center,
-                                            snapshot.data![parentIndex].weedManagement![index].category ?? "",
+                                           filteredData[parentIndex].weedManagement![index].category ?? "",
                                             softWrap: true,
                                             style: const TextStyle(
                                                 color: Color(0xFF111111),
@@ -385,7 +386,7 @@ class _MyWeedManagementPageState extends State<MyWeedManagementPage>
                                         child: ElevatedButton(
                                           onPressed: () {
                                             showSolutionAlertDialog(context,
-                                                snapshot.data![parentIndex].weedManagement![index].solutions!);
+                                                filteredData[parentIndex].weedManagement![index].solutions!);
                                           },
                                           style: ElevatedButton.styleFrom(
                                             foregroundColor: Colors.white,

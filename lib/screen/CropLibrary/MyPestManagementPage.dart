@@ -22,8 +22,9 @@ import '../Language/SelectLanguagePage.dart';
 class MyPestManagementPage extends StatefulWidget {
   bool aapbarVisibility;
   Future<List<CropLibraryData>?> cropData;
+  final String? selectedcrop;
 
-  MyPestManagementPage({super.key, required this.aapbarVisibility, required this.cropData});
+  MyPestManagementPage({super.key, required this.aapbarVisibility, required this.cropData, required this.selectedcrop });
 
   @override
   State<MyPestManagementPage> createState() => _MyPestManagementPageState();
@@ -33,7 +34,7 @@ class _MyPestManagementPageState extends State<MyPestManagementPage>
     with TickerProviderStateMixin {
 
   var _bottomNavIndex = 2; //default index of a first screen
-
+  String? _selectedPest;
   // late AnimationController _fabAnimationController;
   // late AnimationController _borderRadiusAnimationController;
   // late Animation<double> fabAnimation;
@@ -409,8 +410,23 @@ class _MyPestManagementPageState extends State<MyPestManagementPage>
         future: widget.cropData,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
+             List<CropLibraryData>? filteredData = snapshot.data?.where((data) {
+        return data.localName == widget.selectedcrop; // Filter by selected crop
+      }).toList();
+
+      // Check if filteredData has any results
+      if (filteredData == null || filteredData.isEmpty) {
+        return const Text('No data available for the selected crop.');
+      }
+      // Filter out irrigation entries that have only '_id' without additional data
+      filteredData?.forEach((cropData) {
+        cropData.pestManagement?.removeWhere((pestmanagement) =>
+          pestmanagement.name == null &&
+          pestmanagement.solutions == null
+        );
+      });
             return ListView.builder(
-                itemCount: snapshot.data!.length,
+                itemCount: filteredData.length,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemBuilder: (context, parentIndex) {
@@ -420,7 +436,7 @@ class _MyPestManagementPageState extends State<MyPestManagementPage>
                       child: GridView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
-                        itemCount: snapshot.data![parentIndex].pestManagement!.length,
+                        itemCount: filteredData[parentIndex].pestManagement!.length,
                         itemBuilder: (_, index) {
                           return Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -448,10 +464,10 @@ class _MyPestManagementPageState extends State<MyPestManagementPage>
                                       decoration: BoxDecoration(
                                           borderRadius: BorderRadius.circular(15)),
                                       child:
-                                      snapshot.data![parentIndex]
+                                      filteredData[parentIndex]
                                           .pestManagement![index].images!.isNotEmpty ?
                                       DriveImage(imageUrlData:
-                                      snapshot.data![parentIndex].
+                                      filteredData[parentIndex].
                                       pestManagement![index].images![0] ?? ""):Container(),
                                       // snapshot.data![parentIndex]
                                       //     .pestManagement![index].images!.isNotEmpty ?
@@ -471,7 +487,7 @@ class _MyPestManagementPageState extends State<MyPestManagementPage>
                                         child: Center(
                                           child: Text(
                                             textAlign: TextAlign.center,
-                                            snapshot.data![parentIndex].pestManagement![index].name ?? "",
+                                            filteredData[parentIndex].pestManagement![index].name ?? "",
                                             softWrap: true,
                                             style: const TextStyle(
                                                 color: Color(0xFF111111),
@@ -487,7 +503,7 @@ class _MyPestManagementPageState extends State<MyPestManagementPage>
                                             left: 10.0, right: 10.0, bottom: 5.0),
                                         child: ElevatedButton(
                                           onPressed: () {
-                                            showSolutionAlertDialog(context, snapshot.data![parentIndex].pestManagement![index].solutions ?? "");
+                                            showSolutionAlertDialog(context, filteredData[parentIndex].pestManagement![index].solutions ?? "");
                                           },
                                           style: ElevatedButton.styleFrom(
                                             foregroundColor: Colors.white,

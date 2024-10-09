@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
-// import 'package:carousel_slider/carousel_slider.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dio/dio.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -352,25 +352,25 @@ class _BottomOnePageState extends State<BottomOnePage> with TickerProviderStateM
                   ? Column(
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        // CarouselSlider(
-                        //   options: CarouselOptions(
-                        //     height: 150,
-                        //     aspectRatio: 2.0,
-                        //     viewportFraction: 0.9,
-                        //     initialPage: 0,
-                        //     enableInfiniteScroll: true,
-                        //     reverse: false,
-                        //     autoPlay: true,
-                        //     autoPlayInterval: const Duration(seconds: 4),
-                        //     autoPlayAnimationDuration:
-                        //     const Duration(milliseconds: 800),
-                        //     autoPlayCurve: Curves.linearToEaseOut,
-                        //     enlargeCenterPage: true,
-                        //     enlargeFactor: 0.7,
-                        //     scrollDirection: Axis.horizontal,
-                        //   ),
-                        //   items: imageSliders,
-                        // ),
+                        CarouselSlider(
+                          options: CarouselOptions(
+                            height: 150,
+                            aspectRatio: 2.0,
+                            viewportFraction: 0.9,
+                            initialPage: 0,
+                            enableInfiniteScroll: true,
+                            reverse: false,
+                            autoPlay: true,
+                            autoPlayInterval: const Duration(seconds: 4),
+                            autoPlayAnimationDuration:
+                            const Duration(milliseconds: 800),
+                            autoPlayCurve: Curves.linearToEaseOut,
+                            enlargeCenterPage: true,
+                            enlargeFactor: 0.7,
+                            scrollDirection: Axis.horizontal,
+                          ),
+                          items: imageSliders,
+                        ),
                         Center(
                           child: DotsIndicator(
                             dotsCount: imageSliders.length,

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import '../../mvc/model/CropLibraryData.dart';
+import '../../utils/DriveImage.dart';
 import '../Enquiry/BottomCenterEnquiryPage.dart';
 import '../HomeScreen/BottomOnePage.dart';
 import 'BottomThreePage.dart';
@@ -14,8 +15,9 @@ import '../Language/SelectLanguagePage.dart';
 class DeficiencyManagementPage extends StatefulWidget {
   bool aapbarVisibility;
   Future<List<CropLibraryData>?> cropData;
+  String? selectedcrop;
 
-  DeficiencyManagementPage({super.key, required this.aapbarVisibility,  required this.cropData});
+  DeficiencyManagementPage({super.key, required this.aapbarVisibility,  required this.cropData, required this.selectedcrop});
 
   @override
   State<DeficiencyManagementPage> createState() => _DeficiencyManagementPageState();
@@ -382,14 +384,43 @@ class _DeficiencyManagementPageState extends State<DeficiencyManagementPage>
 
   Widget listWidget() {
     return
+      FutureBuilder<List<CropLibraryData>?>(
+        future: widget.cropData,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+     List<CropLibraryData>? filteredData = snapshot.data?.where((data) {
+        return data.localName == widget.selectedcrop; // Filter by selected crop
+      }).toList();
+
+      // Check if filteredData has any results
+      if (filteredData == null || filteredData.isEmpty) {
+        return const Text('No data available for the selected crop.');
+      }
+
+       // Filter nutrients with images in deficiency
+        filteredData.forEach((cropData) {
+          cropData.nutrient?.removeWhere((nutrient) {
+            var deficiency = nutrient.deficiency;
+            return deficiency?.images == null || deficiency!.images!.isEmpty;
+          });
+        });
+
+                return ListView.builder(
+                itemCount: filteredData.length,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemBuilder: (context, parentIndex) {
+    return
       Padding(
         padding: const EdgeInsets.only(left: 12.0, right: 12.0),
         child: ListView.builder(
           shrinkWrap: true,
           scrollDirection: Axis.vertical,
           physics: const NeverScrollableScrollPhysics(),
-          itemCount: ORG_Entity.length,
-          itemBuilder: (_, index) {
+          itemCount: filteredData[parentIndex].nutrient!.length,
+          itemBuilder: (context, deficiencyIndex) {
+             var nutrient = filteredData[parentIndex].nutrient![deficiencyIndex];
+                  var deficiency = nutrient.deficiency;
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: Container(
@@ -415,16 +446,17 @@ class _DeficiencyManagementPageState extends State<DeficiencyManagementPage>
                           padding: const EdgeInsets.all(8.0),
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(15)),
-                          child: Image.asset(ORG_Entity[index].image ?? "",
-                            width: MediaQuery.of(context).size.width,
-                            fit: BoxFit.cover,)),
+                          child:  deficiency?.images?.isNotEmpty == true
+                                  ? DriveImage(imageUrlData: deficiency!.images!.first)
+                                  : Container(),
+                                  ),
                       Flexible(
                         child: Padding(
                           padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 5.0),
                           child: Center(
                             child: Text(
                               textAlign: TextAlign.center,
-                              ORG_Entity[index].name ?? "",
+                              nutrient.name ?? "No Name",
                               softWrap: true,
                               style: const TextStyle(
                                   color: Color(0xFF111111),
@@ -439,7 +471,7 @@ class _DeficiencyManagementPageState extends State<DeficiencyManagementPage>
                           padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 10.0),
                           child: Text(
                             textAlign: TextAlign.left,
-                            ORG_Entity[index].description ?? "",
+                            "Notable Symptoms: ${deficiency!.notableSymptoms ?? "N/A"}",
                             softWrap: true,
                             style: const TextStyle(
                                 color: Color(0xFF808080),
@@ -448,6 +480,35 @@ class _DeficiencyManagementPageState extends State<DeficiencyManagementPage>
                           ),
                         ),
                       ),
+                       const SizedBox(height: 15,),
+                      Container(
+                                        width: MediaQuery.of(context).size.width,
+                                        padding: const EdgeInsets.only(
+                                          left: 10.0, right: 10.0,),
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            showSolutionAlertDialog(context,
+                                                deficiency.solution ?? "No Solution Available");
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            foregroundColor: Colors.white,
+                                            minimumSize: Size.zero,
+                                            textStyle: const TextStyle(fontSize: 14),
+                                            padding: const EdgeInsets.all(5),
+                                            backgroundColor: const Color(0xFF278115),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(17),
+                                            ),
+                                          ),
+                                          child: const Text(
+                                            'SOLUTION',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                fontFamily: 'poppins-regular'),
+                                          ),
+                                        )),
+                                  
                       const SizedBox(height: 15,)
                     ],
                   ),
@@ -456,6 +517,14 @@ class _DeficiencyManagementPageState extends State<DeficiencyManagementPage>
             );
           },
         ),
+      );});
+      } else if (snapshot.hasError) {
+            return Text('${snapshot.error}');
+          }
+
+          // By default, show a loading spinner.
+          return const CircularProgressIndicator();
+        },
       );
   }
 
@@ -506,6 +575,74 @@ class _DeficiencyManagementPageState extends State<DeficiencyManagementPage>
       print("Profile : bottomNavIndex : $_bottomNavIndex");
     }
   }
+
+   showSolutionAlertDialog(BuildContext context, String solution) {
+    AlertDialog alert = AlertDialog(
+      backgroundColor: Colors.white,
+      contentPadding: EdgeInsets.zero,
+      titlePadding: EdgeInsets.zero,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(12.0))),
+      title:
+      Column(
+        children: [
+
+          Padding(
+            padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 10.0),
+            child: Row(
+              children: [
+                const Expanded(
+                  child: Text("Solution", softWrap: true,
+                    style: TextStyle(fontFamily: "poppins-semibold", fontSize: 15.0, color: Colors.black),),
+                ),
+                Expanded(
+                  child: InkWell(
+                    highlightColor: Colors.transparent,
+                    splashColor: Colors.transparent,
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Align(
+                      alignment: Alignment.bottomRight,
+                      child: Icon(
+                        Icons.close,
+                        color: Colors.grey,
+                        size: 20.0,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 5,),
+          const Divider(
+              color: Colors.grey
+          ),
+          const SizedBox(height: 5,),
+
+          Padding(
+            padding: EdgeInsets.only(left: 15.0, right: 15.0,),
+            child: Text(solution, softWrap: true,
+              textAlign: TextAlign.justify,
+              style: TextStyle(fontFamily: "poppins-regular", fontSize: 13.0, color: Color(0xFF666666)),),
+          ),
+
+          const SizedBox(height: 20,),
+        ],
+      ),
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
 }
 
 class Entity {

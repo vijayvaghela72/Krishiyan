@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import '../../mvc/model/CropLibraryData.dart';
+import '../../utils/DriveImage.dart';
 import '../Enquiry/BottomCenterEnquiryPage.dart';
 import '../HomeScreen/BottomOnePage.dart';
 import 'BottomThreePage.dart';
@@ -18,8 +20,10 @@ import '../Language/SelectLanguagePage.dart';
 
 class MyWeatherInjuriesPage extends StatefulWidget {
   bool aapbarVisibility;
+  Future<List<CropLibraryData>?> cropData;
+  String? selectedcrop;
 
-  MyWeatherInjuriesPage({super.key, required this.aapbarVisibility});
+  MyWeatherInjuriesPage({super.key, required this.aapbarVisibility, required this.cropData, required this.selectedcrop});
 
   @override
   State<MyWeatherInjuriesPage> createState() => _MyWeatherInjuriesPageState();
@@ -305,111 +309,143 @@ class _MyWeatherInjuriesPageState extends State<MyWeatherInjuriesPage>
     );
   }
 
-  Widget listWidget() {
-    return Padding(
-      padding: const EdgeInsets.only(left: 12.0, right: 12.0),
-      child: ListView.builder(
-        shrinkWrap: true,
-        scrollDirection: Axis.vertical,
-        physics: const NeverScrollableScrollPhysics(),
-        itemCount: ORG_Entity.length,
-        itemBuilder: (_, index) {
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(color: const Color(0xFFd3d3d3), width: 1),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Color(0xFFd3d3d3),
-                    )
-                  ],
-                  borderRadius: BorderRadius.circular(15)),
-              child: InkWell(
-                highlightColor: Colors.transparent,
-                splashColor: Colors.transparent,
-                onTap: () {},
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Container(
-                        padding: const EdgeInsets.all(8.0),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15)),
-                        child: Image.asset(ORG_Entity[index].image ?? "",
-                          width: MediaQuery.of(context).size.width,
-                          fit: BoxFit.cover,)),
-                    Container(
-                        width: MediaQuery.of(context).size.width,
-                        padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 5.0, bottom: 5.0),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  showCausesAlertDialog(context);
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  foregroundColor: Colors.white,
-                                  minimumSize: Size.zero,
-                                  textStyle: const TextStyle(fontSize: 14),
-                                  padding: const EdgeInsets.all(5),
-                                  backgroundColor: const Color(0xFF278115),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(17),
-                                  ),
-                                ),
-                                child: const Text(
-                                  'CAUSES',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontFamily: 'poppins-regular'),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 10,),
-                            Expanded(
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  showSymptomAlertDialog(context);
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  foregroundColor: Colors.white,
-                                  minimumSize: Size.zero,
-                                  textStyle: const TextStyle(fontSize: 14),
-                                  padding: const EdgeInsets.all(5),
-                                  backgroundColor: const Color(0xFF3FC041),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(17),
-                                  ),
-                                ),
-                                child: const Text(
-                                  'SYMPTOM',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontFamily: 'poppins-regular'),
-                                ),
-                              ),
-                            ),
-                          ],
-                        )),
-                    const SizedBox(height: 10,)
-                  ],
-                ),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
+Widget listWidget() {
+  return FutureBuilder<List<CropLibraryData>?>(
+    future: widget.cropData,
+    builder: (context, snapshot) {
+      if (snapshot.hasData) {
+        List<CropLibraryData>? filteredData = snapshot.data?.where((data) {
+          return data.localName == widget.selectedcrop; // Filter by selected crop
+        }).toList();
 
-  showSymptomAlertDialog(BuildContext context) {
+        // Check if filteredData has any results
+        if (filteredData == null || filteredData.isEmpty) {
+          return const Text('No data available for the selected crop.');
+        }
+
+        return ListView.builder(
+          itemCount: filteredData.length,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemBuilder: (context, parentIndex) {
+            return Padding(
+              padding: const EdgeInsets.only(left: 12.0, right: 12.0),
+              child: ListView.builder(
+                shrinkWrap: true,
+                scrollDirection: Axis.vertical,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: filteredData[parentIndex].weatherInjuries!.length,
+                itemBuilder: (context, injuryIndex) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(color: const Color(0xFFd3d3d3), width: 1),
+                        boxShadow: const [BoxShadow(color: Color(0xFFd3d3d3))],
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: InkWell(
+                        highlightColor: Colors.transparent,
+                        splashColor: Colors.transparent,
+                        onTap: () {},
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Container(
+                              padding: const EdgeInsets.all(8.0),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: filteredData[parentIndex]
+                                          .weatherInjuries![injuryIndex].image!.isNotEmpty
+                                  ? DriveImage(imageUrlData: filteredData[parentIndex]
+                                          .weatherInjuries![injuryIndex].image! ?? "")
+                                  : Container(),
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 5.0, bottom: 5.0),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        showCausesAlertDialog(context, filteredData[parentIndex].weatherInjuries![injuryIndex].causes!);
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        foregroundColor: Colors.white,
+                                        minimumSize: Size.zero,
+                                        textStyle: const TextStyle(fontSize: 14),
+                                        padding: const EdgeInsets.all(5),
+                                        backgroundColor: const Color(0xFF278115),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(17),
+                                        ),
+                                      ),
+                                      child: const Text(
+                                        'CAUSES',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontFamily: 'poppins-regular',
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        showSymptomAlertDialog(context, filteredData[parentIndex].weatherInjuries![injuryIndex].symptoms!);
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        foregroundColor: Colors.white,
+                                        minimumSize: Size.zero,
+                                        textStyle: const TextStyle(fontSize: 14),
+                                        padding: const EdgeInsets.all(5),
+                                        backgroundColor: const Color(0xFF3FC041),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(17),
+                                        ),
+                                      ),
+                                      child: const Text(
+                                        'SYMPTOM',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontFamily: 'poppins-regular',
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            );
+          },
+        );
+      } else if (snapshot.hasError) {
+        return Text('${snapshot.error}');
+      }
+
+      // By default, show a loading spinner.
+      return const CircularProgressIndicator();
+    },
+  );
+}
+
+  showSymptomAlertDialog(BuildContext context, String symptom) {
     AlertDialog alert = AlertDialog(
       backgroundColor: Colors.white,
       contentPadding: EdgeInsets.zero,
@@ -455,12 +491,10 @@ class _MyWeatherInjuriesPageState extends State<MyWeatherInjuriesPage>
           ),
           const SizedBox(height: 5,),
 
-          const Padding(
+           Padding(
             padding: EdgeInsets.only(left: 15.0, right: 15.0,),
-            child: Text("To control the disease: - Apply P. fluorescens or T. viride"
-                " @ 2.5 kg/ha + 50 kg well-decomposed Farm Yard Manure (mix 10 days before) or sand 30 days"
-                "after sowing. - Spray Metalaxyl 1000 g / Mancozeb 2 g/liter at 10-day"
-                " intervals after the disease appears.", softWrap: true,
+            child: Text(symptom
+              , softWrap: true,
               textAlign: TextAlign.justify,
               style: TextStyle(fontFamily: "poppins-regular", fontSize: 13.0, color: Color(0xFF666666)),),
           ),
@@ -479,7 +513,7 @@ class _MyWeatherInjuriesPageState extends State<MyWeatherInjuriesPage>
     );
   }
 
-  showCausesAlertDialog(BuildContext context) {
+  showCausesAlertDialog(BuildContext context, String causes) {
     AlertDialog alert = AlertDialog(
       backgroundColor: Colors.white,
       contentPadding: EdgeInsets.zero,
@@ -525,12 +559,9 @@ class _MyWeatherInjuriesPageState extends State<MyWeatherInjuriesPage>
           ),
           const SizedBox(height: 5,),
 
-          const Padding(
+           Padding(
             padding: EdgeInsets.only(left: 15.0, right: 15.0,),
-            child: Text("To control the disease: - Apply P. fluorescens or T. viride"
-                " @ 2.5 kg/ha + 50 kg well-decomposed Farm Yard Manure (mix 10 days before) or sand 30 days"
-                "after sowing. - Spray Metalaxyl 1000 g / Mancozeb 2 g/liter at 10-day"
-                " intervals after the disease appears.", softWrap: true,
+            child: Text(causes, softWrap: true,
               textAlign: TextAlign.justify,
               style: TextStyle(fontFamily: "poppins-regular", fontSize: 13.0, color: Color(0xFF666666)),),
           ),
