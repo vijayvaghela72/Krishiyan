@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +17,9 @@ import '../../utils/Constants.dart';
 import 'package:intl/intl.dart'; // Required for date formatting
 import 'package:krishiyan/mvc/model/GetOtpDetails.dart';
 import '../../mvc/controller/otpController.dart';
-
+import 'package:image_picker/image_picker.dart';
+import 'package:otp_text_field/otp_field.dart';
+import 'package:otp_text_field/style.dart';
 import 'package:dio/dio.dart';
  // Ensure you have Flutter imports for AlertHelper and setState usage
 import 'dart:convert'; // For json.encode
@@ -30,6 +33,8 @@ class EditProfilePage extends StatefulWidget {
 
 class _EditProfilePageState extends State<EditProfilePage> {
 
+  File? _image; // To store the selected image file
+  final ImagePicker _picker = ImagePicker();
   TextFormField? nameOfOrganizationController;
   TextEditingController dateOfOrganizationController = TextEditingController();
   TextFormField? registrationNumberController;
@@ -49,6 +54,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
   TextEditingController editYourDesignationController = TextEditingController();
 
   String id = "", contactNumber = "", dateOfOrganizationValue = "", typeOfOrg = "";
+  // Method to pick an image from the gallery
+  Future<void> _pickImage() async {
+    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _image = File(pickedFile.path); // Update the selected image
+      });
+    }
+  }
 
   final List<String> fpoItems = [
     buildTranslate('farmerProducerOrganization')!,
@@ -1609,6 +1623,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
       },
     );
   }
+
+  
 
   Future<void> getProfileDetails() async {
     // id = (await AppGlobal.getStringPreference('id'))!;

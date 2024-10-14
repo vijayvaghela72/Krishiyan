@@ -157,8 +157,9 @@ class _LoginPageState extends State<LoginPage> {
                   RegExp regExp = RegExp(pattern);
 
                   if (!regExp.hasMatch(value)) {
-                    return 'Password must contain at least 1 uppercase letter, 1 '
-                        'lowercase letter, and be at least 8 characters long';
+                    AlertHelper.showToast('Password must contain at least 1 uppercase letter, 1 '
+                        'lowercase letter, and be at least 8 characters long', context) ;
+                        return 'Weak Password';
                   }
 
                   return null;

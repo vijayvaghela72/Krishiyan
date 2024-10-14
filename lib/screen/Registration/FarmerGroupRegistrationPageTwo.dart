@@ -5,6 +5,7 @@ import 'package:krishiyan/screen/Registration/MyRegistrationPage.dart';
 import '../../helper/AlertHelper.dart';
 import '../../mvc/controller/farmerDashboardController.dart';
 import '../../utils/AppGlobal.dart';
+import '../../utils/hashPassword.dart';
 import '../Login/LoginPage.dart';
 
 class FarmerGroupRegistrationPageTwo extends StatefulWidget {
@@ -98,6 +99,22 @@ class _FarmerGroupRegistrationPageTwoState extends State<FarmerGroupRegistration
               child: TextFormField(
                 keyboardType: TextInputType.text,
                 controller: userPasswordController,
+                validator: (value){
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a password';
+                  }
+                  // Check if password meets the required conditions
+                  String pattern = r'^(?=.*[a-z])(?=.*[A-Z]).{8,}$';
+                  RegExp regExp = RegExp(pattern);
+
+                  if (!regExp.hasMatch(value)) {
+                    AlertHelper.showToast('Password must contain at least 1 uppercase letter, 1 '
+                        'lowercase letter, and be at least 8 characters long', context) ;
+                        return 'Weak Password';
+                  }
+
+                  return null;
+                },
                 obscureText: !_passwordVisible,//This will obscure text dynamically
                 decoration: InputDecoration(
                   hintText: 'Enter your password',
@@ -326,6 +343,9 @@ class _FarmerGroupRegistrationPageTwoState extends State<FarmerGroupRegistration
   _registrationApiCall(String name, String type, String number, String password,
       String date, String email, String nameOfPromoter) async {
 
+        // Using the PasswordUtils to hash the password
+  String hashedPassword = PasswordUtils.hashPassword(password);
+
     var data = json.encode({
       "typeOfOrganization": "Farmer groups",
       "nameOfFpo": name,
@@ -334,7 +354,7 @@ class _FarmerGroupRegistrationPageTwoState extends State<FarmerGroupRegistration
       "organizationalEmail": email,
       "contactNumber": number,
       "promoterName": nameOfPromoter,
-      "password": password
+      "password": hashedPassword
     });
 
     var farmerRegistration = FarmerDashboardController.farmerGroupRegistration(data, context: context);

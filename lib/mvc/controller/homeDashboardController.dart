@@ -27,7 +27,7 @@ class HomeDashboardController{
     DateTime initialDateTime = DateTime.parse(initialDate);
     String initialFormattedDate = DateFormat('dd/MM/yyyy').format(initialDateTime);
 
-    DateTime finalDateTime = DateTime.parse(initialDate);
+    DateTime finalDateTime = DateTime.parse(finalDate);
     String finalFormattedDate = DateFormat('dd/MM/yyyy').format(finalDateTime);
 
     final response = await http.get(Uri.parse("https://krishiyanback.vercel.app/api/mandi/mandiPrices"

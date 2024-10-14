@@ -15,7 +15,9 @@ import '../../mvc/controller/otpController.dart';
 import '../../utils/AppColor.dart';
 import 'package:dio/dio.dart';
 // Ensure you have Flutter imports for AlertHelper and setState usage
-import 'dart:convert'; // For json.encode
+import 'dart:convert';
+
+import '../../utils/hashPassword.dart'; // For json.encode
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -247,8 +249,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                             RegExp regExp = RegExp(pattern);
             
                             if (!regExp.hasMatch(value)) {
-                              return 'Password must contain at least 1 uppercase letter, 1 '
-                                  'lowercase letter, and be at least 8 characters long';
+                              AlertHelper.showToast('Password must contain at least 1 uppercase letter, 1 '
+                                  'lowercase letter, and be at least 8 characters long', context) ;
+                                  // Return error message for form validation
+    return 'Weak Password';
                             }
                             return null;
                           },
@@ -388,7 +392,7 @@ String phoneNumber = mobileNumberController.text.toString();
      if (_formKey.currentState!.validate()) {
     final mobileNumber = mobileNumberController.text;
     final password = passwordController.text;
-    if (mobileNumber.isNotEmpty && password.isNotEmpty) {
+    if (mobileNumber.isNotEmpty && password.isNotEmpty ) {
       resetPassword(mobileNumber, password); // Call the resetPassword function
     } else {
       AlertHelper.showToast(
@@ -478,9 +482,11 @@ String phoneNumber = mobileNumberController.text.toString();
 
     // Define the URL for your API endpoint
     final url = RESET_PASSWORD; // Replace with your API endpoint
+    // Using the PasswordUtils to hash the password
+  String hashedPassword = PasswordUtils.hashPassword(password);
 
     // Create the payload data
-    final data = {"contactNumber": number, "newPassword": password};
+    final data = {"contactNumber": number, "newPassword": hashedPassword};
 
     try {
       // Make the POST request

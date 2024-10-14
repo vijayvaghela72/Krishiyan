@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
-import 'package:carousel_slider/carousel_slider.dart';
+// import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dio/dio.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -115,6 +115,7 @@ class _BottomOnePageState extends State<BottomOnePage> with TickerProviderStateM
   DateTime? selectedDate;
 
   Future<List<MandiPriceData>>? futureMandiPrice;
+  
 
   @override
   void initState() {
@@ -235,6 +236,17 @@ class _BottomOnePageState extends State<BottomOnePage> with TickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
+    // Check if stateItems or stateItems.data is null
+  if (stateItems == null || stateItems!.data == null) {
+    // Show a loading indicator or placeholder if stateItems is null
+    return Center(
+      child: CircularProgressIndicator(), // Or any other widget you'd like to show while loading
+    );
+  }
+
+  // Ensure the list has unique items
+  List<String> uniqueStateItems = stateItems!.data!.toSet().toList();
+
 
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
@@ -352,25 +364,25 @@ class _BottomOnePageState extends State<BottomOnePage> with TickerProviderStateM
                   ? Column(
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        CarouselSlider(
-                          options: CarouselOptions(
-                            height: 150,
-                            aspectRatio: 2.0,
-                            viewportFraction: 0.9,
-                            initialPage: 0,
-                            enableInfiniteScroll: true,
-                            reverse: false,
-                            autoPlay: true,
-                            autoPlayInterval: const Duration(seconds: 4),
-                            autoPlayAnimationDuration:
-                            const Duration(milliseconds: 800),
-                            autoPlayCurve: Curves.linearToEaseOut,
-                            enlargeCenterPage: true,
-                            enlargeFactor: 0.7,
-                            scrollDirection: Axis.horizontal,
-                          ),
-                          items: imageSliders,
-                        ),
+                        // CarouselSlider(
+                        //   options: CarouselOptions(
+                        //     height: 150,
+                        //     aspectRatio: 2.0,
+                        //     viewportFraction: 0.9,
+                        //     initialPage: 0,
+                        //     enableInfiniteScroll: true,
+                        //     reverse: false,
+                        //     autoPlay: true,
+                        //     autoPlayInterval: const Duration(seconds: 4),
+                        //     autoPlayAnimationDuration:
+                        //     const Duration(milliseconds: 800),
+                        //     autoPlayCurve: Curves.linearToEaseOut,
+                        //     enlargeCenterPage: true,
+                        //     enlargeFactor: 0.7,
+                        //     scrollDirection: Axis.horizontal,
+                        //   ),
+                        //   items: imageSliders,
+                        // ),
                         Center(
                           child: DotsIndicator(
                             dotsCount: imageSliders.length,
@@ -842,7 +854,7 @@ class _BottomOnePageState extends State<BottomOnePage> with TickerProviderStateM
                                       buildTranslate("selectState")!,
                                       style: const TextStyle(fontSize: 13, fontFamily: "poppins-regular"),
                                     ),
-                                    items: stateItems!.data!.map((String crop) {
+                                    items: uniqueStateItems.map((String crop) {
                                       return DropdownMenuItem<String>(
                                         value: crop,
                                         child: Text(crop, style: const TextStyle(
@@ -861,8 +873,10 @@ class _BottomOnePageState extends State<BottomOnePage> with TickerProviderStateM
                                       setState(() {
                                         selectedStateItemValue = value;
                                       });
-                                      print("SelectedStateItemValue : $selectedStateItemValue");
-                                      _fetchDistrictData();
+                                      if (selectedStateItemValue != null) {
+    print("SelectedStateItemValue : $selectedStateItemValue");
+    _fetchDistrictData();
+  }
                                     },
                                     onSaved: (value) {
                                       selectedStateItemValue = value.toString();
@@ -1153,53 +1167,60 @@ class _BottomOnePageState extends State<BottomOnePage> with TickerProviderStateM
                                       child: Container(
                                         color: Colors.white,
                                         alignment: Alignment.bottomCenter,
-                                        child: TextFormField(
-                                          decoration: InputDecoration(
-                                              suffixIcon: IconButton(
-                                                icon: const Icon(
-                                                  Icons.calendar_month,
-                                                  size: 20.0,
-                                                  color: Colors.grey,
-                                                ),
-                                                onPressed: () {
-                                                  _selectFromDate(context);
-                                                },
-                                              ),
-                                              alignLabelWithHint: true,
-                                              fillColor: Colors.white,
-                                              filled: true,
-                                              contentPadding:
-                                              const EdgeInsets.all(10.0),
-                                              border: const OutlineInputBorder(
-                                                borderRadius: BorderRadius.all(
-                                                  Radius.circular(10.0),
-                                                ),
-                                              ),
-                                              enabledBorder: const OutlineInputBorder(
-                                                borderSide: BorderSide(
-                                                  color: Colors.grey,
-                                                  width: 1.0,
-                                                ),
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(8.0)),
-                                              ),
-                                              hintText: buildTranslate("from"),
-                                              hintStyle: const TextStyle(
-                                                  color: Color(0xFF757575),
-                                                  fontFamily: "poppins-regular",
-                                                  fontSize: 13.0),
-                                              focusedBorder: const OutlineInputBorder(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(8.0)),
-                                                borderSide: BorderSide(
-                                                    color: Colors.green,
-                                                    width: 0.5),
-                                              )),
-                                          validator: (value) => value!.isEmpty
-                                              ? 'Please, fill this field.'
-                                              : null,
-                                          controller: fromDateController,
-                                          readOnly: true,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            _selectFromDate(context);
+                                          },
+                                          child: AbsorbPointer(
+                                            child: TextFormField(
+                                              decoration: InputDecoration(
+                                                  suffixIcon: IconButton(
+                                                    icon: const Icon(
+                                                      Icons.calendar_month,
+                                                      size: 20.0,
+                                                      color: Colors.grey,
+                                                    ),
+                                                    onPressed: () {
+                                                      // _selectFromDate(context);
+                                                    },
+                                                  ),
+                                                  alignLabelWithHint: true,
+                                                  fillColor: Colors.white,
+                                                  filled: true,
+                                                  contentPadding:
+                                                  const EdgeInsets.all(10.0),
+                                                  border: const OutlineInputBorder(
+                                                    borderRadius: BorderRadius.all(
+                                                      Radius.circular(10.0),
+                                                    ),
+                                                  ),
+                                                  enabledBorder: const OutlineInputBorder(
+                                                    borderSide: BorderSide(
+                                                      color: Colors.grey,
+                                                      width: 1.0,
+                                                    ),
+                                                    borderRadius: BorderRadius.all(
+                                                        Radius.circular(8.0)),
+                                                  ),
+                                                  hintText: buildTranslate("from"),
+                                                  hintStyle: const TextStyle(
+                                                      color: Color(0xFF757575),
+                                                      fontFamily: "poppins-regular",
+                                                      fontSize: 13.0),
+                                                  focusedBorder: const OutlineInputBorder(
+                                                    borderRadius: BorderRadius.all(
+                                                        Radius.circular(8.0)),
+                                                    borderSide: BorderSide(
+                                                        color: Colors.green,
+                                                        width: 0.5),
+                                                  )),
+                                              validator: (value) => value!.isEmpty
+                                                  ? 'Please, fill this field.'
+                                                  : null,
+                                              controller: fromDateController,
+                                              readOnly: true,
+                                            ),
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -1210,53 +1231,60 @@ class _BottomOnePageState extends State<BottomOnePage> with TickerProviderStateM
                                       child: Container(
                                         color: Colors.white,
                                         alignment: Alignment.bottomCenter,
-                                        child: TextFormField(
-                                          decoration: InputDecoration(
-                                              suffixIcon: IconButton(
-                                                icon: const Icon(
-                                                  Icons.calendar_month,
-                                                  size: 20.0,
-                                                  color: Colors.grey,
-                                                ),
-                                                onPressed: () {
-                                                  _selectToDate(context);
-                                                },
-                                              ),
-                                              alignLabelWithHint: true,
-                                              fillColor: Colors.white,
-                                              filled: true,
-                                              contentPadding:
-                                              const EdgeInsets.all(10.0),
-                                              border: const OutlineInputBorder(
-                                                borderRadius: BorderRadius.all(
-                                                  Radius.circular(10.0),
-                                                ),
-                                              ),
-                                              enabledBorder: const OutlineInputBorder(
-                                                borderSide: BorderSide(
-                                                  color: Colors.grey,
-                                                  width: 1.0,
-                                                ),
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(8.0)),
-                                              ),
-                                              hintText: buildTranslate("to"),
-                                              hintStyle: const TextStyle(
-                                                  color: Color(0xFF757575),
-                                                  fontFamily: "poppins-regular",
-                                                  fontSize: 13.0),
-                                              focusedBorder: const OutlineInputBorder(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(8.0)),
-                                                borderSide: BorderSide(
-                                                    color: Colors.green,
-                                                    width: 0.5),
-                                              )),
-                                          validator: (value) => value!.isEmpty
-                                              ? 'Please, fill this field.'
-                                              : null,
-                                          controller: toDateController,
-                                          readOnly: true,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            _selectToDate(context);
+                                          },
+                                          child: AbsorbPointer(
+                                            child: TextFormField(
+                                              decoration: InputDecoration(
+                                                  suffixIcon: IconButton(
+                                                    icon: const Icon(
+                                                      Icons.calendar_month,
+                                                      size: 20.0,
+                                                      color: Colors.grey,
+                                                    ),
+                                                    onPressed: () {
+                                                      // _selectToDate(context);
+                                                    },
+                                                  ),
+                                                  alignLabelWithHint: true,
+                                                  fillColor: Colors.white,
+                                                  filled: true,
+                                                  contentPadding:
+                                                  const EdgeInsets.all(10.0),
+                                                  border: const OutlineInputBorder(
+                                                    borderRadius: BorderRadius.all(
+                                                      Radius.circular(10.0),
+                                                    ),
+                                                  ),
+                                                  enabledBorder: const OutlineInputBorder(
+                                                    borderSide: BorderSide(
+                                                      color: Colors.grey,
+                                                      width: 1.0,
+                                                    ),
+                                                    borderRadius: BorderRadius.all(
+                                                        Radius.circular(8.0)),
+                                                  ),
+                                                  hintText: buildTranslate("to"),
+                                                  hintStyle: const TextStyle(
+                                                      color: Color(0xFF757575),
+                                                      fontFamily: "poppins-regular",
+                                                      fontSize: 13.0),
+                                                  focusedBorder: const OutlineInputBorder(
+                                                    borderRadius: BorderRadius.all(
+                                                        Radius.circular(8.0)),
+                                                    borderSide: BorderSide(
+                                                        color: Colors.green,
+                                                        width: 0.5),
+                                                  )),
+                                              validator: (value) => value!.isEmpty
+                                                  ? 'Please, fill this field.'
+                                                  : null,
+                                              controller: toDateController,
+                                              readOnly: true,
+                                            ),
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -1962,6 +1990,19 @@ class _BottomOnePageState extends State<BottomOnePage> with TickerProviderStateM
         fromDateController.text =
             DateFormat('dd-MM-yyyy').format(pickedDate);
         dateOfFromValue = "${pickedDate}Z";
+
+        // Validate To Date
+      if (toDateController.text.isNotEmpty) {
+        DateTime toDate = DateFormat('dd-MM-yyyy').parse(toDateController.text);
+        if (pickedDate.isAfter(toDate)) {
+        
+
+          // Show error message using AlertHelper.showToast
+    AlertHelper.showToast('To Date cannot be earlier than From Date', context);
+    
+          toDateController.clear();
+        }
+      }
       });
     }
   }
@@ -1985,6 +2026,18 @@ class _BottomOnePageState extends State<BottomOnePage> with TickerProviderStateM
         toDateController.text =
             DateFormat('dd-MM-yyyy').format(pickedDate);
         dateOfToValue = "${pickedDate}Z";
+
+        // Validate From Date
+      if (fromDateController.text.isNotEmpty) {
+        DateTime fromDate = DateFormat('dd-MM-yyyy').parse(fromDateController.text);
+        if (pickedDate.isBefore(fromDate)) {
+          // Show error message
+          // Show error message using AlertHelper.showToast
+    AlertHelper.showToast('To Date cannot be earlier than From Date', context);
+    
+          fromDateController.clear();
+        }
+      }
       });
     }
   }

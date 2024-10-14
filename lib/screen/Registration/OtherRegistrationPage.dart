@@ -7,10 +7,13 @@ import 'package:otp_text_field/style.dart';
 import '../../helper/AlertHelper.dart';
 import '../../localization/AppLocalizations.dart';
 import '../../mvc/controller/farmerDashboardController.dart';
+import '../../utils/hashPassword.dart';
 import '../Login/LoginPage.dart';
 import 'package:krishiyan/mvc/model/GetOtpDetails.dart';
 import '../../mvc/controller/otpController.dart';
 import 'package:dio/dio.dart';
+import 'package:crypto/crypto.dart';
+
  // Ensure you have Flutter imports for AlertHelper and setState usage
 import 'dart:convert'; // For json.encode
 
@@ -250,6 +253,22 @@ class _OtherRegistrationPageState extends State<OtherRegistrationPage> {
               child: TextFormField(
                 keyboardType: TextInputType.text,
                 controller: userPasswordController,
+                validator: (value){
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a password';
+                  }
+                  // Check if password meets the required conditions
+                  String pattern = r'^(?=.*[a-z])(?=.*[A-Z]).{8,}$';
+                  RegExp regExp = RegExp(pattern);
+
+                  if (!regExp.hasMatch(value)) {
+                    AlertHelper.showToast('Password must contain at least 1 uppercase letter, 1 '
+                        'lowercase letter, and be at least 8 characters long', context) ;
+                        return 'Weak Password';
+                  }
+
+                  return null;
+                },
                 obscureText: !_passwordVisible,//This will obscure text dynamically
                 decoration: InputDecoration(
                   hintText: buildTranslate("enterYourPassword"),
@@ -482,7 +501,11 @@ class _OtherRegistrationPageState extends State<OtherRegistrationPage> {
 
   }
 
+  
+
   _registrationApiCall(String name, String type, String number, String password,) async {
+     // Using the PasswordUtils to hash the password
+  String hashedPassword = PasswordUtils.hashPassword(password);
 
     var data = json.encode({
       "typeOfOrganization": "Others",
@@ -492,7 +515,7 @@ class _OtherRegistrationPageState extends State<OtherRegistrationPage> {
       "organizationalEmail": "",
       "contactNumber": number,
       "promoterName": "",
-      "password": password
+      "password": hashedPassword
     });
 
     var farmerRegistration = FarmerDashboardController.farmerGroupRegistration(data, context: context);
