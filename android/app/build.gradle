@@ -23,7 +23,7 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace "com.krishiyan.krishiyan"
+    namespace "com.krishiyan.wetacre"
     compileSdk 34
     ndkVersion flutter.ndkVersion
 
@@ -33,21 +33,27 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.krishiyan.krishiyan"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
+        applicationId "com.krishiyan.wetacre"
         minSdkVersion 21
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
 
+    signingConfigs {
+        release {
+            keyAlias 'krishiyanappkey' // Use the actual alias from the keystore
+            keyPassword 'Wetacre@2024' // Replace with the actual key password
+            storeFile file('C:/Users/banuv/OneDrive/Desktop/KrishiYan_App/krishiyan-app/krishiYan_key.jks')
+            storePassword 'Wetacre@2024' // Replace with the actual keystore password
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig signingConfigs.debug
+            minifyEnabled false
+            shrinkResources false
+            signingConfig signingConfigs.release
         }
     }
 }

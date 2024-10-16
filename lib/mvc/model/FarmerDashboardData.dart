@@ -1,135 +1,447 @@
 import 'dart:convert';
 
+// 2nd option
+// class FarmerDashboardDataOne {
+//   bool? success;
+//   String? message;
+//   List<FarmerDashboardOne>? farmerDashboard;
+//
+//   FarmerDashboardDataOne({this.success, this.message, this.farmerDashboard});
+//
+//   FarmerDashboardDataOne.fromJson(Map<String, dynamic> json) {
+//     success = json['success'];
+//     message = json['message'];
+//     if (json['FarmerDashboard'] != null) {
+//       farmerDashboard = <FarmerDashboardOne>[];
+//       json['FarmerDashboard'].forEach((v) {
+//         farmerDashboard!.add(FarmerDashboardOne.fromJson(v));
+//       });
+//     }
+//   }
+//
+//   Map<String, dynamic> toJson() {
+//     final Map<String, dynamic> data = new Map<String, dynamic>();
+//     data['success'] = this.success;
+//     data['message'] = this.message;
+//     if (this.farmerDashboard != null) {
+//       data['FarmerDashboard'] =
+//           this.farmerDashboard!.map((v) => v.toJson()).toList();
+//     }
+//     return data;
+//   }
+// }
+//
+// class FarmerDashboardOne {
+//   FarmerDetailsOne? farmerDetails;
+//   List<CropCultivationDetailsOne>? cropCultivationDetails;
+//
+//   FarmerDashboardOne({required this.farmerDetails, required this.cropCultivationDetails});
+//
+//   factory FarmerDashboardOne.fromJson(Map<String, dynamic> json) {
+//     var list = json['cropCultivationDetails'] as List;
+//     List<CropCultivationDetailsOne> cropsList = list.map((i) => CropCultivationDetailsOne.fromJson(i)).toList();
+//     return FarmerDashboardOne(
+//       farmerDetails: FarmerDetailsOne.fromJson(json['farmerDetails']),
+//       cropCultivationDetails: cropsList,
+//     );
+//   }
+//
+//   Map<String, dynamic> toJson() {
+//     final Map<String, dynamic> data = new Map<String, dynamic>();
+//     if (this.farmerDetails != null) {
+//       data['farmerDetails'] = this.farmerDetails!.toJson();
+//     }
+//     if (this.cropCultivationDetails != null) {
+//       data['cropCultivationDetails'] =
+//           this.cropCultivationDetails!.map((v) => v.toJson()).toList();
+//     }
+//     return data;
+//   }
+// }
+//
+// class FarmerDetailsOne {
+//   String? sId;
+//   String? dealerNumber;
+//   String? name;
+//   String? whatsappNumber;
+//   int? totalOwnedFarm;
+//   String? geoLocationOwnedFarm;
+//   int? totalLeaseFarm;
+//   String? geoLocationLeaseFarm;
+//   String? pincode;
+//   String? village;
+//   String? district;
+//   String? state;
+//   String? address;
+//   String? typeOfCultivationPractice;
+//   String? bankName;
+//   String? accountName;
+//   String? accountNumber;
+//   String? ifscCode;
+//   String? pan;
+//   String? aadhaarNumber;
+//   String? createdAt;
+//   String? updatedAt;
+//   int? iV;
+//
+//   FarmerDetailsOne(
+//       {this.sId,
+//         this.dealerNumber,
+//         this.name,
+//         this.whatsappNumber,
+//         this.totalOwnedFarm,
+//         this.geoLocationOwnedFarm,
+//         this.totalLeaseFarm,
+//         this.geoLocationLeaseFarm,
+//         this.pincode,
+//         this.village,
+//         this.district,
+//         this.state,
+//         this.address,
+//         this.typeOfCultivationPractice,
+//         this.bankName,
+//         this.accountName,
+//         this.accountNumber,
+//         this.ifscCode,
+//         this.pan,
+//         this.aadhaarNumber,
+//         this.createdAt,
+//         this.updatedAt,
+//         this.iV});
+//
+//   FarmerDetailsOne.fromJson(Map<String, dynamic> json) {
+//     sId = json['_id'];
+//     dealerNumber = json['dealerNumber'];
+//     name = json['name'];
+//     whatsappNumber = json['whatsappNumber'];
+//     totalOwnedFarm = json['totalOwnedFarm'];
+//     geoLocationOwnedFarm = json['geoLocationOwnedFarm'];
+//     totalLeaseFarm = json['totalLeaseFarm'];
+//     geoLocationLeaseFarm = json['geoLocationLeaseFarm'];
+//     pincode = json['pincode'];
+//     village = json['village'];
+//     district = json['district'];
+//     state = json['state'];
+//     address = json['address'];
+//     typeOfCultivationPractice = json['typeOfCultivationPractice'];
+//     bankName = json['bankName'];
+//     accountName = json['accountName'];
+//     accountNumber = json['accountNumber'];
+//     ifscCode = json['ifscCode'];
+//     pan = json['pan'];
+//     aadhaarNumber = json['aadhaarNumber'];
+//     createdAt = json['createdAt'];
+//     updatedAt = json['updatedAt'];
+//     iV = json['__v'];
+//   }
+//
+//   Map<String, dynamic> toJson() {
+//     final Map<String, dynamic> data = new Map<String, dynamic>();
+//     data['_id'] = this.sId;
+//     data['dealerNumber'] = this.dealerNumber;
+//     data['name'] = this.name;
+//     data['whatsappNumber'] = this.whatsappNumber;
+//     data['totalOwnedFarm'] = this.totalOwnedFarm;
+//     data['geoLocationOwnedFarm'] = this.geoLocationOwnedFarm;
+//     data['totalLeaseFarm'] = this.totalLeaseFarm;
+//     data['geoLocationLeaseFarm'] = this.geoLocationLeaseFarm;
+//     data['pincode'] = this.pincode;
+//     data['village'] = this.village;
+//     data['district'] = this.district;
+//     data['state'] = this.state;
+//     data['address'] = this.address;
+//     data['typeOfCultivationPractice'] = this.typeOfCultivationPractice;
+//     data['bankName'] = this.bankName;
+//     data['accountName'] = this.accountName;
+//     data['accountNumber'] = this.accountNumber;
+//     data['ifscCode'] = this.ifscCode;
+//     data['pan'] = this.pan;
+//     data['aadhaarNumber'] = this.aadhaarNumber;
+//     data['createdAt'] = this.createdAt;
+//     data['updatedAt'] = this.updatedAt;
+//     data['__v'] = this.iV;
+//     return data;
+//   }
+// }
+//
+// class CropCultivationDetailsOne {
+//   String? sId;
+//   String? dealerNumber;
+//   String? fid;
+//   String? farmerName;
+//   String? crops;
+//   String? variety;
+//   String? dateOfSowing;
+//   String? geolocation;
+//   String? typeOfCultivationPractice;
+//   int? areaInAcres;
+//   String? geoLinkAreaOnMap;
+//   int? iV;
+//
+//   CropCultivationDetailsOne({this.sId,
+//     this.dealerNumber,
+//     this.fid,
+//     this.farmerName,
+//     this.crops,
+//     this.variety,
+//     this.dateOfSowing,
+//     this.geolocation,
+//     this.typeOfCultivationPractice,
+//     this.areaInAcres,
+//     this.geoLinkAreaOnMap,
+//     this.iV});
+//
+//   CropCultivationDetailsOne.fromJson(Map<String, dynamic> json) {
+//     sId = json['_id'];
+//     dealerNumber = json['dealerNumber'];
+//     fid = json['fid'];
+//     farmerName = json['farmerName'];
+//     crops = json['crops'];
+//     variety = json['variety'];
+//     dateOfSowing = json['dateOfSowing'];
+//     geolocation = json['geolocation'];
+//     typeOfCultivationPractice = json['typeOfCultivationPractice'];
+//     areaInAcres = json['areaInAcres'];
+//     geoLinkAreaOnMap = json['geoLinkAreaOnMap'];
+//     iV = json['__v'];
+//   }
+//
+//   Map<String, dynamic> toJson() {
+//     final Map<String, dynamic> data = new Map<String, dynamic>();
+//     data['_id'] = this.sId;
+//     data['dealerNumber'] = this.dealerNumber;
+//     data['fid'] = this.fid;
+//     data['farmerName'] = this.farmerName;
+//     data['crops'] = this.crops;
+//     data['variety'] = this.variety;
+//     data['dateOfSowing'] = this.dateOfSowing;
+//     data['geolocation'] = this.geolocation;
+//     data['typeOfCultivationPractice'] = this.typeOfCultivationPractice;
+//     data['areaInAcres'] = this.areaInAcres;
+//     data['geoLinkAreaOnMap'] = this.geoLinkAreaOnMap;
+//     data['__v'] = this.iV;
+//     return data;
+//   }
+// }
+
 class FarmerDashboardData {
-  bool? success;
-  String? message;
-  List<FarmerDashboard>? result;
+  bool success;
+  String message;
+  List<FarmerDetails> data;
 
-  FarmerDashboardData({this.success, this.message, this.result});
+  FarmerDashboardData({
+    required this.success,
+    required this.message,
+    required this.data,
+  });
 
-  FarmerDashboardData.fromJson(Map<String, dynamic> json) {
-    success = json['success'];
-    message = json['message'];
-    if (json['data'] != null) {
-      result = <FarmerDashboard>[];
-      json['data'].forEach((v) {
-        result!.add( FarmerDashboard.fromJson(v));
-      });
-    }
+  factory FarmerDashboardData.fromJson(Map<String, dynamic> json) {
+    return FarmerDashboardData(
+      success: json['success'],
+      message: json['message'],
+      data: List<FarmerDetails>.from(
+          json['data'].map((x) => FarmerDetails.fromJson(x))),
+    );
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    data['success'] = this.success;
-    data['message'] = this.message;
-    if (this.result != null) {
-      data['result'] = this.result!.map((v) => v.toJson()).toList();
-    }
-    return data;
+    return {
+      'success': success,
+      'message': message,
+      'data': List<dynamic>.from(data.map((x) => x.toJson())),
+    };
+  }
+}
+
+class FarmerDetails {
+  FarmerDashboard farmerDetails;
+  dynamic cropCultivationDetails; // Can be a List or String
+
+  FarmerDetails({
+    required this.farmerDetails,
+    required this.cropCultivationDetails,
+  });
+
+  factory FarmerDetails.fromJson(Map<String, dynamic> json) {
+    return FarmerDetails(
+      farmerDetails: FarmerDashboard.fromJson(json['farmerDetails']),
+      cropCultivationDetails: json['cropCultivationDetails'] is List
+          ? List<CropDetails>.from(json['cropCultivationDetails']
+          .map((x) => CropDetails.fromJson(x)))
+          : json['cropCultivationDetails'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'farmerDetails': farmerDetails.toJson(),
+      'cropCultivationDetails': cropCultivationDetails is List
+          ? List<CropDetails>.from(cropCultivationDetails.map((x) => x.toJson()))
+          : cropCultivationDetails,
+    };
   }
 }
 
 class FarmerDashboard {
-  String? sId;
-  String? name;
-  String? whatsappNumber;
-  int? totalOwnedFarm;
-  String? geoLocationOwnedFarm;
-  int? totalLeaseFarm;
-  String? geoLocationLeaseFarm;
-  String? pincode;
-  String? village;
-  String? district;
-  String? state;
-  String? address;
-  String? typeOfCultivationPractice;
-  String? bankName;
-  String? accountName;
-  String? accountNumber;
-  String? ifscCode;
-  String? pan;
-  String? aadhaarNumber;
-  String? createdAt;
-  String? updatedAt;
-  int? iV;
-  String? dealerNumber;
+  String id;
+  String dealerNumber;
+  String name;
+  String whatsappNumber;
+  int totalOwnedFarm;
+  String geoLocationOwnedFarm;
+  int totalLeaseFarm;
+  String geoLocationLeaseFarm;
+  String pincode;
+  String village;
+  String district;
+  String state;
+  String address;
+  String typeOfCultivationPractice;
+  String bankName;
+  String accountName;
+  String accountNumber;
+  String ifscCode;
+  String pan;
+  String aadhaarNumber;
+  String createdAt;
+  String updatedAt;
 
-  FarmerDashboard(
-      {this.sId,
-        this.name,
-        this.whatsappNumber,
-        this.totalOwnedFarm,
-        this.geoLocationOwnedFarm,
-        this.totalLeaseFarm,
-        this.geoLocationLeaseFarm,
-        this.pincode,
-        this.village,
-        this.district,
-        this.state,
-        this.address,
-        this.typeOfCultivationPractice,
-        this.bankName,
-        this.accountName,
-        this.accountNumber,
-        this.ifscCode,
-        this.pan,
-        this.aadhaarNumber,
-        this.createdAt,
-        this.updatedAt,
-        this.iV,
-        this.dealerNumber});
+  FarmerDashboard({
+    required this.id,
+    required this.dealerNumber,
+    required this.name,
+    required this.whatsappNumber,
+    required this.totalOwnedFarm,
+    required this.geoLocationOwnedFarm,
+    required this.totalLeaseFarm,
+    required this.geoLocationLeaseFarm,
+    required this.pincode,
+    required this.village,
+    required this.district,
+    required this.state,
+    required this.address,
+    required this.typeOfCultivationPractice,
+    required this.bankName,
+    required this.accountName,
+    required this.accountNumber,
+    required this.ifscCode,
+    required this.pan,
+    required this.aadhaarNumber,
+    required this.createdAt,
+    required this.updatedAt,
+  });
 
-  FarmerDashboard.fromJson(Map<String, dynamic> json) {
-    sId = json['_id'];
-    name = json['name'];
-    whatsappNumber = json['whatsappNumber'];
-    totalOwnedFarm = json['totalOwnedFarm'];
-    geoLocationOwnedFarm = json['geoLocationOwnedFarm'];
-    totalLeaseFarm = json['totalLeaseFarm'];
-    geoLocationLeaseFarm = json['geoLocationLeaseFarm'];
-    pincode = json['pincode'];
-    village = json['village'];
-    district = json['district'];
-    state = json['state'];
-    address = json['address'];
-    typeOfCultivationPractice = json['typeOfCultivationPractice'];
-    bankName = json['bankName'];
-    accountName = json['accountName'];
-    accountNumber = json['accountNumber'];
-    ifscCode = json['ifscCode'];
-    pan = json['pan'];
-    aadhaarNumber = json['aadhaarNumber'];
-    createdAt = json['createdAt'];
-    updatedAt = json['updatedAt'];
-    iV = json['__v'];
-    dealerNumber = json['dealerNumber'];
+  factory FarmerDashboard.fromJson(Map<String, dynamic> json) {
+    return FarmerDashboard(
+      id: json['_id'],
+      dealerNumber: json['dealerNumber'],
+      name: json['name'],
+      whatsappNumber: json['whatsappNumber'],
+      totalOwnedFarm: json['totalOwnedFarm'],
+      geoLocationOwnedFarm: json['geoLocationOwnedFarm'],
+      totalLeaseFarm: json['totalLeaseFarm'],
+      geoLocationLeaseFarm: json['geoLocationLeaseFarm'],
+      pincode: json['pincode'],
+      village: json['village'],
+      district: json['district'],
+      state: json['state'],
+      address: json['address'],
+      typeOfCultivationPractice: json['typeOfCultivationPractice'],
+      bankName: json['bankName'],
+      accountName: json['accountName'],
+      accountNumber: json['accountNumber'],
+      ifscCode: json['ifscCode'],
+      pan: json['pan'],
+      aadhaarNumber: json['aadhaarNumber'],
+      createdAt: json['createdAt'],
+      updatedAt: json['updatedAt'],
+    );
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    data['_id'] = this.sId;
-    data['name'] = this.name;
-    data['whatsappNumber'] = this.whatsappNumber;
-    data['totalOwnedFarm'] = this.totalOwnedFarm;
-    data['geoLocationOwnedFarm'] = this.geoLocationOwnedFarm;
-    data['totalLeaseFarm'] = this.totalLeaseFarm;
-    data['geoLocationLeaseFarm'] = this.geoLocationLeaseFarm;
-    data['pincode'] = this.pincode;
-    data['village'] = this.village;
-    data['district'] = this.district;
-    data['state'] = this.state;
-    data['address'] = this.address;
-    data['typeOfCultivationPractice'] = this.typeOfCultivationPractice;
-    data['bankName'] = this.bankName;
-    data['accountName'] = this.accountName;
-    data['accountNumber'] = this.accountNumber;
-    data['ifscCode'] = this.ifscCode;
-    data['pan'] = this.pan;
-    data['aadhaarNumber'] = this.aadhaarNumber;
-    data['createdAt'] = this.createdAt;
-    data['updatedAt'] = this.updatedAt;
-    data['__v'] = this.iV;
-    data['dealerNumber'] = this.dealerNumber;
-    return data;
+    return {
+      '_id': id,
+      'dealerNumber': dealerNumber,
+      'name': name,
+      'whatsappNumber': whatsappNumber,
+      'totalOwnedFarm': totalOwnedFarm,
+      'geoLocationOwnedFarm': geoLocationOwnedFarm,
+      'totalLeaseFarm': totalLeaseFarm,
+      'geoLocationLeaseFarm': geoLocationLeaseFarm,
+      'pincode': pincode,
+      'village': village,
+      'district': district,
+      'state': state,
+      'address': address,
+      'typeOfCultivationPractice': typeOfCultivationPractice,
+      'bankName': bankName,
+      'accountName': accountName,
+      'accountNumber': accountNumber,
+      'ifscCode': ifscCode,
+      'pan': pan,
+      'aadhaarNumber': aadhaarNumber,
+      'createdAt': createdAt,
+      'updatedAt': updatedAt,
+    };
+  }
+}
+
+class CropDetails {
+  String id;
+  String dealerNumber;
+  String fid;
+  String farmerName;
+  String crops;
+  String variety;
+  DateTime dateOfSowing;
+  String geolocation;
+  String typeOfCultivationPractice;
+  int areaInAcres;
+  String geoLinkAreaOnMap;
+
+  CropDetails({
+    required this.id,
+    required this.dealerNumber,
+    required this.fid,
+    required this.farmerName,
+    required this.crops,
+    required this.variety,
+    required this.dateOfSowing,
+    required this.geolocation,
+    required this.typeOfCultivationPractice,
+    required this.areaInAcres,
+    required this.geoLinkAreaOnMap,
+  });
+
+  factory CropDetails.fromJson(Map<String, dynamic> json) {
+    return CropDetails(
+      id: json['_id'],
+      dealerNumber: json['dealerNumber'],
+      fid: json['fid'],
+      farmerName: json['farmerName'],
+      crops: json['crops'],
+      variety: json['variety'],
+      dateOfSowing: DateTime.parse(json['dateOfSowing']),
+      geolocation: json['geolocation'],
+      typeOfCultivationPractice: json['typeOfCultivationPractice'],
+      areaInAcres: json['areaInAcres'],
+      geoLinkAreaOnMap: json['geoLinkAreaOnMap'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'dealerNumber': dealerNumber,
+      'fid': fid,
+      'farmerName': farmerName,
+      'crops': crops,
+      'variety': variety,
+      'dateOfSowing': dateOfSowing.toIso8601String(),
+      'geolocation': geolocation,
+      'typeOfCultivationPractice': typeOfCultivationPractice,
+      'areaInAcres': areaInAcres,
+      'geoLinkAreaOnMap': geoLinkAreaOnMap,
+    };
   }
 }

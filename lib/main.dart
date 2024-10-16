@@ -3,8 +3,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:krishiyan/screen/MyWelcomePage.dart';
+import 'package:krishiyan/screen/SplashScreen.dart';
+import 'package:krishiyan/screen/Welcome/WelcomePage.dart';
 import 'package:krishiyan/utils/Constants.dart';
+import 'package:krishiyan/screen/HomeScreen/HomePage.dart'; // Import your HomePage
+import 'helper/SharedPref.dart'; // Import your SharedPref
 
 import 'localization/AppLocalizations.dart';
 import 'localization/NavigationService.dart';
@@ -12,7 +15,6 @@ import 'package:http/http.dart' as http;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // Bypass SSL verification for self-signed certificates
   HttpOverrides.global = MyHttpOverrides();
   runApp(const MyApp());
 }
@@ -52,29 +54,32 @@ class MyApp extends StatelessWidget {
         Locale('hi'), // Hindi
       ],
       debugShowCheckedModeBanner: false,
-      home: const MyWelcomePage(),
+      home: FutureBuilder<bool>(
+        future: _checkLoginStatus(), // Call the method to check login status
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            // Show a loading indicator while waiting for the login status check
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            // Handle errors if any
+            return const Center(child: Text("Error checking login status."));
+          } else {
+            // Navigate based on the login status
+            if (snapshot.data == true) {
+              return HomePage(selectedIndex: 0); // User is logged in
+            } else {
+              return const WelcomePage(); // User is not logged in
+            }
+          }
+        },
+      ),
       routes: const <String, WidgetBuilder>{},
     );
-    // return ChangeNotifierProvider(
-    //     create: (BuildContext context) => appLanguage,
-    //     child: Consumer<AppLanguageProvider>(builder: (context, model, child) {
-    //       return MaterialApp(
-    //         debugShowCheckedModeBanner: false,
-    //         title: 'Flutter Demo',
-    //         theme: ThemeData(
-    //           colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
-    //           useMaterial3: true,
-    //         ),
-    //         home: const MyWelcomePage(),
-    //         locale: model.appLocal,
-    //         supportedLocales: const [
-    //           Locale('en', 'US'),
-    //         ],
-    //         localizationsDelegates: const [
-    //           AppLocalizations.delegate,
-    //         ],
-    //       );
-    //     })
-    // );
   }
+
+   Future<bool> _checkLoginStatus() async {
+    // Check the login status from shared preferences
+    return await SharedPref.readPreferenceValue(isLogin, PrefEnum.BOOL) ?? false;
+  }
+  
 }

@@ -25,6 +25,15 @@ class AppGlobal {
     return value;
   }
 
+  static String convertToIsoStringFormat(String dateString) {
+    print("convertToIsoFormat : $dateString");
+
+    DateTime dateTime = DateTime.parse(dateString);
+    // Convert to ISO 8601 format and append 'Z' for UTC
+    String isoDate = dateTime.toUtc().toIso8601String() + 'Z';
+    return isoDate;
+  }
+
   static String convertToIsoFormat(String dateString) {
     // Define the input format
     DateFormat inputFormat = DateFormat('dd-MM-yyyy');
@@ -34,17 +43,19 @@ class AppGlobal {
 
     // Format the DateTime object to the ISO format
     String isoFormattedDate =
-    DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(dateTime);
-
+    DateFormat("yyyy-MM-ddTHH:mm:ss.SSSZ").format(dateTime);
+    // 2024-09-03T00:00:00.000Z
     // Adjust the format to match the specific format with '000Z' at the end
     // Replace the '+0000' with ':000Z'
-    isoFormattedDate =
-        isoFormattedDate.replaceFirst(RegExp(r'\+0000'), '.000Z');
+    isoFormattedDate = isoFormattedDate.replaceFirst(RegExp(r'\+0000'), '.000Z');
 
     return isoFormattedDate;
   }
 
   static String convertToCustomDateFormat(String isoDate) {
+
+    // print("convertToCustomDateFormat : $isoDate");
+
     // Remove the trailing ':000Z' part to make it a standard ISO 8601 format
     String correctedIsoDate = isoDate.replaceFirst(RegExp(r':\d{3}Z$'), 'Z');
 

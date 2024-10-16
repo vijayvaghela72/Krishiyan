@@ -1,23 +1,66 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../../helper/API.dart';
+import '../../helper/SharedPref.dart';
 import '../../utils/AppGlobal.dart';
 import '../../utils/Constants.dart';
 import '../model/APIResponse.dart';
 import '../model/GetAddressDetails.dart';
 import '../model/GetBankDetails.dart';
+import '../model/GetFRMProfileData.dart';
 import '../model/GetOtherDetails.dart';
 import '../model/GetProfileData.dart';
 
 class AccountSettingController{
 
+  static Future<GetFRMProfileDetails?> fetchFRMEditProfileDetails(BuildContext context, String contactNumber) async {
+    return API
+        .callPostImage(FRM_PROFILE_DETAILS+contactNumber, null, "", isKeyByPass: true)
+        .then((response) {
+      AppGlobal.printLog("Edit FRM Profile Details RESPONSE : " + response);
+      APIResponse? apiResponse = APIResponse.fromJson(jsonDecode(response));
+      if (apiResponse.success!) {
+        if(apiResponse.frmProfileData!.dateOfFpo !=null) {
+
+          String? date = apiResponse.frmProfileData!.dateOfFpo ?? "";
+          String? typeOfOrgData = apiResponse.frmProfileData!.typeOfFpo ?? "";
+
+          print("New Api Date : $date");
+          print("New Api Organization : $typeOfOrgData");
+
+          SharedPref.savePreferenceValue(dateOfOrganization, date ?? "");
+          SharedPref.savePreferenceValue(typeOfOrg, typeOfOrgData ?? "");
+        }
+        return apiResponse.frmProfileData;
+      }
+      if (apiResponse.message != "") {
+        // AlertHelper.showToast(apiResponse.message!, context);
+      }
+      return null;
+    }).catchError((onError) {
+      AppGlobal.printLog("ERROR " + onError.toString());
+      return null;
+    });
+  }
+
   static Future<GetProfileDetails?> fetchEditProfileDetails(BuildContext context, String id) async {
     return API
         .callPostImage(PROFILE_DETAILS+id, null, "", isKeyByPass: true)
         .then((response) {
-      AppGlobal.printLog("Edit Profile Details RESPONSE : " + response);
+      AppGlobal.printLog("Trader Edit Profile Details RESPONSE : " + response);
       APIResponse? apiResponse = APIResponse.fromJson(jsonDecode(response));
       if (apiResponse.success!) {
+        if(apiResponse.profileData!.incorporationDate !=null) {
+
+          String? incorporationDate = apiResponse.profileData!.incorporationDate ?? "";
+          String? typeOfEntityData = apiResponse.profileData!.typeOfEntity ?? "";
+
+          print("New Api incorporationDate : $incorporationDate");
+          print("New Api typeOfEntityData : $typeOfEntityData");
+
+          SharedPref.savePreferenceValue(dateOfIncorporation, incorporationDate ?? "");
+          SharedPref.savePreferenceValue(typeOfEntity, typeOfEntityData ?? "");
+        }
         return apiResponse.profileData;
       }
       if (apiResponse.message != "") {

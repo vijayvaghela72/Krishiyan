@@ -551,7 +551,7 @@ class DiseaseManagement {
 
   DiseaseManagement.fromJson(Map<String, dynamic> json) {
     name = json['name'];
-    causal = json['causal'];
+    causal = json['characteristics'];
     symptoms = json['symptoms'];
     images = json['images'].cast<String>();
     solutions = json['solutions'];

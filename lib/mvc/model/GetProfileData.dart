@@ -1,76 +1,78 @@
 class GetProfileData {
   bool? success;
   String? message;
-  GetProfileDetails? data;
+  GetProfileDetails? getProfileDetails;
 
-  GetProfileData({this.success, this.message, this.data});
+  GetProfileData({this.success, this.message, this.getProfileDetails});
 
   GetProfileData.fromJson(Map<String, dynamic> json) {
     success = json['success'];
     message = json['message'];
-    data = json['data'] != null ? GetProfileDetails.fromJson(json['data']) : null;
+    getProfileDetails = json['data'] != null
+        ? new GetProfileDetails.fromJson(json['data'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = new Map<String, dynamic>();
     data['success'] = this.success;
     data['message'] = this.message;
-    if (this.data != null) {
-      data['data'] = this.data!.toJson();
+    if (this.getProfileDetails != null) {
+      data['data'] = this.getProfileDetails!.toJson();
     }
     return data;
   }
 }
 
 class GetProfileDetails {
-  String? sId;
-  String? typeOfOrganization;
-  String? nameOfFpo;
-  String? typeOfFpo;
-  String? dateOfFpo;
-  String? organizationalEmail;
+  String? nameOfEntity;
+  String? typeOfEntity;
+  String? incorporationDate;
+  String? incorporationNumber;
+  String? businessLocation;
+  String? contactPersonName;
+  String? yourDesignation;
+  String? uRL;
+  String? email;
   String? contactNumber;
-  String? promoterName;
-  String? password;
-  int? iV;
 
   GetProfileDetails(
-      {this.sId,
-        this.typeOfOrganization,
-        this.nameOfFpo,
-        this.typeOfFpo,
-        this.dateOfFpo,
-        this.organizationalEmail,
-        this.contactNumber,
-        this.promoterName,
-        this.password,
-        this.iV});
+      {this.nameOfEntity,
+        this.typeOfEntity,
+        this.incorporationDate,
+        this.incorporationNumber,
+        this.businessLocation,
+        this.contactPersonName,
+        this.yourDesignation,
+        this.uRL,
+        this.email,
+        this.contactNumber});
 
   GetProfileDetails.fromJson(Map<String, dynamic> json) {
-    sId = json['_id'];
-    typeOfOrganization = json['typeOfOrganization'];
-    nameOfFpo = json['nameOfFpo'];
-    typeOfFpo = json['typeOfFpo'];
-    dateOfFpo = json['dateOfFpo'];
-    organizationalEmail = json['organizationalEmail'];
+    nameOfEntity = json['nameOfEntity'];
+    typeOfEntity = json['typeOfEntity'];
+    incorporationDate = json['incorporationDate'];
+    incorporationNumber = json['incorporationNumber'];
+    businessLocation = json['businessLocation'];
+    contactPersonName = json['contactPersonName'];
+    yourDesignation = json['yourDesignation'];
+    uRL = json['URL'];
+    email = json['Email'];
     contactNumber = json['contactNumber'];
-    promoterName = json['promoterName'];
-    password = json['password'];
-    iV = json['__v'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    data['_id'] = this.sId;
-    data['typeOfOrganization'] = this.typeOfOrganization;
-    data['nameOfFpo'] = this.nameOfFpo;
-    data['typeOfFpo'] = this.typeOfFpo;
-    data['dateOfFpo'] = this.dateOfFpo;
-    data['organizationalEmail'] = this.organizationalEmail;
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['nameOfEntity'] = this.nameOfEntity;
+    data['typeOfEntity'] = this.typeOfEntity;
+    data['incorporationDate'] = this.incorporationDate;
+    data['incorporationNumber'] = this.incorporationNumber;
+    data['businessLocation'] = this.businessLocation;
+    data['contactPersonName'] = this.contactPersonName;
+    data['yourDesignation'] = this.yourDesignation;
+    data['URL'] = this.uRL;
+    data['Email'] = this.email;
     data['contactNumber'] = this.contactNumber;
-    data['promoterName'] = this.promoterName;
-    data['password'] = this.password;
-    data['__v'] = this.iV;
     return data;
   }
 }
