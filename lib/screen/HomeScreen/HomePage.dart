@@ -164,6 +164,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     return Scaffold(
       extendBody: true,
       backgroundColor: AppColor.backgroundColor,
+      resizeToAvoidBottomInset: false,
       appBar: typeOfOrganizationData == "Trader" ? _bottomNavIndex ==1 ? null :
       AppBar(
         automaticallyImplyLeading: false,
