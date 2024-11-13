@@ -384,6 +384,7 @@ class _LoginPageState extends State<LoginPage> {
                 builder: (context) =>
                     HomePage(
                       selectedIndex: 0,
+                      typeOfOrganization: "",
                     )),
           );
         });

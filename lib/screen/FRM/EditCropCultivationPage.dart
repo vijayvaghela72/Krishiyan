@@ -1212,7 +1212,7 @@ class _EditCropCultivationPageState extends State<EditCropCultivationPage>
               // }
               Navigator.of(context).pushReplacement(MaterialPageRoute(
                   builder: (BuildContext context) => HomePage(
-                        selectedIndex: 1,
+                        selectedIndex: 1, typeOfOrganization: "",
                       )));
             },
             child: const Align(

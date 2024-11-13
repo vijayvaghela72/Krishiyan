@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:krishiyan/helper/AlertHelper.dart';
 import 'package:krishiyan/localization/AppLocalizations.dart';
 import '../../mvc/controller/enquiryDashboardController.dart';
 import '../../mvc/model/GetAllEnquiryData.dart';
@@ -9,6 +10,7 @@ import '../../mvc/model/GetEnquiryByFilterData.dart';
 import '../../mvc/model/SelectCropNamesData.dart';
 import '../../utils/Constants.dart';
 import 'EnquiryDetailPage.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class EnquiryDashboardPage extends StatefulWidget {
   String? selectedCrop;
@@ -26,7 +28,7 @@ class _EnquiryDashboardPageState extends State<EnquiryDashboardPage>
   late Future<List<EnquiryData>> futureEnquiryData;
   String? _selectedCrop;
   SelectCropNamesData? _cropData;
-  bool showData = false;
+  bool showData = true;
 
   @override
   void initState() {
@@ -186,8 +188,10 @@ class _EnquiryDashboardPageState extends State<EnquiryDashboardPage>
                 child: ElevatedButton(
                   onPressed: () {
                     futureEnquiryData = EnquiryDashboardController.getEnquiryDetailsByCommodity(_selectedCrop.toString());
+                    print("DDDDDDDDDDDDD");
                     setState(() {
                       futureEnquiryData = futureEnquiryData;
+                      showData = true;
                     });
                   },
                   style: ElevatedButton.styleFrom(
@@ -208,16 +212,18 @@ class _EnquiryDashboardPageState extends State<EnquiryDashboardPage>
             const SizedBox(
               height: 20,
             ),
-            // showData
-            //     ?
+            showData
+                ?
             FutureBuilder<List<EnquiryData>>(
               future: futureEnquiryData,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
+                  print("Error: ${snapshot.error}");
                   return Center(child: Text('No Data Available'));
                 } else if (snapshot.hasData) {
+                  print("has data");
                   final List<EnquiryData> commodities = snapshot.data!;
                   return ListView.builder(
                     physics: const NeverScrollableScrollPhysics(),
@@ -242,20 +248,22 @@ class _EnquiryDashboardPageState extends State<EnquiryDashboardPage>
                               children: [
                                 Stack(children: <Widget>[
                                   Padding(
-                                    padding: const EdgeInsets.all(12.0),
-                                    child: Container(
-                                      width:
-                                      MediaQuery.of(context).size.width,
-                                      height: 180,
-                                      decoration: const BoxDecoration(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(12)),
-                                          image: DecorationImage(
-                                              image: AssetImage(
-                                                  "assets/images/enquiryBG.png"),
-                                              fit: BoxFit.cover)),
-                                    ),
-                                  ),
+  padding: const EdgeInsets.all(12.0),
+  child: Container(
+    width: MediaQuery.of(context).size.width,
+    height: 180,
+    decoration: BoxDecoration(
+      borderRadius: const BorderRadius.all(Radius.circular(12)),
+      image: DecorationImage(
+        image: commodity.photoVideoLink != null && commodity.photoVideoLink!.isNotEmpty
+            ? NetworkImage(commodity.photoVideoLink!) // Use the URL from the API
+            : const AssetImage("assets/images/enquiryBG.png") as ImageProvider, // Fallback to the default image
+        fit: BoxFit.cover,
+      ),
+    ),
+  ),
+),
+
                                   Padding(
                                     padding: const EdgeInsets.only(
                                         top: 12.0, left: 12.0),
@@ -292,7 +300,7 @@ class _EnquiryDashboardPageState extends State<EnquiryDashboardPage>
                                   padding:
                                   const EdgeInsets.only(left: 20.0),
                                   child: Text(
-                                    "Name : ${commodity.uid.toString()}",
+                                    "Name : ${commodity.commodity.toString()} ${commodity.variety.toString()}",
                                     softWrap: true,
                                     style: const TextStyle(
                                         color: Color(0xFF808080),
@@ -355,7 +363,9 @@ class _EnquiryDashboardPageState extends State<EnquiryDashboardPage>
                                                   .size
                                                   .width,
                                               child: ElevatedButton(
-                                                onPressed: () {},
+                                                onPressed: () {
+                                                  AlertHelper.showToast("This feature is locked", context);
+                                                },
                                                 style: ElevatedButton
                                                     .styleFrom(
                                                   foregroundColor:
@@ -407,62 +417,59 @@ class _EnquiryDashboardPageState extends State<EnquiryDashboardPage>
                                         const SizedBox(
                                           width: 10.0,
                                         ),
-                                        Expanded(
-                                          child: Container(
-                                              width: MediaQuery.of(context)
-                                                  .size
-                                                  .width,
-                                              child: ElevatedButton(
-                                                onPressed: () {},
-                                                style: ElevatedButton
-                                                    .styleFrom(
-                                                  foregroundColor:
-                                                  Colors.white,
-                                                  padding:
-                                                  const EdgeInsets.all(
-                                                      3),
-                                                  textStyle:
-                                                  const TextStyle(
-                                                      fontSize: 18),
-                                                  backgroundColor:
-                                                  const Color(
-                                                      0xFF3FC041),
-                                                  shape:
-                                                  RoundedRectangleBorder(
-                                                    borderRadius:
-                                                    BorderRadius.circular(
-                                                        20), // <-- Radius
-                                                  ),
-                                                ),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .center,
-                                                  crossAxisAlignment:
-                                                  CrossAxisAlignment
-                                                      .center,
-                                                  children: [
-                                                    Text(
-                                                      buildTranslate(
-                                                          'call')!,
-                                                      style: const TextStyle(
-                                                          fontSize: 11,
-                                                          fontFamily:
-                                                          'poppins-medium'),
-                                                    ),
-                                                    const SizedBox(
-                                                      width: 5,
-                                                    ),
-                                                    Image.asset(
-                                                      'assets/images/call.png',
-                                                      height: 11,
-                                                      width: 11,
-                                                    )
-                                                  ],
-                                                ),
-                                              )),
-                                        ),
-                                        const SizedBox(
+                                       Expanded(
+  child: Container(
+    width: MediaQuery.of(context).size.width,
+    child: ElevatedButton(
+      onPressed: () async {
+        // Ensure `uid` is a valid phone number
+        if (commodity.uid != null && commodity.uid!.isNotEmpty) {
+          final phoneNumber = commodity.uid!;
+          final url = 'tel:$phoneNumber'; // The tel URL scheme
+
+          // Launch the URL to open the dialer
+          if (await canLaunch(url)) {
+            await launch(url);
+          } else {
+            // Handle case when the dialer cannot be launched
+            print("Could not launch the phone dialer");
+          }
+        } else {
+          // Handle the case when the uid is empty or null
+          print("No valid phone number");
+        }
+      },
+      style: ElevatedButton.styleFrom(
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.all(3),
+        textStyle: const TextStyle(fontSize: 18),
+        backgroundColor: const Color(0xFF3FC041),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20), // <-- Radius
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            buildTranslate('call')!,
+            style: const TextStyle(fontSize: 11, fontFamily: 'poppins-medium'),
+          ),
+          const SizedBox(
+            width: 5,
+          ),
+          Image.asset(
+            'assets/images/call.png',
+            height: 11,
+            width: 11,
+          )
+        ],
+      ),
+    ),
+  ),
+),
+const SizedBox(
                                           width: 10.0,
                                         ),
                                         Expanded(
@@ -555,8 +562,8 @@ class _EnquiryDashboardPageState extends State<EnquiryDashboardPage>
                   return const Center(child: Text('No data available'));
                 }
               },
-            ),
-            // : Container(),
+            )
+            : Container(),
           ],
         ),
       ),

@@ -66,7 +66,7 @@ class MyApp extends StatelessWidget {
           } else {
             // Navigate based on the login status
             if (snapshot.data == true) {
-              return HomePage(selectedIndex: 0); // User is logged in
+              return HomePage(selectedIndex: 0, typeOfOrganization: "",); // User is logged in
             } else {
               return const WelcomePage(); // User is not logged in
             }

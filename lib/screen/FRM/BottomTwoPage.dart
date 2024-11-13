@@ -1807,7 +1807,7 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                                         Text(
                                           "Add Crop",
                                           style: const TextStyle(
-                                              fontSize: 18,
+                                              fontSize: 16,
                                               fontFamily: 'poppins-medium'),
                                         ),
                                       ],
@@ -1843,7 +1843,7 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                                     ),
                                   )),
                               const SizedBox(
-                                height: 40,
+                                height: 100,
                               ),
                             ],
                           )
@@ -2669,10 +2669,7 @@ class _BottomTwoPageState extends State<BottomTwoPage>
     
     AlertHelper.showToast("Phone number exists. Please check and try again.", context);
     // Navigate to the login page
-    Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const LoginPage()),
-                          );
+    
 
   }
 }

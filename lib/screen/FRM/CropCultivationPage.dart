@@ -681,7 +681,7 @@ class _CropCultivationPageState extends State<CropCultivationPage> with TickerPr
               //   );
               // }
               Navigator.of(context).pushReplacement(MaterialPageRoute(
-                  builder: (BuildContext context) => HomePage(selectedIndex: 1,)));
+                  builder: (BuildContext context) => HomePage(selectedIndex: 1, typeOfOrganization: typeOfOrganizationData,)));
             },
             child: const Align(
               alignment: Alignment.topRight,

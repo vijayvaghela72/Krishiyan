@@ -14,10 +14,10 @@ import '../AccountSettings/ProfilePage.dart';
 import '../Language/SelectLanguagePage.dart';
 
 class HomePage extends StatefulWidget {
-
+  final String typeOfOrganization;
   int selectedIndex;
 
-  HomePage({super.key, required this.selectedIndex,});
+  HomePage({super.key, required this.selectedIndex, required this.typeOfOrganization});
 
   static void setLocale(BuildContext context, Locale newLocale) async {
     print("setLocal : $newLocale");
@@ -32,16 +32,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   var _bottomNavIndex = 0;
-
-  // late AnimationController _fabAnimationController;
-  // late AnimationController _borderRadiusAnimationController;
-  // late Animation<double> fabAnimation;
-  // late Animation<double> borderRadiusAnimation;
-  //
-  // late CurvedAnimation fabCurve;
-  // late CurvedAnimation borderRadiusCurve;
-  //
-  // late AnimationController _hideBottomBarAnimationController;
 
   List<bottomCategory> iconList1 = [
     bottomCategory(
@@ -78,7 +68,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     BottomTwoPage(aapbarVisibility: false,),
     BottomThreePage(aapbarVisibility: false,),
     const ProfilePage(),
-    BottomCenterEnquiryPage(aapbarVisibility: false,),
+    BottomCenterEnquiryPage(aapbarVisibility: false, ),
   ];
 
   final List<Widget> _screens2 = [
@@ -102,6 +92,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _bottomNavIndex = widget.selectedIndex;
+    typeOfOrganizationData = widget.typeOfOrganization;
+    print("AAAAAAAAAAAA");
+    print(_bottomNavIndex);
     // _fabAnimationController = AnimationController(
     //   duration: const Duration(milliseconds: 500),
     //   vsync: this,
@@ -161,6 +154,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    // Print the current bottomNavIndex before returning the body
+    print(typeOfOrganizationData);
+    bool isFarmerGroup = typeOfOrganizationData == "Farmer groups";
+  print("Current _bottomNavIndex: $_bottomNavIndex");
     return Scaffold(
       extendBody: true,
       backgroundColor: AppColor.backgroundColor,
@@ -201,6 +198,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       'assets/images/language.png',
                       width: 35, height: 35,
                     ),
+                    
                   ],
                 ),
               ),
@@ -242,6 +240,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       'assets/images/language.png',
                       width: 35, height: 35,
                     ),
+                    
                   ],
                 ),
               ),
@@ -249,7 +248,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           ),
         ),
       ) : null,
-      body : typeOfOrganizationData == "Farmer groups" ? _screens1[_bottomNavIndex] : _screens2[_bottomNavIndex],
+      
+      body : 
+      typeOfOrganizationData == "Farmer groups" ? _screens1[_bottomNavIndex] : _screens2[_bottomNavIndex],
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppColor.whiteColor.withAlpha(0), // add this line.
         elevation: 0, // also important, removes the shadow
@@ -272,7 +273,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   .of(context)
                   .push(
                   MaterialPageRoute(builder: (BuildContext context) =>
-                      BottomCenterEnquiryPage(aapbarVisibility: true,)));
+                      BottomCenterEnquiryPage(aapbarVisibility: true, typeOfOrganization: typeOfOrganizationData,)));
               // _onItemTapped(4);
             });
           },
@@ -284,8 +285,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar:
-      typeOfOrganizationData == "Farmer groups" ?
+      bottomNavigationBar: (){
+        print(typeOfOrganizationData);
+        print("printing farmergroup");
+        print(isFarmerGroup);
+        return isFarmerGroup;}()
+       ? 
       Container(
         height: 65,
         decoration: BoxDecoration(
@@ -313,8 +318,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             onTap: (index) {
               setState(() {
                 _bottomNavIndex = index; // Set the current index when tapped
+                print("This is the set state index");
+                print("BBBBBBBBBBBBBBBBBBBBBB");
+                print(_bottomNavIndex);
               });
-              print("_bottomNavIndex 1: $_bottomNavIndex");
+              print("_bottomNavIndex 1 home: $_bottomNavIndex");
             },
             selectedItemColor: Colors.grey,
             unselectedItemColor: Colors.grey,
@@ -359,6 +367,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             onTap: (index) {
               setState(() {
                 _bottomNavIndex = index; // Set the current index when tapped
+                 print("This is the set state index");
+                 
+                 print(_bottomNavIndex);
               });
               print("_bottomNavIndex 2: $_bottomNavIndex");
             },
@@ -445,7 +456,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             .of(context)
             .push(
             MaterialPageRoute(builder: (BuildContext context) =>
-                BottomCenterEnquiryPage(aapbarVisibility: true,)));
+                BottomCenterEnquiryPage(aapbarVisibility: true, typeOfOrganization: typeOfOrganizationData,)));
       }
     }
   }
@@ -480,7 +491,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             .of(context)
             .push(
             MaterialPageRoute(builder: (BuildContext context) =>
-                BottomCenterEnquiryPage(aapbarVisibility: true,)));
+                BottomCenterEnquiryPage(aapbarVisibility: true, typeOfOrganization: typeOfOrganizationData,)));
       }
     }
   }

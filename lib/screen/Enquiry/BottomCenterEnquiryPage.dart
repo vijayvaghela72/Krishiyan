@@ -29,8 +29,9 @@ import 'SellCommodityPage.dart';
 
 class BottomCenterEnquiryPage extends StatefulWidget {
   bool aapbarVisibility;
+  final String? typeOfOrganization;
 
-  BottomCenterEnquiryPage({super.key, required this.aapbarVisibility});
+  BottomCenterEnquiryPage({super.key, required this.aapbarVisibility, this.typeOfOrganization});
 
   @override
   State<BottomCenterEnquiryPage> createState() => _BottomCenterEnquiryPageState();
@@ -53,7 +54,7 @@ class _BottomCenterEnquiryPageState extends State<BottomCenterEnquiryPage> with 
   // late CurvedAnimation fabCurve;
   // late CurvedAnimation borderRadiusCurve;
   // late AnimationController _hideBottomBarAnimationController;
-  var _bottomNavIndex = 1; //default index of a first screen
+  var _bottomNavIndex = 0; //default index of a first screen
 
   String? _selectedCrop;
   SelectCropNamesData? _cropData;
@@ -172,11 +173,13 @@ class _BottomCenterEnquiryPageState extends State<BottomCenterEnquiryPage> with 
     getPrefValue();
   }
 
+  
   Future<void> getPrefValue() async {
     typeOfOrganizationData = await SharedPref.readPreferenceValue(typeOfOrganization, PrefEnum.STRING);
     print("BottomCenterEnquiry TypeOfOrganizationData : $typeOfOrganizationData");
     setState(() {
       typeOfOrganizationData = typeOfOrganizationData;
+      print(typeOfOrganizationData);
     });
   }
 
@@ -688,7 +691,9 @@ class _BottomCenterEnquiryPageState extends State<BottomCenterEnquiryPage> with 
                           if (snapshot.connectionState == ConnectionState.waiting) {
                             return const Center(child: CircularProgressIndicator());
                           } else if (snapshot.hasError) {
+                            print("Error: ${snapshot.error}");
                             return Center(child: Text(buildTranslate("noDataAvailable")!));
+                            
                             // return Center(child: Text(snapshot.hasError.toString()));
                           } else if (snapshot.hasData) {
                             final List<EnquiryByFilterData> enquiry = snapshot.data!;
@@ -719,22 +724,21 @@ class _BottomCenterEnquiryPageState extends State<BottomCenterEnquiryPage> with 
                                             children: [
                                               Stack(children: <Widget>[
                                                 Padding(
-                                                  padding: const EdgeInsets.all(18.0),
-                                                  child: Container(
-                                                    width: MediaQuery.of(context)
-                                                        .size
-                                                        .width,
-                                                    height: 180,
-                                                    decoration: const BoxDecoration(
-                                                        borderRadius:
-                                                        BorderRadius.all(
-                                                            Radius.circular(12)),
-                                                        image: DecorationImage(
-                                                            image: AssetImage(
-                                                                "assets/images/enquiryBG.png"),
-                                                            fit: BoxFit.cover)),
-                                                  ),
-                                                ),
+  padding: const EdgeInsets.all(12.0),
+  child: Container(
+    width: MediaQuery.of(context).size.width,
+    height: 180,
+    decoration: BoxDecoration(
+      borderRadius: const BorderRadius.all(Radius.circular(12)),
+      image: DecorationImage(
+        image: enquiryFilterData.photoVideoLink != null && enquiryFilterData.photoVideoLink!.isNotEmpty
+            ? NetworkImage(enquiryFilterData.photoVideoLink!) // Use the URL from the API
+            : const AssetImage("assets/images/enquiryBG.png") as ImageProvider, // Fallback to the default image
+        fit: BoxFit.cover,
+      ),
+    ),
+  ),
+),
                                                 Padding(
                                                   padding: const EdgeInsets.only(
                                                       top: 18.0, left: 18.0),
@@ -774,7 +778,7 @@ class _BottomCenterEnquiryPageState extends State<BottomCenterEnquiryPage> with 
                                               Padding(
                                                 padding: EdgeInsets.only(left: 20.0),
                                                 child: Text(
-                                                  "Name : ${enquiryFilterData.uid}",
+                                                  "Name : ${enquiryFilterData.commodity.toString()} ${enquiryFilterData.variety.toString()}",
                                                   softWrap: true,
                                                   style: TextStyle(
                                                       color: Color(0xFF808080),
@@ -895,23 +899,22 @@ class _BottomCenterEnquiryPageState extends State<BottomCenterEnquiryPage> with 
                                             MainAxisAlignment.start,
                                             children: [
                                               Stack(children: <Widget>[
-                                                Padding(
-                                                  padding: const EdgeInsets.all(18.0),
-                                                  child: Container(
-                                                    width: MediaQuery.of(context)
-                                                        .size
-                                                        .width,
-                                                    height: 180,
-                                                    decoration: const BoxDecoration(
-                                                        borderRadius:
-                                                        BorderRadius.all(
-                                                            Radius.circular(12)),
-                                                        image: DecorationImage(
-                                                            image: AssetImage(
-                                                                "assets/images/enquiryBG.png"),
-                                                            fit: BoxFit.cover)),
-                                                  ),
-                                                ),
+                                                 Padding(
+  padding: const EdgeInsets.all(12.0),
+  child: Container(
+    width: MediaQuery.of(context).size.width,
+    height: 180,
+    decoration: BoxDecoration(
+      borderRadius: const BorderRadius.all(Radius.circular(12)),
+      image: DecorationImage(
+        image: enquiryFilterData.photoVideoLink != null && enquiryFilterData.photoVideoLink!.isNotEmpty
+            ? NetworkImage(enquiryFilterData.photoVideoLink!) // Use the URL from the API
+            : const AssetImage("assets/images/enquiryBG.png") as ImageProvider, // Fallback to the default image
+        fit: BoxFit.cover,
+      ),
+    ),
+  ),
+),
                                                 Padding(
                                                   padding: const EdgeInsets.only(
                                                       top: 18.0, left: 18.0),
@@ -951,7 +954,7 @@ class _BottomCenterEnquiryPageState extends State<BottomCenterEnquiryPage> with 
                                               Padding(
                                                 padding: EdgeInsets.only(left: 20.0),
                                                 child: Text(
-                                                  "Name : ${enquiryFilterData.uid}",
+                                                  "Name : ${enquiryFilterData.commodity.toString()} ${enquiryFilterData.variety.toString()}",
                                                   softWrap: true,
                                                   style: TextStyle(
                                                       color: Color(0xFF808080),
@@ -1202,6 +1205,7 @@ class _BottomCenterEnquiryPageState extends State<BottomCenterEnquiryPage> with 
             ),
           ),
         )
+        
         // bottomNavigationBar: widget.aapbarVisibility && typeOfOrganizationData == "Farmer groups"
         //     ? AnimatedBottomNavigationBar.builder(
         //   height: 70,
@@ -1374,10 +1378,13 @@ class _BottomCenterEnquiryPageState extends State<BottomCenterEnquiryPage> with 
   void _onItemTapped(int index) {
     setState(() {
       _bottomNavIndex = index;
+      print(_bottomNavIndex);
     });
     Navigator.pop(context);
-    Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (BuildContext context) => HomePage(selectedIndex: _bottomNavIndex,)));
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (BuildContext context) => HomePage(selectedIndex: _bottomNavIndex, typeOfOrganization: typeOfOrganizationData)));
+
+        
     // if (index != 3) {
     //   setState(() {
     //     _bottomNavIndex = index;
@@ -1420,38 +1427,46 @@ class _BottomCenterEnquiryPageState extends State<BottomCenterEnquiryPage> with 
   }
 
   void _onItemTappedData(int index) {
-    if (index != 3) {
-      setState(() {
-        _bottomNavIndex = index;
-      });
-      print("BottomCenterEnquiryPage : $_bottomNavIndex");
-      if (_bottomNavIndex == 0) {
-        // Navigator.pop(context);
-        if (typeOfOrganization == "Farmer groups") {
-          var route = ModalRoute.of(context);
-          if (route != null) {
-            Navigator.of(context).pushReplacement(MaterialPageRoute(
-                builder: (BuildContext context) =>
-                    BottomOnePage(
-                      aapbarVisibility: true,
-                    )));
-          }
-        } else{
-          Navigator.pop(context);
-          var route = ModalRoute.of(context);
-          if (route != null) {
-            Navigator.of(context).pushReplacement(MaterialPageRoute(
-                builder: (BuildContext context) =>
-                    HomePage(selectedIndex: 0,)));
-          }
-        }
-      }
-      else if (_bottomNavIndex == 1) {
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => const ProfilePage()),
-        );
-      }
-    }
+     setState(() {
+      _bottomNavIndex = index;
+      print(_bottomNavIndex);
+    });
+    Navigator.pop(context);
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (BuildContext context) => HomePage(selectedIndex: _bottomNavIndex, typeOfOrganization: typeOfOrganizationData)));
+
+    // if (index != 3) {
+    //   setState(() {
+    //     _bottomNavIndex = index;
+    //   });
+    //   print("BottomCenterEnquiryPage : $_bottomNavIndex");
+    //   if (_bottomNavIndex == 0) {
+    //     // Navigator.pop(context);
+    //     if (typeOfOrganization == "Farmer groups") {
+    //       var route = ModalRoute.of(context);
+    //       if (route != null) {
+    //         Navigator.of(context).pushReplacement(MaterialPageRoute(
+    //             builder: (BuildContext context) =>
+    //                 BottomOnePage(
+    //                   aapbarVisibility: true,
+    //                 )));
+    //       }
+    //     } else{
+    //       Navigator.pop(context);
+    //       var route = ModalRoute.of(context);
+    //       if (route != null) {
+    //         Navigator.of(context).pushReplacement(MaterialPageRoute(
+    //             builder: (BuildContext context) =>
+    //                 HomePage(selectedIndex: 0, typeOfOrganization: typeOfOrganizationData,)));
+    //       }
+    //     }
+    //   }
+    //   else if (_bottomNavIndex == 1) {
+    //     Navigator.of(context).push(
+    //       MaterialPageRoute(builder: (context) => const ProfilePage()),
+    //     );
+    //   }
+    // }
   }
 
   void _onSelectedTopDataTapped(int index) {

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -6,8 +7,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:krishiyan/mvc/model/GetEnquiryByFilterData.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../helper/AlertHelper.dart';
 import '../../localization/AppLocalizations.dart';
@@ -39,6 +43,7 @@ class _EditSellCommodityPageState extends State<EditSellCommodityPage> {
   TextEditingController dateOfShipmentController = TextEditingController();
   TextEditingController originCommodityController = TextEditingController();
   TextEditingController commentsController = TextEditingController();
+    TextEditingController deliveryLocationController = TextEditingController();
 
   final List<String> quantityItems = ['Ton', 'Kg', 'Qtl'];
   String? selectedQuantityItemValue;
@@ -59,6 +64,23 @@ class _EditSellCommodityPageState extends State<EditSellCommodityPage> {
     super.initState();
     futureCropData = CropController.fetchCrop();
     _fetchCropData();
+    getSellCommoditiyValue();
+  }
+
+   void getSellCommoditiyValue() {
+    _selectedCrop = widget.enquiryData.commodity ?? "";
+    varietyController.text = widget.enquiryData.variety ?? "";
+    quantityController.text = widget.enquiryData.quantity.toString() ?? "";
+    moistureController.text = widget.enquiryData.moisture.toString() ?? "";
+    localGradeController.text = widget.enquiryData.localGradeSpecification.toString() ?? "";
+    sizeController.text = widget.enquiryData.size.toString() ?? "";
+    countController.text = widget.enquiryData.count.toString() ?? "";
+    supplyPriceController.text = widget.enquiryData.price.toString() ?? "";
+
+    dateOfShipmentController.text = AppGlobal.convertToCustomDateFormat(widget.enquiryData.date.toString());
+    originCommodityController.text = widget.enquiryData.origin.toString() ?? "";
+    deliveryLocationController.text = widget.enquiryData.location.toString() ?? "";
+    commentsController.text = widget.enquiryData.comments.toString() ?? "";
   }
 
   Future<void> _fetchCropData() async {
@@ -77,6 +99,103 @@ class _EditSellCommodityPageState extends State<EditSellCommodityPage> {
       print('My SellCommodity : Error fetching crop data: $e');
     }
   }
+
+      final ImagePicker _picker = ImagePicker();
+  File? _image;
+  String? _imageUrl;
+  Dio _dio = Dio(); // Create a Dio instance
+  // Cache expiration in days
+  final int cacheExpirationDays = 10;
+
+  // Generate a unique file name for the image
+  String generateFileName(String id) {
+    String timestamp = DateFormat("yyyyMMdd_HHmmss").format(DateTime.now());
+    String? crop = _selectedCrop;
+    // Encode the crop name to handle spaces and special characters
+  String encodedCrop = Uri.encodeComponent(crop ?? "");
+
+  // Return the formatted file name with the encoded crop name
+  return "${id}_${encodedCrop}_$timestamp.png";
+  }
+
+  // Pick an image from the gallery
+  Future<void> pickImage() async {
+    print("function called");
+    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _image = File(pickedFile.path);
+      });
+      uploadImageToAWS(_image!);
+    }
+  }
+
+  // Upload the image to AWS using Dio
+  Future<void> uploadImageToAWS(File image) async {
+    try {
+      String fileName = generateFileName(id);  // Example id (can be dynamic)
+      print("FileName");
+      print(fileName);
+      
+      FormData formData = FormData.fromMap({
+        'image': await MultipartFile.fromFile(image.path, filename: fileName),
+      });
+
+      // Send the POST request to the API
+      Response response = await _dio.post(
+        'https://krishiyanback.vercel.app/api/upload',
+        data: formData,
+      );
+
+      if (response.statusCode == 200) {
+        var jsonResponse = response.data;
+        String imageKey = jsonResponse['Key'];
+         // Construct the image URL
+        String imageUrl = 'https://krishiyanback.vercel.app/images/$imageKey';
+
+        // Store the image URL in cache and local storage
+        await cacheImage(imageKey, imageUrl);
+
+        setState(() {
+          _imageUrl = imageUrl;
+        });
+
+        // Handle the successful response
+        print("Image uploaded successfully. Image URL: $imageUrl");
+        print(_imageUrl);
+        print("Image key: $imageKey");
+      } else {
+        // Handle error response
+        print("Failed to upload image. Status code: ${response.statusCode}");
+      }
+    } catch (e) {
+      // Handle exceptions
+      print("Error uploading image: $e");
+    }
+  }
+
+  // Cache the image locally (stores URL and file)
+  Future<void> cacheImage(String imageKey, String imageUrl) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final cacheDirectory = await getTemporaryDirectory();
+      final imageCachePath = '${cacheDirectory.path}/$imageKey';
+      print(imageCachePath);
+
+      // Save the image URL and timestamp in shared preferences
+      prefs.setString(imageKey, imageUrl);
+      prefs.setInt(imageKey, DateTime.now().millisecondsSinceEpoch);
+
+      // Download and store the image locally
+      final response = await _dio.get(imageUrl, options: Options(responseType: ResponseType.bytes));
+      if (response.statusCode == 200) {
+        File(imageCachePath)..writeAsBytesSync(response.data);
+      }
+    } catch (e) {
+      print("Error caching image: $e");
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -117,7 +236,7 @@ class _EditSellCommodityPageState extends State<EditSellCommodityPage> {
           padding: const EdgeInsets.only(left: 25.0, right: 25.0),
           child: ElevatedButton(
             onPressed: () {
-              // _sellCommodityApiCall();
+              _sellCommodityApiCall();
             },
             style: ElevatedButton.styleFrom(
               foregroundColor: Colors.white,
@@ -751,7 +870,9 @@ class _EditSellCommodityPageState extends State<EditSellCommodityPage> {
               width: MediaQuery.of(context).size.width,
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  pickImage();
+                },
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.all(17),
@@ -768,6 +889,32 @@ class _EditSellCommodityPageState extends State<EditSellCommodityPage> {
                 ),
               ),
             ),
+             if(_image != null)
+                Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Image.file(
+                    _image!, 
+                    height: 200, 
+                    width: 200, 
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              )
+             else if (widget.enquiryData.photoVideoLink != null) 
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Image.network(
+                widget.enquiryData.photoVideoLink!, 
+                height: 200, 
+                width: 200, 
+                fit: BoxFit.cover)
+                ),
+              )
+              
+              else 
+               SizedBox(height: 10,),
             const SizedBox(
               height: 20,
             ),
@@ -884,6 +1031,10 @@ class _EditSellCommodityPageState extends State<EditSellCommodityPage> {
 
         showAlertDialog(context);
       } else {
+         print("Error response received:");
+        print("Status Code: ${response.statusCode}");
+        print("Status Message: ${response.statusMessage}");
+        print("Response Data: ${response.data}");
         AlertHelper.showToast(response.statusMessage.toString(), context);
         print(response.statusMessage);
       }

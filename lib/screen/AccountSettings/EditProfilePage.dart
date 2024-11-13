@@ -7,8 +7,10 @@ import 'package:flutter/services.dart';
 import 'package:krishiyan/localization/AppLocalizations.dart';
 import 'package:krishiyan/mvc/model/GetFRMProfileData.dart';
 import 'package:krishiyan/screen/AccountSettings/ProfilePage.dart';
+import 'package:krishiyan/screen/HomeScreen/HomePage.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/style.dart';
+import 'package:path_provider/path_provider.dart';
 import '../../helper/AlertHelper.dart';
 import '../../mvc/controller/accountSettingController.dart';
 import '../../mvc/model/GetProfileData.dart';
@@ -20,9 +22,11 @@ import '../../mvc/controller/otpController.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/style.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart';
  // Ensure you have Flutter imports for AlertHelper and setState usage
 import 'dart:convert'; // For json.encode
+import 'dart:io';
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
@@ -43,6 +47,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   TextFormField? emailIdController;
   TextFormField? nameOfPromoterController;
   TextFormField? yourDesignationController;
+  File? _imageFile; 
 
   TextEditingController editNameOfOrganizationController = TextEditingController();
   TextEditingController editDateOfOrganizationController = TextEditingController();
@@ -55,15 +60,180 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   String id = "", contactNumber = "", dateOfOrganizationValue = "", typeOfOrg = "";
   // Method to pick an image from the gallery
-  Future<void> _pickImage() async {
-    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
+  String? _imageUrl;  // AWS image URL
+
+Future<void> _pickImage(String organizationName) async {
+  // Check if the organization name is empty and handle accordingly
+  if (organizationName.isEmpty) {
+    print("Please provide the organization name before uploading an image.");
+    return;
+  }
+
+  // Pick image from the gallery
+  final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
+  if (pickedFile != null) {
+    // Generate a custom file name with the organization name
+    String modifiedFileName = '${organizationName}_profile_image.jpg';
+
+    // Get the app's document directory to store the image
+    final appDir = await getApplicationDocumentsDirectory();
+    final directory = Directory('${appDir.path}/images');
+
+    // Create the directory if it doesn't exist
+    if (!await directory.exists()) {
+      await directory.create(recursive: true);
+    }
+
+    // Define the local file path with the modified file name
+    final File localImageFile = File('${directory.path}/$modifiedFileName');
+
+    // Copy the picked image to the new local file path
+    await File(pickedFile.path).copy(localImageFile.path);
+
+    // Save the new image path in SharedPreferences for caching
+    await _saveImagePath(localImageFile.path);
+
+    // Update the UI with the new image
+    setState(() {
+      _image = localImageFile;  // Display the local image on the UI
+    });
+
+    // Upload the image to AWS
+    await _uploadImageToAWS(localImageFile, organizationName);  // Pass the org name to upload function
+  }
+}
+
+Future<void> _saveImagePath(String imagePath) async {
+  final prefs = await SharedPreferences.getInstance();
+  prefs.setString('${editNameOfOrganizationController.text}_image_path', imagePath);
+  print("Image path saved: $imagePath");
+}
+
+Future<void> _loadImagePath() async {
+  final prefs = await SharedPreferences.getInstance();
+  final savedImagePath = prefs.getString('${editNameOfOrganizationController.text}_image_path');
+  if (savedImagePath != null && savedImagePath.isNotEmpty) {
+    setState(() {
+      _image = File(savedImagePath);  // Load the saved image file
+    });
+  }
+}
+
+Future<void> _uploadImageToAWS(File imageFile, String organizationName) async {
+  Dio dio = Dio();
+
+  if (organizationName.isEmpty) {
+    print("Organization name is empty. Please enter a valid name.");
+    return;
+  }
+
+  // Modify the file name based on the organization name
+  String modifiedFileName = '${organizationName}_profile_image.jpg';
+
+  try {
+    // Prepare the image for upload with the modified file name
+    FormData formData = FormData.fromMap({
+      'image': await MultipartFile.fromFile(imageFile.path, filename: modifiedFileName),  // Use the modified name
+    });
+
+    // Send the request to the API
+    Response response = await dio.post(
+      'https://krishiyanback.vercel.app/api/upload',
+      data: formData,
+    );
+
+    // Debugging: Print the full response to check the returned data
+    print("Response status: ${response.statusCode}");
+    print("Response data: ${response.data}");
+
+    if (response.statusCode == 200) {
+      // The server has responded with a success (HTTP 200)
+      var responseData = response.data;
+      
+      // You can retrieve the Location or the key for the uploaded image
+      String uploadedImageUrl = responseData['Location']; // This is the full URL to access the image
+
+      // Debugging: Print the uploaded image URL
+      print("Image uploaded successfully: $uploadedImageUrl");
+
+      // Save the uploaded image URL to SharedPreferences for caching
+      await _saveImageUrl(uploadedImageUrl);
+
+      // Update the UI with the uploaded image URL
       setState(() {
-        _image = File(pickedFile.path); // Update the selected image
+        _imageUrl = uploadedImageUrl; // Store the image URL in state to display it
       });
+    } else {
+      // In case of an error response from the server (non-200 status)
+      print("Failed to upload image. Status code: ${response.statusCode}");
+      print("Error details: ${response.data}"); // Print the error response body
+    }
+  } catch (e) {
+    // Handle any errors that occur during the image upload process
+    print("Error uploading image: $e");
+
+    if (e is DioError) {
+      // If the error is a DioError, print more specific details
+      print("Dio error type: ${e.type}");
+      print("Dio error message: ${e.message}");
+      if (e.response != null) {
+        // Print the server's response, even if it's an error
+        print("Dio error response: ${e.response?.data}");
+      }
     }
   }
 
+  // Optionally load the saved image URL to make sure the image is reflected on the UI
+  _loadImageUrl(organizationName);
+}
+
+Future<void> _saveImageUrl(String imageUrl) async {
+  final prefs = await SharedPreferences.getInstance();
+  prefs.setString('uploaded_image_url', imageUrl);  // Save URL to shared preferences (cache)
+  print("Image URL saved: $imageUrl");
+  
+}
+
+Future<void> _loadImageUrl(String organizationName) async {
+  if (organizationName.isEmpty) {
+      print("Organization name is empty. Please enter a valid name.");
+      return;
+    }
+
+    // Construct the image URL
+    String imageUrl = 'https://krishiyanback.vercel.app/images/${organizationName}_profile_image.jpg';
+    print("Fetching image from URL: $imageUrl");
+
+    // Update the UI with the fetched image URL
+    setState(() {
+      _imageUrl = imageUrl; // Store the fetched image URL to display it
+    });
+}
+
+
+
+// Future<void> _saveImagePath(String imagePath) async {
+//   final prefs = await SharedPreferences.getInstance();
+//   prefs.setString('${editNameOfOrganizationController.text.toString()}_image_path', imagePath);
+//   print("Image path saved: $imagePath");  // Debug: print the saved path
+// }
+
+// Future<void> _loadImagePath() async {
+//   final prefs = await SharedPreferences.getInstance();
+//   final savedImagePath = prefs.getString('${editNameOfOrganizationController.text.toString()}_image_path');
+//   print("Image path loaded: $savedImagePath");  // Debug: print the loaded path
+
+//   if (savedImagePath != null && savedImagePath.isNotEmpty) {
+//     setState(() {
+//       _image = File(savedImagePath);  // Load the saved image file
+//     });
+//   }
+// }
+
+
+
+  
   final List<String> fpoItems = [
     buildTranslate('farmerProducerOrganization')!,
     buildTranslate('farmerProducerCompany')!,
@@ -96,6 +266,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     // TODO: implement initState
     super.initState();
     getProfileDetails();
+    _loadImagePath();
   }
 
   @override
@@ -135,46 +306,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            const SizedBox(
-              height: 30,
-            ),
-            Center(
-              child: SizedBox(
-                height: 80,
-                width: 80,
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  fit: StackFit.expand,
-                  children: [
-                    CircleAvatar(
-                      backgroundColor: Colors.white,
-                      child: Image.asset(
-                        "assets/images/user_profile.png",
-                        color: Colors.grey,
-                      ),
-                    ),
-                    Positioned(
-                        bottom: 35,
-                        right: -45,
-                        child: RawMaterialButton(
-                          onPressed: () {},
-                          elevation: 10.0,
-                          // fillColor: const Color(0xFFF5F6F9),
-                          padding: const EdgeInsets.all(25.0),
-                          shape: const CircleBorder(),
-                          child: const Icon(
-                            Icons.camera_alt,
-                            size: 30.0,
-                            color: Colors.grey,
-                          ),
-                        )),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
             FutureBuilder<GetFRMProfileDetails?>(
               future: futureProfileDetails,
               builder: (context, snapshot) {
@@ -192,6 +323,61 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                           const SizedBox(
+              height: 30,
+            ),
+            Center(
+              child: SizedBox(
+                height: 80,
+                width: 80,
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  fit: StackFit.expand,
+                  children: [
+  
+           CircleAvatar(
+          key: ValueKey<File>(_image ?? File('')),
+          backgroundColor: Colors.white,
+          backgroundImage:  _imageUrl != null && _imageUrl!.isNotEmpty
+              ? NetworkImage(_imageUrl!) // Show AWS image URL
+              : _image != null
+                  ? FileImage(_image!) // Show local selected image
+                  : AssetImage("assets/images/user_profile.png") as ImageProvider, // Default image
+        ),
+            // Positioned camera icon button to upload new image
+            Positioned(
+              
+              bottom: 35,
+              right: -45,
+              child: RawMaterialButton( 
+                
+                onPressed: () {
+String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
+
+    if (organizationName.isNotEmpty) {
+      _pickImage(organizationName);  // Pass the organization name to the function
+    } else {
+      print("Please provide the organization name before uploading an image.");
+    }
+  },  // Open image picker when tapped
+                elevation: 10.0,
+                padding: const EdgeInsets.all(15.0),
+                shape: const CircleBorder(),
+                fillColor: Colors.white,
+                child: const Icon(
+                  Icons.camera_alt,
+                  size: 20.0,
+                  color: Colors.grey,
+                ),
+              ),
+            ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
                           // fpo name
                           Padding(
                             padding:
@@ -213,7 +399,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             child: TextFormField(
                               onSaved: (value) => nameOfOrganization = value,
                               initialValue: nameOfOrganizationController == null
-                                  ? snapshot.data!.nameOfFpo.toString()
+                                  ? (snapshot.data!.nameOfFpo.toString() ?? "")
                                   : null,
                               decoration: InputDecoration(
                                   alignLabelWithHint: true,
@@ -246,6 +432,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           const SizedBox(
                             height: 20,
                           ),
+
+                          // Image Upload Section
+          
+
+          const SizedBox(height: 20),
 
                           // type of fpo
                           Padding(
@@ -419,8 +610,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               onSaved: (value) => registrationNumber = value,
                               initialValue:
                               registrationNumberController == null
-                                  ? snapshot.data!.registrationNumber.toString()
-                                  : null,
+                                  ? snapshot.data!.registrationNumber.toString() 
+                                  : "",
                               decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.symmetric(
                                     vertical: 10.0, horizontal: 10.0),
@@ -608,28 +799,28 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                   borderSide: BorderSide(
                                       color: Colors.green, width: 0.5),
                                 ),
-                                suffixIcon: Container(
-                                  margin: const EdgeInsets.all(5),
-                                  child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      minimumSize: const Size(70, 35),
-                                      foregroundColor: Colors.white,
-                                      textStyle: const TextStyle(fontSize: 15),
-                                      backgroundColor: const Color(0xFF3FC041),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                        BorderRadius.circular(12.0),
-                                      ),
-                                    ),
-                                    child: Text(buildTranslate("getOtp")!),
-                                    onPressed: () {
-                                      setState(() {
-                                        otpVisible = true;
-                                      });
+                                // suffixIcon: Container(
+                                //   margin: const EdgeInsets.all(5),
+                                //   child: ElevatedButton(
+                                //     style: ElevatedButton.styleFrom(
+                                //       minimumSize: const Size(70, 35),
+                                //       foregroundColor: Colors.white,
+                                //       textStyle: const TextStyle(fontSize: 15),
+                                //       backgroundColor: const Color(0xFF3FC041),
+                                //       shape: RoundedRectangleBorder(
+                                //         borderRadius:
+                                //         BorderRadius.circular(12.0),
+                                //       ),
+                                //     ),
+                                //     child: Text(buildTranslate("getOtp")!),
+                                //     onPressed: () {
+                                //       setState(() {
+                                //         otpVisible = true;
+                                //       });
                                       
-                                    },
-                                  ),
-                                ),
+                                //     },
+                                //   ),
+                                // ),
                               ),
                               validator: (value) => value!.isEmpty
                                   ? 'Please, fill this field.'
@@ -1404,7 +1595,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                   editNameOfPromoterController.text.toString().isNotEmpty &&
                                   editCbboNameController.text.toString().isNotEmpty &&
                                   editYourDesignationController.text.toString().isNotEmpty) {
-
+                                     _saveImagePath(_image?.path ?? ''); 
                                 _updateProfileDetailsApiCall(
                                   editNameOfOrganizationController.text.toString(),
                                   selectedFPOItemValue.toString(),
@@ -1570,7 +1761,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               Navigator.pop(context);
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => const ProfilePage()),
+                MaterialPageRoute(builder: (context) => HomePage(selectedIndex: 3, typeOfOrganization: "Farmer groups")),
               );
             },
             child: const Align(
@@ -1627,7 +1818,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
   
 
   Future<void> getProfileDetails() async {
-    // id = (await AppGlobal.getStringPreference('id'))!;
+    id = (await AppGlobal.getStringPreference('id'))!;
+    print("IDDD");
+    print(id);
     contactNumber = (await AppGlobal.getStringPreference('contactNumber'))!;
     print("contactNumber : $contactNumber");
     futureProfileDetails = AccountSettingController.fetchFRMEditProfileDetails(context, contactNumber);

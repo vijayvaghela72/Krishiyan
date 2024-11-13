@@ -75,7 +75,7 @@ class _WelcomePageState extends State<WelcomePage> {
               }
               else {
                 Navigator.push(context, MaterialPageRoute(builder:
-                    (context) => HomePage(selectedIndex: 0,)),
+                    (context) => HomePage(selectedIndex: 0, typeOfOrganization: "",)),
                 );
               }
             },

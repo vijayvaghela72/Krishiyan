@@ -6,6 +6,7 @@ import 'package:dio/dio.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart' hide CarouselController;
 import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
@@ -187,6 +188,19 @@ class _BottomOnePageState extends State<BottomOnePage> with TickerProviderStateM
       print('HomePage Mandi Price : Error fetching state data: $e');
     }
   }
+
+  String convertToDirectImageUrl(String fileUrl) {
+  // Extract the file ID from the Google Drive URL
+  RegExp regExp = RegExp(r"file/d/([a-zA-Z0-9-_]+)");
+  Match? match = regExp.firstMatch(fileUrl);
+  
+  if (match != null) {
+    String fileId = match.group(1)!;
+    return "https://drive.google.com/uc?id=$fileId"; // Construct the direct image URL
+  }
+  return fileUrl; // Return the original URL if it doesn't match the expected format
+}
+
 
   Future<void> _fetchDistrictData() async {
     try {
@@ -411,18 +425,18 @@ class _BottomOnePageState extends State<BottomOnePage> with TickerProviderStateM
                                                     fontFamily: 'poppins-medium'),
                                               )),
                                           const VerticalDivider(width: 1.0),
-                                          Expanded(
-                                              child: Align(
-                                                alignment: Alignment.centerRight,
-                                                child: Text(
-                                                  buildTranslate("showMore")!,
-                                                  softWrap: true,
-                                                  style: const TextStyle(
-                                                      color: Colors.grey,
-                                                      fontSize: 15,
-                                                      fontFamily: 'poppins-regular'),
-                                                ),
-                                              )),
+                                          // Expanded(
+                                          //     child: Align(
+                                          //       alignment: Alignment.centerRight,
+                                          //       child: Text(
+                                          //         buildTranslate("showMore")!,
+                                          //         softWrap: true,
+                                          //         style: const TextStyle(
+                                          //             color: Colors.grey,
+                                          //             fontSize: 15,
+                                          //             fontFamily: 'poppins-regular'),
+                                          //       ),
+                                          //     )),
                                         ],
                                       ),
                                     ),
@@ -434,6 +448,19 @@ class _BottomOnePageState extends State<BottomOnePage> with TickerProviderStateM
                                       scrollDirection: Axis.vertical,
                                       itemBuilder: (context, index) {
                                         final newsData = news[index];
+                                        // Truncate the title and add "Read more" link if it's too long
+                  String truncatedTitle = newsData.title ?? '';
+                  bool isLongTitle = truncatedTitle.length > 50; // Truncate at 50 characters
+                  if (isLongTitle) {
+                    truncatedTitle = truncatedTitle.substring(0, 50) + '...';
+                  }
+
+                                        // Truncate the description and add "Read more" link if it's too long
+                  String truncatedDescription = newsData.description ?? '';
+                  bool isLongDescription = truncatedDescription.length > 60;
+                  if (isLongDescription) {
+                    truncatedDescription = truncatedDescription.substring(0, 60) + '.....';
+                  }
                                         return InkWell(
                                         highlightColor: Colors.transparent,
                                         splashColor: Colors.transparent,
@@ -443,7 +470,7 @@ class _BottomOnePageState extends State<BottomOnePage> with TickerProviderStateM
                                                 builder: (context) =>
                                                     DetailNewsPage(title : newsData.title,
                                                         description: newsData.description,
-                                                        imageLink: newsData.imageURL)),
+                                                        imageLink: convertToDirectImageUrl(newsData.imageURL.toString()))),
                                           );
                                         },
                                         child: Column(
@@ -463,35 +490,65 @@ class _BottomOnePageState extends State<BottomOnePage> with TickerProviderStateM
                                                     mainAxisAlignment: MainAxisAlignment.start,
                                                     crossAxisAlignment: CrossAxisAlignment.start,
                                                     children: [
+                                                      // Title with truncation and "Read more" link
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 20.0),
+                                    child: RichText(
+                                      text: TextSpan(
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
+                                          fontFamily: "poppins-medium",
+                                        ),
+                                        children: [
+                                          TextSpan(text: truncatedTitle),
+                                                                                  ],
+                                      ),
+                                    ),
+                                  ),
                                                       Padding(
-                                                        padding: const EdgeInsets.only(left: 20.0),
-                                                        child: Text(
-                                                          newsData.title.toString() ?? "",
-                                                          softWrap: true,
-                                                          style: TextStyle(
-                                                              fontSize: 16,
-                                                              fontWeight:
-                                                              FontWeight.bold,
-                                                              color: Colors.black,
-                                                              fontFamily:
-                                                              "poppins-medium"),
-                                                        ),
+                                    padding: const EdgeInsets.only(
+                                        left: 20.0, right: 10.0),
+                                    child: RichText(
+                                      text: TextSpan(
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w700,
+                                          fontFamily: "poppins-regular",
+                                          color: Colors.grey,
+                                        ),
+                                        children: [
+                                          TextSpan(text: truncatedDescription),
+                                          if (isLongDescription)
+                                            TextSpan(
+                                              text: " Read more",
+                                              style: TextStyle(
+                                                color: Colors.green.shade300,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                              recognizer: TapGestureRecognizer()
+                                                ..onTap = () {
+                                                  // Navigate to the detail page with full description
+                                                  Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          DetailNewsPage(
+                                                        title: newsData.title,
+                                                        description: newsData.description,
+                                                        imageLink: newsData.imageURL,
                                                       ),
-                                                      Padding(
-                                                        padding: const EdgeInsets.only(left: 20.0, right: 10.0),
-                                                        child: Text(
-                                                          newsData.description.toString() ?? "",
-                                                          softWrap: true,
-                                                          style: TextStyle(
-                                                              fontSize: 13,
-                                                              fontWeight: FontWeight.w700,
-                                                              fontFamily: "poppins-regular",
-                                                              color: Colors.grey),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
+                                                    ),
+                                                  );
+                                                },
+                                            ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                                                 Expanded(
                                                   flex: 1,
                                                   // child: Image.asset(
@@ -500,13 +557,41 @@ class _BottomOnePageState extends State<BottomOnePage> with TickerProviderStateM
                                                   //   height: 50,
                                                   // ),
                                                   child:
-                                                  Image.network(newsData.imageURL.toString() ?? "",
-                                                      errorBuilder: (context, error, stackTrace) {
-                                                        return Text('Image not found'); // Custom message for 404
-                                                      },
-                                                      width: 50,
-                                                      height: 50),
-                                                )
+                                                  Container(
+  width: 50, // Set the width of the container
+  height: 100, // Set the height of the container
+  decoration: BoxDecoration(
+    borderRadius: BorderRadius.circular(12), // Set border radius for rounded corners
+    
+  ),
+  child: ClipRRect(
+    borderRadius: BorderRadius.circular(12), // Apply the same border radius here
+    child: Image.network(
+      convertToDirectImageUrl(newsData.imageURL.toString()), // Use the converted URL
+      width: double.infinity, // Ensure the image takes up the entire width
+      height: double.infinity, // Ensure the image takes up the entire height
+      fit: BoxFit.cover, // Makes the image cover the container, cropping if needed
+      loadingBuilder: (context, child, loadingProgress) {
+        if (loadingProgress == null) {
+          return child; // When image is fully loaded, show it
+        } else {
+          return Center(child: CircularProgressIndicator()); // Show loading indicator while image loads
+        }
+      },
+      errorBuilder: (context, error, stackTrace) {
+        return Column(
+          children: [
+            Icon(Icons.error, color: Colors.red),
+            Text('Image not found', style: TextStyle(color: Colors.red)),
+          ],
+        );
+      },
+    ),
+  ),
+)
+
+                                                ),
+                                                SizedBox(width: 10,)
                                               ],
                                             ),
 

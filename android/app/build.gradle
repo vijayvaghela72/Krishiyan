@@ -44,7 +44,7 @@ android {
         release {
             keyAlias 'krishiyanappkey' // Use the actual alias from the keystore
             keyPassword 'Wetacre@2024' // Replace with the actual key password
-            storeFile file('C:/Users/banuv/OneDrive/Desktop/KrishiYan_App/krishiyan-app/krishiYan_key.jks')
+            storeFile file('C:/Users/Admin/Downloads/krishiYan_key.jks')
             storePassword 'Wetacre@2024' // Replace with the actual keystore password
         }
     }

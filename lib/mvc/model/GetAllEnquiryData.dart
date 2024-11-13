@@ -73,12 +73,19 @@ class EnquiryData {
     operation = json['operation'];
     commodity = json['commodity'];
     variety = json['variety'];
-    quantity = json['quantity'];
+     // Convert 'quantity' to int if it's a string
+    quantity = json['quantity'] is String
+        ? int.tryParse(json['quantity']) // Convert string to int
+        : json['quantity']; // If it's already an int, use it directly
     moisture = json['moisture'];
     localGradeSpecification = json['localGradeSpecification'];
     size = json['size'];
     count = json['count'];
-    price = json['price'];
+    // Convert 'price' to int if it's a string
+    price = json['price'] is String
+        ? int.tryParse(json['price']) // Convert string to int
+        : json['price']; // If it's already an int, use it directly
+    
     date = json['date'];
     origin = json['origin'];
     location = json['location'];

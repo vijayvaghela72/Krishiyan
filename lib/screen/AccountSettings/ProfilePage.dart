@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -18,6 +20,7 @@ import 'EditProfilePage.dart';
 import 'ForgotPasswordPage.dart';
 import '../HomeScreen/HomePage.dart';
 import '../Login/LoginPage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatefulWidget {
 
@@ -28,6 +31,7 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> with TickerProviderStateMixin{
+  File? _profileImage; // To store the profile image file
 
   var _bottomNavIndex = 3; //default index of a first screen
 
@@ -75,6 +79,7 @@ class _ProfilePageState extends State<ProfilePage> with TickerProviderStateMixin
   @override
   void initState() {
     super.initState();
+    
 
     // _fabAnimationController = AnimationController(
     //   duration: const Duration(milliseconds: 500),
@@ -114,7 +119,9 @@ class _ProfilePageState extends State<ProfilePage> with TickerProviderStateMixin
 
     getDetails();
     getPrefValue();
+    
   }
+  String? _imageUrl;
 
   // @override
   // void dispose() {
@@ -123,6 +130,24 @@ class _ProfilePageState extends State<ProfilePage> with TickerProviderStateMixin
   //   _hideBottomBarAnimationController.dispose(); // Dispose the controller
   //   super.dispose();
   // }
+  // Method to load the saved image from SharedPreferences
+Future<void> _loadImageUrl(String organizationName) async {
+  if (organizationName.isEmpty) {
+      print("Organization name is empty. Please enter a valid name.");
+      return;
+    }
+
+    // Construct the image URL
+    String imageUrl = 'https://krishiyanback.vercel.app/images/${organizationName}_profile_image.jpg';
+    print("Fetching image from URL: $imageUrl");
+
+    // Update the UI with the fetched image URL
+    setState(() {
+      _imageUrl = imageUrl; // Store the fetched image URL to display it
+    });
+}
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -152,16 +177,30 @@ class _ProfilePageState extends State<ProfilePage> with TickerProviderStateMixin
               child: Row(
                 children: <Widget>[
                   Container(
-                    height: 60.0,
-                    width: 60.0,
-                    decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                            image: AssetImage("assets/images/user_profile.png"),
-                            fit: BoxFit.cover
-                        )
-                    ),
-                  ),
+  height: 60.0,
+  width: 60.0,
+  decoration: BoxDecoration(
+    shape: BoxShape.circle,
+    image: DecorationImage(
+      image: _imageUrl != null 
+          ? NetworkImage(_imageUrl!)  // If an image is selected, show it
+          : AssetImage("assets/images/user_profile.png") as ImageProvider,  // Default image
+      fit: BoxFit.cover, // Ensure the image covers the container
+    ),
+    border: Border.all(
+      color: Colors.green, // Border color
+      width: 2.0,  // Border width
+    ),
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black.withOpacity(0.1), // Shadow color
+        blurRadius: 4.0, // Blur radius
+        offset: Offset(0, 2), // Shadow position
+      ),
+    ],
+  ),
+),
+
                   const SizedBox(width: 15,),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -689,11 +728,14 @@ class _ProfilePageState extends State<ProfilePage> with TickerProviderStateMixin
     name = (await AppGlobal.getStringPreference('name'))!;
     email = (await AppGlobal.getStringPreference('email'))!;
     contactNumber = (await AppGlobal.getStringPreference('contactNumber'))!;
+    print("Organization name");
+    print(name);
 
     setState(() {
       name = name;
       email = email;
       contactNumber = contactNumber;
+      _loadImageUrl(name);
     });
   }
 

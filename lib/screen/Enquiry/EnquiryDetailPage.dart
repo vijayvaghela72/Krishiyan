@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:krishiyan/mvc/model/GetAllEnquiryData.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import '../../helper/AlertHelper.dart';
 
 class EnquiryDetailPage extends StatefulWidget {
 
@@ -500,7 +503,9 @@ class _EnquiryDetailPageState extends State<EnquiryDetailPage>
                             child: Container(
                                 width: MediaQuery.of(context).size.width,
                                 child: ElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    AlertHelper.showToast("This feature is locked", context);
+                                  },
                                   style: ElevatedButton.styleFrom(
                                     foregroundColor: Colors.white,
                                     padding: const EdgeInsets.all(5),
@@ -542,7 +547,24 @@ class _EnquiryDetailPageState extends State<EnquiryDetailPage>
                             child: Container(
                                 width: MediaQuery.of(context).size.width,
                                 child: ElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () async {
+        // Ensure `uid` is a valid phone number
+        if (widget.commodity.uid != null && widget.commodity.uid!.isNotEmpty) {
+          final phoneNumber = widget.commodity.uid!;
+          final url = 'tel:$phoneNumber'; // The tel URL scheme
+
+          // Launch the URL to open the dialer
+          if (await canLaunch(url)) {
+            await launch(url);
+          } else {
+            // Handle case when the dialer cannot be launched
+            print("Could not launch the phone dialer");
+          }
+        } else {
+          // Handle the case when the uid is empty or null
+          print("No valid phone number");
+        }
+      },
                                   style: ElevatedButton.styleFrom(
                                     foregroundColor: Colors.white,
                                     padding: const EdgeInsets.all(3),
