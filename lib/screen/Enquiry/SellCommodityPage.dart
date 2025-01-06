@@ -10,6 +10,7 @@ import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../helper/AlertHelper.dart';
@@ -40,6 +41,7 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
   TextEditingController dateOfShipmentController = TextEditingController();
   TextEditingController originCommodityController = TextEditingController();
   TextEditingController commentsController = TextEditingController();
+  bool _isUploading = false;
 
   // final List<String> commodityItems = ['Maize', 'Coriander', 'Soya'];
   // String? selectedCommodityItemValue;
@@ -97,20 +99,54 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
     return "${id}_${crop}_$timestamp.png";
   }
 
-  // Pick an image from the gallery
+ // Pick an image from the gallery with permission check
   Future<void> pickImage() async {
-    print("function called");
-    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() {
-        _image = File(pickedFile.path);
-      });
-      uploadImageToAWS(_image!);
+    // Check for storage permission
+    PermissionStatus status = await Permission.storage.status;
+
+    if (status.isGranted) {
+      // Permission is granted, proceed to pick image
+      print("Storage permission granted");
+      final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+      if (pickedFile != null) {
+        setState(() {
+          _image = File(pickedFile.path);
+        });
+        uploadImageToAWS(_image!);
+      }
+    } else if (status.isDenied) {
+      // Permission is denied, request permission
+      print("Storage permission denied, requesting permission...");
+      await Permission.storage.request();
+
+      // Check permission status again after requesting
+      if (await Permission.storage.isGranted) {
+        print("Storage permission granted after request");
+        final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+        if (pickedFile != null) {
+          setState(() {
+            _image = File(pickedFile.path);
+          });
+          uploadImageToAWS(_image!);
+        }
+      } else {
+        print("Storage permission still denied");
+        // Handle the case when permission is still denied
+        // Optionally, guide the user to open app settings to enable the permission
+        openAppSettings();
+      }
+    } else if (status.isPermanentlyDenied) {
+      // Permission is permanently denied, open app settings
+      print("Storage permission permanently denied. Please enable it in settings.");
+      openAppSettings();
     }
   }
 
   // Upload the image to AWS using Dio
   Future<void> uploadImageToAWS(File image) async {
+    setState(() {
+      _isUploading = true;
+    });
     try {
       String fileName = generateFileName(id);  // Example id (can be dynamic)
       print("FileName");
@@ -149,7 +185,12 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
     } catch (e) {
       // Handle exceptions
       print("Error uploading image: $e");
-    }
+    }finally {
+    // Regardless of success or failure, re-enable the button
+    setState(() {
+      _isUploading = false; // End the upload process
+    });
+  }
   }
 
     Future<void> cacheImage(String imageKey, String imageUrl) async {
@@ -233,7 +274,7 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
           width: MediaQuery.of(context).size.width,
           padding: const EdgeInsets.only(left: 25.0, right: 25.0),
           child: ElevatedButton(
-            onPressed: () {
+            onPressed: _isUploading ? null : () {
               _sellCommodityApiCall();
             },
             style: ElevatedButton.styleFrom(

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:krishiyan/helper/AlertHelper.dart';
 import 'package:krishiyan/localization/AppLocalizations.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../../mvc/controller/enquiryDashboardController.dart';
 import '../../mvc/model/GetAllEnquiryData.dart';
 import '../../mvc/model/GetEnquiryByFilterData.dart';
@@ -422,23 +423,55 @@ class _EnquiryDashboardPageState extends State<EnquiryDashboardPage>
     width: MediaQuery.of(context).size.width,
     child: ElevatedButton(
       onPressed: () async {
-        // Ensure `uid` is a valid phone number
-        if (commodity.uid != null && commodity.uid!.isNotEmpty) {
-          final phoneNumber = commodity.uid!;
-          final url = 'tel:$phoneNumber'; // The tel URL scheme
+        PermissionStatus phonePermissionStatus = await Permission.phone.status;
 
-          // Launch the URL to open the dialer
-          if (await canLaunch(url)) {
-            await launch(url);
+      if (phonePermissionStatus.isGranted) {
+      // Ensure `uid` is a valid phone number
+      if (commodity.uid != null && commodity.uid!.isNotEmpty) {
+        final phoneNumber = commodity.uid!;
+        final Uri url = Uri.parse('tel:$phoneNumber'); // Create a Uri object
+
+        // Check if the URL can be launched (i.e., if the dialer is available)
+        try {
+          if (await canLaunchUrl(url)) {
+            await launchUrl(url);  // Launch the dialer
           } else {
-            // Handle case when the dialer cannot be launched
+            // Handle the case when the dialer cannot be launched
             print("Could not launch the phone dialer");
+            AlertHelper.showToast("Could not launch phone dialer, please allow permission", context);
           }
-        } else {
-          // Handle the case when the uid is empty or null
-          print("No valid phone number");
+        } catch (e) {
+          // Catching any exceptions
+          print("Error launching the dialer: $e");
+          AlertHelper.showToast("Error: Could not launch phone dialer", context);
         }
-      },
+      } else {
+        // Handle the case when the uid is empty or null
+        print("No valid phone number");
+        AlertHelper.showToast("No valid phone number", context);
+      }
+      }else {
+                // Handle the case when phone permission is not granted
+                print("Phone permission not granted");
+                AlertHelper.showToast("Phone permission is not granted. Please enable it in settings.", context);
+
+                // Optionally, request the permission
+                await Permission.phone.request();
+
+                // Recheck the permission after requesting
+                if (await Permission.phone.isGranted) {
+                  // Retry calling the number after permission is granted
+                  final phoneNumber = commodity.uid!;
+                  final Uri url = Uri.parse('tel:$phoneNumber');
+                  if (await canLaunchUrl(url)) {
+                    await launchUrl(url);
+                  }
+                } else {
+                  // If still not granted, guide user to settings
+                  openAppSettings();
+                }
+              }
+            },
       style: ElevatedButton.styleFrom(
         foregroundColor: Colors.white,
         padding: const EdgeInsets.all(3),

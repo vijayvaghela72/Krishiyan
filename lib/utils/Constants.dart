@@ -17,7 +17,7 @@ const String typeOfOrg = 'typeOfOrg';
 const String token = 'token';
 
 const String prefKeyToken = 'prefToken';
-const String baseUrl = "https://d1dv04h56lh39n.cloudfront.net/";
+const String baseUrl = "https://krishiyanback.vercel.app/api/";
 
 const String LOGIN = "${baseUrl}api/sign-in";
 const String SIGNUP = "${baseUrl}api/fpo";
@@ -59,7 +59,7 @@ const String ENQUIRY_LIST_BY_ID = "${baseUrl}api/commodities/";
 const String BUY_COMMODITY = "${baseUrl}api/commodity";
 const String SELL_COMMODITY = "${baseUrl}api/commodity";
 
-const String VILLAGES_NAMES = "${baseUrl}api/appFarmer/villages/1";
+const String VILLAGES_NAMES = "${baseUrl}api/appFarmer/villages/";
 const String CROPS_NAMES = "${baseUrl}api/crops";
 
 const String FARMER_REGISTRATION = "${baseUrl}api/appFarmer/register";

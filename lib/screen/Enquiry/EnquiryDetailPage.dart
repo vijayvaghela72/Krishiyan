@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:krishiyan/mvc/model/GetAllEnquiryData.dart';
 import 'package:intl/intl.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../helper/AlertHelper.dart';
@@ -548,14 +549,17 @@ class _EnquiryDetailPageState extends State<EnquiryDetailPage>
                                 width: MediaQuery.of(context).size.width,
                                 child: ElevatedButton(
                                   onPressed: () async {
+                                      PermissionStatus phonePermissionStatus = await Permission.phone.status;
+
+      if (phonePermissionStatus.isGranted) {
         // Ensure `uid` is a valid phone number
         if (widget.commodity.uid != null && widget.commodity.uid!.isNotEmpty) {
           final phoneNumber = widget.commodity.uid!;
-          final url = 'tel:$phoneNumber'; // The tel URL scheme
+          final Uri url = Uri.parse('tel:$phoneNumber'); 
 
           // Launch the URL to open the dialer
-          if (await canLaunch(url)) {
-            await launch(url);
+          if (await canLaunchUrl(url)) {
+            await launchUrl(url);
           } else {
             // Handle case when the dialer cannot be launched
             print("Could not launch the phone dialer");
@@ -564,6 +568,27 @@ class _EnquiryDetailPageState extends State<EnquiryDetailPage>
           // Handle the case when the uid is empty or null
           print("No valid phone number");
         }
+      }else {
+                // Handle the case when phone permission is not granted
+                print("Phone permission not granted");
+                AlertHelper.showToast("Phone permission is not granted. Please enable it in settings.", context);
+
+                // Optionally, request the permission
+                await Permission.phone.request();
+
+                // Recheck the permission after requesting
+                if (await Permission.phone.isGranted) {
+                  // Retry calling the number after permission is granted
+                  final phoneNumber = widget.commodity.uid!;
+                  final Uri url = Uri.parse('tel:$phoneNumber');
+                  if (await canLaunchUrl(url)) {
+                    await launchUrl(url);
+                  }
+                } else {
+                  // If still not granted, guide user to settings
+                  openAppSettings();
+                }
+              }
       },
                                   style: ElevatedButton.styleFrom(
                                     foregroundColor: Colors.white,

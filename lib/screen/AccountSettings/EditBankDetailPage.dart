@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:krishiyan/localization/AppLocalizations.dart';
 
 import '../../helper/AlertHelper.dart';
@@ -20,7 +22,6 @@ class EditBankDetailPage extends StatefulWidget {
 }
 
 class _EditBankDetailPageState extends State<EditBankDetailPage> {
-
   TextFormField? bankNameController;
   TextFormField? accountNameController;
   TextFormField? accountNumberController;
@@ -39,9 +40,81 @@ class _EditBankDetailPageState extends State<EditBankDetailPage> {
   String? accountName;
   String? accountNumber;
   String? ifscCode;
+  String? _imageUrl;
 
   final _formKey = GlobalKey<FormState>();
+    final ImagePicker _picker = ImagePicker();
+  File? _image;
 
+// Function to pick an image from the gallery or camera
+  Future<void> _pickImage() async {
+    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _image = File(pickedFile.path);
+      });
+    }
+    // _uploadImage(_image!);
+  }
+
+  // Function to upload the image to AWS using Dio
+  Future<void> _uploadImage(File image) async {
+    try {
+      // Generate a unique key using the bank name and last 6 digits of the account number
+      String uniqueKey = _generateUniqueKey(bankName!, accountNumber!);
+      print(uniqueKey);
+
+      // Dio instance for HTTP requests
+      Dio dio = Dio();
+
+      // Prepare the form data for the upload
+      FormData formData = FormData.fromMap({
+        'image': await MultipartFile.fromFile(image.path, filename: uniqueKey),
+      });
+
+      // Send the request
+      Response response = await dio.post(
+        'https://krishiyanback.vercel.app/api/upload',
+        data: formData,
+      );
+
+      if (response.statusCode == 200) {
+        var jsonResponse = response.data;
+        String imageKey = jsonResponse['Key'];
+         // Construct the image URL
+        _imageUrl = 'https://krishiyanback.vercel.app/images/$imageKey';
+
+        setState(() {
+          _imageUrl = _imageUrl;
+          print(_imageUrl);
+        });
+
+        // Handle the successful response
+        print("Image uploaded successfully. Image URL: $_imageUrl");
+        
+        print("Image key: $imageKey");
+      } else {
+        print("Failed to upload image: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error uploading image: $e");
+    }
+  }
+  
+
+  // Function to generate a unique key from the bank name and account number
+  String _generateUniqueKey(String bankName, String accountNumber) {
+    // Remove spaces from the bank name
+    String cleanedBankName = bankName.replaceAll(' ', '');
+
+    // Get the last 6 digits of the account number
+    String last6Digits = accountNumber.length > 6 ? accountNumber.substring(accountNumber.length - 6) : '';
+
+    // Concatenate the cleaned bank name and the last 6 digits of the account number
+    return "$cleanedBankName$last6Digits";
+  }
+  
   @override
   void initState() {
     // TODO: implement initState
@@ -332,7 +405,7 @@ class _EditBankDetailPageState extends State<EditBankDetailPage> {
                                           const RoundedRectangleBorder(
                                               side: BorderSide(
                                                   color: Color(0xFFe7e7e7))))),
-                                  onPressed: () {},
+                                  onPressed: _pickImage,
                                   child: Text(buildTranslate('chooseFile')!,
                                       softWrap: true,
                                       style: const TextStyle(
@@ -341,6 +414,14 @@ class _EditBankDetailPageState extends State<EditBankDetailPage> {
                                           fontFamily: 'poppins-regular')),
                                 ),
                               ),
+                              // If an image is picked, display it
+        if (_image != null) 
+          Image.file(
+            _image!,
+            width: 100,
+            height: 100,
+            fit: BoxFit.cover,
+          ),
                               Padding(
                                 padding: const EdgeInsets.only(left: 10.0, right: 10.0),
                                 child: Text(
@@ -623,7 +704,7 @@ class _EditBankDetailPageState extends State<EditBankDetailPage> {
                                       const RoundedRectangleBorder(
                                           side: BorderSide(
                                               color: Color(0xFFe7e7e7))))),
-                              onPressed: () {},
+                              onPressed:_pickImage,
                               child: Text(buildTranslate('chooseFile')!,
                                   softWrap: true,
                                   style: const TextStyle(
@@ -632,16 +713,33 @@ class _EditBankDetailPageState extends State<EditBankDetailPage> {
                                       fontFamily: 'poppins-regular')),
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 10.0, right: 10.0),
-                            child: Text(
-                              buildTranslate("noChooseFile")!,
-                              style: const TextStyle(
-                                  fontSize: 15,
-                                  color: Color(0xFF666666),
-                                  fontFamily: 'poppins-regular'),
-                            ),
-                          ),
+                          // If an image is picked, display it
+        // Show "No file chosen" text if no image is selected
+        if (_image == null)
+          Padding(
+            padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+            child: Text(
+              'No file chosen', // Use your translated text here
+              style: const TextStyle(
+                fontSize: 15,
+                color: Color(0xFF666666),
+                fontFamily: 'poppins-regular',
+              ),
+            ),
+          ),
+
+        // If an image is selected, display the image
+        if (_image != null)
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Image.file(
+              _image!,
+              width: 100,
+              height: 100,
+              fit: BoxFit.cover,
+            ),
+          ),
+                          
                         ],
                       ),
 
@@ -658,12 +756,14 @@ class _EditBankDetailPageState extends State<EditBankDetailPage> {
                               if (editBankNameController.text.toString().isNotEmpty &&
                                   editAccountNameController.text.toString().isNotEmpty &&
                                   editAccountNumberController.text.toString().isNotEmpty &&
-                                  editIfscController.text.toString().isNotEmpty) {
+                                  editIfscController.text.toString().isNotEmpty &&
+                                  _imageUrl.toString().isNotEmpty) {
                                 _bankDetailsApiCall(
                                     editBankNameController.text.toString(),
                                     editAccountNameController.text.toString(),
                                     editAccountNumberController.text.toString(),
-                                    editIfscController.text.toString());
+                                    editIfscController.text.toString(),
+                                    _imageUrl.toString());
                               } else {
                                 AlertHelper.showToast(
                                     "Please enter details.", context);
@@ -698,20 +798,29 @@ class _EditBankDetailPageState extends State<EditBankDetailPage> {
     );
   }
 
-  void _getValue() {
+  void _getValue() async {
 
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save(); // This triggers onSaved for each TextFormField
       print("bankName : $bankName");
+      // Once the image is selected, proceed to upload it
+      // Ensure the image is uploaded first
+    if (_image != null) {
+      await _uploadImage(_image!);
+    }
+      print("Image URL");
+      print(_imageUrl);
 
       if (bankName != null && accountName != null &&
-          accountNumber != null && ifscCode != null) {
-
+          accountNumber != null && ifscCode != null && _imageUrl != null) {
+        print("AAAAAAAAAAAAA");
+        print(_imageUrl);
         _bankDetailsApiCall(
             bankName.toString(),
             accountName.toString(),
             accountNumber.toString(),
-            ifscCode.toString());
+            ifscCode.toString(),
+            _imageUrl.toString());
       } else {
         AlertHelper.showToast(
             "Please enter data.", context);
@@ -720,21 +829,25 @@ class _EditBankDetailPageState extends State<EditBankDetailPage> {
   }
 
   _bankDetailsApiCall(String bankName, String accountName, String accountNumber,
-      String ifscCode) async {
+      String ifscCode, String _imageUrl) async {
 
     if (bankName.isNotEmpty &&
         accountName.isNotEmpty &&
         accountNumber.isNotEmpty &&
-        ifscCode.isNotEmpty ) {
-
+        ifscCode.isNotEmpty &&
+        _imageUrl.isNotEmpty ) {
+          print("BANK DETAILS UPDATION");
+      print(_imageUrl);
       var headers = {'Content-Type': 'application/json'};
       var data = json.encode({
         "uid": number,
         "bankName": bankName,
         "accountName": accountName,
         "accountNumber": accountNumber,
-        "ifscCode": ifscCode
+        "ifscCode": ifscCode,
+        "URL": _imageUrl
       });
+       print("Request Payload: $data"); // Log the request payload
       var dio = Dio();
       var response = await dio.request(
         UPDATE_BANK_DETAILS,
@@ -747,7 +860,6 @@ class _EditBankDetailPageState extends State<EditBankDetailPage> {
 
       if (response.statusCode == 201) {
         print("Bank details updated : " + json.encode(response.data));
-
         showAlertDialog(context);
       } else {
         print(response.statusMessage);

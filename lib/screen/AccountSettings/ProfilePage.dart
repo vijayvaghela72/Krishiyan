@@ -266,7 +266,7 @@ Future<void> _loadImageUrl(String organizationName) async {
                     top: 10.0, bottom: 20.0, right: 18.0, left: 18.0),
                 child: Row(
                   children: <Widget>[
-                    Image.asset('assets/images/other_details.png', height: 20, width: 20,),
+                    Image.asset('assets/images/edit_profile.png', height: 20, width: 20,),
                     const SizedBox(width: 10,),
                     Text(buildTranslate("editAddress")!, softWrap: true,
                       style: const TextStyle(color: Colors.black, fontSize: 17, fontFamily: 'poppins-regular'),),
@@ -313,7 +313,7 @@ Future<void> _loadImageUrl(String organizationName) async {
                     top: 10.0, bottom: 20.0, right: 18.0, left: 18.0),
                 child: Row(
                   children: <Widget>[
-                    Image.asset('assets/images/other_details.png', height: 20, width: 20,),
+                    Image.asset('assets/images/edit_profile.png', height: 20, width: 20,),
                     const SizedBox(width: 10,),
                     Text(buildTranslate("otherDetails")!, softWrap: true,
                       style: const TextStyle(color: Colors.black,

@@ -465,34 +465,6 @@ class _EditAddressPageState extends State<EditAddressPage> {
                           onChanged: _onTextChanged,
                         ),
                       ),
-                      // Padding(
-                      //   padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-                      //   child: TextFormField(
-                      //     decoration: InputDecoration(
-                      //         alignLabelWithHint: true,
-                      //         fillColor: Colors.white,
-                      //         filled: true,
-                      //         enabledBorder: const OutlineInputBorder(
-                      //           borderSide: BorderSide(
-                      //             color: Colors.grey,
-                      //             width: 1.0,
-                      //           ),
-                      //         ),
-                      //         contentPadding: const EdgeInsets.symmetric(
-                      //             vertical: 10.0, horizontal: 10.0),
-                      //         hintText: buildTranslate('enterPincode')!,
-                      //         hintStyle: const TextStyle(color: Colors.grey),
-                      //         focusedBorder: const OutlineInputBorder(
-                      //           // borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                      //           borderSide:
-                      //               BorderSide(color: Colors.green, width: 0.5),
-                      //         )),
-                      //     validator: (value) => value!.isEmpty
-                      //         ? 'Please, fill this field.'
-                      //         : null,
-                      //     controller: editPincodeController,
-                      //   ),
-                      // ),
                       const SizedBox(
                         height: 20,
                       ),
@@ -565,36 +537,6 @@ class _EditAddressPageState extends State<EditAddressPage> {
                               },
                             )),
                       ),
-                      // Padding(
-                      //   padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-                      //   child: TextFormField(
-                      //     keyboardType: TextInputType.text,
-                      //     controller: editDistrictController,
-                      //     decoration: InputDecoration(
-                      //       contentPadding: const EdgeInsets.symmetric(
-                      //           vertical: 10.0, horizontal: 10.0),
-                      //       hintText: buildTranslate('enterDistrict')!,
-                      //       hintStyle: const TextStyle(color: Colors.grey),
-                      //       fillColor: Colors.white,
-                      //       filled: true,
-                      //       border: const OutlineInputBorder(
-                      //           // borderRadius: BorderRadius.all(Radius.circular(10.0),),
-                      //           ),
-                      //       enabledBorder: const OutlineInputBorder(
-                      //         borderSide: BorderSide(
-                      //           color: Colors.grey,
-                      //           width: 1.0,
-                      //         ),
-                      //         // borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                      //       ),
-                      //       focusedBorder: const OutlineInputBorder(
-                      //         // borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                      //         borderSide:
-                      //             BorderSide(color: Colors.green, width: 0.5),
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
                       const SizedBox(
                         height: 20,
                       ),
@@ -670,36 +612,6 @@ class _EditAddressPageState extends State<EditAddressPage> {
                               },
                             )),
                       ),
-                      // Padding(
-                      //   padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-                      //   child: TextFormField(
-                      //     keyboardType: TextInputType.text,
-                      //     controller: editStateController,
-                      //     decoration: InputDecoration(
-                      //       contentPadding: const EdgeInsets.symmetric(
-                      //           vertical: 10.0, horizontal: 10.0),
-                      //       hintText: buildTranslate('enterState')!,
-                      //       hintStyle: const TextStyle(color: Colors.grey),
-                      //       fillColor: Colors.white,
-                      //       filled: true,
-                      //       border: const OutlineInputBorder(
-                      //           // borderRadius: BorderRadius.all(Radius.circular(10.0),),
-                      //           ),
-                      //       enabledBorder: const OutlineInputBorder(
-                      //         borderSide: BorderSide(
-                      //           color: Colors.grey,
-                      //           width: 1.0,
-                      //         ),
-                      //         // borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                      //       ),
-                      //       focusedBorder: const OutlineInputBorder(
-                      //         // borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                      //         borderSide:
-                      //             BorderSide(color: Colors.green, width: 0.5),
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
                       const SizedBox(
                         height: 20,
                       ),
@@ -846,60 +758,56 @@ class _EditAddressPageState extends State<EditAddressPage> {
 
   void _getValue() {
     if (_formKey.currentState!.validate()) {
-      _formKey.currentState!
-          .save(); // This triggers onSaved for each TextFormField
+      _formKey.currentState!.save(); // This triggers onSaved for each TextFormField
       print("pincode : $pincode");
 
-      if (pincode != null &&
-          district != null &&
-          state != null &&
-          address != null &&
-          village != null) {
-        otherEditAddressApiCall(pincode.toString(), district.toString(),
-            state.toString(), address.toString(), village.toString());
+      if (pincode != null && village != null) {
+        // Proceed with the API call only if pincode and village are not null
+        otherEditAddressApiCall(
+          pincode.toString(),
+          district?.toString() ?? '', // Allow district to be empty
+          state?.toString() ?? '', // Allow state to be empty
+          address?.toString() ?? '', // Allow address to be empty
+          village.toString(),
+        );
       } else {
-        AlertHelper.showToast("Please enter data.", context);
+        AlertHelper.showToast("Please enter pincode and village.", context);
       }
     }
   }
 
-  otherEditAddressApiCall(String pincode, String district, String state,
-      String address, String village) async {
-    if (pincode.isNotEmpty &&
-        district.isNotEmpty &&
-        state.isNotEmpty &&
-        address.isNotEmpty &&
-        village.isNotEmpty) {
-      var headers = {'Content-Type': 'application/json'};
-      var data = json.encode({
-        "uid": number,
-        "pincode": pincode,
-        "district": district,
-        "state": state,
-        "address": address,
-        "village": village
-      });
-      var dio = Dio();
-      var response = await dio.request(
-        UPDATE_ADDRESS_DETAILS,
-        options: Options(
-          method: 'POST',
-          headers: headers,
-        ),
-        data: data,
-      );
+otherEditAddressApiCall(String pincode, String district, String state,
+    String address, String village) async {
+  if (pincode.isNotEmpty && village.isNotEmpty) {
+    var headers = {'Content-Type': 'application/json'};
+    var data = json.encode({
+      "uid": number,
+      "pincode": pincode,
+      "district": district,
+      "state": state,
+      "address": address,
+      "village": village
+    });
+    var dio = Dio();
+    var response = await dio.request(
+      UPDATE_ADDRESS_DETAILS,
+      options: Options(
+        method: 'POST',
+        headers: headers,
+      ),
+      data: data,
+    );
 
-      if (response.statusCode == 201) {
-        print("Address details updated : " + json.encode(response.data));
-
-        showAlertDialog(context);
-      } else {
-        print(response.statusMessage);
-      }
+    if (response.statusCode == 201) {
+      print("Address details updated : " + json.encode(response.data));
+      showAlertDialog(context);
     } else {
-      AlertHelper.showToast("Please enter details.", context);
+      print(response.statusMessage);
     }
+  } else {
+    AlertHelper.showToast("Please enter pincode and village.", context);
   }
+}
 
   showAlertDialog(BuildContext context) {
     // set up the AlertDialog

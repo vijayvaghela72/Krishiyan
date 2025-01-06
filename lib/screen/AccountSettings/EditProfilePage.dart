@@ -27,6 +27,7 @@ import 'package:dio/dio.dart';
  // Ensure you have Flutter imports for AlertHelper and setState usage
 import 'dart:convert'; // For json.encode
 import 'dart:io';
+import 'package:permission_handler/permission_handler.dart';
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
@@ -231,6 +232,35 @@ Future<void> _loadImageUrl(String organizationName) async {
 //   }
 // }
 
+ String convertDateFormat(String date) {
+
+    try {
+
+      // Parse the input date string in "dd-MM-yyyy" format
+
+      DateTime parsedDate = DateFormat("dd-MM-yyyy").parse(date);
+
+
+
+      // Format the parsed date to "yyyy-MM-dd" format
+
+      String formattedDate = DateFormat("yyyy-MM-dd").format(parsedDate);
+
+
+
+      return formattedDate;
+
+    } catch (e) {
+
+      // Handle invalid date formats
+
+      print("Error parsing date: $e");
+
+      return date;
+
+    }
+
+  }
 
 
   
@@ -271,6 +301,9 @@ Future<void> _loadImageUrl(String organizationName) async {
 
   @override
   Widget build(BuildContext context) {
+    print("Selected FPO Item");
+    print(selectedFPOItemValue);
+    print(fpoItems);
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
     ));
@@ -316,7 +349,22 @@ Future<void> _loadImageUrl(String organizationName) async {
                   if (snapshot.data!.toString().isEmpty) {
                     // If the future returns data, but it's empty
                     return const Center(child: Text("No data found"));
+                    
                   } else {
+                    
+print('snapshot : ${snapshot.data!.toJson()}');
+
+print(
+
+'snapshot.data!.registrationNumber : ${snapshot.data!.registrationNumber}');
+
+print('_imageUrl : ${_imageUrl}');
+
+print('_image : ${_image}');
+
+print(
+
+'condition : ${_imageUrl != null && _imageUrl!.isNotEmpty}');
                     return Form(
                       key: _formKey,
                       child: Column(
@@ -336,14 +384,26 @@ Future<void> _loadImageUrl(String organizationName) async {
                   children: [
   
            CircleAvatar(
-          key: ValueKey<File>(_image ?? File('')),
+          key: ValueKey<File>(_image ?? File('')), // Use _imageUrl to refresh widget
           backgroundColor: Colors.white,
           backgroundImage:  _imageUrl != null && _imageUrl!.isNotEmpty
-              ? NetworkImage(_imageUrl!) // Show AWS image URL
-              : _image != null
-                  ? FileImage(_image!) // Show local selected image
-                  : AssetImage("assets/images/user_profile.png") as ImageProvider, // Default image
-        ),
+              ?  NetworkImage(
+
+"${_imageUrl!}?${DateTime.now().millisecondsSinceEpoch}") // Show AWS image URL
+
+: _image != null
+
+? FileImage(
+
+_image!) // Show local selected image
+
+: AssetImage(
+
+"assets/images/user_profile.png")
+
+as ImageProvider, // Default image
+
+),
             // Positioned camera icon button to upload new image
             Positioned(
               
@@ -398,9 +458,7 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                             const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: TextFormField(
                               onSaved: (value) => nameOfOrganization = value,
-                              initialValue: nameOfOrganizationController == null
-                                  ? (snapshot.data!.nameOfFpo.toString() ?? "")
-                                  : null,
+                              initialValue:snapshot.data!.nameOfFpo?.toString() ?? "",
                               decoration: InputDecoration(
                                   alignLabelWithHint: true,
                                   fillColor: Colors.white,
@@ -608,10 +666,8 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                             child: TextFormField(
                               keyboardType: TextInputType.text,
                               onSaved: (value) => registrationNumber = value,
-                              initialValue:
-                              registrationNumberController == null
-                                  ? snapshot.data!.registrationNumber.toString() 
-                                  : "",
+                              initialValue: snapshot.data!.registrationNumber?.toString() ?? "",
+
                               decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.symmetric(
                                     vertical: 10.0, horizontal: 10.0),
@@ -662,10 +718,8 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                             child: TextFormField(
                               keyboardType: TextInputType.text,
                               onSaved: (value) => cbboName = value,
-                              initialValue:
-                              cbboNameController == null
-                                  ? snapshot.data!.cBBOName.toString()
-                                  : null,
+                              initialValue: snapshot.data!.cBBOName?.toString() ?? "",
+
                               decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.symmetric(
                                     vertical: 10.0, horizontal: 10.0),
@@ -716,10 +770,8 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                             child: TextFormField(
                               keyboardType: TextInputType.text,
                               onSaved: (value) => officeContactNumber = value,
-                              initialValue:
-                              officeContactNumberController == null
-                                  ? snapshot.data!.contactNumber.toString()
-                                  : null,
+                              initialValue: snapshot.data!.contactNumber?.toString() ?? "",
+
                               decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.symmetric(
                                     vertical: 10.0, horizontal: 10.0),
@@ -770,10 +822,8 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                             const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: TextFormField(
                               onSaved: (value) => emailId = value,
-                              initialValue: emailIdController == null
-                                  ? snapshot.data!.organizationalEmail
-                                  .toString()
-                                  : null,
+                             initialValue: snapshot.data!.organizationalEmail?.toString() ?? "",
+
                               decoration: InputDecoration(
                                 enabled: true,
                                 alignLabelWithHint: true,
@@ -904,8 +954,11 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                               keyboardType: TextInputType.text,
                               onSaved: (value) => nameOfPromoter = value,
                               initialValue: nameOfPromoter == null
+
                                   ? snapshot.data!.promoterName.toString()
+
                                   : null,
+
                               decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.symmetric(
                                     vertical: 10.0, horizontal: 10.0),
@@ -956,8 +1009,11 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                               keyboardType: TextInputType.text,
                               onSaved: (value) => yourDesignation = value,
                               initialValue: yourDesignationController == null
+
                                   ? snapshot.data!.yourDesignation.toString()
+
                                   : null,
+
                               decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.symmetric(
                                     vertical: 10.0, horizontal: 10.0),
@@ -1717,7 +1773,7 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
       var data = json.encode({
       "nameOfFpo": nameOfOrganization,
       "typeOfFpo": typeOfOrganization,
-      "dateOfFpo": dateOfOrganization,
+      "dateOfFpo": convertDateFormat(dateOfOrganization!),
       "organizationalEmail": emailID,
       "contactNumber": officeNumber,
       "yourDesignation": designation,
@@ -1815,8 +1871,6 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
     );
   }
 
-  
-
   Future<void> getProfileDetails() async {
     id = (await AppGlobal.getStringPreference('id'))!;
     print("IDDD");
@@ -1837,4 +1891,5 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
       dateOfOrganizationController.text = AppGlobal.convertToCustomDateFormat(dateOfOrganizationValue);
     });
   }
+
 }

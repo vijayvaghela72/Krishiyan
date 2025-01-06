@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:intl/intl.dart';
+import 'package:krishiyan/mvc/model/MarketInsight.dart';
 import '../../utils/Constants.dart';
 import '../model/DailyNewsDetails.dart';
 import 'package:http/http.dart' as http;
@@ -45,6 +46,28 @@ class HomeDashboardController{
       final List<dynamic> data = jsonResponse['data'];
       print("Get Mandi Price Details : $data");
       return data.map((item) => MandiPriceData.fromJson(item)).toList();
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
+
+  static Future<List<MarketInsight>> getMarketInsightDetails(String state, String district, String commodity) async {
+
+
+    final response = await http.get(Uri.parse("https://krishiyanback.vercel.app/api/appData/price"
+        "?state=$state&district=$district&commodity=$commodity"
+        ));
+
+    print("state : $state");
+    print("district : $district");
+    print("commodity : $commodity");
+    
+
+    if (response.statusCode == 200) {
+      print("200");
+      final List<dynamic> jsonResponse = json.decode(response.body);
+    print("Get Market Price Details: $jsonResponse");
+      return jsonResponse.map((item) => MarketInsight.fromJson(item)).toList();
     } else {
       throw Exception('Failed to load data');
     }

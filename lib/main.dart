@@ -13,9 +13,14 @@ import 'localization/AppLocalizations.dart';
 import 'localization/NavigationService.dart';
 import 'package:http/http.dart' as http;
 
+import 'package:permission_handler/permission_handler.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   HttpOverrides.global = MyHttpOverrides();
+   // Request all necessary permissions as soon as the app starts
+  await MyApp._requestPermissions();
+
   runApp(const MyApp());
 }
 
@@ -80,6 +85,26 @@ class MyApp extends StatelessWidget {
    Future<bool> _checkLoginStatus() async {
     // Check the login status from shared preferences
     return await SharedPref.readPreferenceValue(isLogin, PrefEnum.BOOL) ?? false;
+  }
+
+  // Request permissions when the app starts
+  static Future<void> _requestPermissions() async {
+    // Request individual permissions for storage and phone call
+    PermissionStatus storagePermissionStatus = await Permission.storage.request();
+    PermissionStatus phonePermissionStatus = await Permission.phone.request();
+
+    // You can handle the status accordingly, for example:
+    if (storagePermissionStatus.isGranted) {
+      print("Storage permission granted");
+    } else {
+      print("Storage permission denied");
+    }
+
+    if (phonePermissionStatus.isGranted) {
+      print("Phone permission granted");
+    } else {
+      print("Phone permission denied");
+    }
   }
   
 }

@@ -11,6 +11,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:krishiyan/localization/AppLocalizations.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../helper/AlertHelper.dart';
 import '../../mvc/controller/cropController.dart';
@@ -40,6 +41,7 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
   TextEditingController originCommodityController = TextEditingController();
   TextEditingController deliveryLocationController = TextEditingController();
   TextEditingController commentsController = TextEditingController();
+  bool _isUploading = false;
 
   String id = "";
   String? _selectedCrop;
@@ -98,20 +100,60 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
   return "${id}_${encodedCrop}_$timestamp.png";
   }
 
-  // Pick an image from the gallery
+// Pick an image from the gallery with permission check
   Future<void> pickImage() async {
-    print("function called");
-    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() {
-        _image = File(pickedFile.path);
-      });
-      uploadImageToAWS(_image!);
+    // Check if the storage permission is granted
+    PermissionStatus status = await Permission.storage.status;
+
+    if (status.isGranted) {
+      // Permission is granted, proceed to pick an image
+      print("Storage permission granted");
+
+      // Open the image picker
+      final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+      if (pickedFile != null) {
+        setState(() {
+          _image = File(pickedFile.path);
+        });
+        uploadImageToAWS(_image!);  // Call your upload function here
+      }
+    } else if (status.isDenied) {
+      // Permission is denied, request permission
+      print("Storage permission denied, requesting permission...");
+      await Permission.storage.request();
+
+      // After requesting, check the permission status again
+      if (await Permission.storage.isGranted) {
+        print("Storage permission granted after request");
+
+        // Proceed with picking an image if permission is granted
+        final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+        if (pickedFile != null) {
+          setState(() {
+            _image = File(pickedFile.path);
+          });
+          uploadImageToAWS(_image!);  // Call your upload function here
+        }
+      } else {
+        print("Storage permission still denied");
+
+        // Optionally, prompt user to go to app settings to enable the permission manually
+        openAppSettings();
+      }
+    } else if (status.isPermanentlyDenied) {
+      // Permission is permanently denied, show a message or redirect user to settings
+      print("Storage permission permanently denied. Please enable it in settings.");
+
+      // Optionally, open the app settings for the user to manually enable the permission
+      openAppSettings();
     }
   }
 
   // Upload the image to AWS using Dio
   Future<void> uploadImageToAWS(File image) async {
+     setState(() {
+    _isUploading = true; // Start uploading
+  });
     try {
       String fileName = generateFileName(id);  // Example id (can be dynamic)
       print("FileName");
@@ -152,6 +194,12 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
       // Handle exceptions
       print("Error uploading image: $e");
     }
+    finally {
+    // Regardless of success or failure, re-enable the button
+    setState(() {
+      _isUploading = false; // End the upload process
+    });
+  }
   }
 
   // // Fetch the image URL using the key
@@ -236,9 +284,9 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
           width: MediaQuery.of(context).size.width,
           padding: const EdgeInsets.only(left: 25.0, right: 25.0),
           child: ElevatedButton(
-            onPressed: () {
-              _buyCommodityApiCall();
-            },
+            onPressed:  _isUploading ? null : () {
+        _buyCommodityApiCall();
+      },
             style: ElevatedButton.styleFrom(
               foregroundColor: Colors.white,
               padding: const EdgeInsets.all(12),

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -41,7 +42,52 @@ class _OtherRegistrationPageState extends State<OtherRegistrationPage> {
   bool _passwordVisible = false;
   bool _confirmPasswordVisible = false;
   late OtpFieldController otpController = OtpFieldController();
+    bool isOtpButtonEnabled = true;  // Track OTP button status
+String countdownText = '';      // To show countdown text (e.g., "Wait 1:45")
+Timer? otpCooldownTimer;        // Timer to track cooldown
 
+void startOtpCooldown() {
+  setState(() {
+    isOtpButtonEnabled = false;  // Disable the OTP button
+  });
+
+  // Set the initial cooldown time (2 minutes = 120 seconds)
+  int cooldownTime = 120;  // 2 minutes in seconds
+
+  // Update the countdown text every second
+  otpCooldownTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+    setState(() {
+      // Calculate minutes and seconds
+      int minutes = cooldownTime ~/ 60;  // Integer division to get minutes
+      int seconds = cooldownTime % 60;  // Modulo operation to get seconds
+
+      // Format as MM:SS, ensuring two digits for minutes and seconds
+      countdownText = "Please wait ${_formatTime(minutes)}:${_formatTime(seconds)} before trying again.";
+    });
+
+    if (cooldownTime == 0) {
+      timer.cancel();  // Stop the timer when the cooldown is over
+      setState(() {
+        isOtpButtonEnabled = true;  // Re-enable the OTP button
+        countdownText = "";  // Clear the countdown text
+      });
+    } else {
+      cooldownTime--;  // Decrease the cooldown time by 1 second
+    }
+  });
+}
+
+// Helper function to format time as two digits
+String _formatTime(int time) {
+  return time < 10 ? "0$time" : "$time";
+}
+
+@override
+void dispose() {
+  // Always cancel the timer when the widget is disposed
+  otpCooldownTimer?.cancel();
+  super.dispose();
+}
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -187,12 +233,15 @@ class _OtherRegistrationPageState extends State<OtherRegistrationPage> {
                         setState(() {
                           otpVisible = true;
                         });
-                        if (mobileNumberController.text.isNotEmpty) {
-                          getOtpApiCall();
-                        } else {
-                          AlertHelper.showToast(
-                              "Please enter details", context);
-                        }
+                         if (mobileNumberController.text.isNotEmpty) {
+    if (isOtpButtonEnabled) {
+      getOtpApiCall();
+    } else {
+      AlertHelper.showToast("Please wait before requesting again.", context);
+    }
+  } else {
+    AlertHelper.showToast("Please enter details", context);
+  }
                       },
                     ),
                   ),
@@ -201,6 +250,21 @@ class _OtherRegistrationPageState extends State<OtherRegistrationPage> {
                 controller: mobileNumberController,
               ),
             ),
+
+                        // Display the countdown timer if the button is disabled
+Visibility(
+  visible: !isOtpButtonEnabled,
+  child: Padding(
+    padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+    child: Text(
+      countdownText, // This is the dynamic countdown text
+      style: const TextStyle(
+        fontSize: 14,
+        color: Color(0xFF666666),
+      ),
+    ),
+  ),
+),
 
             otpVisible ? const SizedBox(height: 15,) : Container(),
 
@@ -641,15 +705,16 @@ Future<void> getOtpApiCall() async {
     if (userOtp != null) {
       print("otpData : ${userOtp.otp}");
       otpData = userOtp.otp ?? "";
-      
-      // You can add any additional handling here if needed
+      // Start the timer for 2 minutes (120 seconds)
+        startOtpCooldown();
+      AlertHelper.showToast("OTP sent on your mobile number", context);
     } else {
       print("Failed to get OTP data.");
       AlertHelper.showToast("Failed to retrieve OTP. Please try again.", context);
     }
   } catch (e) {
     print("Error during OTP request: $e");
-    AlertHelper.showToast("Error occurred. Please try again.", context);
+    // AlertHelper.showToast("Error occurred. Please try again.", context);
   }}else{
     
     AlertHelper.showToast("Phone number exists. Please check and try again.", context);

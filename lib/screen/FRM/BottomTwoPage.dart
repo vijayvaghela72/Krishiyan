@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -5,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:krishiyan/mvc/model/FarmerDashboardData.dart';
+import 'package:krishiyan/mvc/model/FrmInsight.dart';
 import 'package:krishiyan/mvc/model/InsightData.dart';
 import 'package:krishiyan/screen/AccountSettings/FarmerEditProfilePage.dart';
 import 'package:krishiyan/screen/Login/LoginPage.dart';
@@ -59,7 +61,7 @@ class _BottomTwoPageState extends State<BottomTwoPage>
   ];
 
   var _bottomNavIndex = 1; //default index of a first screen
-
+  Future<FrmInsight?>? _futureFrminSight;
   List<bottomCategory> iconList = [
     bottomCategory(
         name: buildTranslate("home")!,
@@ -84,13 +86,13 @@ class _BottomTwoPageState extends State<BottomTwoPage>
 
   List<cropsCategory> search_crops = [
     cropsCategory(
-        name: "Total Farmer 350", id: "1", icon: 'assets/images/crops1.png'),
+        name: "Total Farmer", id: "1", icon: 'assets/images/crops1.png'),
     cropsCategory(
-        name: "Total Farmer Land(in HA) 125400",
+        name: "Total Farmer Land(in HA)",
         id: "2",
         icon: 'assets/images/crops2.png'),
     cropsCategory(
-        name: "Expected Yield(in Qtl)256300",
+        name: "Expected Yield(in Qtl)",
         id: "3",
         icon: 'assets/images/crops1.png'),
   ];
@@ -113,6 +115,7 @@ class _BottomTwoPageState extends State<BottomTwoPage>
   ];
 
   String? selectedSortItemsValue;
+  List<Farmer> sortedFarmers = []; // To hold the sorted farmers list
 
   var farmerDashboardList;
   
@@ -149,6 +152,55 @@ class _BottomTwoPageState extends State<BottomTwoPage>
   late Future<List<FarmerDetails>> futureFarmerProfiles;
   String _searchText = '';
   String WhatsappNumberData = '';
+
+    bool isOtpButtonEnabled = true;  // Track OTP button status
+String countdownText = '';      // To show countdown text (e.g., "Wait 1:45")
+Timer? otpCooldownTimer;        // Timer to track cooldown
+
+void startOtpCooldown() {
+  setState(() {
+    isOtpButtonEnabled = false;  // Disable the OTP button
+  });
+
+  // Set the initial cooldown time (2 minutes = 120 seconds)
+  int cooldownTime = 120;  // 2 minutes in seconds
+
+  // Update the countdown text every second
+  otpCooldownTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+    setState(() {
+      // Calculate minutes and seconds
+      int minutes = cooldownTime ~/ 60;  // Integer division to get minutes
+      int seconds = cooldownTime % 60;  // Modulo operation to get seconds
+
+      // Format as MM:SS, ensuring two digits for minutes and seconds
+      countdownText = "Please wait ${_formatTime(minutes)}:${_formatTime(seconds)} before trying again.";
+    });
+
+    if (cooldownTime == 0) {
+      timer.cancel();  // Stop the timer when the cooldown is over
+      setState(() {
+        isOtpButtonEnabled = true;  // Re-enable the OTP button
+        countdownText = "";  // Clear the countdown text
+      });
+    } else {
+      cooldownTime--;  // Decrease the cooldown time by 1 second
+    }
+  });
+}
+
+// Helper function to format time as two digits
+String _formatTime(int time) {
+  return time < 10 ? "0$time" : "$time";
+}
+
+
+
+@override
+void dispose() {
+  // Always cancel the timer when the widget is disposed
+  otpCooldownTimer?.cancel();
+  super.dispose();
+}
 
   @override
   void initState() {
@@ -428,7 +480,7 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                                     final Name =
                                         farmers[index].farmerDetails.name ?? "";
                                     final Address =
-                                        farmers[index].farmerDetails.address ??
+                                        farmers[index].farmerDetails.village ??
                                             "";
                                     WhatsappNumberData = farmers[index]
                                             .farmerDetails
@@ -1131,7 +1183,9 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                                       minimumSize: const Size(80, 35),
                                       foregroundColor: Colors.white,
                                       textStyle: const TextStyle(fontSize: 18),
-                                      backgroundColor: const Color(0xFF3FC041),
+                                      backgroundColor: isOtpButtonEnabled
+                ? const Color(0xFF3FC041) // Green when enabled
+                : Colors.grey,  // Grey when disabled (cooldown)
                                       shape: RoundedRectangleBorder(
                                         borderRadius:
                                             BorderRadius.circular(12.0),
@@ -1143,11 +1197,14 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                           otpVisible = true;
                         });
                         if (whatsAppNumberController.text.isNotEmpty) {
-                          getOtpApiCall();
-                        } else {
-                          AlertHelper.showToast(
-                              "Please enter details", context);
-                        }
+    if (isOtpButtonEnabled) {
+      getOtpApiCall();
+    } else {
+      AlertHelper.showToast("Please wait before requesting again.", context);
+    }
+  } else {
+    AlertHelper.showToast("Please enter details", context);
+  }
                       },
                                   ),
                                 ),
@@ -1158,6 +1215,21 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                               controller: whatsAppNumberController,
                             ),
                           ),
+
+                                      // Display the countdown timer if the button is disabled
+Visibility(
+  visible: !isOtpButtonEnabled,
+  child: Padding(
+    padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+    child: Text(
+      countdownText, // This is the dynamic countdown text
+      style: const TextStyle(
+        fontSize: 14,
+        color: Color(0xFF666666),
+      ),
+    ),
+  ),
+),
                           const SizedBox(
                             height: 20,
                           ),
@@ -2197,7 +2269,9 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                                                 child: ElevatedButton(
                                                   onPressed: () {
                                                     setState(() {
+                                                      onSearchPressed();
                                                       searchCropsFlag = true;
+                                                      
                                                     });
                                                   },
                                                   style:
@@ -2250,7 +2324,34 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                                           padding: const EdgeInsets.all(10.0),
                                           child: Column(
                                             children: [
-                                              listWidget(),
+                                             FutureBuilder<FrmInsight?>(
+  future: _futureFrminSight,
+  builder: (context, snapshot) {
+    // Log the connection state and snapshot data
+    print('Connection State: ${snapshot.connectionState}');
+    print('Has data: ${snapshot.hasData}');
+    print('Error: ${snapshot.error}');
+    print('Data: ${snapshot.data}');
+
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return Center(child: CircularProgressIndicator()); // Loading state
+    } else if (snapshot.hasError) {
+      // Handle the error case
+      return Center(child: Text('Error: ${snapshot.error}'));
+    } else if (!snapshot.hasData) {
+      // Handle the case where there's no data
+      return Center(child: Text('No data available.'));
+    } else {
+      FrmInsight? frminSight = snapshot.data;
+      if (frminSight == null) {
+        return Center(child: Text('No data available.'));
+      }
+      print('Has data: ${frminSight.data}');
+      return listWidget(frminSight); // Your list display widget
+    }
+  },
+),
+
                                               const SizedBox(
                                                 height: 10,
                                               ),
@@ -2322,16 +2423,42 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                                               child: Padding(
                                                 padding:
                                                     const EdgeInsets.all(12.0),
-                                                child: Text(
-                                                  buildTranslate(
-                                                      "Farmers(300)")!,
-                                                  softWrap: true,
-                                                  style: const TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize: 14,
-                                                      fontFamily:
-                                                          'poppins-semibold'),
+                                                child: FutureBuilder<FrmInsight?>(
+                                                  future: _futureFrminSight,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator()); // Show loading spinner while waiting
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}')); // Show error message
+        } else if (!snapshot.hasData) {
+          return Center(child: Text('No data available.')); // Show message if no data
+        } 
+else {
+          // Successfully fetched data
+          FrmInsight? frminSight = snapshot.data;
+          int totalFarmers = frminSight?.data.numberOfFarmers ?? 0; // Get total farmers
+          print(totalFarmers);
+
+                                                 return Column(
+        children: [
+          // Display total farmers inside brackets dynamically
+          Padding(
+            padding: const EdgeInsets.only(left: 20.0),
+            child: Text(
+              "Farmers($totalFarmers)" ?? "Farmers($totalFarmers)", // Fallback to default if buildTranslate fails
+              softWrap: true,
+              style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 14,
+                  fontFamily: 'poppins-semibold'),
+            ),
+          ),
+          // Other UI elements here...
+        ],
+      );}
+      }
                                                 ),
+
                                               ),
                                             ),
                                             const Spacer(),
@@ -2416,7 +2543,42 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                                         height: 35,
                                       ),
                                       _buildHeaderTable(),
-                                      buildTable(context)
+                                      FutureBuilder<FrmInsight?>(
+  future: _futureFrminSight, // The future that fetches FrmInsight data
+  builder: (context, snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return Center(child: CircularProgressIndicator()); // Loading state
+    } else if (snapshot.hasError) {
+      return Center(child: Text('Error: ${snapshot.error}')); // Error handling
+    } else if (!snapshot.hasData) {
+      return Center(child: Text('No data available.'));
+    } else {
+      FrmInsight? frminSight = snapshot.data;
+      if (frminSight == null || frminSight.data.farmers.isEmpty) {
+        return Center(child: Text('No farmers data available.'));
+      }
+      // Get the farmers data
+              var farmers = snapshot.data?.data?.farmers ?? [];
+      // Sort the farmers based on the selected sorting option
+              if (selectedSortItemsValue == buildTranslate("highExpYield")) {
+                // Sort in descending order by expectedYield (high to low)
+                farmers.sort((a, b) => b.expectedYield!.compareTo(a.expectedYield!));
+              } else if (selectedSortItemsValue == buildTranslate("lowExpYield")) {
+                // Sort in ascending order by expectedYield (low to high)
+                farmers.sort((a, b) => a.expectedYield!.compareTo(b.expectedYield!));
+              }
+
+      // Pass the fetched FrmInsight data to the table widget
+      return Column(
+        children: [
+          // The header row of the table
+          buildTable(context, frminSight!), // The table with farmer data
+        ],
+      );
+    }
+  },
+)
+
                                     ],
                                   )
                                 : Container(),
@@ -2505,11 +2667,59 @@ class _BottomTwoPageState extends State<BottomTwoPage>
     );
   }
 
+Future<FrmInsight?> fetchInsightsData() async {
+   String? number = await AppGlobal.getStringPreference('contactNumber');
+    var num = number ?? "1";
+
+    if (_selectedCrop == null || _selectedVillageName == null) {
+      print('Please select both crop and village');
+      return null;
+    }
+
+    final url =
+        'https://krishiyanback.vercel.app/api/appFarmer/farmers/insight?dealerNumber=$num&village=$_selectedVillageName&crop=$_selectedCrop&sort=highToLow';
+
+    try {
+      final response = await Dio().get(url);
+      if (response.statusCode == 200) {
+        print('API Response: ${response.data}');
+    //     _futureFrminSight = fetchInsightsData();
+    // print('Future initialized: $_futureFrminSight');
+        return FrmInsight.fromJson(response.data); // Return the parsed data
+      } else {
+        print('Failed to load data: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      if (e is DioError) {
+        print('Dio Error: ${e.message}');
+      } else {
+        print('Unknown Error: $e');
+      }
+      return null;
+    }
+  }
+
+  void onSearchPressed() {
+  // Validate if both crop and village are selected
+  if (_selectedCrop != null && _selectedVillageName != null) {
+    setState(() {
+      // Initialize the future here, which will trigger the API request
+      _futureFrminSight = fetchInsightsData();
+    });
+  } else {
+    // Show an error or prompt to select both crop and village
+    print('Please select both crop and village');
+  }
+}
+
+
   Future<void> _fetchFarmerNameData() async {
     try {
       String? number = await AppGlobal.getStringPreference('contactNumber');
       var num = number ?? "1";
       var response = await Dio().get(FARMER_NAME + num);
+      print(num);
 
       if (response.statusCode == 200) {
         dropdownItems =
@@ -2530,7 +2740,11 @@ class _BottomTwoPageState extends State<BottomTwoPage>
   Future<void> _fetchVillageData() async {
     try {
       // Replace with your actual API endpoint
-      var response = await Dio().get(VILLAGES_NAMES);
+       // Retrieve the dealer number first
+    String? number = await AppGlobal.getStringPreference('contactNumber');
+    var dealerNumber = number ?? "1";  // Default to "1" if no number found
+
+      var response = await Dio().get(VILLAGES_NAMES + dealerNumber);
 
       if (response.statusCode == 200) {
         if (mounted) {
@@ -2633,7 +2847,7 @@ class _BottomTwoPageState extends State<BottomTwoPage>
   } catch (e) {
     // Handle errors
     print("Error during phone number check: $e");
-    AlertHelper.showToast("Error occurred. Please try again.", context);
+    // AlertHelper.showToast("Error occurred. Please try again.", context);
     return false; // Return false in case of an error
   }
 }
@@ -2656,15 +2870,16 @@ class _BottomTwoPageState extends State<BottomTwoPage>
     if (userOtp != null) {
       print("otpData : ${userOtp.otp}");
       otpData = userOtp.otp ?? "";
-      
-      // You can add any additional handling here if needed
+       // Start the timer for 2 minutes (120 seconds)
+        startOtpCooldown();
+      AlertHelper.showToast("OTP sent on your mobile number", context);
     } else {
       print("Failed to get OTP data.");
       AlertHelper.showToast("Failed to retrieve OTP. Please try again.", context);
     }
   } catch (e) {
     print("Error during OTP request: $e");
-    AlertHelper.showToast("Error occurred. Please try again.", context);
+    // AlertHelper.showToast("Error occurred. Please try again.", context);
   }}else{
     
     AlertHelper.showToast("Phone number exists. Please check and try again.", context);
@@ -2779,224 +2994,155 @@ class _BottomTwoPageState extends State<BottomTwoPage>
     print("Selected Top Page : $selectedTopData");
   }
 
-  Widget listWidget() {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: search_crops.length,
-      itemBuilder: (_, index) {
-        return Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Container(
-            decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: const [
-                  BoxShadow(
-                    color: Color(0xFFd3d3d3),
-                  )
-                ],
-                border: Border.all(color: const Color(0xFFd3d3d3), width: 1.0),
-                borderRadius: BorderRadius.circular(12)),
-            child: InkWell(
-              highlightColor: Colors.transparent,
-              splashColor: Colors.transparent,
-              onTap: () {
+Widget listWidget(FrmInsight frminSight) {
+  // Extracting required data from the API response
+  int totalfarmers = frminSight.data.numberOfFarmers;
+  int totalLandInAcres = frminSight.data.totalAreaInAcres;
+  int expectedYield = 0; // Default value, can be updated if needed
+
+  // You may need to fetch the expected yield for each crop if it's provided in the data
+  // For now, we assume it's a generic value across the crops.
+  return GridView.builder(
+    shrinkWrap: true,
+    physics: const NeverScrollableScrollPhysics(),
+    itemCount: search_crops.length,
+    itemBuilder: (_, index) {
+      String displayText = '';
+      
+      // Condition to decide which value to display based on index
+      if (index == 0) {
+        // First index, show total number of farmers
+        displayText = '$totalfarmers Farmers\n${search_crops[index].name ?? ""}';
+      } else if (index == 1) {
+        // Second index, show total land in acres
+        displayText = '$totalLandInAcres Acres\n${search_crops[index].name ?? ""}';
+      } else if (index == 2) {
+        // Third index, show expected yield
+        displayText = '$expectedYield Expected Yield\n${search_crops[index].name ?? ""}';
+      } else {
+        // For other items, show just the crop name
+        displayText = search_crops[index].name ?? "";
+      }
+
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Container(
+          decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0xFFd3d3d3),
+                )
+              ],
+              border: Border.all(color: const Color(0xFFd3d3d3), width: 1.0),
+              borderRadius: BorderRadius.circular(12)),
+          child: InkWell(
+            highlightColor: Colors.transparent,
+            splashColor: Colors.transparent,
+            onTap: () {
+              // Only set selectedTopData to 4 if the index is 0
+              if (index == 0) {
                 setState(() {
                   selectedTopData = 4;
                 });
-              },
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Image.asset(
-                    search_crops[index].icon ?? "",
-                    width: 35,
-                    height: 35,
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  Flexible(
-                    child: Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: Text(
-                        search_crops[index].name ?? "",
-                        textAlign: TextAlign.center,
-                        softWrap: true,
-                        maxLines: 2,
-                        style: const TextStyle(
-                            color: Color(0xFF666666),
-                            fontSize: 15,
-                            fontFamily: 'poppins-regular'),
-                      ),
+                onSearchPressed();
+              }
+            },
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Image.asset(
+                  search_crops[index].icon ?? "",
+                  width: 35,
+                  height: 35,
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Flexible(
+                  child: Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: Text(
+                      displayText,  // Display the dynamic text based on the index
+                      textAlign: TextAlign.center,
+                      softWrap: true,
+                      maxLines: 2,
+                      style: const TextStyle(
+                          color: Color(0xFF666666),
+                          fontSize: 15,
+                          fontFamily: 'poppins-regular'),
                     ),
                   ),
-                  index == 0
-                      ? Image.asset(
-                          "assets/images/right_arrow.png",
-                          width: 25,
-                          height: 25,
-                        )
-                      : Container(),
-                ],
-              ),
+                ),
+                index == 0
+                    ? Image.asset(
+                        "assets/images/right_arrow.png",
+                        width: 25,
+                        height: 25,
+                      )
+                    : Container(),
+              ],
             ),
           ),
-        );
-      },
-      gridDelegate:
-          const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-    );
-  }
+        ),
+      );
+    },
+    gridDelegate:
+        const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+  );
+}
 
-  Widget buildTable(BuildContext context) {
-    return Theme(
-      data: Theme.of(context).copyWith(dividerColor: Colors.black),
-      child: Padding(
-        padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-        child: Table(
-            columnWidths: const {
-              0: FlexColumnWidth(4),
-              1: FlexColumnWidth(5),
-              2: FlexColumnWidth(5),
-            },
-            border: TableBorder.all(),
-            children: const [
-              TableRow(children: [
-                Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    'Raju',
-                    style: TextStyle(
-                        fontFamily: "poppins-semibold", fontSize: 12.0),
-                  ),
+Widget buildTable(BuildContext context, FrmInsight frminSight) {
+  return Theme(
+    data: Theme.of(context).copyWith(dividerColor: Colors.black),
+    child: Padding(
+      padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+      child: Table(
+        columnWidths: const {
+          0: FlexColumnWidth(4),
+          1: FlexColumnWidth(5),
+          2: FlexColumnWidth(5),
+        },
+        border: TableBorder.all(),
+        children: [
+          
+
+          // Data rows: loop over the list of farmers in FrmInsight
+          for (var farmer in frminSight.data.farmers)
+            TableRow(children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  farmer.name ?? 'N/A', // Use 'N/A' if name is null
+                  style: const TextStyle(
+                      fontFamily: "poppins-semibold", fontSize: 12.0),
                 ),
-                Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    '123456789',
-                    style: TextStyle(
-                        fontFamily: "poppins-regular", fontSize: 12.0),
-                  ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  farmer.whatsappNumber ?? 'N/A', // Use 'N/A' if number is null
+                  style: const TextStyle(
+                      fontFamily: "poppins-regular", fontSize: 12.0),
                 ),
-                Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    '25930',
-                    style: TextStyle(
-                        fontFamily: "poppins-regular", fontSize: 12.0),
-                  ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  farmer.expectedYield != null
+                      ? farmer.expectedYield.toString()
+                      : 'N/A', // Use 'N/A' if yield is null
+                  style: const TextStyle(
+                      fontFamily: "poppins-regular", fontSize: 12.0),
                 ),
-              ]),
-              TableRow(children: [
-                Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    'Ankit',
-                    style: TextStyle(
-                        fontFamily: "poppins-semibold", fontSize: 12.0),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    '123456789',
-                    style: TextStyle(
-                        fontFamily: "poppins-regular", fontSize: 12.0),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    '25930',
-                    style: TextStyle(
-                        fontFamily: "poppins-regular", fontSize: 12.0),
-                  ),
-                ),
-              ]),
-              TableRow(children: [
-                Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    'Mohedin',
-                    style: TextStyle(
-                        fontFamily: "poppins-semibold", fontSize: 12.0),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    '123456789',
-                    style: TextStyle(
-                        fontFamily: "poppins-regular", fontSize: 12.0),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    '25930',
-                    style: TextStyle(
-                        fontFamily: "poppins-regular", fontSize: 12.0),
-                  ),
-                ),
-              ]),
-              TableRow(children: [
-                Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    'jhon',
-                    style: TextStyle(
-                        fontFamily: "poppins-semibold", fontSize: 12.0),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    '123456789',
-                    style: TextStyle(
-                        fontFamily: "poppins-regular", fontSize: 12.0),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    '25930',
-                    style: TextStyle(
-                        fontFamily: "poppins-regular", fontSize: 12.0),
-                  ),
-                ),
-              ]),
-              TableRow(children: [
-                Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    'jemisom',
-                    style: TextStyle(
-                        fontFamily: "poppins-semibold", fontSize: 12.0),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    '123456789',
-                    style: TextStyle(
-                        fontFamily: "poppins-regular", fontSize: 12.0),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    '25930',
-                    style: TextStyle(
-                        fontFamily: "poppins-regular", fontSize: 12.0),
-                  ),
-                ),
-              ]),
+              ),
             ]),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildHeaderTable() {
     return Padding(

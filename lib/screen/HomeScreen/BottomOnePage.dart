@@ -12,6 +12,7 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:krishiyan/mvc/model/GetMandiPriceData.dart';
+import 'package:krishiyan/mvc/model/MarketInsight.dart';
 import 'package:krishiyan/utils/AppGlobal.dart';
 import 'package:krishiyan/utils/Constants.dart';
 import '../../helper/AlertHelper.dart';
@@ -66,12 +67,18 @@ class _BottomOnePageState extends State<BottomOnePage> with TickerProviderStateM
 
   String? selectedStateItemValue;
   MandiPriceStateData? stateItems;
+    MandiPriceStateData? stateMarketItems;
+    String? selectedMarketStateItemValue;
 
   MandiPriceDistrictData? districtItems;
+  MandiPriceDistrictData? districtMarketItems;
   String? selectedDistrictItemValue;
+  String? selectedMarketDistrictItemValue;
 
   MandiPriceCommodityData? commodityItems;
+  MandiPriceCommodityData? commodityMarketItems;
   String selectedCommodityItemValue = "";
+  String selectedMarketCommodityItemValue = "";
 
   List<bottomCategory> iconList = [
     bottomCategory(
@@ -116,6 +123,7 @@ class _BottomOnePageState extends State<BottomOnePage> with TickerProviderStateM
   DateTime? selectedDate;
 
   Future<List<MandiPriceData>>? futureMandiPrice;
+  Future<List<MarketInsight>>? futureMarketInsight;
   
 
   @override
@@ -161,6 +169,7 @@ class _BottomOnePageState extends State<BottomOnePage> with TickerProviderStateM
     futureHomeNewsData = HomeDashboardController.getNewsDetails();
     getPrefValue();
     _fetchStateData();
+    _fetchMarketStateData();
   }
 
   Future<void> getPrefValue() async {
@@ -189,6 +198,24 @@ class _BottomOnePageState extends State<BottomOnePage> with TickerProviderStateM
     }
   }
 
+  Future<void> _fetchMarketStateData() async {
+    try {
+      // Replace with your actual API endpoint
+      var response = await Dio().get(MANDI_PRICE_STATE);
+
+      if (response.statusCode == 200) {
+        print("fetchStateData response : $response");
+        setState(() {
+          stateMarketItems = MandiPriceStateData.fromJson(response.data);
+        });
+      } else {
+        throw Exception('Failed to load state');
+      }
+    } catch (e) {
+      print('HomePage Mandi Price : Error fetching state data: $e');
+    }
+  }
+
   String convertToDirectImageUrl(String fileUrl) {
   // Extract the file ID from the Google Drive URL
   RegExp regExp = RegExp(r"file/d/([a-zA-Z0-9-_]+)");
@@ -207,11 +234,29 @@ class _BottomOnePageState extends State<BottomOnePage> with TickerProviderStateM
       // Replace with your actual API endpoint
       var response = await Dio().get("https://krishiyanback.vercel.app"
           "/api/mandi/filter?stateName=$selectedStateItemValue");
-
+  
       if (response.statusCode == 200) {
         print("fetchDistrictData response : $response");
         setState(() {
           districtItems = MandiPriceDistrictData.fromJson(response.data);
+        });
+      } else {
+        throw Exception('Failed to load state');
+      }
+    } catch (e) {
+      print('HomePage Mandi Price : Error fetching state data: $e');
+    }
+  }
+  Future<void> _fetchMarketDistrictData() async {
+    try {
+      // Replace with your actual API endpoint
+      var response = await Dio().get("https://krishiyanback.vercel.app"
+          "/api/mandi/filter?stateName=$selectedMarketStateItemValue");
+  
+      if (response.statusCode == 200) {
+        print("fetchDistrictData response : $response");
+        setState(() {
+          districtMarketItems = MandiPriceDistrictData.fromJson(response.data);
         });
       } else {
         throw Exception('Failed to load state');
@@ -231,6 +276,25 @@ class _BottomOnePageState extends State<BottomOnePage> with TickerProviderStateM
         print("fetchCommodityData response : $response");
         setState(() {
           commodityItems = MandiPriceCommodityData.fromJson(response.data);
+        });
+      } else {
+        throw Exception('Failed to load state');
+      }
+    } catch (e) {
+      print('HomePage Mandi Price : Error fetching state data: $e');
+    }
+  }
+
+  Future<void> _fetchMarketCommodityData() async {
+    try {
+      // Replace with your actual API endpoint
+      var response = await Dio().get("https://krishiyanback.vercel.app"
+          "/api/mandi/filter?stateName=$selectedMarketStateItemValue&districtName=$selectedMarketDistrictItemValue");
+
+      if (response.statusCode == 200) {
+        print("fetchCommodityData response : $response");
+        setState(() {
+          commodityMarketItems = MandiPriceCommodityData.fromJson(response.data);
         });
       } else {
         throw Exception('Failed to load state');
@@ -260,6 +324,7 @@ class _BottomOnePageState extends State<BottomOnePage> with TickerProviderStateM
 
   // Ensure the list has unique items
   List<String> uniqueStateItems = stateItems!.data!.toSet().toList();
+    List<String> uniqueMarketStateItems = stateMarketItems!.data!.toSet().toList();
 
 
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -1246,6 +1311,26 @@ class _BottomOnePageState extends State<BottomOnePage> with TickerProviderStateM
                       const SizedBox(
                         height: 20,
                       ),
+                      Padding(
+                                              padding: const EdgeInsets.only(left: 15.0, right: 15.0,),
+                                              child: Row(
+                                                      children: [
+                                                        Image.asset("assets/images/location.png", width: 15, height: 15,),
+                                                        const SizedBox(
+                                                          width: 5,
+                                                        ),
+                                                        Text(
+                                                          selectedStateItemValue.toString(),
+                                                          softWrap: true,
+                                                          style: TextStyle(
+                                                              color: Color(0xFF808080),
+                                                              fontSize: 11,
+                                                              fontFamily: 'poppins-semibold'),
+                                                        ),
+                                                      ],
+                                                    ),
+                                            ),
+                      
                       futureMandiPrice.toString().isEmpty
                           ? Center(child: Text(buildTranslate("noDataAvailable")!))
                           :
@@ -1285,13 +1370,8 @@ class _BottomOnePageState extends State<BottomOnePage> with TickerProviderStateM
     return priceB.compareTo(priceA);
   });
 }
-
-
       // Print the sorted data for debugging
       print("After sorting: ${mandiPrice.map((e) => e.modalPrice)}");
-
-
-
                             return
                               ListView.builder(
                                 itemCount: mandiPrice.length,
@@ -1326,7 +1406,7 @@ class _BottomOnePageState extends State<BottomOnePage> with TickerProviderStateM
                                                           width: 5,
                                                         ),
                                                         Text(
-                                                          mandiPrice[index].state ?? "",
+                                                          mandiPrice[index].market ?? "",
                                                           softWrap: true,
                                                           style: TextStyle(
                                                               color: Color(0xFF959595),
@@ -1524,14 +1604,604 @@ class _BottomOnePageState extends State<BottomOnePage> with TickerProviderStateM
                     ],
                   )
                   : selectedTopData == 2
-                  ? Padding(
-                padding: EdgeInsets.only(top: 200.0),
-                child: Center(child: Text(buildTranslate("screenLocked")!, softWrap: true,
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 15,
-                      fontFamily: 'poppins-semibold'),)),
-              )
+                  ? Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            top: 10.0, right: 20.0, left: 20.0),
+                        child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          decoration: const BoxDecoration(
+                              color: Colors.white,
+                              borderRadius:
+                              BorderRadius.all(Radius.circular(18))),
+                          child: Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                // select state
+                                Text(
+                                  buildTranslate("selectState")!,
+                                  softWrap: true,
+                                  style: const TextStyle(
+                                      color: Color(0xFF666666),
+                                      fontSize: 13,
+                                      fontFamily: 'poppins-semibold'),
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                stateMarketItems == null ||
+                                    stateMarketItems!.data == null
+                                    ? Center(child: Text(buildTranslate("noDataAvailable")!))
+                                    :
+                                Container(
+                                  color: Colors.white,
+                                  child: DropdownButtonFormField2<String>(
+                                    isExpanded: true,
+                                    dropdownStyleData: const DropdownStyleData(maxHeight: 200),
+                                    decoration: InputDecoration(
+                                      contentPadding:
+                                      const EdgeInsets.symmetric(
+                                          vertical: 10),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      // Add more decoration..
+                                    ),
+                                    hint: Text(
+                                      buildTranslate("selectState")!,
+                                      style: const TextStyle(fontSize: 13, fontFamily: "poppins-regular"),
+                                    ),
+                                    items: uniqueMarketStateItems.map((String crop1) {
+                                      return DropdownMenuItem<String>(
+                                        value: crop1,
+                                        child: Text(crop1, style: const TextStyle(
+                                            fontSize: 15,
+                                            color: Colors.black,
+                                            fontFamily: 'poppins-regular')),
+                                      );
+                                    }).toList(),
+                                    validator: (value) {
+                                      if (value == null) {
+                                        return 'Please select type of state.';
+                                      }
+                                      return null;
+                                    },
+                                    onChanged: (value) {
+                                      setState(() {
+                                        selectedMarketStateItemValue = value;
+                                      });
+                                      if (selectedMarketStateItemValue != null) {
+    print("selectedMarketStateItemValue : $selectedMarketStateItemValue");
+    _fetchMarketDistrictData();
+  }
+                                    },
+                                    onSaved: (value) {
+                                      selectedMarketStateItemValue = value.toString();
+                                    },
+                                    buttonStyleData: const ButtonStyleData(
+                                      padding: EdgeInsets.only(right: 8),
+                                    ),
+                                    iconStyleData: const IconStyleData(
+                                      icon: Icon(
+                                        Icons.arrow_drop_down,
+                                        color: Colors.black45,
+                                      ),
+                                      iconSize: 24,
+                                    ),
+                                    menuItemStyleData: const MenuItemStyleData(
+                                      padding:
+                                      EdgeInsets.symmetric(horizontal: 16),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 20,
+                                ),
+
+                                // select district
+                                Text(
+                                  buildTranslate("selectDistrict")!,
+                                  softWrap: true,
+                                  style: const TextStyle(
+                                      color: Color(0xFF666666),
+                                      fontSize: 13,
+                                      fontFamily: 'poppins-semibold'),
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                districtMarketItems == null ||
+                                    districtMarketItems!.data == null
+                                    ? Container(
+                                  color: Colors.white,
+                                  child: DropdownButtonFormField2<String>(
+                                    isExpanded: true,
+                                    dropdownStyleData: const DropdownStyleData(maxHeight: 200),
+                                    decoration: InputDecoration(
+                                      contentPadding:
+                                      const EdgeInsets.symmetric(
+                                          vertical: 10),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      // Add more decoration..
+                                    ),
+                                    hint: Text(
+                                      buildTranslate("selectDistrict")!,
+                                      style: const TextStyle(fontSize: 13, fontFamily: "poppins-regular"),
+                                    ),
+                                    validator: (value) {
+                                      if (value == null) {
+                                        return 'Please select type of district.';
+                                      }
+                                      return null;
+                                    },
+                                    onChanged: (value) {
+
+                                    },
+                                    onSaved: (value) {
+                                    },
+                                    buttonStyleData: const ButtonStyleData(
+                                      padding: EdgeInsets.only(right: 8),
+                                    ),
+                                    iconStyleData: const IconStyleData(
+                                      icon: Icon(
+                                        Icons.arrow_drop_down,
+                                        color: Colors.black45,
+                                      ),
+                                      iconSize: 24,
+                                    ),
+                                    menuItemStyleData: const MenuItemStyleData(
+                                      padding:
+                                      EdgeInsets.symmetric(horizontal: 16),
+                                    ), items: [],
+                                  ),
+                                )
+                                    :
+                                Container(
+                                  color: Colors.white,
+                                  child: DropdownButtonFormField2<String>(
+                                    isExpanded: true,
+                                    dropdownStyleData: const DropdownStyleData(maxHeight: 200),
+                                    decoration: InputDecoration(
+                                      contentPadding:
+                                      const EdgeInsets.symmetric(
+                                          vertical: 10),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      // Add more decoration..
+                                    ),
+                                    hint: Text(
+                                      buildTranslate("selectDistrict")!,
+                                      style: const TextStyle(fontSize: 13, fontFamily: "poppins-regular"),
+                                    ),
+                                    items: districtMarketItems!.data!.map((String crop) {
+                                      return DropdownMenuItem<String>(
+                                        value: crop,
+                                        child: Text(crop, style: const TextStyle(
+                                            fontSize: 15,
+                                            color: Colors.black,
+                                            fontFamily: 'poppins-regular')),
+                                      );
+                                    }).toList(),
+                                    validator: (value) {
+                                      if (value == null) {
+                                        return 'Please select type of district.';
+                                      }
+                                      return null;
+                                    },
+                                    onChanged: (value) {
+                                      setState(() {
+                                        selectedMarketDistrictItemValue = value;
+                                      });
+                                      print("selectedMarketDistrictItemValue : $selectedMarketDistrictItemValue");
+                                      _fetchMarketCommodityData();
+                                    },
+                                    onSaved: (value) {
+                                      selectedMarketDistrictItemValue = value.toString();
+                                    },
+                                    buttonStyleData: const ButtonStyleData(
+                                      padding: EdgeInsets.only(right: 8),
+                                    ),
+                                    iconStyleData: const IconStyleData(
+                                      icon: Icon(
+                                        Icons.arrow_drop_down,
+                                        color: Colors.black45,
+                                      ),
+                                      iconSize: 24,
+                                    ),
+                                    menuItemStyleData: const MenuItemStyleData(
+                                      padding:
+                                      EdgeInsets.symmetric(horizontal: 16),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 20,
+                                ),
+
+                                // select commodity
+                                Text(
+                                  buildTranslate("selectCommodity")!,
+                                  softWrap: true,
+                                  style: const TextStyle(
+                                      color: Color(0xFF666666),
+                                      fontSize: 13,
+                                      fontFamily: 'poppins-semibold'),
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                commodityMarketItems == null ||
+                                    commodityMarketItems!.data == null
+                                    ? Container(
+                                  color: Colors.white,
+                                  child: DropdownButtonFormField2<String>(
+                                    isExpanded: true,
+                                    dropdownStyleData: const DropdownStyleData(maxHeight: 200),
+                                    decoration: InputDecoration(
+                                      contentPadding:
+                                      const EdgeInsets.symmetric(
+                                          vertical: 10),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      // Add more decoration..
+                                    ),
+                                    hint: Text(
+                                      buildTranslate("selectCommodity")!,
+                                      style: const TextStyle(fontSize: 13, fontFamily: "poppins-regular"),
+                                    ),
+                                    items: [],
+                                    validator: (value) {
+                                      if (value == null) {
+                                        return 'Please select type of district.';
+                                      }
+                                      return null;
+                                    },
+                                    onChanged: (value) {
+
+                                    },
+                                    onSaved: (value) {
+
+                                    },
+                                    buttonStyleData: const ButtonStyleData(
+                                      padding: EdgeInsets.only(right: 8),
+                                    ),
+                                    iconStyleData: const IconStyleData(
+                                      icon: Icon(
+                                        Icons.arrow_drop_down,
+                                        color: Colors.black45,
+                                      ),
+                                      iconSize: 24,
+                                    ),
+                                    menuItemStyleData: const MenuItemStyleData(
+                                      padding:
+                                      EdgeInsets.symmetric(horizontal: 16),
+                                    ),
+                                  ),
+                                )
+                                    :
+                                Container(
+                                  color: Colors.white,
+                                  child: DropdownButtonFormField2<String>(
+                                    isExpanded: true,
+                                    dropdownStyleData: const DropdownStyleData(maxHeight: 200),
+                                    decoration: InputDecoration(
+                                      contentPadding:
+                                      const EdgeInsets.symmetric(
+                                          vertical: 10),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      // Add more decoration..
+                                    ),
+                                    hint: Text(
+                                      buildTranslate("selectCommodity")!,
+                                      style: const TextStyle(fontSize: 13, fontFamily: "poppins-regular"),
+                                    ),
+                                    items: commodityMarketItems!.data!.map((String crop) {
+                                      return DropdownMenuItem<String>(
+                                        value: crop,
+                                        child: Text(crop, style: const TextStyle(
+                                            fontSize: 15,
+                                            color: Colors.black,
+                                            fontFamily: 'poppins-regular')),
+                                      );
+                                    }).toList(),
+                                    validator: (value) {
+                                      if (value == null) {
+                                        return 'Please select type of district.';
+                                      }
+                                      return null;
+                                    },
+                                    onChanged: (value) {
+                                      setState(() {
+                                        selectedMarketCommodityItemValue = value!;
+                                      });
+                                      print("selectedMarketCommodityItemValue : $selectedMarketCommodityItemValue");
+                                    },
+                                    onSaved: (value) {
+                                      selectedMarketCommodityItemValue = value.toString();
+                                    },
+                                    buttonStyleData: const ButtonStyleData(
+                                      padding: EdgeInsets.only(right: 8),
+                                    ),
+                                    iconStyleData: const IconStyleData(
+                                      icon: Icon(
+                                        Icons.arrow_drop_down,
+                                        color: Colors.black45,
+                                      ),
+                                      iconSize: 24,
+                                    ),
+                                    menuItemStyleData: const MenuItemStyleData(
+                                      padding:
+                                      EdgeInsets.symmetric(horizontal: 16),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 20,
+                                ),
+
+                               
+                                const SizedBox(
+                                  height: 30,
+                                ),
+                                Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        getMarketInsight();
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        foregroundColor: Colors.white,
+                                        padding: const EdgeInsets.all(12),
+                                        textStyle:
+                                        const TextStyle(fontSize: 18),
+                                        backgroundColor:
+                                        const Color(0xFF3FC041),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                              12), // <-- Radius
+                                        ),
+                                      ),
+                                      child: Text(
+                                        buildTranslate('SUBMIT')!,
+                                        style: const TextStyle(
+                                            fontSize: 15,
+                                            fontFamily: 'poppins-regular'),
+                                      ),
+                                    )),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      
+                      futureMarketInsight.toString().isEmpty
+                          ? Center(child: Text(buildTranslate("noDataAvailable")!))
+                          :
+                      FutureBuilder<List<MarketInsight>>(
+                        future: futureMarketInsight,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return const Center(child: CircularProgressIndicator());
+                          } else if (snapshot.hasError) {
+                            return Center(child: Text('Error: ${snapshot.error}'));
+                            // return Center(child: Padding(
+                            //   padding: EdgeInsets.only(bottom: 40.0),
+                            //   child: Text(buildTranslate("noDataAvailable")!,
+                            // )));
+                          } else if (snapshot.hasData) {
+                            final List<MarketInsight> marketInsight = snapshot.data!;
+                           
+
+
+    
+
+                            return
+                              ListView.builder(
+                                itemCount: marketInsight.length,
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemBuilder: (context, index) {
+                                  return Padding(
+                                      padding: const EdgeInsets.only(
+                                          top: 10.0, right: 20.0, left: 20.0,),
+                                      child: Container(
+                                        width: MediaQuery.of(context).size.width,
+                                        decoration: const BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                            BorderRadius.all(Radius.circular(18))),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                            
+                                            Padding(
+                                              padding: const EdgeInsets.only(left: 15.0, right: 15.0,),
+                                              child: Expanded(
+                                                child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    
+                                                    Column(
+                                                       mainAxisAlignment: MainAxisAlignment.start,
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        Text(
+                                                          textAlign: TextAlign.start,
+                                                          marketInsight[index].state ?? "Not Available",
+                                                          softWrap: true,
+                                                          style: TextStyle(
+                                                              color: Colors.black,
+                                                              fontSize: 14,
+                                                              fontFamily: 'poppins-semibold'),
+                                                        ),
+                                                        Text(
+                                                          textAlign: TextAlign.start,
+                                                  marketInsight[index].market ?? "",
+                                                  softWrap: true,
+                                                  style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 14,
+                                                      fontFamily: 'poppins-semibold'),
+                                                ),
+                                                      ],
+                                                    ),
+                                                    Text(
+                                                      textAlign: TextAlign.start,
+                                                          marketInsight[index].commodity ?? "Not Available",
+                                                          softWrap: true,
+                                                          style: TextStyle(
+                                                              color: Colors.black,
+                                                              fontSize: 14,
+                                                              fontFamily: 'poppins-semibold'),
+                                                      ),
+                                                    Column(
+                                                      children: [
+                                                        Text(
+                                                          textAlign: TextAlign.start,
+                                                           "Today",
+                                                          softWrap: true,
+                                                          style: TextStyle(
+                                                              color: Colors.green,
+                                                              fontSize: 14,
+                                                              fontFamily: 'poppins-semibold'),
+                                                        ),
+                                                        Text(
+                                                          textAlign: TextAlign.start,
+                                                  marketInsight[index].todaysPrice.toString() ?? "",
+                                                  softWrap: true,
+                                                  style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 14,
+                                                      fontFamily: 'poppins-semibold'),
+                                                ),
+                                                 Text(
+                                                  textAlign: TextAlign.start,
+                                                           marketInsight[index].todaysPriceChange.toString(),
+                                                          softWrap: true,
+                                                          style: TextStyle(
+                                                              color: Colors.green,
+                                                              fontSize: 14,
+                                                              fontFamily: 'poppins-semibold'),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    Column(
+                                                      children: [
+                                                        Text(
+                                                          textAlign: TextAlign.start,
+                                                           "Yesterday",
+                                                          softWrap: true,
+                                                          style: TextStyle(
+                                                              color: Colors.red,
+                                                              fontSize: 14,
+                                                              fontFamily: 'poppins-semibold'),
+                                                        ),
+                                                        Text(
+                                                          textAlign: TextAlign.start,
+                                                  marketInsight[index].yesterdaysPrice.toString() ?? "",
+                                                  softWrap: true,
+                                                  style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 14,
+                                                      fontFamily: 'poppins-semibold'),
+                                                ),
+                                                 Text(
+                                                  textAlign: TextAlign.start,
+                                                           marketInsight[index].yesterdaysPriceChange.toString(),
+                                                          softWrap: true,
+                                                          style: TextStyle(
+                                                              color: Colors.red,
+                                                              fontSize: 14,
+                                                              fontFamily: 'poppins-semibold'),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              height: 15,
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 15.0),
+                                              child: Expanded(
+                                                      child: TextButton(
+                                                         onPressed: () {
+                                        // getValue();
+                                      },
+                                       style: TextButton.styleFrom(
+        foregroundColor: const Color(0xFF959595), // Keep the text color the same
+        overlayColor: Colors.transparent, // Remove the hover effect
+      ),
+                                                        child: Row(
+                                                          mainAxisAlignment: MainAxisAlignment.end,
+                                                          crossAxisAlignment: CrossAxisAlignment.end,
+                                                          children: [
+                                                            Image.asset("assets/images/right_arrow.png", width: 10, height: 10,),
+                                                            const SizedBox(
+                                                              width: 5,
+                                                            ),
+                                                            Text(
+                                                              "View More",
+                                                              softWrap: true,
+                                                              style: TextStyle(
+                                                                  color: Color(0xFF959595),
+                                                                  fontSize: 11,
+                                                                  fontFamily: 'poppins-regular'),
+                                                            ),
+                                                          ],
+                                                                                                        ),
+                                                      ),
+                                              ),
+                                            ),
+                                            
+                                            const SizedBox(
+                                              height: 15,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                },
+                              );
+                          }
+                          else {
+                            return Center(child: Padding(
+                              padding: EdgeInsets.only(bottom: 40.0),
+                              child: Text(buildTranslate("noDataAvailable")!),
+                            ));
+                          }
+                        },
+                      ),
+                      const SizedBox(
+                        height: 60,
+                      ),
+                    ],
+                  )
+                  
                   : Container(),
                     Container(),
             ],
@@ -1688,12 +2358,35 @@ class _BottomOnePageState extends State<BottomOnePage> with TickerProviderStateM
 
       setState(() {
         futureMandiPrice = futureMandiPrice;
+        print(futureMandiPrice);
       });
     }
     else{
       AlertHelper.showToast("Please enter details.", context);
     }
   }
+
+    void getMarketInsight() {
+      print("object");
+    if(selectedMarketStateItemValue.toString().isNotEmpty &&
+        selectedMarketDistrictItemValue.toString().isNotEmpty &&
+        selectedMarketCommodityItemValue.toString().isNotEmpty )
+    {
+      futureMarketInsight = HomeDashboardController.getMarketInsightDetails(selectedMarketStateItemValue.toString(),
+          selectedMarketDistrictItemValue.toString(),
+          selectedMarketCommodityItemValue.toString());
+
+      setState(() {
+        futureMarketInsight = futureMarketInsight;
+        print("DATA");
+        print(futureMarketInsight);
+      });
+    }
+    else{
+      AlertHelper.showToast("Please enter details.", context);
+    }
+  }
+
 
 }
 
