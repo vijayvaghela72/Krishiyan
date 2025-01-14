@@ -19,12 +19,12 @@ const String token = 'token';
 const String prefKeyToken = 'prefToken';
 const String baseUrl = "https://krishiyanback.vercel.app/api/";
 
-const String LOGIN = "${baseUrl}api/sign-in";
-const String SIGNUP = "${baseUrl}api/fpo";
+const String LOGIN = "${baseUrl}app/sign-in";
+const String SIGNUP = "${baseUrl}fpo";
 
-const String FARMER_NAME = "${baseUrl}api/appFarmer/names/";
+const String FARMER_NAME = "${baseUrl}appFarmer/names/";
 
-const String CROP_LIST = "${baseUrl}api/crop";
+const String CROP_LIST = "${baseUrl}crop";
 // const String FARMER_DASHBOARD = "${baseUrl}api/appFarmer";
 const String FARMER_DASHBOARD = "https://krishiyanback.vercel.app/api/appFarmer/data";
 
@@ -34,16 +34,16 @@ const String FRM_UPDATE_PROFILE_DETAILS = "https://krishiyanback.vercel.app/api/
 const String PROFILE_DETAILS = "https://krishiyanback.vercel.app/api/entity/contact/";
 const String UPDATE_PROFILE_DETAILS = "https://krishiyanback.vercel.app/api/entity/contact/";
 
-const String OTHER_DETAILS = "${baseUrl}api/otherDetails/";
-const String UPDATE_OTHER_DETAILS = "${baseUrl}api/otherDetails";
+const String OTHER_DETAILS = "${baseUrl}otherDetails/";
+const String UPDATE_OTHER_DETAILS = "${baseUrl}otherDetails";
 
-const String BANK_DETAILS = "${baseUrl}api/bankDetails/";
-const String UPDATE_BANK_DETAILS = "${baseUrl}api/bankDetails";
+const String BANK_DETAILS = "${baseUrl}bankDetails/";
+const String UPDATE_BANK_DETAILS = "${baseUrl}bankDetails";
 
-const String ADDRESS_DETAILS = "${baseUrl}api/address/";
-const String UPDATE_ADDRESS_DETAILS = "${baseUrl}api/address";
+const String ADDRESS_DETAILS = "${baseUrl}address/";
+const String UPDATE_ADDRESS_DETAILS = "${baseUrl}address";
 
-const String RESET_PASSWORD = "${baseUrl}api/app/reset-password";
+const String RESET_PASSWORD = "${baseUrl}app/reset-password";
 
 const String PincodeToState = "api/farmer/address";
 
@@ -53,18 +53,18 @@ const bool DEVELOPER_MODE = true;
 
 const String NEWS_LIST = "https://krishiyanback.vercel.app/api/all/news";
 
-const String ENQUIRY_LIST = "${baseUrl}api/commodities";
-const String ENQUIRY_LIST_BY_ID = "${baseUrl}api/commodities/";
+const String ENQUIRY_LIST = "${baseUrl}commodities";
+const String ENQUIRY_LIST_BY_ID = "${baseUrl}commodities/";
 
-const String BUY_COMMODITY = "${baseUrl}api/commodity";
-const String SELL_COMMODITY = "${baseUrl}api/commodity";
+const String BUY_COMMODITY = "${baseUrl}commodity";
+const String SELL_COMMODITY = "${baseUrl}commodity";
 
-const String VILLAGES_NAMES = "${baseUrl}api/appFarmer/villages/";
-const String CROPS_NAMES = "${baseUrl}api/crops";
+const String VILLAGES_NAMES = "${baseUrl}appFarmer/villages/";
+const String CROPS_NAMES = "${baseUrl}crops";
 
-const String FARMER_REGISTRATION = "${baseUrl}api/appFarmer/register";
-const String FARMER_GROUP_REGISTRATION = "${baseUrl}api/sign-in";
+const String FARMER_REGISTRATION = "${baseUrl}appFarmer/register";
+const String FARMER_GROUP_REGISTRATION = "${baseUrl}sign-in";
 
-const String CROP_CULTIVATION_REGISTR = "${baseUrl}api/appFarmer/crop/register";
+const String CROP_CULTIVATION_REGISTR = "${baseUrl}appFarmer/crop/register";
 
 const String GET_OTP = "https://krishiyanback.vercel.app/api/whatsapp/send-otp/";

@@ -59,6 +59,7 @@ dependencies:
   url_launcher: ^6.3.1
   permission_handler: ^11.3.1
   location: ^7.0.1
+  fl_chart: ^0.66.0
 
 dev_dependencies:
   flutter_test:

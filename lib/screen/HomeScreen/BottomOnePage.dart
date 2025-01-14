@@ -13,6 +13,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:krishiyan/mvc/model/GetMandiPriceData.dart';
 import 'package:krishiyan/mvc/model/MarketInsight.dart';
+import 'package:krishiyan/screen/HomeScreen/PriceHistoryPage.dart';
 import 'package:krishiyan/utils/AppGlobal.dart';
 import 'package:krishiyan/utils/Constants.dart';
 import '../../helper/AlertHelper.dart';
@@ -2064,7 +2065,7 @@ class _BottomOnePageState extends State<BottomOnePage> with TickerProviderStateM
                                                       color: Colors.black,
                                                       fontSize: 14,
                                                       fontFamily: 'poppins-semibold'),
-                                                ),
+                                                        ),
                                                       ],
                                                     ),
                                                     Text(
@@ -2150,8 +2151,15 @@ class _BottomOnePageState extends State<BottomOnePage> with TickerProviderStateM
                                               child: Expanded(
                                                       child: TextButton(
                                                          onPressed: () {
-                                        // getValue();
-                                      },
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PriceHistoryPage(
+          commodityId: marketInsight[index].primaryKey, // Pass the primary key here
+        ),
+      ),
+    );
+  },
                                        style: TextButton.styleFrom(
         foregroundColor: const Color(0xFF959595), // Keep the text color the same
         overlayColor: Colors.transparent, // Remove the hover effect
@@ -2366,7 +2374,7 @@ class _BottomOnePageState extends State<BottomOnePage> with TickerProviderStateM
     }
   }
 
-    void getMarketInsight() {
+    void  getMarketInsight() {
       print("object");
     if(selectedMarketStateItemValue.toString().isNotEmpty &&
         selectedMarketDistrictItemValue.toString().isNotEmpty &&

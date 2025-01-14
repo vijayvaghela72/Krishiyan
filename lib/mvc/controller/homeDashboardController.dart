@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'package:krishiyan/mvc/model/MarketInsight.dart';
+import 'package:krishiyan/mvc/model/PriceData.dart';
 import '../../utils/Constants.dart';
 import '../model/DailyNewsDetails.dart';
 import 'package:http/http.dart' as http;
@@ -72,4 +73,21 @@ class HomeDashboardController{
       throw Exception('Failed to load data');
     }
   }
+
+  // Function to fetch price history from the API
+static Future<List<PriceData>> fetchPriceHistory(String primaryKey) async {
+  final response = await http.get(Uri.parse('https://krishiyanback.vercel.app/api/market/$primaryKey'));
+
+  if (response.statusCode == 200) {
+    final Map<String, dynamic> data = jsonDecode(response.body);
+    if (data['success']) {
+      final List<dynamic> prices = data['data']['prices'];
+      return prices.map((priceJson) => PriceData.fromJson(priceJson)).toList();
+    } else {
+      throw Exception('Failed to load price data');
+    }
+  } else {
+    throw Exception('Failed to load data from the API');
+  }
+}
 }
