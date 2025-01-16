@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 import 'package:krishiyan/localization/AppLocalizations.dart';
 import 'package:krishiyan/mvc/model/GetFRMProfileData.dart';
 import 'package:krishiyan/screen/AccountSettings/ProfilePage.dart';
@@ -24,7 +25,7 @@ import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/style.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart';
- // Ensure you have Flutter imports for AlertHelper and setState usage
+// Ensure you have Flutter imports for AlertHelper and setState usage
 import 'dart:convert'; // For json.encode
 import 'dart:io';
 import 'package:permission_handler/permission_handler.dart';
@@ -37,7 +38,6 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
-
   File? _image; // To store the selected image file
   final ImagePicker _picker = ImagePicker();
   TextFormField? nameOfOrganizationController;
@@ -48,171 +48,186 @@ class _EditProfilePageState extends State<EditProfilePage> {
   TextFormField? emailIdController;
   TextFormField? nameOfPromoterController;
   TextFormField? yourDesignationController;
-  File? _imageFile; 
+  File? _imageFile;
 
-  TextEditingController editNameOfOrganizationController = TextEditingController();
-  TextEditingController editDateOfOrganizationController = TextEditingController();
-  TextEditingController editRegistrationNumberController = TextEditingController();
+  TextEditingController editNameOfOrganizationController =
+      TextEditingController();
+  TextEditingController editDateOfOrganizationController =
+      TextEditingController();
+  TextEditingController editRegistrationNumberController =
+      TextEditingController();
   TextEditingController editCbboNameController = TextEditingController();
-  TextEditingController editOfficeContactNumberController = TextEditingController();
+  TextEditingController editOfficeContactNumberController =
+      TextEditingController();
   TextEditingController editEmailIdController = TextEditingController();
   TextEditingController editNameOfPromoterController = TextEditingController();
   TextEditingController editYourDesignationController = TextEditingController();
 
-  String id = "", contactNumber = "", dateOfOrganizationValue = "", typeOfOrg = "";
+  String id = "",
+      contactNumber = "",
+      dateOfOrganizationValue = "",
+      typeOfOrg = "";
   // Method to pick an image from the gallery
-  String? _imageUrl;  // AWS image URL
+  String? _imageUrl; // AWS image URL
 
-Future<void> _pickImage(String organizationName) async {
-  // Check if the organization name is empty and handle accordingly
-  if (organizationName.isEmpty) {
-    print("Please provide the organization name before uploading an image.");
-    return;
+  Future<void> _pickImage(String organizationName) async {
+    // Check if the organization name is empty and handle accordingly
+    if (organizationName.isEmpty) {
+      print("Please provide the organization name before uploading an image.");
+      return;
+    }
+
+    // Pick image from the gallery
+    final XFile? pickedFile =
+        await _picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      // Generate a custom file name with the organization name
+      String modifiedFileName = '${organizationName}_profile_image.jpg';
+
+      // Get the app's document directory to store the image
+      final appDir = await getApplicationDocumentsDirectory();
+      final directory = Directory('${appDir.path}/images');
+
+      // Create the directory if it doesn't exist
+      if (!await directory.exists()) {
+        await directory.create(recursive: true);
+      }
+
+      // Define the local file path with the modified file name
+      final File localImageFile = File('${directory.path}/$modifiedFileName');
+
+      // Copy the picked image to the new local file path
+      await File(pickedFile.path).copy(localImageFile.path);
+
+      // Save the new image path in SharedPreferences for caching
+      await _saveImagePath(localImageFile.path);
+
+      // Update the UI with the new image
+      setState(() {
+        _image = localImageFile; // Display the local image on the UI
+      });
+
+      // Upload the image to AWS
+      await _uploadImageToAWS(localImageFile,
+          organizationName); // Pass the org name to upload function
+    }
   }
 
-  // Pick image from the gallery
-  final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+  Future<void> _saveImagePath(String imagePath) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString(
+        '${editNameOfOrganizationController.text}_image_path', imagePath);
+    print("Image path saved: $imagePath");
+  }
 
-  if (pickedFile != null) {
-    // Generate a custom file name with the organization name
+  Future<void> _loadImagePath() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedImagePath =
+        prefs.getString('${editNameOfOrganizationController.text}_image_path');
+    if (savedImagePath != null && savedImagePath.isNotEmpty) {
+      setState(() {
+        _image = File(savedImagePath); // Load the saved image file
+      });
+    }
+  }
+
+  Future<void> _uploadImageToAWS(
+      File imageFile, String organizationName) async {
+    Dio dio = Dio();
+
+    if (organizationName.isEmpty) {
+      print("Organization name is empty. Please enter a valid name.");
+      return;
+    }
+
+    // Modify the file name based on the organization name
     String modifiedFileName = '${organizationName}_profile_image.jpg';
 
-    // Get the app's document directory to store the image
-    final appDir = await getApplicationDocumentsDirectory();
-    final directory = Directory('${appDir.path}/images');
-
-    // Create the directory if it doesn't exist
-    if (!await directory.exists()) {
-      await directory.create(recursive: true);
-    }
-
-    // Define the local file path with the modified file name
-    final File localImageFile = File('${directory.path}/$modifiedFileName');
-
-    // Copy the picked image to the new local file path
-    await File(pickedFile.path).copy(localImageFile.path);
-
-    // Save the new image path in SharedPreferences for caching
-    await _saveImagePath(localImageFile.path);
-
-    // Update the UI with the new image
-    setState(() {
-      _image = localImageFile;  // Display the local image on the UI
-    });
-
-    // Upload the image to AWS
-    await _uploadImageToAWS(localImageFile, organizationName);  // Pass the org name to upload function
-  }
-}
-
-Future<void> _saveImagePath(String imagePath) async {
-  final prefs = await SharedPreferences.getInstance();
-  prefs.setString('${editNameOfOrganizationController.text}_image_path', imagePath);
-  print("Image path saved: $imagePath");
-}
-
-Future<void> _loadImagePath() async {
-  final prefs = await SharedPreferences.getInstance();
-  final savedImagePath = prefs.getString('${editNameOfOrganizationController.text}_image_path');
-  if (savedImagePath != null && savedImagePath.isNotEmpty) {
-    setState(() {
-      _image = File(savedImagePath);  // Load the saved image file
-    });
-  }
-}
-
-Future<void> _uploadImageToAWS(File imageFile, String organizationName) async {
-  Dio dio = Dio();
-
-  if (organizationName.isEmpty) {
-    print("Organization name is empty. Please enter a valid name.");
-    return;
-  }
-
-  // Modify the file name based on the organization name
-  String modifiedFileName = '${organizationName}_profile_image.jpg';
-
-  try {
-    // Prepare the image for upload with the modified file name
-    FormData formData = FormData.fromMap({
-      'image': await MultipartFile.fromFile(imageFile.path, filename: modifiedFileName),  // Use the modified name
-    });
-
-    // Send the request to the API
-    Response response = await dio.post(
-      'https://krishiyanback.vercel.app/api/upload',
-      data: formData,
-    );
-
-    // Debugging: Print the full response to check the returned data
-    print("Response status: ${response.statusCode}");
-    print("Response data: ${response.data}");
-
-    if (response.statusCode == 200) {
-      // The server has responded with a success (HTTP 200)
-      var responseData = response.data;
-      
-      // You can retrieve the Location or the key for the uploaded image
-      String uploadedImageUrl = responseData['Location']; // This is the full URL to access the image
-
-      // Debugging: Print the uploaded image URL
-      print("Image uploaded successfully: $uploadedImageUrl");
-
-      // Save the uploaded image URL to SharedPreferences for caching
-      await _saveImageUrl(uploadedImageUrl);
-
-      // Update the UI with the uploaded image URL
-      setState(() {
-        _imageUrl = uploadedImageUrl; // Store the image URL in state to display it
+    try {
+      // Prepare the image for upload with the modified file name
+      FormData formData = FormData.fromMap({
+        'image': await MultipartFile.fromFile(imageFile.path,
+            filename: modifiedFileName), // Use the modified name
       });
-    } else {
-      // In case of an error response from the server (non-200 status)
-      print("Failed to upload image. Status code: ${response.statusCode}");
-      print("Error details: ${response.data}"); // Print the error response body
-    }
-  } catch (e) {
-    // Handle any errors that occur during the image upload process
-    print("Error uploading image: $e");
 
-    if (e is DioError) {
-      // If the error is a DioError, print more specific details
-      print("Dio error type: ${e.type}");
-      print("Dio error message: ${e.message}");
-      if (e.response != null) {
-        // Print the server's response, even if it's an error
-        print("Dio error response: ${e.response?.data}");
+      // Send the request to the API
+      Response response = await dio.post(
+        'https://krishiyanback.vercel.app/api/upload',
+        data: formData,
+      );
+
+      // Debugging: Print the full response to check the returned data
+      print("Response status: ${response.statusCode}");
+      print("Response data: ${response.data}");
+
+      if (response.statusCode == 200) {
+        // The server has responded with a success (HTTP 200)
+        var responseData = response.data;
+
+        // You can retrieve the Location or the key for the uploaded image
+        String uploadedImageUrl = responseData[
+            'Location']; // This is the full URL to access the image
+
+        // Debugging: Print the uploaded image URL
+        print("Image uploaded successfully: $uploadedImageUrl");
+
+        // Save the uploaded image URL to SharedPreferences for caching
+        await _saveImageUrl(uploadedImageUrl);
+
+        // Update the UI with the uploaded image URL
+        setState(() {
+          _imageUrl =
+              uploadedImageUrl; // Store the image URL in state to display it
+        });
+      } else {
+        // In case of an error response from the server (non-200 status)
+        print("Failed to upload image. Status code: ${response.statusCode}");
+        print(
+            "Error details: ${response.data}"); // Print the error response body
+      }
+    } catch (e) {
+      // Handle any errors that occur during the image upload process
+      print("Error uploading image: $e");
+
+      if (e is DioError) {
+        // If the error is a DioError, print more specific details
+        print("Dio error type: ${e.type}");
+        print("Dio error message: ${e.message}");
+        if (e.response != null) {
+          // Print the server's response, even if it's an error
+          print("Dio error response: ${e.response?.data}");
+        }
       }
     }
+
+    // Optionally load the saved image URL to make sure the image is reflected on the UI
+    _loadImageUrl(organizationName);
   }
 
-  // Optionally load the saved image URL to make sure the image is reflected on the UI
-  _loadImageUrl(organizationName);
-}
+  Future<void> _saveImageUrl(String imageUrl) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('uploaded_image_url',
+        imageUrl); // Save URL to shared preferences (cache)
+    print("Image URL saved: $imageUrl");
+  }
 
-Future<void> _saveImageUrl(String imageUrl) async {
-  final prefs = await SharedPreferences.getInstance();
-  prefs.setString('uploaded_image_url', imageUrl);  // Save URL to shared preferences (cache)
-  print("Image URL saved: $imageUrl");
-  
-}
-
-Future<void> _loadImageUrl(String organizationName) async {
-  if (organizationName.isEmpty) {
+  Future<void> _loadImageUrl(String organizationName) async {
+    if (organizationName.isEmpty) {
       print("Organization name is empty. Please enter a valid name.");
       return;
     }
 
     // Construct the image URL
-    String imageUrl = 'https://krishiyanback.vercel.app/images/${organizationName}_profile_image.jpg';
+    String imageUrl =
+        'https://krishiyanback.vercel.app/images/${organizationName}_profile_image.jpg';
     print("Fetching image from URL: $imageUrl");
 
     // Update the UI with the fetched image URL
     setState(() {
       _imageUrl = imageUrl; // Store the fetched image URL to display it
     });
-}
-
-
+  }
 
 // Future<void> _saveImagePath(String imagePath) async {
 //   final prefs = await SharedPreferences.getInstance();
@@ -232,38 +247,26 @@ Future<void> _loadImageUrl(String organizationName) async {
 //   }
 // }
 
- String convertDateFormat(String date) {
-
+  String convertDateFormat(String date) {
     try {
-
       // Parse the input date string in "dd-MM-yyyy" format
 
       DateTime parsedDate = DateFormat("dd-MM-yyyy").parse(date);
-
-
 
       // Format the parsed date to "yyyy-MM-dd" format
 
       String formattedDate = DateFormat("yyyy-MM-dd").format(parsedDate);
 
-
-
       return formattedDate;
-
     } catch (e) {
-
       // Handle invalid date formats
 
       print("Error parsing date: $e");
 
       return date;
-
     }
-
   }
 
-
-  
   final List<String> fpoItems = [
     buildTranslate('farmerProducerOrganization')!,
     buildTranslate('farmerProducerCompany')!,
@@ -288,8 +291,8 @@ Future<void> _loadImageUrl(String organizationName) async {
   DateTime? selectedDate;
   final _formKey = GlobalKey<FormState>();
   late OtpFieldController otpController = OtpFieldController();
-       String enteredOtp = '';
-   String otpData = "";
+  String enteredOtp = '';
+  String otpData = "";
 
   @override
   void initState() {
@@ -299,11 +302,18 @@ Future<void> _loadImageUrl(String organizationName) async {
     _loadImagePath();
   }
 
+  update() {
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     print("Selected FPO Item");
     print(selectedFPOItemValue);
-    print(fpoItems);
+    print('fpoItems : ');
+    fpoItems.forEach((e) {
+      print("i : $e");
+    });
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
     ));
@@ -349,99 +359,94 @@ Future<void> _loadImageUrl(String organizationName) async {
                   if (snapshot.data!.toString().isEmpty) {
                     // If the future returns data, but it's empty
                     return const Center(child: Text("No data found"));
-                    
                   } else {
-                    
-print('snapshot : ${snapshot.data!.toJson()}');
+                    print('snapshot : ${snapshot.data!.toJson()}');
 
-print(
+                    print(
+                        'snapshot.data!.registrationNumber : ${snapshot.data!.registrationNumber}');
 
-'snapshot.data!.registrationNumber : ${snapshot.data!.registrationNumber}');
+                    print('_imageUrl : ${_imageUrl}');
 
-print('_imageUrl : ${_imageUrl}');
+                    print('_image : ${_image}');
 
-print('_image : ${_image}');
-
-print(
-
-'condition : ${_imageUrl != null && _imageUrl!.isNotEmpty}');
+                    print(
+                        'condition : ${_imageUrl != null && _imageUrl!.isNotEmpty}');
                     return Form(
                       key: _formKey,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                           const SizedBox(
-              height: 30,
-            ),
-            Center(
-              child: SizedBox(
-                height: 80,
-                width: 80,
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  fit: StackFit.expand,
-                  children: [
-  
-           CircleAvatar(
-          key: ValueKey<File>(_image ?? File('')), // Use _imageUrl to refresh widget
-          backgroundColor: Colors.white,
-          backgroundImage:  _imageUrl != null && _imageUrl!.isNotEmpty
-              ?  NetworkImage(
+                          const SizedBox(
+                            height: 30,
+                          ),
+                          Center(
+                            child: SizedBox(
+                              height: 80,
+                              width: 80,
+                              child: Stack(
+                                clipBehavior: Clip.none,
+                                fit: StackFit.expand,
+                                children: [
+                                  CircleAvatar(
+                                    key: ValueKey<File>(_image ??
+                                        File(
+                                            '')), // Use _imageUrl to refresh widget
+                                    backgroundColor: Colors.white,
+                                    backgroundImage: _imageUrl != null &&
+                                            _imageUrl!.isNotEmpty
+                                        ? NetworkImage(
+                                            "${_imageUrl!}?${DateTime.now().millisecondsSinceEpoch}") // Show AWS image URL
 
-"${_imageUrl!}?${DateTime.now().millisecondsSinceEpoch}") // Show AWS image URL
+                                        : _image != null
+                                            ? FileImage(
+                                                _image!) // Show local selected image
 
-: _image != null
+                                            : AssetImage(
+                                                    "assets/images/user_profile.png")
+                                                as ImageProvider, // Default image
+                                  ),
+                                  // Positioned camera icon button to upload new image
+                                  Positioned(
+                                    bottom: 35,
+                                    right: -45,
+                                    child: RawMaterialButton(
+                                      onPressed: () {
+                                        String organizationName = snapshot
+                                                .data!.nameOfFpo
+                                                ?.toString() ??
+                                            "";
 
-? FileImage(
-
-_image!) // Show local selected image
-
-: AssetImage(
-
-"assets/images/user_profile.png")
-
-as ImageProvider, // Default image
-
-),
-            // Positioned camera icon button to upload new image
-            Positioned(
-              
-              bottom: 35,
-              right: -45,
-              child: RawMaterialButton( 
-                
-                onPressed: () {
-String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
-
-    if (organizationName.isNotEmpty) {
-      _pickImage(organizationName);  // Pass the organization name to the function
-    } else {
-      print("Please provide the organization name before uploading an image.");
-    }
-  },  // Open image picker when tapped
-                elevation: 10.0,
-                padding: const EdgeInsets.all(15.0),
-                shape: const CircleBorder(),
-                fillColor: Colors.white,
-                child: const Icon(
-                  Icons.camera_alt,
-                  size: 20.0,
-                  color: Colors.grey,
-                ),
-              ),
-            ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
+                                        if (organizationName.isNotEmpty) {
+                                          _pickImage(
+                                              organizationName); // Pass the organization name to the function
+                                        } else {
+                                          print(
+                                              "Please provide the organization name before uploading an image.");
+                                        }
+                                      }, // Open image picker when tapped
+                                      elevation: 10.0,
+                                      padding: const EdgeInsets.all(15.0),
+                                      shape: const CircleBorder(),
+                                      fillColor: Colors.white,
+                                      child: const Icon(
+                                        Icons.camera_alt,
+                                        size: 20.0,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
                           // fpo name
                           Padding(
                             padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: Text(
                               buildTranslate("nameOfOrganization")!,
                               style: const TextStyle(
@@ -455,10 +460,11 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                           ),
                           Padding(
                             padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: TextFormField(
                               onSaved: (value) => nameOfOrganization = value,
-                              initialValue:snapshot.data!.nameOfFpo?.toString() ?? "",
+                              initialValue:
+                                  snapshot.data!.nameOfFpo?.toString() ?? "",
                               decoration: InputDecoration(
                                   alignLabelWithHint: true,
                                   fillColor: Colors.white,
@@ -475,7 +481,7 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                                   hintText: buildTranslate(
                                       'enterNameOfTheOrganization')!,
                                   hintStyle:
-                                  const TextStyle(color: Colors.grey),
+                                      const TextStyle(color: Colors.grey),
                                   focusedBorder: const OutlineInputBorder(
                                     // borderRadius: BorderRadius.all(Radius.circular(10.0)),
                                     borderSide: BorderSide(
@@ -492,14 +498,13 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                           ),
 
                           // Image Upload Section
-          
 
-          const SizedBox(height: 20),
+                          const SizedBox(height: 20),
 
                           // type of fpo
                           Padding(
                             padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: Text(
                               buildTranslate("typeOfOrganization")!,
                               style: const TextStyle(
@@ -511,17 +516,67 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                           const SizedBox(
                             height: 10,
                           ),
+                          // GestureDetector(
+                          //   onTapDown: (TapDownDetails details) {
+                          //     servingPopupMenu(
+                          //       context,
+                          //       details.globalPosition,
+                          //       update,
+                          //     );
+                          //   },
+                          //   child: Container(
+                          //     margin: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+                          //     height: 30,
+                          //     decoration: BoxDecoration(
+                          //       color: Colors.white,
+                          //       borderRadius: BorderRadius.circular(20),
+                          //     ),
+                          //     child: Padding(
+                          //       padding:
+                          //           const EdgeInsets.symmetric(horizontal: 8),
+                          //       child: Row(
+                          //         children: [
+                          //           Expanded(
+                          //             child: Text(
+                          //               selectedFPOItemValue == null ? "" : selectedFPOItemValue,
+                          //               style: const TextStyle(
+                          //                 color: Colors.black,
+                          //                 fontSize: 9,
+                          //                 fontWeight: FontWeight.bold,
+                          //               ),
+                          //               overflow: TextOverflow.ellipsis,
+                          //             ),
+                          //           ),
+                          //           const Icon(
+                          //             Icons.keyboard_arrow_down,
+                          //             color: Colors.black,
+                          //             size: 25,
+                          //           ),
+                          //         ],
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
+
                           Padding(
                             padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: Container(
                               color: Colors.white,
                               child: DropdownButtonFormField2<String>(
-                                value: selectedFPOItemValue,
+                                value: () {
+                                  if (!fpoItems
+                                      .contains(selectedFPOItemValue)) {
+                                    selectedFPOItemValue =
+                                        null; // Reset to null if not valid
+                                    return null;
+                                  }
+                                  return selectedFPOItemValue;
+                                }(),
                                 isExpanded: true,
                                 decoration: InputDecoration(
                                   contentPadding:
-                                  const EdgeInsets.symmetric(vertical: 10),
+                                      const EdgeInsets.symmetric(vertical: 10),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(4),
                                     borderSide: const BorderSide(
@@ -529,7 +584,6 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                                       width: 1.0,
                                     ),
                                   ),
-                                  // Add more decoration..
                                 ),
                                 hint: const Text(
                                   '--',
@@ -537,14 +591,14 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                                 ),
                                 items: fpoItems
                                     .map((item) => DropdownMenuItem<String>(
-                                  value: item,
-                                  child: Text(
-                                    item,
-                                    style: const TextStyle(
-                                        fontSize: 14,
-                                        color: Colors.grey),
-                                  ),
-                                ))
+                                          value: item,
+                                          child: Text(
+                                            item,
+                                            style: const TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.grey),
+                                          ),
+                                        ))
                                     .toList(),
                                 validator: (value) {
                                   if (value == null) {
@@ -584,7 +638,7 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                           // date
                           Padding(
                             padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: Text(
                               buildTranslate("dateOfOrganization")!,
                               style: const TextStyle(
@@ -598,7 +652,7 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                           ),
                           Padding(
                             padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: TextFormField(
                               controller: dateOfOrganizationController,
                               keyboardType: TextInputType.text,
@@ -618,13 +672,15 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                                 suffixIcon: IconButton(
                                   icon: const Icon(Icons.calendar_today),
                                   onPressed: () {
-                                    print("OnPressed : $dateOfOrganizationValue");
-                                    _selectDate(context, dateOfOrganizationValue.toString());
+                                    print(
+                                        "OnPressed : $dateOfOrganizationValue");
+                                    _selectDate(context,
+                                        dateOfOrganizationValue.toString());
                                   }, // Open date picker on icon press
                                 ),
                                 border: const OutlineInputBorder(
-                                  // borderRadius: BorderRadius.all(Radius.circular(10.0),),
-                                ),
+                                    // borderRadius: BorderRadius.all(Radius.circular(10.0),),
+                                    ),
                                 enabledBorder: const OutlineInputBorder(
                                   borderSide: BorderSide(
                                     color: Colors.grey,
@@ -648,7 +704,7 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                           // registration number
                           Padding(
                             padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: Text(
                               buildTranslate("registrationNumber")!,
                               style: const TextStyle(
@@ -662,12 +718,13 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                           ),
                           Padding(
                             padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: TextFormField(
                               keyboardType: TextInputType.text,
                               onSaved: (value) => registrationNumber = value,
-                              initialValue: snapshot.data!.registrationNumber?.toString() ?? "",
-
+                              initialValue: snapshot.data!.registrationNumber
+                                      ?.toString() ??
+                                  "",
                               decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.symmetric(
                                     vertical: 10.0, horizontal: 10.0),
@@ -676,8 +733,8 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                                 fillColor: Colors.white,
                                 filled: true,
                                 border: const OutlineInputBorder(
-                                  // borderRadius: BorderRadius.all(Radius.circular(10.0),),
-                                ),
+                                    // borderRadius: BorderRadius.all(Radius.circular(10.0),),
+                                    ),
                                 enabledBorder: const OutlineInputBorder(
                                   borderSide: BorderSide(
                                     color: Colors.grey,
@@ -700,7 +757,7 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                           // CBBOName
                           Padding(
                             padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: Text(
                               buildTranslate("CBBOName")!,
                               style: const TextStyle(
@@ -714,12 +771,12 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                           ),
                           Padding(
                             padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: TextFormField(
                               keyboardType: TextInputType.text,
                               onSaved: (value) => cbboName = value,
-                              initialValue: snapshot.data!.cBBOName?.toString() ?? "",
-
+                              initialValue:
+                                  snapshot.data!.cBBOName?.toString() ?? "",
                               decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.symmetric(
                                     vertical: 10.0, horizontal: 10.0),
@@ -728,8 +785,8 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                                 fillColor: Colors.white,
                                 filled: true,
                                 border: const OutlineInputBorder(
-                                  // borderRadius: BorderRadius.all(Radius.circular(10.0),),
-                                ),
+                                    // borderRadius: BorderRadius.all(Radius.circular(10.0),),
+                                    ),
                                 enabledBorder: const OutlineInputBorder(
                                   borderSide: BorderSide(
                                     color: Colors.grey,
@@ -752,7 +809,7 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                           // contact number
                           Padding(
                             padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: Text(
                               buildTranslate("officeContactNumberData")!,
                               style: const TextStyle(
@@ -766,23 +823,24 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                           ),
                           Padding(
                             padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: TextFormField(
                               keyboardType: TextInputType.text,
                               onSaved: (value) => officeContactNumber = value,
-                              initialValue: snapshot.data!.contactNumber?.toString() ?? "",
-
+                              initialValue:
+                                  snapshot.data!.contactNumber?.toString() ??
+                                      "",
                               decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.symmetric(
                                     vertical: 10.0, horizontal: 10.0),
                                 hintText:
-                                buildTranslate('officeContactNumberData')!,
+                                    buildTranslate('officeContactNumberData')!,
                                 hintStyle: const TextStyle(color: Colors.grey),
                                 fillColor: Colors.white,
                                 filled: true,
                                 border: const OutlineInputBorder(
-                                  // borderRadius: BorderRadius.all(Radius.circular(10.0),),
-                                ),
+                                    // borderRadius: BorderRadius.all(Radius.circular(10.0),),
+                                    ),
                                 enabledBorder: const OutlineInputBorder(
                                   borderSide: BorderSide(
                                     color: Colors.grey,
@@ -805,7 +863,7 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                           // email id
                           Padding(
                             padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: Text(
                               buildTranslate("emailId")!,
                               style: const TextStyle(
@@ -819,11 +877,12 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                           ),
                           Padding(
                             padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: TextFormField(
                               onSaved: (value) => emailId = value,
-                             initialValue: snapshot.data!.organizationalEmail?.toString() ?? "",
-
+                              initialValue: snapshot.data!.organizationalEmail
+                                      ?.toString() ??
+                                  "",
                               decoration: InputDecoration(
                                 enabled: true,
                                 alignLabelWithHint: true,
@@ -845,7 +904,7 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                                 hintStyle: const TextStyle(color: Colors.grey),
                                 focusedBorder: const OutlineInputBorder(
                                   borderRadius:
-                                  BorderRadius.all(Radius.circular(10.0)),
+                                      BorderRadius.all(Radius.circular(10.0)),
                                   borderSide: BorderSide(
                                       color: Colors.green, width: 0.5),
                                 ),
@@ -867,7 +926,7 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                                 //       setState(() {
                                 //         otpVisible = true;
                                 //       });
-                                      
+
                                 //     },
                                 //   ),
                                 // ),
@@ -880,8 +939,8 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
 
                           otpVisible
                               ? const SizedBox(
-                            height: 15,
-                          )
+                                  height: 15,
+                                )
                               : Container(),
 
                           // verify otp
@@ -901,13 +960,14 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                           ),
                           otpVisible
                               ? const SizedBox(
-                            height: 15,
-                          )
+                                  height: 15,
+                                )
                               : Container(),
                           Visibility(
                             visible: otpVisible,
                             child: Padding(
-                              padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+                              padding: const EdgeInsets.only(
+                                  left: 15.0, right: 15.0),
                               child: OTPTextField(
                                   controller: otpController,
                                   length: 4,
@@ -915,7 +975,8 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                                   // showFieldAsBox: true,
                                   // filled: true,
                                   width: MediaQuery.of(context).size.width,
-                                  textFieldAlignment: MainAxisAlignment.spaceAround,
+                                  textFieldAlignment:
+                                      MainAxisAlignment.spaceAround,
                                   fieldWidth: 55,
                                   fieldStyle: FieldStyle.box,
                                   outlineBorderRadius: 10,
@@ -935,7 +996,7 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                           // Name of Promoter or CEO
                           Padding(
                             padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: Text(
                               buildTranslate("nameOfPromoterOrCEO")!,
                               style: const TextStyle(
@@ -949,21 +1010,18 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                           ),
                           Padding(
                             padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: TextFormField(
                               keyboardType: TextInputType.text,
                               onSaved: (value) => nameOfPromoter = value,
                               initialValue: nameOfPromoter == null
-
                                   ? snapshot.data!.promoterName.toString()
-
                                   : null,
-
                               decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.symmetric(
                                     vertical: 10.0, horizontal: 10.0),
                                 hintText:
-                                buildTranslate("nameOfPromoterOrCEO")!,
+                                    buildTranslate("nameOfPromoterOrCEO")!,
                                 hintStyle: const TextStyle(color: Colors.grey),
                                 fillColor: Colors.white,
                                 filled: true,
@@ -990,7 +1048,7 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                           // Your Designation
                           Padding(
                             padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: Text(
                               buildTranslate("yourDesignation")!,
                               style: const TextStyle(
@@ -1004,16 +1062,13 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                           ),
                           Padding(
                             padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: TextFormField(
                               keyboardType: TextInputType.text,
                               onSaved: (value) => yourDesignation = value,
                               initialValue: yourDesignationController == null
-
                                   ? snapshot.data!.yourDesignation.toString()
-
                                   : null,
-
                               decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.symmetric(
                                     vertical: 10.0, horizontal: 10.0),
@@ -1056,7 +1111,7 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                                   backgroundColor: const Color(0xFF3FC041),
                                   shape: RoundedRectangleBorder(
                                     borderRadius:
-                                    BorderRadius.circular(12), // <-- Radius
+                                        BorderRadius.circular(12), // <-- Radius
                                   ),
                                 ),
                                 child: Text(
@@ -1116,12 +1171,12 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                               contentPadding: const EdgeInsets.symmetric(
                                   vertical: 10.0, horizontal: 10.0),
                               hintText:
-                              buildTranslate('enterNameOfTheOrganization')!,
+                                  buildTranslate('enterNameOfTheOrganization')!,
                               hintStyle: const TextStyle(color: Colors.grey),
                               focusedBorder: const OutlineInputBorder(
                                 // borderRadius: BorderRadius.all(Radius.circular(10.0)),
                                 borderSide:
-                                BorderSide(color: Colors.green, width: 0.5),
+                                    BorderSide(color: Colors.green, width: 0.5),
                               )),
                           validator: (value) => value!.isEmpty
                               ? 'Please, fill this field.'
@@ -1155,7 +1210,7 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                             isExpanded: true,
                             decoration: InputDecoration(
                               contentPadding:
-                              const EdgeInsets.symmetric(vertical: 10),
+                                  const EdgeInsets.symmetric(vertical: 10),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(4),
                                 borderSide: const BorderSide(
@@ -1171,13 +1226,13 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                             ),
                             items: fpoItems
                                 .map((item) => DropdownMenuItem<String>(
-                              value: item,
-                              child: Text(
-                                item,
-                                style: const TextStyle(
-                                    fontSize: 14, color: Colors.grey),
-                              ),
-                            ))
+                                      value: item,
+                                      child: Text(
+                                        item,
+                                        style: const TextStyle(
+                                            fontSize: 14, color: Colors.grey),
+                                      ),
+                                    ))
                                 .toList(),
                             validator: (value) {
                               if (value == null) {
@@ -1186,9 +1241,9 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                               return null;
                             },
                             onChanged: (value) {
-                             setState(() {
-                               selectedFPOItemValue = value.toString();
-                             });
+                              setState(() {
+                                selectedFPOItemValue = value.toString();
+                              });
                             },
                             onSaved: (value) {
                               selectedFPOItemValue = value.toString();
@@ -1248,8 +1303,8 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                             fillColor: Colors.white,
                             filled: true,
                             border: const OutlineInputBorder(
-                              // borderRadius: BorderRadius.all(Radius.circular(10.0),),
-                            ),
+                                // borderRadius: BorderRadius.all(Radius.circular(10.0),),
+                                ),
                             enabledBorder: const OutlineInputBorder(
                               borderSide: BorderSide(
                                 color: Colors.grey,
@@ -1259,7 +1314,8 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                             ),
                             focusedBorder: const OutlineInputBorder(
                               // borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                              borderSide: BorderSide(color: Colors.green, width: 0.5),
+                              borderSide:
+                                  BorderSide(color: Colors.green, width: 0.5),
                             ),
                           ),
                           readOnly: true,
@@ -1297,8 +1353,8 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                             fillColor: Colors.white,
                             filled: true,
                             border: const OutlineInputBorder(
-                              // borderRadius: BorderRadius.all(Radius.circular(10.0),),
-                            ),
+                                // borderRadius: BorderRadius.all(Radius.circular(10.0),),
+                                ),
                             enabledBorder: const OutlineInputBorder(
                               borderSide: BorderSide(
                                 color: Colors.grey,
@@ -1309,7 +1365,7 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                             focusedBorder: const OutlineInputBorder(
                               // borderRadius: BorderRadius.all(Radius.circular(10.0)),
                               borderSide:
-                              BorderSide(color: Colors.green, width: 0.5),
+                                  BorderSide(color: Colors.green, width: 0.5),
                             ),
                           ),
                         ),
@@ -1346,8 +1402,8 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                             fillColor: Colors.white,
                             filled: true,
                             border: const OutlineInputBorder(
-                              // borderRadius: BorderRadius.all(Radius.circular(10.0),),
-                            ),
+                                // borderRadius: BorderRadius.all(Radius.circular(10.0),),
+                                ),
                             enabledBorder: const OutlineInputBorder(
                               borderSide: BorderSide(
                                 color: Colors.grey,
@@ -1358,7 +1414,7 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                             focusedBorder: const OutlineInputBorder(
                               // borderRadius: BorderRadius.all(Radius.circular(10.0)),
                               borderSide:
-                              BorderSide(color: Colors.green, width: 0.5),
+                                  BorderSide(color: Colors.green, width: 0.5),
                             ),
                           ),
                         ),
@@ -1391,13 +1447,13 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                             contentPadding: const EdgeInsets.symmetric(
                                 vertical: 10.0, horizontal: 10.0),
                             hintText:
-                            buildTranslate('officeContactNumberData')!,
+                                buildTranslate('officeContactNumberData')!,
                             hintStyle: const TextStyle(color: Colors.grey),
                             fillColor: Colors.white,
                             filled: true,
                             border: const OutlineInputBorder(
-                              // borderRadius: BorderRadius.all(Radius.circular(10.0),),
-                            ),
+                                // borderRadius: BorderRadius.all(Radius.circular(10.0),),
+                                ),
                             enabledBorder: const OutlineInputBorder(
                               borderSide: BorderSide(
                                 color: Colors.grey,
@@ -1408,7 +1464,7 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                             focusedBorder: const OutlineInputBorder(
                               // borderRadius: BorderRadius.all(Radius.circular(10.0)),
                               borderSide:
-                              BorderSide(color: Colors.green, width: 0.5),
+                                  BorderSide(color: Colors.green, width: 0.5),
                             ),
                           ),
                         ),
@@ -1457,9 +1513,9 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                             hintStyle: const TextStyle(color: Colors.grey),
                             focusedBorder: const OutlineInputBorder(
                               borderRadius:
-                              BorderRadius.all(Radius.circular(10.0)),
+                                  BorderRadius.all(Radius.circular(10.0)),
                               borderSide:
-                              BorderSide(color: Colors.green, width: 0.5),
+                                  BorderSide(color: Colors.green, width: 0.5),
                             ),
                             suffixIcon: Container(
                               margin: const EdgeInsets.all(5),
@@ -1490,8 +1546,8 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
 
                       otpVisible
                           ? const SizedBox(
-                        height: 15,
-                      )
+                              height: 15,
+                            )
                           : Container(),
 
                       // verify otp
@@ -1499,7 +1555,7 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                         visible: otpVisible,
                         child: Padding(
                           padding:
-                          const EdgeInsets.only(left: 25.0, right: 25.0),
+                              const EdgeInsets.only(left: 25.0, right: 25.0),
                           child: Text(
                             buildTranslate("verifyOtp")!,
                             style: const TextStyle(
@@ -1511,13 +1567,14 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                       ),
                       otpVisible
                           ? const SizedBox(
-                        height: 15,
-                      )
+                              height: 15,
+                            )
                           : Container(),
                       Visibility(
                         visible: otpVisible,
                         child: Padding(
-                          padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+                          padding:
+                              const EdgeInsets.only(left: 15.0, right: 15.0),
                           child: OTPTextField(
                               controller: otpController,
                               length: 4,
@@ -1579,7 +1636,7 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                             focusedBorder: const OutlineInputBorder(
                               // borderRadius: BorderRadius.all(Radius.circular(10.0)),
                               borderSide:
-                              BorderSide(color: Colors.green, width: 0.5),
+                                  BorderSide(color: Colors.green, width: 0.5),
                             ),
                           ),
                         ),
@@ -1625,7 +1682,7 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                             ),
                             focusedBorder: const OutlineInputBorder(
                               borderSide:
-                              BorderSide(color: Colors.green, width: 0.5),
+                                  BorderSide(color: Colors.green, width: 0.5),
                             ),
                           ),
                         ),
@@ -1639,32 +1696,51 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                         alignment: FractionalOffset.bottomCenter,
                         child: Container(
                           width: MediaQuery.of(context).size.width,
-                          padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+                          padding:
+                              const EdgeInsets.only(left: 25.0, right: 25.0),
                           child: ElevatedButton(
                             onPressed: () {
                               if (editNameOfOrganizationController.text.toString().isNotEmpty &&
                                   selectedFPOItemValue.toString().isNotEmpty &&
-                                  editDateOfOrganizationController.text.toString().isNotEmpty &&
-                                  editRegistrationNumberController.text.toString().isNotEmpty &&
-                                  editOfficeContactNumberController.text.toString().isNotEmpty &&
-                                  editEmailIdController.text.toString().isNotEmpty &&
-                                  editNameOfPromoterController.text.toString().isNotEmpty &&
-                                  editCbboNameController.text.toString().isNotEmpty &&
-                                  editYourDesignationController.text.toString().isNotEmpty) {
-                                     _saveImagePath(_image?.path ?? ''); 
+                                  editDateOfOrganizationController.text
+                                      .toString()
+                                      .isNotEmpty &&
+                                  editRegistrationNumberController.text
+                                      .toString()
+                                      .isNotEmpty &&
+                                  editOfficeContactNumberController.text
+                                      .toString()
+                                      .isNotEmpty &&
+                                  editEmailIdController.text
+                                      .toString()
+                                      .isNotEmpty &&
+                                  editNameOfPromoterController.text
+                                      .toString()
+                                      .isNotEmpty &&
+                                  editCbboNameController.text
+                                      .toString()
+                                      .isNotEmpty &&
+                                  editYourDesignationController.text
+                                      .toString()
+                                      .isNotEmpty) {
+                                _saveImagePath(_image?.path ?? '');
                                 _updateProfileDetailsApiCall(
-                                  editNameOfOrganizationController.text.toString(),
-                                  selectedFPOItemValue.toString(),
-                                  editDateOfOrganizationController.text.toString(),
-                                  editRegistrationNumberController.text.toString(),
-                                  editOfficeContactNumberController.text.toString(),
-                                  editEmailIdController.text.toString(),
-                                  editNameOfPromoterController.text.toString(),
+                                    editNameOfOrganizationController.text
+                                        .toString(),
+                                    selectedFPOItemValue.toString(),
+                                    editDateOfOrganizationController.text
+                                        .toString(),
+                                    editRegistrationNumberController.text
+                                        .toString(),
+                                    editOfficeContactNumberController.text
+                                        .toString(),
+                                    editEmailIdController.text.toString(),
+                                    editNameOfPromoterController.text
+                                        .toString(),
                                     editCbboNameController.text.toString(),
-                                    editYourDesignationController.text.toString()
-                                );
-                              }
-                              else {
+                                    editYourDesignationController.text
+                                        .toString());
+                              } else {
                                 AlertHelper.showToast(
                                     "Please enter details.", context);
                               }
@@ -1676,7 +1752,7 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                               backgroundColor: const Color(0xFF3FC041),
                               shape: RoundedRectangleBorder(
                                 borderRadius:
-                                BorderRadius.circular(12), // <-- Radius
+                                    BorderRadius.circular(12), // <-- Radius
                               ),
                             ),
                             child: Text(
@@ -1703,30 +1779,36 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
 
   Future<void> _selectDate(BuildContext context, String date) async {
     // Show the date picker dialog
-    if(date.isNotEmpty) {
+    if (date.isNotEmpty) {
       selectedDate = DateTime.parse(date).toLocal();
       print("selectedDate : $selectedDate");
     }
     final DateTime? pickedDate = await showDatePicker(
       context: context,
-      initialDate: selectedDate !=null ? selectedDate : DateTime.now(), // Default date is the current date
+      initialDate: selectedDate != null
+          ? selectedDate
+          : DateTime.now(), // Default date is the current date
       firstDate: DateTime(2000), // Earliest selectable date
-      lastDate: DateTime.now(),  // Latest selectable date
+      lastDate: DateTime.now(), // Latest selectable date
       helpText: 'Select a date', // Optional help text
     );
     if (pickedDate != null) {
       print("pickedDate : $pickedDate");
       setState(() {
         // Format the selected date and display it in the TextFormField
-        dateOfOrganizationController.text = DateFormat('dd-MM-yyyy').format(pickedDate);
+        dateOfOrganizationController.text =
+            DateFormat('dd-MM-yyyy').format(pickedDate);
         dateOfOrganizationValue = "${pickedDate}Z";
       });
     }
   }
 
   void _getValue() {
+    print('Testing A');
     if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save(); // This triggers onSaved for each TextFormField
+      _formKey.currentState!
+          .save(); // This triggers onSaved for each TextFormField
+      print('Testing B');
 
       if (nameOfOrganization != null &&
           selectedFPOItemValue != null &&
@@ -1734,7 +1816,10 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
           registrationNumber != null &&
           officeContactNumber != null &&
           emailId != null &&
-          nameOfPromoter != null && cbboName !=null && yourDesignation !=null) {
+          nameOfPromoter != null &&
+          cbboName != null &&
+          yourDesignation != null) {
+        print('Testing C');
 
         _updateProfileDetailsApiCall(
             nameOfOrganization.toString(),
@@ -1743,9 +1828,10 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
             registrationNumber.toString(),
             officeContactNumber.toString(),
             emailId.toString(),
-            nameOfPromoter.toString(), cbboName.toString(), yourDesignation.toString());
-      }
-      else {
+            nameOfPromoter.toString(),
+            cbboName.toString(),
+            yourDesignation.toString());
+      } else {
         AlertHelper.showToast("Please enter data.", context);
       }
     }
@@ -1758,7 +1844,10 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
       String registrationNumber,
       String officeNumber,
       String emailID,
-      String promoterName, String cbboName, String designation) async {
+      String promoterName,
+      String cbboName,
+      String designation) async {
+    print('Testing D');
 
     if (nameOfOrganization.isNotEmpty &&
         typeOfOrganization.isNotEmpty &&
@@ -1766,38 +1855,57 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
         registrationNumber.isNotEmpty &&
         officeNumber.isNotEmpty &&
         emailID.isNotEmpty &&
-        promoterName.isNotEmpty && cbboName.isNotEmpty && designation.isNotEmpty) {
-
+        promoterName.isNotEmpty &&
+        cbboName.isNotEmpty &&
+        designation.isNotEmpty) {
+      print('Testing E');
       var headers = {'Content-Type': 'application/json'};
 
       var data = json.encode({
-      "nameOfFpo": nameOfOrganization,
-      "typeOfFpo": typeOfOrganization,
-      "dateOfFpo": convertDateFormat(dateOfOrganization!),
-      "organizationalEmail": emailID,
-      "contactNumber": officeNumber,
-      "yourDesignation": designation,
-      "promoterName": promoterName,
-      "RegistrationNumber": registrationNumber,
-      "CBBOName": cbboName
+        "nameOfFpo": nameOfOrganization,
+        "typeOfFpo": typeOfOrganization,
+        "dateOfFpo": convertDateFormat(dateOfOrganization!),
+        "organizationalEmail": emailID,
+        "contactNumber": officeNumber,
+        "yourDesignation": designation,
+        "promoterName": promoterName,
+        "RegistrationNumber": registrationNumber,
+        "CBBOName": cbboName
       });
+      print('data  : $data');
 
-      var dio = Dio();
-      var response = await dio.request(
-        FRM_UPDATE_PROFILE_DETAILS+contactNumber,
-        options: Options(
-          method: 'PUT',
-          headers: headers,
-        ),
-        data: data,
-      );
+      // var dio = Dio();
+      print('link : ${FRM_UPDATE_PROFILE_DETAILS + contactNumber}');
+      var response = await http
+          .put(
+            Uri.parse(FRM_UPDATE_PROFILE_DETAILS + contactNumber),
+            headers: headers,
+            body: data,
+            encoding: Encoding.getByName("utf-8"),
+          )
+          .timeout(const Duration(seconds: 8));
+
+      // var response = await dio.request(
+      //   FRM_UPDATE_PROFILE_DETAILS + contactNumber,
+      //   options: Options(
+      //     method: 'PUT',
+      //     headers: headers,
+      //   ),getAddressDetailsgetAddressDetailsgetAddressDetails
+      //   data: data,
+      // );
+      print('response1 : ${response.statusCode}');
+      print('response2 : ${response.body}');
 
       if (response.statusCode == 200) {
-        print("Profile details updated : " + json.encode(response.data));
+        var data = jsonDecode(response.body);
+        print("Profile details updated : " + data);
 
         showAlertDialog(context);
       } else {
-        print(response.statusMessage);
+        print(response);
+        var data = jsonDecode(response.body);
+        AlertHelper.showToast(
+            "Fail to update profile : Error ${data['message']}", context);
       }
     } else {
       AlertHelper.showToast("Please enter details.", context);
@@ -1817,7 +1925,9 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
               Navigator.pop(context);
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => HomePage(selectedIndex: 3, typeOfOrganization: "Farmer groups")),
+                MaterialPageRoute(
+                    builder: (context) => HomePage(
+                        selectedIndex: 3, typeOfOrganization: "Farmer groups")),
               );
             },
             child: const Align(
@@ -1831,10 +1941,10 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
           ),
           Center(
               child: Image.asset(
-                'assets/images/check_green.png',
-                width: 100,
-                height: 100,
-              )),
+            'assets/images/check_green.png',
+            width: 100,
+            height: 100,
+          )),
           const Text(
             "You've Details Updated Successfully!",
             softWrap: true,
@@ -1877,19 +1987,21 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
     print(id);
     contactNumber = (await AppGlobal.getStringPreference('contactNumber'))!;
     print("contactNumber : $contactNumber");
-    futureProfileDetails = AccountSettingController.fetchFRMEditProfileDetails(context, contactNumber);
+    futureProfileDetails = AccountSettingController.fetchFRMEditProfileDetails(
+        context, contactNumber);
     setState(() {
       futureProfileDetails = futureProfileDetails;
     });
     Future.delayed(Duration(seconds: 2), () async {
-      dateOfOrganizationValue = (await AppGlobal.getStringPreference('dateOfOrganization'))!;
+      dateOfOrganizationValue =
+          (await AppGlobal.getStringPreference('dateOfOrganization'))!;
       typeOfOrg = (await AppGlobal.getStringPreference('typeOfOrg'))!;
       setState(() {
-      dateOfOrganizationValue = dateOfOrganizationValue;
-      selectedFPOItemValue = typeOfOrg;
+        dateOfOrganizationValue = dateOfOrganizationValue;
+        selectedFPOItemValue = typeOfOrg;
       });
-      dateOfOrganizationController.text = AppGlobal.convertToCustomDateFormat(dateOfOrganizationValue);
+      dateOfOrganizationController.text =
+          AppGlobal.convertToCustomDateFormat(dateOfOrganizationValue);
     });
   }
-
 }
