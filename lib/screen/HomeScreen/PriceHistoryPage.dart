@@ -1,7 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:krishiyan/mvc/model/PriceData.dart';
-  
+
 class PriceHistoryPage extends StatefulWidget {
   final String? commodityId;
 
@@ -14,7 +14,7 @@ class PriceHistoryPage extends StatefulWidget {
 class _PriceHistoryPageState extends State<PriceHistoryPage> {
   List<PriceData> prices = [];
   List<FlSpot> chartData = [];
-  String selectedTimeInterval = '1 month'; // Default to 1 month
+  String selectedTimeInterval = '1 year'; // Fixed to 1 year
 
   @override
   void initState() {
@@ -27,35 +27,17 @@ class _PriceHistoryPageState extends State<PriceHistoryPage> {
     final data = await fetchPriceHistory(widget.commodityId);
     setState(() {
       prices = data;
-      updateChartData('1 month'); // Initialize with 1 month data
+      updateChartData(); // Initialize with 1 year data
     });
   }
 
-  // Update the chart data based on the selected time interval
-  void updateChartData(String timeInterval) {
-    Map<int, List<PriceData>> groupedPrices;
-
-    // Filter prices based on the selected interval
-    switch (timeInterval) {
-      case '1 month':
-        groupedPrices = groupPricesByDay(prices);
-        break;
-      case '3 months':
-        groupedPrices = groupPricesByMonth(prices);
-        break;
-      case '6 months':
-        groupedPrices = groupPricesByMonth(prices);
-        break;
-      case '1 year':
-        groupedPrices = groupPricesByMonth(prices);
-        break;
-      default:
-        groupedPrices = groupPricesByMonth(prices);
-    }
+  // Update the chart data based on the fixed time interval ('1 year')
+  void updateChartData() {
+    Map<int, List<PriceData>> groupedPrices = groupPricesByMonth(prices);
 
     setState(() {
-      chartData = prepareChartData(groupedPrices, timeInterval);
-      selectedTimeInterval = timeInterval;
+      chartData = prepareChartData(groupedPrices, '1 year');
+      selectedTimeInterval = '1 year';
     });
   }
 
@@ -63,84 +45,77 @@ class _PriceHistoryPageState extends State<PriceHistoryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Price History")),
-      body: Column(
-        children: [
-          // Time interval buttons
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              ElevatedButton(
-                onPressed: () => updateChartData('1 month'),
-                child: Text('1 Month'),
-              ),
-              ElevatedButton(
-                onPressed: () => updateChartData('3 months'),
-                child: Text('3 Months'),
-              ),
-              ElevatedButton(
-                onPressed: () => updateChartData('6 months'),
-                child: Text('6 Months'),
-              ),
-              ElevatedButton(
-                onPressed: () => updateChartData('1 year'),
-                child: Text('1 Year'),
-              ),
-            ],
-          ),
-          Expanded(
-            child: FutureBuilder<List<PriceData>>(
-              future: fetchPriceHistory(widget.commodityId),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                } else if (snapshot.hasData) {
-                  return LineChart(
-                    LineChartData(
-                      gridData: FlGridData(show: true),
-                      titlesData: FlTitlesData(
-                        leftTitles: AxisTitles(
-                          sideTitles: SideTitles(showTitles: true),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0), // Adding padding
+        child: Column(
+          children: [
+            Expanded(
+              child: FutureBuilder<List<PriceData>>(
+                future: fetchPriceHistory(widget.commodityId),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (snapshot.hasData) {
+                    return LineChart(
+                      LineChartData(
+                        gridData: FlGridData(
+                          show: true,
+                          horizontalInterval: 1000,  // Adjust Y-axis interval
                         ),
-                        bottomTitles: AxisTitles(
-                          sideTitles: SideTitles(
-                            showTitles: true,
-                            getTitlesWidget: (value, TitleMeta meta) {
-                              if (selectedTimeInterval == '1 month') {
-                                return Text('${(value * 5).toInt()}'); // Show days in 5-day intervals
-                              } else if (selectedTimeInterval == '3 months' ||
-                                         selectedTimeInterval == '6 months' ||
-                                         selectedTimeInterval == '1 year') {
+                        titlesData: FlTitlesData(
+                          leftTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: true,
+                              reservedSize: 32,
+                              getTitlesWidget: (value, TitleMeta meta) {
+                                // Display price values on Y-axis
+                                return Text('${value.toInt()}');
+                              },
+                            ),
+                          ),
+                          bottomTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: true,
+                              reservedSize: 32,
+                              getTitlesWidget: (value, TitleMeta meta) {
                                 final months = [
                                   'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
                                 ];
                                 return Text(months[value.toInt() % 12]);
-                              }
-                              return Container(); 
-                            },
+                              },
+                            ),
                           ),
+                          // Hide right and top titles
+                          rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
                         ),
+                        borderData: FlBorderData(show: true),
+                        lineBarsData: [
+                          LineChartBarData(
+  spots: chartData,
+  isCurved: true,
+  color: Colors.blue, // Line color
+  barWidth: 2, // Thinner line (adjusted to 2)
+  belowBarData: BarAreaData(show: false), // Optional: remove shaded area
+  isStrokeCapRound: false, // Ensure no circular data points
+  dotData: FlDotData(show: false), // Hide the circular dots
+),
+
+                        ],
+                        minY: 0, // Min Y value
+                        maxY: 10000, // Max Y value (prices from 0 to 10,000)
                       ),
-                      borderData: FlBorderData(show: true),
-                      lineBarsData: [
-                        LineChartBarData(
-                          spots: chartData,
-                          isCurved: true,
-                          color: Colors.blue, // Line color
-                          barWidth: 4,
-                          belowBarData: BarAreaData(show: false), // Optional: remove shaded area
-                        ),
-                      ],
-                    ),
-                  );
-                } else {
-                  return Center(child: Text("No data available"));
-                }
-              },
+                    );
+                  } else {
+                    return Center(child: Text("No data available"));
+                  }
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

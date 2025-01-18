@@ -25,7 +25,14 @@ Future<List<PriceData>> fetchPriceHistory(String? primaryKey) async {
     final Map<String, dynamic> data = jsonDecode(response.body);
     if (data['success']) {
       final List<dynamic> prices = data['data']['prices'];
-      return prices.map((priceJson) => PriceData.fromJson(priceJson)).toList();
+
+      // Convert the raw data into PriceData objects and sort them by date
+      List<PriceData> priceDataList = prices.map((priceJson) => PriceData.fromJson(priceJson)).toList();
+      
+      // Sort the price data by date (ascending order)
+      priceDataList.sort((a, b) => a.date.compareTo(b.date));
+
+      return priceDataList;
     } else {
       throw Exception('Failed to load price data');
     }
@@ -33,6 +40,7 @@ Future<List<PriceData>> fetchPriceHistory(String? primaryKey) async {
     throw Exception('Failed to load data from the API');
   }
 }
+
 
 Map<int, List<PriceData>> groupPricesByMonth(List<PriceData> prices) {
   Map<int, List<PriceData>> groupedPrices = {};
@@ -65,7 +73,7 @@ List<FlSpot> prepareChartData(Map<int, List<PriceData>> groupedPrices, String ti
   // Depending on the time interval, adjust the chart generation logic
   switch (timeInterval) {
     case '1 month':
-      // For 1 month, group by day and show the average for every 5 days
+      // For 1 month, group by day and show the average for each day
       groupedPrices.forEach((day, prices) {
         double avgPrice = prices.fold(0.0, (sum, price) => sum + price.price) / prices.length;
         // X-axis value will be day, and Y-axis will be the average price
@@ -77,11 +85,12 @@ List<FlSpot> prepareChartData(Map<int, List<PriceData>> groupedPrices, String ti
     case '6 months':
     case '1 year':
       // For 3 months, 6 months, and 1 year, group by month
-      groupedPrices.forEach((month, prices) {
-        double avgPrice = prices.fold(0.0, (sum, price) => sum + price.price) / prices.length;
+      List<int> sortedMonths = groupedPrices.keys.toList()..sort(); // Sort months in ascending order
+      for (int month in sortedMonths) {
+        double avgPrice = groupedPrices[month]!.fold(0.0, (sum, price) => sum + price.price) / groupedPrices[month]!.length;
         // X-axis value will be month (adjusted for proper labels), and Y-axis will be the average price
         spots.add(FlSpot(month.toDouble() - 1, avgPrice)); // Subtract 1 to make months zero-indexed
-      });
+      }
       break;
     
     default:

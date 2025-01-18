@@ -60,7 +60,7 @@ const String BUY_COMMODITY = "${baseUrl}commodity";
 const String SELL_COMMODITY = "${baseUrl}commodity";
 
 const String VILLAGES_NAMES = "${baseUrl}appFarmer/villages/";
-const String CROPS_NAMES = "${baseUrl}crops";
+const String CROPS_NAMES = "${baseUrl}all/crops";
 
 const String FARMER_REGISTRATION = "${baseUrl}appFarmer/register";
 const String FARMER_GROUP_REGISTRATION = "${baseUrl}sign-in";
