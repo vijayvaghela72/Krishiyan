@@ -517,7 +517,15 @@ String organizationName = snapshot.data!.nameOfFpo?.toString() ?? "";
                             child: Container(
                               color: Colors.white,
                               child: DropdownButtonFormField2<String>(
-                                value: selectedFPOItemValue,
+                                value: () {
+                                  if (!fpoItems
+                                      .contains(selectedFPOItemValue)) {
+                                    selectedFPOItemValue =
+                                        null; // Reset to null if not valid
+                                    return null;
+                                  }
+                                  return selectedFPOItemValue;
+                                }(),
                                 isExpanded: true,
                                 decoration: InputDecoration(
                                   contentPadding:
