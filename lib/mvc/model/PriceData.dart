@@ -3,7 +3,6 @@ import 'package:http/http.dart' as http;
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
-// Model class to represent the price data
 class PriceData {
   final double price;
   final DateTime date;
@@ -13,11 +12,12 @@ class PriceData {
   factory PriceData.fromJson(Map<String, dynamic> json) {
     return PriceData(
       price: json['price'].toDouble(),
-      date: DateTime.parse(json['date']), // Parsing the ISO date string
+      date: DateTime.parse(json['date']),
     );
   }
 }
 
+// Function to fetch price history from the API
 Future<List<PriceData>> fetchPriceHistory(String? primaryKey) async {
   final response = await http.get(Uri.parse('https://krishiyanback.vercel.app/api/market/$primaryKey'));
 
@@ -25,13 +25,7 @@ Future<List<PriceData>> fetchPriceHistory(String? primaryKey) async {
     final Map<String, dynamic> data = jsonDecode(response.body);
     if (data['success']) {
       final List<dynamic> prices = data['data']['prices'];
-      // Sort prices by date in ascending order
-      List<PriceData> priceList = prices
-          .map((priceJson) => PriceData.fromJson(priceJson))
-          .toList();
-      priceList.sort((a, b) => a.date.compareTo(b.date)); // Sort by date
-
-      return priceList;
+      return prices.map((priceJson) => PriceData.fromJson(priceJson)).toList();
     } else {
       throw Exception('Failed to load price data');
     }
@@ -40,16 +34,16 @@ Future<List<PriceData>> fetchPriceHistory(String? primaryKey) async {
   }
 }
 
-// Prepare chart data for plotting all the data points (without averaging)
-List<FlSpot> prepareChartData(List<PriceData> prices) {
+// Function to plot all data points for 1 year interval
+List<FlSpot> prepareChartDataForYear(List<PriceData> prices) {
   List<FlSpot> spots = [];
 
-  // Iterate through the list of prices and create a FlSpot for each price with its corresponding date
-  for (int i = 0; i < prices.length; i++) {
-    // We use the index as the X-value (this will be the position in the line chart)
-    // The Y-value is the price for that particular date
-    spots.add(FlSpot(i.toDouble(), prices[i].price));
+  // Plot all data points with their actual date and price
+  for (var price in prices) {
+    // X-axis is the date in milliseconds since epoch (to create a continuous range)
+    spots.add(FlSpot(price.date.millisecondsSinceEpoch.toDouble(), price.price));
   }
 
   return spots;
 }
+
