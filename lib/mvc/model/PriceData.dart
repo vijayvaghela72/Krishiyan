@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
 
-// Model class to represent the price data
 class PriceData {
   final double price;
   final DateTime date;
@@ -34,60 +34,16 @@ Future<List<PriceData>> fetchPriceHistory(String? primaryKey) async {
   }
 }
 
-Map<int, List<PriceData>> groupPricesByMonth(List<PriceData> prices) {
-  Map<int, List<PriceData>> groupedPrices = {};
-  for (var price in prices) {
-    int month = price.date.month; // Group by month
-    if (!groupedPrices.containsKey(month)) {
-      groupedPrices[month] = [];
-    }
-    groupedPrices[month]?.add(price);
-  }
-  return groupedPrices;
-}
-
-
-Map<int, List<PriceData>> groupPricesByDay(List<PriceData> prices) {
-  Map<int, List<PriceData>> groupedPrices = {};
-  for (var price in prices) {
-    int day = price.date.day; // Group by day of the month
-    if (!groupedPrices.containsKey(day)) {
-      groupedPrices[day] = [];
-    }
-    groupedPrices[day]?.add(price);
-  }
-  return groupedPrices;
-}
-
-List<FlSpot> prepareChartData(Map<int, List<PriceData>> groupedPrices, String timeInterval) {
+// Function to plot all data points for 1 year interval
+List<FlSpot> prepareChartDataForYear(List<PriceData> prices) {
   List<FlSpot> spots = [];
 
-  // Depending on the time interval, adjust the chart generation logic
-  switch (timeInterval) {
-    case '1 month':
-      // For 1 month, group by day and show the average for every 5 days
-      groupedPrices.forEach((day, prices) {
-        double avgPrice = prices.fold(0.0, (sum, price) => sum + price.price) / prices.length;
-        // X-axis value will be day, and Y-axis will be the average price
-        spots.add(FlSpot(day.toDouble(), avgPrice));
-      });
-      break;
-    
-    case '3 months':
-    case '6 months':
-    case '1 year':
-      // For 3 months, 6 months, and 1 year, group by month
-      groupedPrices.forEach((month, prices) {
-        double avgPrice = prices.fold(0.0, (sum, price) => sum + price.price) / prices.length;
-        // X-axis value will be month (adjusted for proper labels), and Y-axis will be the average price
-        spots.add(FlSpot(month.toDouble() - 1, avgPrice)); // Subtract 1 to make months zero-indexed
-      });
-      break;
-    
-    default:
-      // Default behavior, can be omitted or customized for other intervals
-      break;
+  // Plot all data points with their actual date and price
+  for (var price in prices) {
+    // X-axis is the date in milliseconds since epoch (to create a continuous range)
+    spots.add(FlSpot(price.date.millisecondsSinceEpoch.toDouble(), price.price));
   }
 
   return spots;
 }
+

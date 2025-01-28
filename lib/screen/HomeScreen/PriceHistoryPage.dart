@@ -1,7 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:krishiyan/mvc/model/PriceData.dart';
-  
+
 class PriceHistoryPage extends StatefulWidget {
   final String? commodityId;
 
@@ -14,7 +14,7 @@ class PriceHistoryPage extends StatefulWidget {
 class _PriceHistoryPageState extends State<PriceHistoryPage> {
   List<PriceData> prices = [];
   List<FlSpot> chartData = [];
-  String selectedTimeInterval = '1 month'; // Default to 1 month
+  String selectedTimeInterval = '1 year'; // Default to 1 year
 
   @override
   void initState() {
@@ -27,99 +27,107 @@ class _PriceHistoryPageState extends State<PriceHistoryPage> {
     final data = await fetchPriceHistory(widget.commodityId);
     setState(() {
       prices = data;
-      updateChartData('1 month'); // Initialize with 1 month data
+      updateChartData('1 year'); // Initialize with 1-year data
     });
   }
 
-  // Update the chart data based on the selected time interval
-  void updateChartData(String timeInterval) {
-    Map<int, List<PriceData>> groupedPrices;
+void updateChartData(String timeInterval) {
+  List<FlSpot> updatedChartData = [];
 
-    // Filter prices based on the selected interval
-    switch (timeInterval) {
-      case '1 month':
-        groupedPrices = groupPricesByDay(prices);
-        break;
-      case '3 months':
-        groupedPrices = groupPricesByMonth(prices);
-        break;
-      case '6 months':
-        groupedPrices = groupPricesByMonth(prices);
-        break;
-      case '1 year':
-        groupedPrices = groupPricesByMonth(prices);
-        break;
-      default:
-        groupedPrices = groupPricesByMonth(prices);
-    }
-
-    setState(() {
-      chartData = prepareChartData(groupedPrices, timeInterval);
-      selectedTimeInterval = timeInterval;
-    });
+  // Slice the topmost prices based on the selected time interval
+  List<PriceData> selectedPrices = [];
+  if (timeInterval == '1 month') {
+    selectedPrices = prices.take(30).toList(); // Take the topmost 30 prices
+  } else if (timeInterval == '3 months') {
+    selectedPrices = prices.take(90).toList(); // Take the topmost 90 prices
+  } else if (timeInterval == '6 months') {
+    selectedPrices = prices.take(180).toList(); // Take the topmost 180 prices
+  } else if (timeInterval == '1 year') {
+    selectedPrices = prices; // No slicing for 1 year
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Price History")),
-      body: Column(
-        children: [
-          // Time interval buttons
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              ElevatedButton(
-                onPressed: () => updateChartData('1 month'),
-                child: Text('1 Month'),
-              ),
-              ElevatedButton(
-                onPressed: () => updateChartData('3 months'),
-                child: Text('3 Months'),
-              ),
-              ElevatedButton(
-                onPressed: () => updateChartData('6 months'),
-                child: Text('6 Months'),
-              ),
-              ElevatedButton(
-                onPressed: () => updateChartData('1 year'),
-                child: Text('1 Year'),
-              ),
-            ],
-          ),
-          Expanded(
-            child: FutureBuilder<List<PriceData>>(
-              future: fetchPriceHistory(widget.commodityId),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                } else if (snapshot.hasData) {
-                  return LineChart(
+  // Prepare the chart data for the selected prices
+  updatedChartData = prepareChartDataForYear(selectedPrices);
+
+  setState(() {
+    chartData = updatedChartData;
+    selectedTimeInterval = timeInterval;
+  });
+}
+
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(title: Text("Price History")),
+    body: Column(
+      children: [
+        // Time interval buttons
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            ElevatedButton(
+              onPressed: () => updateChartData('1 month'),
+              child: Text('1 Month'),
+            ),
+            ElevatedButton(
+              onPressed: () => updateChartData('3 months'),
+              child: Text('3 Months'),
+            ),
+            ElevatedButton(
+              onPressed: () => updateChartData('6 months'),
+              child: Text('6 Months'),
+            ),
+            ElevatedButton(
+              onPressed: () => updateChartData('1 year'),
+              child: Text('1 Year'),
+            ),
+          ],
+        ),
+        Expanded(
+          child: FutureBuilder<List<PriceData>>(
+            future: fetchPriceHistory(widget.commodityId),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else if (snapshot.hasData) {
+                return Padding(
+                  padding: const EdgeInsets.all(25.0),
+                  child: LineChart(
                     LineChartData(
                       gridData: FlGridData(show: true),
                       titlesData: FlTitlesData(
                         leftTitles: AxisTitles(
-                          sideTitles: SideTitles(showTitles: true),
+                          sideTitles: SideTitles(
+                            showTitles: true,
+                            getTitlesWidget: (value, TitleMeta meta) {
+                              // Set custom Y-axis labels with interval of 2000
+                              if (value % 2000 == 0 && value <= 12000) {
+                                return Text(value.toString(),
+                                    style: TextStyle(fontSize: 10));
+                              }
+                              return Container();
+                            },
+                          ),
                         ),
                         bottomTitles: AxisTitles(
                           sideTitles: SideTitles(
                             showTitles: true,
                             getTitlesWidget: (value, TitleMeta meta) {
-                              if (selectedTimeInterval == '1 month') {
-                                return Text('${(value * 5).toInt()}'); // Show days in 5-day intervals
-                              } else if (selectedTimeInterval == '3 months' ||
-                                         selectedTimeInterval == '6 months' ||
-                                         selectedTimeInterval == '1 year') {
-                                final months = [
-                                  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-                                ];
-                                return Text(months[value.toInt() % 12]);
+                              if (selectedTimeInterval == '1 year') {
+                                // Show the date in format yyyy-MM-dd
+                                return Text(DateTime.fromMillisecondsSinceEpoch(value.toInt()).toString().substring(0, 10));
                               }
-                              return Container(); 
+                              return Container();
                             },
                           ),
+                        ),
+                        topTitles: AxisTitles(
+                          sideTitles: SideTitles(showTitles: false),
+                        ),
+                        rightTitles: AxisTitles(
+                          sideTitles: SideTitles(showTitles: false),
                         ),
                       ),
                       borderData: FlBorderData(show: true),
@@ -133,15 +141,16 @@ class _PriceHistoryPageState extends State<PriceHistoryPage> {
                         ),
                       ],
                     ),
-                  );
-                } else {
-                  return Center(child: Text("No data available"));
-                }
-              },
-            ),
+                  ),
+                );
+              } else {
+                return Center(child: Text("No data available"));
+              }
+            },
           ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
+}
 }

@@ -1399,23 +1399,21 @@ class _BottomOnePageState extends State<BottomOnePage> with TickerProviderStateM
                                               padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 15.0),
                                               child: Row(
                                                 children: [
-                                                  Expanded(
-                                                    child: Row(
-                                                      children: [
-                                                        Image.asset("assets/images/location.png", width: 15, height: 15,),
-                                                        const SizedBox(
-                                                          width: 5,
-                                                        ),
-                                                        Text(
-                                                          mandiPrice[index].market ?? "",
-                                                          softWrap: true,
-                                                          style: TextStyle(
-                                                              color: Color(0xFF959595),
-                                                              fontSize: 11,
-                                                              fontFamily: 'poppins-semibold'),
-                                                        ),
-                                                      ],
-                                                    ),
+                                                  Row(
+                                                    children: [
+                                                      Image.asset("assets/images/location.png", width: 15, height: 15,),
+                                                      const SizedBox(
+                                                        width: 5,
+                                                      ),
+                                                      Text(
+                                                        mandiPrice[index].market ?? "",
+                                                        softWrap: true,
+                                                        style: TextStyle(
+                                                            color: Color(0xFF959595),
+                                                            fontSize: 11,
+                                                            fontFamily: 'poppins-semibold'),
+                                                      ),
+                                                    ],
                                                   ),
                                                   Expanded(
                                                     child: Row(
@@ -2036,153 +2034,143 @@ class _BottomOnePageState extends State<BottomOnePage> with TickerProviderStateM
                                               height: 10,
                                             ),
                                             
-                                            Padding(
-                                              padding: const EdgeInsets.only(left: 15.0, right: 15.0,),
-                                              child: Expanded(
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: [
-                                                    
-                                                    Column(
-                                                       mainAxisAlignment: MainAxisAlignment.start,
-                                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                                      children: [
-                                                        Text(
-                                                          textAlign: TextAlign.start,
-                                                          marketInsight[index].state ?? "Not Available",
-                                                          softWrap: true,
-                                                          style: TextStyle(
-                                                              color: Colors.black,
-                                                              fontSize: 14,
-                                                              fontFamily: 'poppins-semibold'),
-                                                        ),
-                                                        Text(
-                                                          textAlign: TextAlign.start,
-                                                  marketInsight[index].market ?? "",
-                                                  softWrap: true,
-                                                  style: TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize: 14,
-                                                      fontFamily: 'poppins-semibold'),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    Text(
-                                                      textAlign: TextAlign.start,
-                                                          marketInsight[index].commodity ?? "Not Available",
-                                                          softWrap: true,
-                                                          style: TextStyle(
-                                                              color: Colors.black,
-                                                              fontSize: 14,
-                                                              fontFamily: 'poppins-semibold'),
-                                                      ),
-                                                    Column(
-                                                      children: [
-                                                        Text(
-                                                          textAlign: TextAlign.start,
-                                                           "Today",
-                                                          softWrap: true,
-                                                          style: TextStyle(
-                                                              color: Colors.green,
-                                                              fontSize: 14,
-                                                              fontFamily: 'poppins-semibold'),
-                                                        ),
-                                                        Text(
-                                                          textAlign: TextAlign.start,
-                                                  marketInsight[index].todaysPrice.toString() ?? "",
-                                                  softWrap: true,
-                                                  style: TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize: 14,
-                                                      fontFamily: 'poppins-semibold'),
-                                                ),
-                                                 Text(
-                                                  textAlign: TextAlign.start,
-                                                           marketInsight[index].todaysPriceChange.toString(),
-                                                          softWrap: true,
-                                                          style: TextStyle(
-                                                              color: Colors.green,
-                                                              fontSize: 14,
-                                                              fontFamily: 'poppins-semibold'),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    Column(
-                                                      children: [
-                                                        Text(
-                                                          textAlign: TextAlign.start,
-                                                           "Yesterday",
-                                                          softWrap: true,
-                                                          style: TextStyle(
-                                                              color: Colors.red,
-                                                              fontSize: 14,
-                                                              fontFamily: 'poppins-semibold'),
-                                                        ),
-                                                        Text(
-                                                          textAlign: TextAlign.start,
-                                                  marketInsight[index].yesterdaysPrice.toString() ?? "",
-                                                  softWrap: true,
-                                                  style: TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize: 14,
-                                                      fontFamily: 'poppins-semibold'),
-                                                ),
-                                                 Text(
-                                                  textAlign: TextAlign.start,
-                                                           marketInsight[index].yesterdaysPriceChange.toString(),
-                                                          softWrap: true,
-                                                          style: TextStyle(
-                                                              color: Colors.red,
-                                                              fontSize: 14,
-                                                              fontFamily: 'poppins-semibold'),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
+                                           Padding(
+  padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+  child: Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            marketInsight[index].state ?? "Not Available",
+            softWrap: true,
+            style: TextStyle(
+                color: Colors.black,
+                fontSize: 12,
+                fontFamily: 'poppins-semibold'),
+          ),
+          Container(
+            width: 80,  // Set the specific width here
+            child: Text(
+              marketInsight[index].market ?? "",
+              softWrap: true,
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 12,
+                fontFamily: 'poppins-semibold',
+              ),
+            ),
+          )
+        ],
+      ),
+      Text(
+        marketInsight[index].commodity ?? "Not Available",
+        softWrap: true,
+        style: TextStyle(
+            color: Colors.black,
+            fontSize: 12,
+            fontFamily: 'poppins-semibold'),
+      ),
+      Column(
+        children: [
+          Text(
+            "Today",
+            softWrap: true,
+            style: TextStyle(
+                color: Colors.green,
+                fontSize: 12,
+                fontFamily: 'poppins-semibold'),
+          ),
+          Text(
+            marketInsight[index].todaysPrice.toString() ?? "",
+            softWrap: true,
+            style: TextStyle(
+                color: Colors.black,
+                fontSize: 12,
+                fontFamily: 'poppins-semibold'),
+          ),
+          Text(
+            marketInsight[index].todaysPriceChange.toString() ?? "",
+            softWrap: true,
+            style: TextStyle(
+                color: Colors.green,
+                fontSize: 12,
+                fontFamily: 'poppins-semibold'),
+          ),
+        ],
+      ),
+      Column(
+        children: [
+          Text(
+            "Yesterday",
+            softWrap: true,
+            style: TextStyle(
+                color: Colors.red,
+                fontSize: 12,
+                fontFamily: 'poppins-semibold'),
+          ),
+          Text(
+            marketInsight[index].yesterdaysPrice.toString() ?? "",
+            softWrap: true,
+            style: TextStyle(
+                color: Colors.black,
+                fontSize: 12,
+                fontFamily: 'poppins-semibold'),
+          ),
+          Text(
+            marketInsight[index].yesterdaysPriceChange.toString() ?? "",
+            softWrap: true,
+            style: TextStyle(
+                color: Colors.red,
+                fontSize: 12,
+                fontFamily: 'poppins-semibold'),
+          ),
+        ],
+      ),
+    ],
+  ),
+),
                                             const SizedBox(
                                               height: 15,
                                             ),
                                             Padding(
                                               padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 15.0),
-                                              child: Expanded(
-                                                      child: TextButton(
-                                                         onPressed: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => PriceHistoryPage(
-          commodityId: marketInsight[index].primaryKey, // Pass the primary key here
-        ),
-      ),
-    );
-  },
-                                       style: TextButton.styleFrom(
-        foregroundColor: const Color(0xFF959595), // Keep the text color the same
-        overlayColor: Colors.transparent, // Remove the hover effect
-      ),
-                                                        child: Row(
-                                                          mainAxisAlignment: MainAxisAlignment.end,
-                                                          crossAxisAlignment: CrossAxisAlignment.end,
-                                                          children: [
-                                                            Image.asset("assets/images/right_arrow.png", width: 10, height: 10,),
-                                                            const SizedBox(
-                                                              width: 5,
-                                                            ),
-                                                            Text(
-                                                              "View More",
-                                                              softWrap: true,
-                                                              style: TextStyle(
-                                                                  color: Color(0xFF959595),
-                                                                  fontSize: 11,
-                                                                  fontFamily: 'poppins-regular'),
-                                                            ),
-                                                          ],
-                                                                                                        ),
+                                              child: TextButton(
+                                                 onPressed: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) => PriceHistoryPage(
+                                                        commodityId: marketInsight[index].primaryKey, // Pass the primary key here
                                                       ),
+                                                    ),
+                                                  );
+                                                },
+                                                                                     style: TextButton.styleFrom(
+                                                      foregroundColor: const Color(0xFF959595), // Keep the text color the same
+                                                      overlayColor: Colors.transparent, // Remove the hover effect
+                                                    ),
+                                                child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.end,
+                                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                                  children: [
+                                                    Image.asset("assets/images/right_arrow.png", width: 10, height: 10,),
+                                                    const SizedBox(
+                                                      width: 5,
+                                                    ),
+                                                    Text(
+                                                      "View More",
+                                                      softWrap: true,
+                                                      style: TextStyle(
+                                                          color: Color(0xFF959595),
+                                                          fontSize: 11,
+                                                          fontFamily: 'poppins-regular'),
+                                                    ),
+                                                  ],
+                                                                                                ),
                                               ),
                                             ),
                                             

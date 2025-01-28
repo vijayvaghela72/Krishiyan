@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -8,11 +7,9 @@ import 'package:krishiyan/screen/Welcome/WelcomePage.dart';
 import 'package:krishiyan/utils/Constants.dart';
 import 'package:krishiyan/screen/HomeScreen/HomePage.dart'; // Import your HomePage
 import 'helper/SharedPref.dart'; // Import your SharedPref
-
 import 'localization/AppLocalizations.dart';
 import 'localization/NavigationService.dart';
 import 'package:http/http.dart' as http;
-
 import 'package:permission_handler/permission_handler.dart';
 
 Future<void> main() async {
