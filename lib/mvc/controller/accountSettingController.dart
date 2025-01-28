@@ -11,17 +11,17 @@ import '../model/GetFRMProfileData.dart';
 import '../model/GetOtherDetails.dart';
 import '../model/GetProfileData.dart';
 
-class AccountSettingController{
-
-  static Future<GetFRMProfileDetails?> fetchFRMEditProfileDetails(BuildContext context, String contactNumber) async {
+class AccountSettingController {
+  static Future<GetFRMProfileDetails?> fetchFRMEditProfileDetails(
+      BuildContext context, String contactNumber) async {
     return API
-        .callPostImage(FRM_PROFILE_DETAILS+contactNumber, null, "", isKeyByPass: true)
+        .callPostImage(FRM_PROFILE_DETAILS + contactNumber, null, "",
+            isKeyByPass: true)
         .then((response) {
       AppGlobal.printLog("Edit FRM Profile Details RESPONSE : " + response);
       APIResponse? apiResponse = APIResponse.fromJson(jsonDecode(response));
       if (apiResponse.success!) {
-        if(apiResponse.frmProfileData!.dateOfFpo !=null) {
-
+        if (apiResponse.frmProfileData!.dateOfFpo != null) {
           String? date = apiResponse.frmProfileData!.dateOfFpo ?? "";
           String? typeOfOrgData = apiResponse.frmProfileData!.typeOfFpo ?? "";
 
@@ -43,22 +43,25 @@ class AccountSettingController{
     });
   }
 
-  static Future<GetProfileDetails?> fetchEditProfileDetails(BuildContext context, String id) async {
+  static Future<GetProfileDetails?> fetchEditProfileDetails(
+      BuildContext context, String id) async {
     return API
-        .callPostImage(PROFILE_DETAILS+id, null, "", isKeyByPass: true)
+        .callPostImage(PROFILE_DETAILS + id, null, "", isKeyByPass: true)
         .then((response) {
       AppGlobal.printLog("Trader Edit Profile Details RESPONSE : " + response);
       APIResponse? apiResponse = APIResponse.fromJson(jsonDecode(response));
       if (apiResponse.success!) {
-        if(apiResponse.profileData!.incorporationDate !=null) {
-
-          String? incorporationDate = apiResponse.profileData!.incorporationDate ?? "";
-          String? typeOfEntityData = apiResponse.profileData!.typeOfEntity ?? "";
+        if (apiResponse.profileData!.incorporationDate != null) {
+          String? incorporationDate =
+              apiResponse.profileData!.incorporationDate ?? "";
+          String? typeOfEntityData =
+              apiResponse.profileData!.typeOfEntity ?? "";
 
           print("New Api incorporationDate : $incorporationDate");
           print("New Api typeOfEntityData : $typeOfEntityData");
 
-          SharedPref.savePreferenceValue(dateOfIncorporation, incorporationDate ?? "");
+          SharedPref.savePreferenceValue(
+              dateOfIncorporation, incorporationDate ?? "");
           SharedPref.savePreferenceValue(typeOfEntity, typeOfEntityData ?? "");
         }
         return apiResponse.profileData;
@@ -73,9 +76,10 @@ class AccountSettingController{
     });
   }
 
-  static Future<OtherData?> fetchAccountDetails(BuildContext context, String number) async {
+  static Future<OtherData?> fetchAccountDetails(
+      BuildContext context, String number) async {
     return API
-        .callPostImage(OTHER_DETAILS+number, null, "", isKeyByPass: true)
+        .callPostImage(OTHER_DETAILS + number, null, "", isKeyByPass: true)
         .then((response) {
       AppGlobal.printLog("Other Details RESPONSE : " + response);
       APIResponse? apiResponse = APIResponse.fromJson(jsonDecode(response));
@@ -92,12 +96,15 @@ class AccountSettingController{
     });
   }
 
-  static Future<BankData?> fetchBankDetails(BuildContext context, String number) async {
+  static Future<BankData?> fetchBankDetails(
+      BuildContext context, String number) async {
     return API
-        .callPostImage(BANK_DETAILS+number, null, "", isKeyByPass: true)
+        .callPostImage(BANK_DETAILS + number, null, "", isKeyByPass: true)
         .then((response) {
+      print('BANK_DETAILS + number : ${BANK_DETAILS + number}');
       AppGlobal.printLog("Bank Details RESPONSE : " + response);
       APIResponse? apiResponse = APIResponse.fromJson(jsonDecode(response));
+
       if (apiResponse.success!) {
         return apiResponse.bankData;
       }
@@ -111,20 +118,23 @@ class AccountSettingController{
     });
   }
 
-  static Future<Address?>? fetchAddressDetails(BuildContext context, String number) async {
+  static Future<Address?>? fetchAddressDetails(
+      BuildContext context, String number) async {
     return API
-    // .callPostImage(ADDRESS_DETAILS+number, null, "", isKeyByPass: true)
-        .callPostImage("https://krishiyanback.vercel.app/api/address/"+number, null, "", isKeyByPass: true)
+        // .callPostImage(ADDRESS_DETAILS+number, null, "", isKeyByPass: true)
+        .callPostImage(
+            "https://krishiyanback.vercel.app/api/address/" + number, null, "",
+            isKeyByPass: true)
         .then((response) {
       AppGlobal.printLog("Address RESPONSE : " + response.toString());
       APIResponse? apiResponse = APIResponse.fromJson(jsonDecode(response));
       if (apiResponse.success!) {
-        AppGlobal.printLog("Address Success : " + apiResponse.success.toString());
+        AppGlobal.printLog(
+            "Address Success : " + apiResponse.success.toString());
         return apiResponse.addressData;
       }
       if (apiResponse.message != "") {
         print("Address msg : ${apiResponse.message}");
-
       }
       return null;
     }).catchError((onError) {
@@ -132,5 +142,4 @@ class AccountSettingController{
       return null;
     });
   }
-
 }

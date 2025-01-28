@@ -8,7 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:krishiyan/localization/AppLocalizations.dart';
 import 'package:krishiyan/utils/Constants.dart';
-
+import 'package:http/http.dart' as http;
 import '../../helper/AlertHelper.dart';
 import '../../mvc/controller/accountSettingController.dart';
 import '../../mvc/model/GetAddressDetails.dart';
@@ -23,7 +23,6 @@ class EditAddressPage extends StatefulWidget {
 }
 
 class _EditAddressPageState extends State<EditAddressPage> {
-
   TextFormField? pincodeController;
   TextFormField? districtController;
   TextFormField? stateController;
@@ -116,7 +115,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                           // pincode
                           Padding(
                             padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: Text(
                               buildTranslate("pinCode")!,
                               style: const TextStyle(
@@ -130,7 +129,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                           ),
                           Padding(
                             padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: TextFormField(
                               onSaved: (value) => pincode = value,
                               decoration: InputDecoration(
@@ -147,7 +146,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                                       vertical: 10.0, horizontal: 10.0),
                                   hintText: buildTranslate('enterPincode')!,
                                   hintStyle:
-                                  const TextStyle(color: Colors.grey),
+                                      const TextStyle(color: Colors.grey),
                                   focusedBorder: const OutlineInputBorder(
                                     // borderRadius: BorderRadius.all(Radius.circular(10.0)),
                                     borderSide: BorderSide(
@@ -156,8 +155,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                               validator: (value) => value!.isEmpty
                                   ? 'Please, fill this field.'
                                   : null,
-                              initialValue:
-                              snapshot.data!.pincode.toString(),
+                              initialValue: snapshot.data!.pincode.toString(),
                             ),
                           ),
                           const SizedBox(
@@ -167,7 +165,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                           // district
                           Padding(
                             padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: Text(
                               buildTranslate("district")!,
                               style: const TextStyle(
@@ -181,12 +179,11 @@ class _EditAddressPageState extends State<EditAddressPage> {
                           ),
                           Padding(
                             padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: TextFormField(
                               onSaved: (value) => district = value,
                               keyboardType: TextInputType.text,
-                              initialValue:
-                              snapshot.data!.district.toString(),
+                              initialValue: snapshot.data!.district.toString(),
                               decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.symmetric(
                                     vertical: 10.0, horizontal: 10.0),
@@ -195,8 +192,8 @@ class _EditAddressPageState extends State<EditAddressPage> {
                                 fillColor: Colors.white,
                                 filled: true,
                                 border: const OutlineInputBorder(
-                                  // borderRadius: BorderRadius.all(Radius.circular(10.0),),
-                                ),
+                                    // borderRadius: BorderRadius.all(Radius.circular(10.0),),
+                                    ),
                                 enabledBorder: const OutlineInputBorder(
                                   borderSide: BorderSide(
                                     color: Colors.grey,
@@ -219,7 +216,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                           // state
                           Padding(
                             padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: Text(
                               buildTranslate("state")!,
                               style: const TextStyle(
@@ -233,12 +230,11 @@ class _EditAddressPageState extends State<EditAddressPage> {
                           ),
                           Padding(
                             padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: TextFormField(
                               keyboardType: TextInputType.text,
                               onSaved: (value) => state = value,
-                              initialValue:
-                              snapshot.data!.state!.toString(),
+                              initialValue: snapshot.data!.state!.toString(),
                               decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.symmetric(
                                     vertical: 10.0, horizontal: 10.0),
@@ -247,8 +243,8 @@ class _EditAddressPageState extends State<EditAddressPage> {
                                 fillColor: Colors.white,
                                 filled: true,
                                 border: const OutlineInputBorder(
-                                  // borderRadius: BorderRadius.all(Radius.circular(10.0),),
-                                ),
+                                    // borderRadius: BorderRadius.all(Radius.circular(10.0),),
+                                    ),
                                 enabledBorder: const OutlineInputBorder(
                                   borderSide: BorderSide(
                                     color: Colors.grey,
@@ -271,7 +267,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                           // address
                           Padding(
                             padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: Text(
                               buildTranslate("address")!,
                               style: const TextStyle(
@@ -285,12 +281,11 @@ class _EditAddressPageState extends State<EditAddressPage> {
                           ),
                           Padding(
                             padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: TextFormField(
                               keyboardType: TextInputType.text,
                               onSaved: (value) => address = value,
-                              initialValue:
-                              snapshot.data!.address.toString(),
+                              initialValue: snapshot.data!.address.toString(),
                               decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.symmetric(
                                     vertical: 10.0, horizontal: 10.0),
@@ -299,8 +294,8 @@ class _EditAddressPageState extends State<EditAddressPage> {
                                 fillColor: Colors.white,
                                 filled: true,
                                 border: const OutlineInputBorder(
-                                  // borderRadius: BorderRadius.all(Radius.circular(10.0),),
-                                ),
+                                    // borderRadius: BorderRadius.all(Radius.circular(10.0),),
+                                    ),
                                 enabledBorder: const OutlineInputBorder(
                                   borderSide: BorderSide(
                                     color: Colors.grey,
@@ -323,7 +318,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                           // Village
                           Padding(
                             padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: Text(
                               buildTranslate("village")!,
                               style: const TextStyle(
@@ -337,12 +332,11 @@ class _EditAddressPageState extends State<EditAddressPage> {
                           ),
                           Padding(
                             padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: TextFormField(
                               keyboardType: TextInputType.text,
                               onSaved: (value) => village = value,
-                              initialValue:
-                              snapshot.data!.village.toString(),
+                              initialValue: snapshot.data!.village.toString(),
                               decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.symmetric(
                                     vertical: 10.0, horizontal: 10.0),
@@ -351,8 +345,8 @@ class _EditAddressPageState extends State<EditAddressPage> {
                                 fillColor: Colors.white,
                                 filled: true,
                                 border: const OutlineInputBorder(
-                                  // borderRadius: BorderRadius.all(Radius.circular(10.0),),
-                                ),
+                                    // borderRadius: BorderRadius.all(Radius.circular(10.0),),
+                                    ),
                                 enabledBorder: const OutlineInputBorder(
                                   borderSide: BorderSide(
                                     color: Colors.grey,
@@ -389,7 +383,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                                   backgroundColor: const Color(0xFF3FC041),
                                   shape: RoundedRectangleBorder(
                                     borderRadius:
-                                    BorderRadius.circular(12), // <-- Radius
+                                        BorderRadius.circular(12), // <-- Radius
                                   ),
                                 ),
                                 child: Text(
@@ -446,7 +440,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                                   width: 1.0,
                                 ),
                                 borderRadius:
-                                BorderRadius.all(Radius.circular(8.0)),
+                                    BorderRadius.all(Radius.circular(8.0)),
                               ),
                               contentPadding: EdgeInsets.symmetric(
                                   vertical: 10.0, horizontal: 10.0),
@@ -454,9 +448,9 @@ class _EditAddressPageState extends State<EditAddressPage> {
                               hintStyle: TextStyle(color: Color(0xFFe7e7e7)),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius:
-                                BorderRadius.all(Radius.circular(8.0)),
+                                    BorderRadius.all(Radius.circular(8.0)),
                                 borderSide:
-                                BorderSide(color: Colors.white, width: 0.5),
+                                    BorderSide(color: Colors.white, width: 0.5),
                               )),
                           validator: (value) => value!.isEmpty
                               ? 'Please, fill this field.'
@@ -489,11 +483,11 @@ class _EditAddressPageState extends State<EditAddressPage> {
                             color: Colors.white,
                             child: DropdownButtonFormField2<String>(
                               dropdownStyleData:
-                              const DropdownStyleData(maxHeight: 200),
+                                  const DropdownStyleData(maxHeight: 200),
                               hint: const Text('Select a district'),
                               decoration: InputDecoration(
                                 contentPadding:
-                                const EdgeInsets.symmetric(vertical: 16),
+                                    const EdgeInsets.symmetric(vertical: 16),
                                 filled: true,
                                 fillColor: Colors.white,
                                 border: OutlineInputBorder(
@@ -523,7 +517,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                               onChanged: (newValue) {
                                 if (newValue != null &&
                                     dropdownDistrictItems!.any(
-                                            (item) => item.value == newValue)) {
+                                        (item) => item.value == newValue)) {
                                   print("if newValue : $newValue");
                                   setState(() {
                                     _selectedDistrictName = newValue;
@@ -561,11 +555,11 @@ class _EditAddressPageState extends State<EditAddressPage> {
                             color: Colors.white,
                             child: DropdownButtonFormField2<String>(
                               dropdownStyleData:
-                              const DropdownStyleData(maxHeight: 200),
+                                  const DropdownStyleData(maxHeight: 200),
                               hint: const Text('Select a state'),
                               decoration: InputDecoration(
                                 contentPadding:
-                                const EdgeInsets.symmetric(vertical: 16),
+                                    const EdgeInsets.symmetric(vertical: 16),
                                 filled: true,
                                 fillColor: Colors.white,
                                 border: OutlineInputBorder(
@@ -595,7 +589,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                               onChanged: (newValue) {
                                 if (newValue != null &&
                                     dropdownStateItems!.any(
-                                            (item) => item.value == newValue)) {
+                                        (item) => item.value == newValue)) {
                                   print("if newValue : $newValue");
                                   setState(() {
                                     _selectedStateName = newValue;
@@ -643,8 +637,8 @@ class _EditAddressPageState extends State<EditAddressPage> {
                             fillColor: Colors.white,
                             filled: true,
                             border: const OutlineInputBorder(
-                              // borderRadius: BorderRadius.all(Radius.circular(10.0),),
-                            ),
+                                // borderRadius: BorderRadius.all(Radius.circular(10.0),),
+                                ),
                             enabledBorder: const OutlineInputBorder(
                               borderSide: BorderSide(
                                 color: Colors.grey,
@@ -655,7 +649,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                             focusedBorder: const OutlineInputBorder(
                               // borderRadius: BorderRadius.all(Radius.circular(10.0)),
                               borderSide:
-                              BorderSide(color: Colors.green, width: 0.5),
+                                  BorderSide(color: Colors.green, width: 0.5),
                             ),
                           ),
                         ),
@@ -691,8 +685,8 @@ class _EditAddressPageState extends State<EditAddressPage> {
                             fillColor: Colors.white,
                             filled: true,
                             border: const OutlineInputBorder(
-                              // borderRadius: BorderRadius.all(Radius.circular(10.0),),
-                            ),
+                                // borderRadius: BorderRadius.all(Radius.circular(10.0),),
+                                ),
                             enabledBorder: const OutlineInputBorder(
                               borderSide: BorderSide(
                                 color: Colors.grey,
@@ -703,7 +697,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                             focusedBorder: const OutlineInputBorder(
                               // borderRadius: BorderRadius.all(Radius.circular(10.0)),
                               borderSide:
-                              BorderSide(color: Colors.green, width: 0.5),
+                                  BorderSide(color: Colors.green, width: 0.5),
                             ),
                           ),
                         ),
@@ -717,7 +711,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                         child: Container(
                           width: MediaQuery.of(context).size.width,
                           padding:
-                          const EdgeInsets.only(left: 25.0, right: 25.0),
+                              const EdgeInsets.only(left: 25.0, right: 25.0),
                           child: ElevatedButton(
                             onPressed: () {
                               otherEditAddressApiCall(
@@ -734,7 +728,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
                               backgroundColor: const Color(0xFF3FC041),
                               shape: RoundedRectangleBorder(
                                 borderRadius:
-                                BorderRadius.circular(12), // <-- Radius
+                                    BorderRadius.circular(12), // <-- Radius
                               ),
                             ),
                             child: Text(
@@ -758,7 +752,8 @@ class _EditAddressPageState extends State<EditAddressPage> {
 
   void _getValue() {
     if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save(); // This triggers onSaved for each TextFormField
+      _formKey.currentState!
+          .save(); // This triggers onSaved for each TextFormField
       print("pincode : $pincode");
 
       if (pincode != null && village != null) {
@@ -776,38 +771,51 @@ class _EditAddressPageState extends State<EditAddressPage> {
     }
   }
 
-otherEditAddressApiCall(String pincode, String district, String state,
-    String address, String village) async {
-  if (pincode.isNotEmpty && village.isNotEmpty) {
-    var headers = {'Content-Type': 'application/json'};
-    var data = json.encode({
-      "uid": number,
-      "pincode": pincode,
-      "district": district,
-      "state": state,
-      "address": address,
-      "village": village
-    });
-    var dio = Dio();
-    var response = await dio.request(
-      UPDATE_ADDRESS_DETAILS,
-      options: Options(
-        method: 'POST',
-        headers: headers,
-      ),
-      data: data,
-    );
+  otherEditAddressApiCall(String pincode, String district, String state,
+      String address, String village) async {
+    if (pincode.isNotEmpty && village.isNotEmpty) {
+      var headers = {'Content-Type': 'application/json'};
+      var data = json.encode({
+        "uid": number,
+        "pincode": pincode,
+        "district": district,
+        "state": state,
+        "address": address,
+        "village": village
+      });
+      // var dio = Dio();
+      print('data : $data');
+      print('link : ${UPDATE_ADDRESS_DETAILS}');
 
-    if (response.statusCode == 201) {
-      print("Address details updated : " + json.encode(response.data));
-      showAlertDialog(context);
+      var response = await http
+          .post(
+            Uri.parse(UPDATE_ADDRESS_DETAILS),
+            headers: headers,
+            body: data,
+            encoding: Encoding.getByName("utf-8"),
+          )
+          .timeout(const Duration(seconds: 8));
+      // var response = await dio.request(
+      //   UPDATE_ADDRESS_DETAILS,
+      //   options: Options(
+      //     method: 'POST',
+      //     headers: headers,
+      //   ),
+      //   data: data,
+      // );
+
+      if (response.statusCode == 201) {
+        // print("Address details updated : " + json.encode(response.data));
+        showAlertDialog(context);
+      } else {
+        var data = jsonDecode(response.body);
+        AlertHelper.showToast(
+            "Fail to update profile : Error ${data['message']}", context);
+      }
     } else {
-      print(response.statusMessage);
+      AlertHelper.showToast("Please enter pincode and village.", context);
     }
-  } else {
-    AlertHelper.showToast("Please enter pincode and village.", context);
   }
-}
 
   showAlertDialog(BuildContext context) {
     // set up the AlertDialog
@@ -836,10 +844,10 @@ otherEditAddressApiCall(String pincode, String district, String state,
           ),
           Center(
               child: Image.asset(
-                'assets/images/check_green.png',
-                width: 100,
-                height: 100,
-              )),
+            'assets/images/check_green.png',
+            width: 100,
+            height: 100,
+          )),
           const Text(
             "You've Details Updated Successfully!",
             softWrap: true,
@@ -878,7 +886,8 @@ otherEditAddressApiCall(String pincode, String district, String state,
 
   Future<void> getAddressDetails() async {
     number = (await AppGlobal.getStringPreference('contactNumber'))!;
-    futureAddressDetails = AccountSettingController.fetchAddressDetails(context, number);
+    futureAddressDetails =
+        AccountSettingController.fetchAddressDetails(context, number);
     setState(() {
       futureAddressDetails = futureAddressDetails;
     });
@@ -942,5 +951,4 @@ otherEditAddressApiCall(String pincode, String district, String state,
       print('API call failed: $e');
     }
   }
-
 }

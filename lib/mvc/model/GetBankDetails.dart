@@ -30,15 +30,18 @@ class BankData {
   String? accountNumber;
   String? bankName;
   String? ifscCode;
+  String? URL;
 
-  BankData(
-      {this.sId,
-        this.uid,
-        this.iV,
-        this.accountName,
-        this.accountNumber,
-        this.bankName,
-        this.ifscCode});
+  BankData({
+    this.sId,
+    this.uid,
+    this.iV,
+    this.accountName,
+    this.accountNumber,
+    this.bankName,
+    this.ifscCode,
+    this.URL,
+  });
 
   BankData.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
@@ -48,6 +51,7 @@ class BankData {
     accountNumber = json['accountNumber'];
     bankName = json['bankName'];
     ifscCode = json['ifscCode'];
+    URL = json['URL'];
   }
 
   Map<String, dynamic> toJson() {
@@ -59,6 +63,7 @@ class BankData {
     data['accountNumber'] = this.accountNumber;
     data['bankName'] = this.bankName;
     data['ifscCode'] = this.ifscCode;
+    data['URL'] = this.URL;
     return data;
   }
 }
