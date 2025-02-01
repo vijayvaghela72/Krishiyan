@@ -19,10 +19,12 @@ class PriceData {
 
 // Function to fetch price history from the API
 Future<List<PriceData>> fetchPriceHistory(String? primaryKey) async {
-  final response = await http.get(Uri.parse('https://krishiyanback.vercel.app/api/market/$primaryKey'));
-
+  final response = await http.get(
+      Uri.parse('https://krishiyanback.vercel.app/api/market/$primaryKey'));
+  print('https://krishiyanback.vercel.app/api/market/$primaryKey');
   if (response.statusCode == 200) {
     final Map<String, dynamic> data = jsonDecode(response.body);
+    print('data : $data');
     if (data['success']) {
       final List<dynamic> prices = data['data']['prices'];
       return prices.map((priceJson) => PriceData.fromJson(priceJson)).toList();
@@ -41,9 +43,9 @@ List<FlSpot> prepareChartDataForYear(List<PriceData> prices) {
   // Plot all data points with their actual date and price
   for (var price in prices) {
     // X-axis is the date in milliseconds since epoch (to create a continuous range)
-    spots.add(FlSpot(price.date.millisecondsSinceEpoch.toDouble(), price.price));
+    spots
+        .add(FlSpot(price.date.millisecondsSinceEpoch.toDouble(), price.price));
   }
 
   return spots;
 }
-
