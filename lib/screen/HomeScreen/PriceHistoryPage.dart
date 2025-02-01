@@ -255,8 +255,12 @@ class _PriceHistoryPageState extends State<PriceHistoryPage> {
                                 // Set custom Y-axis labels with interval of 2000
                                 if (value % 2000 == 0 &&
                                     value <= calculateMaxY(chartData)) {
-                                  return Text(value.round().toString(),
-                                      style: TextStyle(fontSize: 10));
+                                  return Text(
+                                    value.round().toString(),
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                    ),
+                                  );
                                 }
                                 return Container();
                               },
@@ -317,6 +321,55 @@ class _PriceHistoryPageState extends State<PriceHistoryPage> {
                                 show: false), // Optional: remove shaded area
                           ),
                         ],
+                        lineTouchData: LineTouchData(
+                          touchTooltipData: LineTouchTooltipData(
+                            maxContentWidth: 100,
+                            getTooltipColor: (touchedSpot) => Colors.black,
+                            getTooltipItems: (touchedSpots) {
+                              return touchedSpots
+                                  .map((LineBarSpot touchedSpot) {
+                                // Convert the x value (milliseconds since epoch) to a DateTime object
+                                DateTime date =
+                                    DateTime.fromMillisecondsSinceEpoch(
+                                        touchedSpot.x.toInt());
+
+                                // Format the date as desired (e.g., "dd MMM yyyy" or any other format)
+                                String formattedDate =
+                                    "${date.day} ${_getMonthName(date.month)}";
+
+                                final textStyle = TextStyle(
+                                  color: Colors.green,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                );
+
+                                // Display the formatted date and the y value in the tooltip
+                                return LineTooltipItem(
+                                  '$formattedDate : ${touchedSpot.y.toStringAsFixed(2)}',
+                                  textStyle,
+                                );
+                              }).toList();
+                            },
+                          ),
+                          getTouchedSpotIndicator: (LineChartBarData barData,
+                              List<int> spotIndexes) {
+                            return spotIndexes.map((spotIndex) {
+                              return TouchedSpotIndicatorData(
+                                FlLine(color: Colors.green, strokeWidth: 2),
+                                FlDotData(
+                                  show: true,
+                                  getDotPainter:
+                                      (spot, percent, barData, index) =>
+                                          FlDotCirclePainter(
+                                              radius: 5,
+                                              color: Colors.green,
+                                              strokeWidth: 2,
+                                              strokeColor: Colors.white),
+                                ),
+                              );
+                            }).toList();
+                          },
+                        ),
                       ),
                     ),
                   );
