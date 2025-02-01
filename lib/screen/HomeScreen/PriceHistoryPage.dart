@@ -55,38 +55,50 @@ class _PriceHistoryPageState extends State<PriceHistoryPage> {
     // Prepare the chart data for the selected prices
     updatedChartData = prepareChartData(selectedPrices);
 
-    setState(() {
-      chartData = updatedChartData;
-      intSelectedType = timeInterval;
-    });
+    chartData = updatedChartData;
+    intSelectedType = timeInterval;
+    setState(() {});
   }
 
   List<FlSpot> prepareChartData(List<PriceData> prices) {
-    if (intSelectedType == 2) {
-      // 6-month interval
-      List<FlSpot> filteredData = [];
-      DateTime? lastAddedDate;
+    List<FlSpot> filteredData = [];
+    DateTime? lastAddedDate;
 
-      for (var price in prices) {
+    // Sort prices by date to ensure chronological order
+    prices.sort((a, b) => a.date.compareTo(b.date));
+
+    for (var price in prices) {
+      if (intSelectedType == 3) {
+        // For 1-year interval, filter data to reduce density (one data point every 10 days)
         if (lastAddedDate == null ||
-            price.date.difference(lastAddedDate).inDays >= 18) {
+            price.date.difference(lastAddedDate).inDays >= 10) {
           filteredData.add(FlSpot(
             price.date.millisecondsSinceEpoch.toDouble(),
             price.price.toDouble(),
           ));
-          lastAddedDate = price.date;
+          lastAddedDate = price.date; // Update the last added date
         }
+      } else if (intSelectedType == 2) {
+        // For 6-month interval, filter data to reduce density (one data point per week)
+        if (lastAddedDate == null ||
+            price.date.difference(lastAddedDate).inDays >= 7) {
+          filteredData.add(FlSpot(
+            price.date.millisecondsSinceEpoch.toDouble(),
+            price.price.toDouble(),
+          ));
+          lastAddedDate = price.date; // Update the last added date
+        }
+      } else {
+        // For other intervals (1 month, 3 months), include all data points
+        filteredData.add(FlSpot(
+          price.date.millisecondsSinceEpoch.toDouble(),
+          price.price.toDouble(),
+        ));
       }
-
-      return filteredData;
     }
 
-    // For other intervals, return all data points
-    return prices.map((price) {
-      // Convert the date to a timestamp for the X-axis
-      double timestamp = price.date.millisecondsSinceEpoch.toDouble();
-      return FlSpot(timestamp, price.price.toDouble());
-    }).toList();
+    print('filteredData length: ${filteredData.length}');
+    return filteredData;
   }
 
   String _getMonthName(int month) {
@@ -146,6 +158,30 @@ class _PriceHistoryPageState extends State<PriceHistoryPage> {
         1.1; // 10% padding
   }
 
+  double calculateMinX(int timeInterval) {
+    DateTime now = DateTime.now();
+    if (timeInterval == 0) {
+      return now.subtract(Duration(days: 30)).millisecondsSinceEpoch.toDouble();
+    } else if (timeInterval == 1) {
+      return now.subtract(Duration(days: 90)).millisecondsSinceEpoch.toDouble();
+    } else if (timeInterval == 2) {
+      return now
+          .subtract(Duration(days: 180))
+          .millisecondsSinceEpoch
+          .toDouble();
+    } else if (timeInterval == 3) {
+      return now
+          .subtract(Duration(days: 365))
+          .millisecondsSinceEpoch
+          .toDouble();
+    }
+    return 0;
+  }
+
+  double calculateMaxX() {
+    return DateTime.now().millisecondsSinceEpoch.toDouble();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -202,11 +238,15 @@ class _PriceHistoryPageState extends State<PriceHistoryPage> {
                       LineChartData(
                         minY: calculateMinY(chartData), // Set minY dynamically
                         maxY: calculateMaxY(chartData), // Set maxY dynamically
-                        gridData: FlGridData(show: true),
-                        // lineTouchData: ,
-
+                        minX: calculateMinX(
+                            intSelectedType), // Set minX dynamically
+                        maxX: calculateMaxX(), // Set maxX dynamically
+                        gridData: FlGridData(
+                          show: true,
+                          drawVerticalLine: true,
+                        ),
+                        // y axis
                         titlesData: FlTitlesData(
-                          // y axis
                           leftTitles: AxisTitles(
                             sideTitles: SideTitles(
                               showTitles: true,
@@ -267,9 +307,12 @@ class _PriceHistoryPageState extends State<PriceHistoryPage> {
                         lineBarsData: [
                           LineChartBarData(
                             spots: chartData,
-                            isCurved: true,
+                            isCurved: true, //  need to manage
+                            dotData: const FlDotData(
+                              show: false,
+                            ),
                             color: Colors.blue, // Line color
-                            barWidth: 4,
+                            barWidth: 2,
                             belowBarData: BarAreaData(
                                 show: false), // Optional: remove shaded area
                           ),
