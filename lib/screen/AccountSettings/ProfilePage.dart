@@ -46,6 +46,13 @@ class _ProfilePageState extends State<ProfilePage> with TickerProviderStateMixin
     getPrefValue();
   }
 
+   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // This will be called every time the page is pushed or the dependencies change
+    getDetails(); // Make sure to call getDetails here to update the values
+  }
+
   
   String? _imageUrl;
 

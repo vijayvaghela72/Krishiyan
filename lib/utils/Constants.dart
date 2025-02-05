@@ -24,7 +24,8 @@ const String SIGNUP = "${baseUrl}fpo";
 
 const String FARMER_NAME = "${baseUrl}appFarmer/names/";
 
-const String CROP_LIST = "${baseUrl}crop";
+const String CROP_LIST = "https://d1dv04h56lh39n.cloudfront.net/api/crop";
+// const String CROP_LIST = "${baseUrl}crop";
 // const String FARMER_DASHBOARD = "${baseUrl}api/appFarmer";
 const String FARMER_DASHBOARD = "https://krishiyanback.vercel.app/api/appFarmer/data";
 
