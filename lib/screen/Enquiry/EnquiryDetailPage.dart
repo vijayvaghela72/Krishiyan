@@ -83,11 +83,11 @@ class _EnquiryDetailPageState extends State<EnquiryDetailPage>
                     child: Container(
                       width: MediaQuery.of(context).size.width,
                       height: 210,
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(12)),
                           image: DecorationImage(
                               image:
-                              AssetImage("assets/images/enquiryBG.png"),
+                              NetworkImage(widget.commodity.photoVideoLink ?? ''),
                               fit: BoxFit.cover)),
                     ),
                   ),
