@@ -338,15 +338,17 @@ class _MyWeedManagementPageState extends State<MyWeedManagementPage>
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisSize: MainAxisSize.min,
                                   children: <Widget>[
-                                    Container(
-                                        padding: const EdgeInsets.all(8.0),
-                                        decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(15)),
-                                        child: filteredData[parentIndex]
-                                          .weedManagement![index].image!.isNotEmpty ?
-                                      DriveImage(imageUrlData:
-                                      filteredData[parentIndex].
-                                      weedManagement![index].image! ?? ""):Container(),),
+                                    Center(
+                                      child: Container(
+                                          padding: const EdgeInsets.all(8.0),
+                                          decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(15)),
+                                          child: filteredData[parentIndex]
+                                            .weedManagement![index].image!.isNotEmpty ?
+                                        DriveImage(imageUrlData:
+                                        filteredData[parentIndex].
+                                        weedManagement![index].image! ?? ""):Container(),),
+                                    ),
                                     Flexible(
                                       child: Padding(
                                         padding: const EdgeInsets.all(3.0),

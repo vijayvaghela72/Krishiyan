@@ -17,9 +17,9 @@ class DriveImage extends StatelessWidget {
 
     return Image.network(
       imageUrl,
-      width: MediaQuery.of(context).size.width,
-      height: 100,
-      fit: BoxFit.cover,
+      // width: MediaQuery.of(context).size.width,
+      // height: MediaQuery.of(context).size.height,
+      fit: BoxFit.fill,
       errorBuilder: (context, error, stackTrace) {
         // Handle any errors that occur while loading the image
         return const Icon(Icons.error);

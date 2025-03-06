@@ -459,27 +459,30 @@ class _MyPestManagementPageState extends State<MyPestManagementPage>
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisSize: MainAxisSize.min,
                                   children: <Widget>[
-                                    Container(
-                                      padding: const EdgeInsets.all(8.0),
-                                      decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(15)),
-                                      child:
-                                      filteredData[parentIndex]
-                                          .pestManagement![index].images!.isNotEmpty ?
-                                      DriveImage(imageUrlData:
-                                      filteredData[parentIndex].
-                                      pestManagement![index].images![0] ?? ""):Container(),
-                                      // snapshot.data![parentIndex]
-                                      //     .pestManagement![index].images!.isNotEmpty ?
-                                      // CachedNetworkImage(
-                                      //   imageUrl: snapshot.data![parentIndex]
-                                      //       .pestManagement![index].images![0] ?? "",
-                                      //   width: MediaQuery.of(context).size.width,
-                                      //   height: 200,
-                                      //   fit: BoxFit.cover,
-                                      //   placeholder: (context, url) => Image.asset('assets/images/g1.png'),
-                                      //   errorWidget: (context, url, error) => Icon(Icons.error),
-                                      // ) : Container(),
+                                    Center(
+                                      child: Container(
+                                        height: 200,
+                                        padding: const EdgeInsets.all(8.0),
+                                        decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(15)),
+                                        child:
+                                        filteredData[parentIndex]
+                                            .pestManagement![index].images!.isNotEmpty ?
+                                        DriveImage(imageUrlData:
+                                        filteredData[parentIndex].
+                                        pestManagement![index].images![0] ?? ""):Container(),
+                                        // snapshot.data![parentIndex]
+                                        //     .pestManagement![index].images!.isNotEmpty ?
+                                        // CachedNetworkImage(
+                                        //   imageUrl: snapshot.data![parentIndex]
+                                        //       .pestManagement![index].images![0] ?? "",
+                                        //   width: MediaQuery.of(context).size.width,
+                                        //   height: 200,
+                                        //   fit: BoxFit.cover,
+                                        //   placeholder: (context, url) => Image.asset('assets/images/g1.png'),
+                                        //   errorWidget: (context, url, error) => Icon(Icons.error),
+                                        // ) : Container(),
+                                      ),
                                     ),
                                     Flexible(
                                       child: Padding(

@@ -358,15 +358,17 @@ class _DiseaseManagementPageState extends State<DiseaseManagementPage>
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisSize: MainAxisSize.min,
                                   children: <Widget>[
-                                    Container(
-                                        padding: const EdgeInsets.all(8.0),
-                                        decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(15)),
-                                        child:  filteredData[parentIndex]
-                                          .diseaseManagement![index].images!.isNotEmpty ?
-                                      DriveImage(imageUrlData:
-                                      filteredData[parentIndex].
-                                      diseaseManagement![index].images![0] ?? ""):Container(),),
+                                    Center(
+                                      child: Container(
+                                          padding: const EdgeInsets.all(8.0),
+                                          decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(15)),
+                                          child:  filteredData[parentIndex]
+                                            .diseaseManagement![index].images!.isNotEmpty ?
+                                        DriveImage(imageUrlData:
+                                        filteredData[parentIndex].
+                                        diseaseManagement![index].images![0] ?? ""):Container(),),
+                                    ),
                                     Flexible(
                                       child: Padding(
                                         padding: const EdgeInsets.all(5.0),

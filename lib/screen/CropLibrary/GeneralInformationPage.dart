@@ -704,13 +704,15 @@ class _GeneralInformationPageState extends State<GeneralInformationPage>
                         onTap: () {},
                         child: Column(
                           children: <Widget>[
-                            Container(
-                              padding: const EdgeInsets.all(8.0),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              child: DriveImage(
-                                imageUrlData: filteredData[parentIndex].stages![index].images![0] ?? "",
+                            Center(
+                              child: Container(
+                                padding: const EdgeInsets.all(8.0),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                child: DriveImage(
+                                  imageUrlData: filteredData[parentIndex].stages![index].images![0] ?? "",
+                                ),
                               ),
                             ),
                             Flexible(

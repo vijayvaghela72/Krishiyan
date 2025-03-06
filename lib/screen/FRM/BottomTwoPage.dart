@@ -3374,7 +3374,10 @@ class _MyDrawerState extends State<MyDrawer> {
 
   Future<void> _fetchVillageData() async {
     try {
-      var response = await Dio().get(VILLAGES_NAMES);
+      String? number = await AppGlobal.getStringPreference('contactNumber');
+    var dealerNumber = number ?? "1";  // Default to "1" if no number found
+
+      var response = await Dio().get(VILLAGES_NAMES + dealerNumber);
 
       if (response.statusCode == 200) {
         setState(() {

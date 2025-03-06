@@ -1321,7 +1321,7 @@ class _BottomOnePageState extends State<BottomOnePage> with TickerProviderStateM
                                                           width: 5,
                                                         ),
                                                         Text(
-                                                          selectedStateItemValue.toString(),
+                                                          selectedStateItemValue?.toString() ?? '',
                                                           softWrap: true,
                                                           style: TextStyle(
                                                               color: Color(0xFF808080),

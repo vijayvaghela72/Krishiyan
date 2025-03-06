@@ -442,14 +442,16 @@ class _DeficiencyManagementPageState extends State<DeficiencyManagementPage>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      Container(
-                          padding: const EdgeInsets.all(8.0),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15)),
-                          child:  deficiency?.images?.isNotEmpty == true
-                                  ? DriveImage(imageUrlData: deficiency!.images!.first)
-                                  : Container(),
-                                  ),
+                      Center(
+                        child: Container(
+                            padding: const EdgeInsets.all(8.0),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15)),
+                            child:  deficiency?.images?.isNotEmpty == true
+                                    ? DriveImage(imageUrlData: deficiency!.images!.first)
+                                    : Container(),
+                                    ),
+                      ),
                       Flexible(
                         child: Padding(
                           padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 5.0),
