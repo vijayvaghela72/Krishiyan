@@ -47,7 +47,7 @@ android {
         release {
             keyAlias 'krishiyanappkey' // Use the actual alias from the keystore
             keyPassword 'Wetacre@2024' // Replace with the actual key password
-            // storeFile file('C:/Users/Admin/Downloads/krishiYan_key.jks')
+            storeFile file('/Users/admin/Downloads/Projects/krishiyan-app/android/krishiYan_key.jks')
             storePassword 'Wetacre@2024' // Replace with the actual keystore password
         }
     }
@@ -56,7 +56,7 @@ android {
         release {
             minifyEnabled false
             shrinkResources false
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
         }
     }
 }
