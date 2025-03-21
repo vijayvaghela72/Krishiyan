@@ -25,13 +25,16 @@ if (flutterVersionName == null) {
 android {
     namespace "com.krishiyan.wetacre"
     compileSdk 35
-    ndkVersion flutter.ndkVersion
+    ndkVersion '28.0.13004108'
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
+    kotlinOptions {
+        jvmTarget = '17'
+    }
     defaultConfig {
         applicationId "com.krishiyan.wetacre"
         minSdkVersion 21
@@ -44,7 +47,7 @@ android {
         release {
             keyAlias 'krishiyanappkey' // Use the actual alias from the keystore
             keyPassword 'Wetacre@2024' // Replace with the actual key password
-            storeFile file('C:/Users/Admin/Downloads/krishiYan_key.jks')
+            // storeFile file('C:/Users/Admin/Downloads/krishiYan_key.jks')
             storePassword 'Wetacre@2024' // Replace with the actual keystore password
         }
     }
@@ -53,7 +56,7 @@ android {
         release {
             minifyEnabled false
             shrinkResources false
-            signingConfig signingConfigs.release
+            signingConfig signingConfigs.debug
         }
     }
 }

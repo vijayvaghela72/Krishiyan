@@ -1,0 +1,2 @@
+/Users/admin/Downloads/Projects/krishiyan-app/android/app/.cxx/Debug/2m5p3l1e/x86/CMakeFiles/edit_cache.dir
+/Users/admin/Downloads/Projects/krishiyan-app/android/app/.cxx/Debug/2m5p3l1e/x86/CMakeFiles/rebuild_cache.dir
