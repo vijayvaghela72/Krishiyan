@@ -1898,7 +1898,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
-        print("Profile details updated : " + data);
+        print("Profile details updated : ${data}");
 
         showAlertDialog(context);
       } else {
