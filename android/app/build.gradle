@@ -23,7 +23,7 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace "com.krishiyan.wetacre"
+    namespace "com.wetacre.krishiyan"
     compileSdk 35
     ndkVersion '28.0.13004108'
 
@@ -36,7 +36,7 @@ android {
         jvmTarget = '17'
     }
     defaultConfig {
-        applicationId "com.krishiyan.wetacre"
+        applicationId "com.wetacre.krishiyan"
         minSdkVersion 21
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()

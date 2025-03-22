@@ -1,4 +1,4 @@
-package com.krishiyan.wetacre;
+package com.wetacre.krishiyan;
 
 import io.flutter.embedding.android.FlutterActivity;
 

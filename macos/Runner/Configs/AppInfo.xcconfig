@@ -8,7 +8,7 @@
 PRODUCT_NAME = krishiyan
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.krishiyan.wetacre
+PRODUCT_BUNDLE_IDENTIFIER = com.wetacre.krishiyan
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2024 com.krishiyan. All rights reserved.
