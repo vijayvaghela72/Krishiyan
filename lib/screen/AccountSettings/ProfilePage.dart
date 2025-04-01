@@ -23,18 +23,19 @@ import '../Login/LoginPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatefulWidget {
-
-  const ProfilePage({super.key,});
+  const ProfilePage({
+    super.key,
+  });
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> with TickerProviderStateMixin{
+class _ProfilePageState extends State<ProfilePage>
+    with TickerProviderStateMixin {
   File? _profileImage; // To store the profile image file
 
   var _bottomNavIndex = 3; //default index of a first screen
-
 
   String name = "", email = "", contactNumber = "";
   String typeOfOrganizationData = "";
@@ -46,39 +47,35 @@ class _ProfilePageState extends State<ProfilePage> with TickerProviderStateMixin
     getPrefValue();
   }
 
-   @override
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     // This will be called every time the page is pushed or the dependencies change
     getDetails(); // Make sure to call getDetails here to update the values
   }
 
-  
   String? _imageUrl;
 
-
   // Method to load the saved image from SharedPreferences
-Future<void> _loadImageUrl(String organizationName) async {
-  if (organizationName.isEmpty) {
+  Future<void> _loadImageUrl(String organizationName) async {
+    if (organizationName.isEmpty) {
       print("Organization name is empty. Please enter a valid name.");
       return;
     }
 
     // Construct the image URL
-    String imageUrl = 'https://krishiyanback.vercel.app/images/${organizationName}_profile_image.jpg';
+    String imageUrl =
+        '${baseUrlEnd}images/${organizationName}_profile_image.jpg';
     print("Fetching image from URL: $imageUrl");
 
     // Update the UI with the fetched image URL
     setState(() {
       _imageUrl = imageUrl; // Store the fetched image URL to display it
     });
-}
-
-
+  }
 
   @override
   Widget build(BuildContext context) {
-
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
     ));
@@ -90,7 +87,10 @@ Future<void> _loadImageUrl(String organizationName) async {
         backgroundColor: Colors.green,
         title: Text(
           buildTranslate("myProfile")!,
-          style: const TextStyle(color: Colors.white, fontFamily: 'poppins-semibold', fontSize: 20),
+          style: const TextStyle(
+              color: Colors.white,
+              fontFamily: 'poppins-semibold',
+              fontSize: 20),
         ),
       ),
       body: SingleChildScrollView(
@@ -104,52 +104,82 @@ Future<void> _loadImageUrl(String organizationName) async {
               child: Row(
                 children: <Widget>[
                   Container(
-  height: 60.0,
-  width: 60.0,
-  decoration: BoxDecoration(
-    shape: BoxShape.circle,
-    image: DecorationImage(
-      image: _imageUrl != null 
-          ? NetworkImage(_imageUrl!)  // If an image is selected, show it
-          : AssetImage("assets/images/user_profile.png") as ImageProvider,  // Default image
-      fit: BoxFit.cover, // Ensure the image covers the container
-    ),
-    border: Border.all(
-      color: Colors.green, // Border color
-      width: 2.0,  // Border width
-    ),
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black.withOpacity(0.1), // Shadow color
-        blurRadius: 4.0, // Blur radius
-        offset: Offset(0, 2), // Shadow position
-      ),
-    ],
-  ),
-),
-
-                  const SizedBox(width: 15,),
+                    height: 60.0,
+                    width: 60.0,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                        image: _imageUrl != null
+                            ? NetworkImage(
+                                _imageUrl!) // If an image is selected, show it
+                            : AssetImage("assets/images/user_profile.png")
+                                as ImageProvider, // Default image
+                        fit: BoxFit
+                            .cover, // Ensure the image covers the container
+                      ),
+                      border: Border.all(
+                        color: Colors.green, // Border color
+                        width: 2.0, // Border width
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1), // Shadow color
+                          blurRadius: 4.0, // Blur radius
+                          offset: Offset(0, 2), // Shadow position
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 15,
+                  ),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(name ?? "", softWrap: true,
-                        style: const TextStyle(color: Colors.black, fontSize: 15, fontFamily: 'poppins-semibold'),),
-                      Text(email ?? "", softWrap: true,
-                        style: const TextStyle(color: Color(0xFF888888), fontSize: 14, fontFamily: 'poppins-regular'),),
-                      Text(contactNumber ?? "", softWrap: true,
-                        style: const TextStyle(color: Color(0xFF888888), fontSize: 14, fontFamily: 'poppins-regular'),),
+                      Text(
+                        name ?? "",
+                        softWrap: true,
+                        style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 15,
+                            fontFamily: 'poppins-semibold'),
+                      ),
+                      Text(
+                        email ?? "",
+                        softWrap: true,
+                        style: const TextStyle(
+                            color: Color(0xFF888888),
+                            fontSize: 14,
+                            fontFamily: 'poppins-regular'),
+                      ),
+                      Text(
+                        contactNumber ?? "",
+                        softWrap: true,
+                        style: const TextStyle(
+                            color: Color(0xFF888888),
+                            fontSize: 14,
+                            fontFamily: 'poppins-regular'),
+                      ),
                     ],
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 20,),
+            const SizedBox(
+              height: 20,
+            ),
 
             Padding(
               padding: const EdgeInsets.only(left: 18.0, right: 18.0),
-              child: Text(buildTranslate("updateYourProfile")!, softWrap: true,
-                style: const TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'poppins-semibold'),),
+              child: Text(
+                buildTranslate("updateYourProfile")!,
+                softWrap: true,
+                style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 18,
+                    fontFamily: 'poppins-semibold'),
+              ),
             ),
 
             // edit profile
@@ -157,23 +187,37 @@ Future<void> _loadImageUrl(String organizationName) async {
               highlightColor: Colors.transparent,
               splashColor: Colors.transparent,
               onTap: () {
-                typeOfOrganizationData == "Farmer groups" ?
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const EditProfilePage()),
-                ) :
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const EditOtherProfilePage()),
-                );
+                typeOfOrganizationData == "Farmer groups"
+                    ? Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (context) => const EditProfilePage()),
+                      )
+                    : Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (context) => const EditOtherProfilePage()),
+                      );
               },
               child: Padding(
                 padding: const EdgeInsets.only(
                     top: 30.0, bottom: 20.0, right: 18.0, left: 18.0),
                 child: Row(
                   children: <Widget>[
-                    Image.asset('assets/images/edit_profile.png', height: 20, width: 20,),
-                    const SizedBox(width: 10,),
-                    Text(buildTranslate("editProfile")!, softWrap: true,
-                      style: const TextStyle(color: Colors.black, fontSize: 17, fontFamily: 'poppins-regular'),),
+                    Image.asset(
+                      'assets/images/edit_profile.png',
+                      height: 20,
+                      width: 20,
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      buildTranslate("editProfile")!,
+                      softWrap: true,
+                      style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 17,
+                          fontFamily: 'poppins-regular'),
+                    ),
                   ],
                 ),
               ),
@@ -185,7 +229,8 @@ Future<void> _loadImageUrl(String organizationName) async {
               splashColor: Colors.transparent,
               onTap: () {
                 Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const EditAddressPage()),
+                  MaterialPageRoute(
+                      builder: (context) => const EditAddressPage()),
                 );
               },
               child: Padding(
@@ -193,10 +238,22 @@ Future<void> _loadImageUrl(String organizationName) async {
                     top: 10.0, bottom: 20.0, right: 18.0, left: 18.0),
                 child: Row(
                   children: <Widget>[
-                    Image.asset('assets/images/edit_profile.png', height: 20, width: 20,),
-                    const SizedBox(width: 10,),
-                    Text(buildTranslate("editAddress")!, softWrap: true,
-                      style: const TextStyle(color: Colors.black, fontSize: 17, fontFamily: 'poppins-regular'),),
+                    Image.asset(
+                      'assets/images/edit_profile.png',
+                      height: 20,
+                      width: 20,
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      buildTranslate("editAddress")!,
+                      softWrap: true,
+                      style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 17,
+                          fontFamily: 'poppins-regular'),
+                    ),
                   ],
                 ),
               ),
@@ -208,7 +265,8 @@ Future<void> _loadImageUrl(String organizationName) async {
               splashColor: Colors.transparent,
               onTap: () {
                 Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const EditBankDetailPage()),
+                  MaterialPageRoute(
+                      builder: (context) => const EditBankDetailPage()),
                 );
               },
               child: Padding(
@@ -216,11 +274,22 @@ Future<void> _loadImageUrl(String organizationName) async {
                     top: 10.0, bottom: 20.0, right: 18.0, left: 18.0),
                 child: Row(
                   children: <Widget>[
-                    Image.asset('assets/images/edit_bankDetails.png', height: 20, width: 20,),
-                    const SizedBox(width: 10,),
-                    Text(buildTranslate("editBankDetails")!, softWrap: true,
-                      style: const TextStyle(color: Colors.black,
-                          fontSize: 17, fontFamily: 'poppins-regular'),),
+                    Image.asset(
+                      'assets/images/edit_bankDetails.png',
+                      height: 20,
+                      width: 20,
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      buildTranslate("editBankDetails")!,
+                      softWrap: true,
+                      style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 17,
+                          fontFamily: 'poppins-regular'),
+                    ),
                   ],
                 ),
               ),
@@ -232,7 +301,8 @@ Future<void> _loadImageUrl(String organizationName) async {
               splashColor: Colors.transparent,
               onTap: () {
                 Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const OtherDetailPage()),
+                  MaterialPageRoute(
+                      builder: (context) => const OtherDetailPage()),
                 );
               },
               child: Padding(
@@ -240,11 +310,22 @@ Future<void> _loadImageUrl(String organizationName) async {
                     top: 10.0, bottom: 20.0, right: 18.0, left: 18.0),
                 child: Row(
                   children: <Widget>[
-                    Image.asset('assets/images/edit_profile.png', height: 20, width: 20,),
-                    const SizedBox(width: 10,),
-                    Text(buildTranslate("otherDetails")!, softWrap: true,
-                      style: const TextStyle(color: Colors.black,
-                          fontSize: 17, fontFamily: 'poppins-regular'),),
+                    Image.asset(
+                      'assets/images/edit_profile.png',
+                      height: 20,
+                      width: 20,
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      buildTranslate("otherDetails")!,
+                      softWrap: true,
+                      style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 17,
+                          fontFamily: 'poppins-regular'),
+                    ),
                   ],
                 ),
               ),
@@ -256,7 +337,8 @@ Future<void> _loadImageUrl(String organizationName) async {
               splashColor: Colors.transparent,
               onTap: () {
                 Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const ForgotPasswordPage()),
+                  MaterialPageRoute(
+                      builder: (context) => const ForgotPasswordPage()),
                 );
               },
               child: Padding(
@@ -264,10 +346,22 @@ Future<void> _loadImageUrl(String organizationName) async {
                     top: 10.0, bottom: 20.0, right: 18.0, left: 18.0),
                 child: Row(
                   children: <Widget>[
-                    Image.asset('assets/images/reset_password.png', height: 20, width: 20,),
-                    const SizedBox(width: 10,),
-                    Text(buildTranslate("resetPassword")!, softWrap: true,
-                      style: const TextStyle(color: Colors.black, fontSize: 17, fontFamily: 'poppins-regular'),),
+                    Image.asset(
+                      'assets/images/reset_password.png',
+                      height: 20,
+                      width: 20,
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      buildTranslate("resetPassword")!,
+                      softWrap: true,
+                      style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 17,
+                          fontFamily: 'poppins-regular'),
+                    ),
                   ],
                 ),
               ),
@@ -277,13 +371,13 @@ Future<void> _loadImageUrl(String organizationName) async {
             InkWell(
               highlightColor: Colors.transparent,
               splashColor: Colors.transparent,
-              onTap: () async{
+              onTap: () async {
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 await prefs.clear(); // Clear user data
 
                 Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(builder: (context) => const LoginPage()),
-                      (Route<dynamic> route) => false,
+                  (Route<dynamic> route) => false,
                 );
 
                 // Navigator.pushReplacement(
@@ -294,11 +388,22 @@ Future<void> _loadImageUrl(String organizationName) async {
                     top: 10.0, bottom: 20.0, right: 18.0, left: 18.0),
                 child: Row(
                   children: <Widget>[
-                    Image.asset('assets/images/logout.png', height: 20, width: 20,),
-                    const SizedBox(width: 10,),
-                    Text(buildTranslate("logout")!, softWrap: true,
-                      style: const TextStyle(color: Colors.black,
-                          fontSize: 17, fontFamily: 'poppins-regular'),),
+                    Image.asset(
+                      'assets/images/logout.png',
+                      height: 20,
+                      width: 20,
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      buildTranslate("logout")!,
+                      softWrap: true,
+                      style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 17,
+                          fontFamily: 'poppins-regular'),
+                    ),
                   ],
                 ),
               ),
@@ -310,69 +415,57 @@ Future<void> _loadImageUrl(String organizationName) async {
   }
 
   void _onItemTapped(int index) {
-
     print("Profile index : $index");
 
     if (index == 0) {
       Navigator.pop(context);
       var route = ModalRoute.of(context);
       if (route != null) {
-        Navigator
-            .of(context)
-            .pushReplacement(
-            MaterialPageRoute(builder: (BuildContext context) =>
-                BottomOnePage(aapbarVisibility: true,)));
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (BuildContext context) => BottomOnePage(
+                  aapbarVisibility: true,
+                )));
       }
-    }
-    else if(index ==1) {
+    } else if (index == 1) {
       // Navigator.pop(context);
       var route = ModalRoute.of(context);
       if (route != null) {
-        Navigator
-            .of(context)
-            .pushReplacement(
-            MaterialPageRoute(builder: (BuildContext context) =>
-                BottomTwoPage(aapbarVisibility: true,)));
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (BuildContext context) => BottomTwoPage(
+                  aapbarVisibility: true,
+                )));
       }
-    }
-    else if(index ==2) {
+    } else if (index == 2) {
       // Navigator.pop(context);
       var route = ModalRoute.of(context);
       if (route != null) {
-        Navigator
-            .of(context)
-            .pushReplacement(
-            MaterialPageRoute(builder: (BuildContext context) =>
-                BottomThreePage(aapbarVisibility: true,)));
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (BuildContext context) => BottomThreePage(
+                  aapbarVisibility: true,
+                )));
       }
-    }
-    else if(index == 3){
+    } else if (index == 3) {
       // if (typeOfOrganization == "Farmer groups") {
       Navigator.of(context).push(
         MaterialPageRoute(builder: (context) => ProfilePage()),
       );
       // }
-    }
-    else if(index == 4){
+    } else if (index == 4) {
       // if (typeOfOrganization == "Farmer groups") {
       var route = ModalRoute.of(context);
       if (route != null) {
-        Navigator
-            .of(context)
-            .pushReplacement(
-            MaterialPageRoute(builder: (BuildContext context) =>
-                BottomCenterEnquiryPage(aapbarVisibility: true,)));
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (BuildContext context) => BottomCenterEnquiryPage(
+                  aapbarVisibility: true,
+                )));
       }
       // }
-    }
-
-    else {
+    } else {
       setState(() {
         _bottomNavIndex = index;
       });
       print("Profile : bottomNavIndex : $_bottomNavIndex");
     }
-
   }
 
   Future<void> getDetails() async {
@@ -391,12 +484,12 @@ Future<void> _loadImageUrl(String organizationName) async {
   }
 
   Future<void> getPrefValue() async {
-    typeOfOrganizationData = await SharedPref.readPreferenceValue(typeOfOrganization, PrefEnum.STRING);
+    typeOfOrganizationData = await SharedPref.readPreferenceValue(
+        typeOfOrganization, PrefEnum.STRING);
     print("Profile TypeOfOrganizationData : $typeOfOrganizationData");
-    if(typeOfOrganizationData == "Farmer groups" ) {
+    if (typeOfOrganizationData == "Farmer groups") {
       _bottomNavIndex = 3;
-    }
-    else{
+    } else {
       _bottomNavIndex = 1;
     }
     setState(() {
@@ -404,11 +497,9 @@ Future<void> _loadImageUrl(String organizationName) async {
       _bottomNavIndex = _bottomNavIndex;
     });
   }
-
 }
 
 class bottomCategory {
-
   String? name;
   String? icon;
   String? id;

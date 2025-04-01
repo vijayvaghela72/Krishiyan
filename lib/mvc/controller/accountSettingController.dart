@@ -122,8 +122,7 @@ class AccountSettingController {
       BuildContext context, String number) async {
     return API
         // .callPostImage(ADDRESS_DETAILS+number, null, "", isKeyByPass: true)
-        .callPostImage(
-            "https://krishiyanback.vercel.app/api/address/" + number, null, "",
+        .callPostImage("${baseUrl}address/" + number, null, "",
             isKeyByPass: true)
         .then((response) {
       AppGlobal.printLog("Address RESPONSE : " + response.toString());

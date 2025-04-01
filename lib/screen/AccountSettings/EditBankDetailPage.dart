@@ -88,7 +88,7 @@ class _EditBankDetailPageState extends State<EditBankDetailPage> {
 
       // Send the request
       Response response = await dio.post(
-        'https://krishiyanback.vercel.app/api/upload',
+        '${baseUrl}upload',
         data: formData,
       );
 
@@ -96,7 +96,7 @@ class _EditBankDetailPageState extends State<EditBankDetailPage> {
         var jsonResponse = response.data;
         String imageKey = jsonResponse['Key'];
         // Construct the image URL
-        _imageUrl = 'https://krishiyanback.vercel.app/images/$imageKey';
+        _imageUrl = '${baseUrlEnd}images/$imageKey';
 
         setState(() {
           _imageUrl = _imageUrl;

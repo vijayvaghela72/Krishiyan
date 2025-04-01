@@ -17,7 +17,10 @@ class HomePage extends StatefulWidget {
   final String typeOfOrganization;
   int selectedIndex;
 
-  HomePage({super.key, required this.selectedIndex, required this.typeOfOrganization});
+  HomePage(
+      {super.key,
+      required this.selectedIndex,
+      required this.typeOfOrganization});
 
   static void setLocale(BuildContext context, Locale newLocale) async {
     print("setLocal : $newLocale");
@@ -30,7 +33,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
-
   var _bottomNavIndex = 0;
 
   List<bottomCategory> iconList1 = [
@@ -64,17 +66,25 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   ];
 
   final List<Widget> _screens1 = [
-    BottomOnePage(aapbarVisibility : false),
-    BottomTwoPage(aapbarVisibility: false,),
-    BottomThreePage(aapbarVisibility: false,),
+    BottomOnePage(aapbarVisibility: false),
+    BottomTwoPage(
+      aapbarVisibility: false,
+    ),
+    BottomThreePage(
+      aapbarVisibility: false,
+    ),
     const ProfilePage(),
-    BottomCenterEnquiryPage(aapbarVisibility: false, ),
+    BottomCenterEnquiryPage(
+      aapbarVisibility: false,
+    ),
   ];
 
   final List<Widget> _screens2 = [
-    BottomOnePage(aapbarVisibility : false),
+    BottomOnePage(aapbarVisibility: false),
     const ProfilePage(),
-    BottomCenterEnquiryPage(aapbarVisibility: false,),
+    BottomCenterEnquiryPage(
+      aapbarVisibility: false,
+    ),
   ];
 
   Locale _locale = const Locale("en");
@@ -157,242 +167,274 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     // Print the current bottomNavIndex before returning the body
     print(typeOfOrganizationData);
     bool isFarmerGroup = typeOfOrganizationData == "Farmer groups";
-  print("Current _bottomNavIndex: $_bottomNavIndex");
+    print("Current _bottomNavIndex: $_bottomNavIndex");
     return Scaffold(
-      extendBody: true,
-      backgroundColor: AppColor.backgroundColor,
-      resizeToAvoidBottomInset: false,
-      appBar: typeOfOrganizationData == "Trader" ? _bottomNavIndex ==1 ? null :
-      AppBar(
-        automaticallyImplyLeading: false,
-        title: InkWell(
-          highlightColor: AppColor.transparentColor,
-          splashColor: AppColor.transparentColor,
-          onTap: () {
-            // Navigator.of(context).push(
-            //   MaterialPageRoute(builder: (context) => const MySelectLanguagePage()),
-            // );
-            Navigator.push(context, MaterialPageRoute(builder: (context) => const SelectLanguagePage()))
-                .then((value) {
-              setState(() {
-                // refresh state
-                MyLocalizations.load(Locale(localLang, ''));
-                HomePage.setLocale(context, Locale(localLang, ''));
-                print("HomePage Lang: $localLang");
-              });
-            });
-          },
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Image.asset('assets/images/loginLogo.png', width: 150, height: 60,),
-              const Spacer(),
-              Padding(
-                padding: const EdgeInsets.only(right: 5.0, top: 12.0),
-                child:
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Image.asset(
-                      'assets/images/language.png',
-                      width: 35, height: 35,
+        extendBody: true,
+        backgroundColor: AppColor.backgroundColor,
+        resizeToAvoidBottomInset: false,
+        appBar: typeOfOrganizationData == "Trader"
+            ? _bottomNavIndex == 1
+                ? null
+                : AppBar(
+                    automaticallyImplyLeading: false,
+                    title: InkWell(
+                      highlightColor: AppColor.transparentColor,
+                      splashColor: AppColor.transparentColor,
+                      onTap: () {
+                        // Navigator.of(context).push(
+                        //   MaterialPageRoute(builder: (context) => const MySelectLanguagePage()),
+                        // );
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const SelectLanguagePage())).then((value) {
+                          setState(() {
+                            // refresh state
+                            MyLocalizations.load(Locale(localLang, ''));
+                            HomePage.setLocale(context, Locale(localLang, ''));
+                            print("HomePage Lang: $localLang");
+                          });
+                        });
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Image.asset(
+                            'assets/images/loginLogo.png',
+                            width: 150,
+                            height: 60,
+                          ),
+                          const Spacer(),
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(right: 5.0, top: 12.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Image.asset(
+                                  'assets/images/language.png',
+                                  width: 35,
+                                  height: 35,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ) : _bottomNavIndex !=3  ? AppBar(
-        automaticallyImplyLeading: false,
-        title: InkWell(
-          highlightColor: AppColor.transparentColor,
-          splashColor: AppColor.transparentColor,
-          onTap: () {
-            // Navigator.of(context).push(
-            //   MaterialPageRoute(builder: (context) => const MySelectLanguagePage()),
-            // );
-            Navigator.push(context, MaterialPageRoute(builder: (context) => const SelectLanguagePage()))
-                .then((value) {
-              setState(() {
-                // refresh state
-                MyLocalizations.load(Locale(localLang, ''));
-                HomePage.setLocale(context, Locale(localLang, ''));
-                print("HomePage Lang: $localLang");
-              });
-            });
-          },
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Image.asset('assets/images/loginLogo.png', width: 150, height: 60,),
-              const Spacer(),
-              Padding(
-                padding: const EdgeInsets.only(right: 5.0, top: 12.0),
-                child:
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Image.asset(
-                      'assets/images/language.png',
-                      width: 35, height: 35,
+                  )
+            : _bottomNavIndex != 3
+                ? AppBar(
+                    automaticallyImplyLeading: false,
+                    title: InkWell(
+                      highlightColor: AppColor.transparentColor,
+                      splashColor: AppColor.transparentColor,
+                      onTap: () {
+                        // Navigator.of(context).push(
+                        //   MaterialPageRoute(builder: (context) => const MySelectLanguagePage()),
+                        // );
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const SelectLanguagePage())).then((value) {
+                          setState(() {
+                            // refresh state
+                            MyLocalizations.load(Locale(localLang, ''));
+                            HomePage.setLocale(context, Locale(localLang, ''));
+                            print("HomePage Lang: $localLang");
+                          });
+                        });
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Image.asset(
+                            'assets/images/loginLogo.png',
+                            width: 150,
+                            height: 60,
+                          ),
+                          const Spacer(),
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(right: 5.0, top: 12.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Image.asset(
+                                  'assets/images/language.png',
+                                  width: 35,
+                                  height: 35,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ) : null,
-      
-      body : 
-      typeOfOrganizationData == "Farmer groups" ? _screens1[_bottomNavIndex] : _screens2[_bottomNavIndex],
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: AppColor.whiteColor.withAlpha(0), // add this line.
-        elevation: 0, // also important, removes the shadow
-        heroTag: "floatingActionBtn",
-        shape: const RoundedRectangleBorder( // <= Change BeveledRectangleBorder to RoundedRectangularBorder
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(30.0),
-            topRight: Radius.circular(30.0),
-            bottomLeft: Radius.circular(30.0),
-            bottomRight: Radius.circular(30.0),
-          ),
-        ),
-        child: InkWell(
-          highlightColor: AppColor.transparentColor,
-          splashColor: AppColor.transparentColor,
-          onTap: () {
-            print("Center dock");
-            setState(() {
-              Navigator
-                  .of(context)
-                  .push(
-                  MaterialPageRoute(builder: (BuildContext context) =>
-                      BottomCenterEnquiryPage(aapbarVisibility: true, typeOfOrganization: typeOfOrganizationData,)));
-              // _onItemTapped(4);
-            });
-          },
-          child: Image.asset(
-            'assets/images/bottomCenter.png',
-          ),
-        ),
-        onPressed: () {
-        },
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: (){
-        print(typeOfOrganizationData);
-        print("printing farmergroup");
-        print(isFarmerGroup);
-        return isFarmerGroup;}()
-       ? 
-      Container(
-        height: 65,
-        decoration: BoxDecoration(
-          color: Colors.grey,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(30.0),  // Top-left corner
-            topRight: Radius.circular(30.0), // Top-right corner
-          ),
-          boxShadow: [
-            BoxShadow(
-              offset: Offset(0, 5),
-              blurRadius: 2,
-              spreadRadius: 0.8,
-              color: AppColor.whiteColor,
-            ),
-          ]
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(30.0),  // Matches the Container's border radius
-            topRight: Radius.circular(30.0), // Matches the Container's border radius
-          ),
-          child: BottomNavigationBar(
-            currentIndex: _bottomNavIndex,
-            onTap: (index) {
-              setState(() {
-                _bottomNavIndex = index; // Set the current index when tapped
-                print("This is the set state index");
-                print("BBBBBBBBBBBBBBBBBBBBBB");
-                print(_bottomNavIndex);
-              });
-              print("_bottomNavIndex 1 home: $_bottomNavIndex");
-            },
-            selectedItemColor: Colors.grey,
-            unselectedItemColor: Colors.grey,
-            items: iconList1.map((category) {
-              return BottomNavigationBarItem(
-                icon: Image.asset(category.icon ?? "", width: 25, height: 25,
-                  color: _bottomNavIndex == iconList1.indexOf(category)
-                  ? Colors.green
-                  : Colors.grey,),
-                label: category.name,
-              );
-            }).toList(),
-            type: BottomNavigationBarType.fixed, // Keeps the icons in a fixed position
-          ),
-        ),
-      )
-          :
-      Container(
-        height: 65,
-        decoration: BoxDecoration(
-            color: Colors.grey,
+                  )
+                : null,
+        body: typeOfOrganizationData == "Farmer groups"
+            ? _screens1[_bottomNavIndex]
+            : _screens2[_bottomNavIndex],
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: AppColor.whiteColor.withAlpha(0), // add this line.
+          elevation: 0, // also important, removes the shadow
+          heroTag: "floatingActionBtn",
+          shape: const RoundedRectangleBorder(
+            // <= Change BeveledRectangleBorder to RoundedRectangularBorder
             borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(30.0),  // Top-left corner
-              topRight: Radius.circular(30.0), // Top-right corner
+              topLeft: Radius.circular(30.0),
+              topRight: Radius.circular(30.0),
+              bottomLeft: Radius.circular(30.0),
+              bottomRight: Radius.circular(30.0),
             ),
-            boxShadow: [
-              BoxShadow(
-                offset: Offset(0, 1),
-                blurRadius: 2,
-                spreadRadius: 0.8,
-                color: AppColor.whiteColor,
-              ),
-            ]
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(30.0),  // Matches the Container's border radius
-            topRight: Radius.circular(30.0), // Matches the Container's border radius
           ),
-          child: BottomNavigationBar(
-            currentIndex: _bottomNavIndex,
-            onTap: (index) {
+          child: InkWell(
+            highlightColor: AppColor.transparentColor,
+            splashColor: AppColor.transparentColor,
+            onTap: () {
+              print("Center dock");
               setState(() {
-                _bottomNavIndex = index; // Set the current index when tapped
-                 print("This is the set state index");
-                 
-                 print(_bottomNavIndex);
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (BuildContext context) => BottomCenterEnquiryPage(
+                          aapbarVisibility: true,
+                          typeOfOrganization: typeOfOrganizationData,
+                        )));
+                // _onItemTapped(4);
               });
-              print("_bottomNavIndex 2: $_bottomNavIndex");
             },
-            selectedItemColor: Colors.grey,
-            unselectedItemColor: Colors.grey,
-            items: iconList2.map((category) {
-              return BottomNavigationBarItem(
-                icon: Image.asset(category.icon ?? "", width: 25, height: 25,
-                  color: _bottomNavIndex == iconList2.indexOf(category)
-                      ? Colors.green
-                      : Colors.grey,),
-                label: category.name,
-              );
-            }).toList(),
-            type: BottomNavigationBarType.fixed, // Keeps the icons in a fixed position
+            child: Image.asset(
+              'assets/images/bottomCenter.png',
+            ),
           ),
+          onPressed: () {},
         ),
-      )
-    );
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        bottomNavigationBar: () {
+          print(typeOfOrganizationData);
+          print("printing farmergroup");
+          print(isFarmerGroup);
+          return isFarmerGroup;
+        }()
+            ? Container(
+                height: 100,
+                decoration: BoxDecoration(
+                    color: Colors.grey,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(30.0), // Top-left corner
+                      topRight: Radius.circular(30.0), // Top-right corner
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        offset: Offset(0, 5),
+                        blurRadius: 2,
+                        spreadRadius: 0.8,
+                        color: AppColor.whiteColor,
+                      ),
+                    ]),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(
+                        30.0), // Matches the Container's border radius
+                    topRight: Radius.circular(
+                        30.0), // Matches the Container's border radius
+                  ),
+                  child: BottomNavigationBar(
+                    currentIndex: _bottomNavIndex,
+                    onTap: (index) {
+                      setState(() {
+                        _bottomNavIndex =
+                            index; // Set the current index when tapped
+                        print("This is the set state index");
+                        print("BBBBBBBBBBBBBBBBBBBBBB");
+                        print(_bottomNavIndex);
+                      });
+                      print("_bottomNavIndex 1 home: $_bottomNavIndex");
+                    },
+                    selectedItemColor: Colors.grey,
+                    unselectedItemColor: Colors.grey,
+                    items: iconList1.map((category) {
+                      return BottomNavigationBarItem(
+                        icon: Image.asset(
+                          category.icon ?? "",
+                          width: 25,
+                          height: 25,
+                          color: _bottomNavIndex == iconList1.indexOf(category)
+                              ? Colors.green
+                              : Colors.grey,
+                        ),
+                        label: category.name,
+                      );
+                    }).toList(),
+                    type: BottomNavigationBarType
+                        .fixed, // Keeps the icons in a fixed position
+                  ),
+                ),
+              )
+            : Container(
+                height: 65,
+                decoration: BoxDecoration(
+                    color: Colors.grey,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(30.0), // Top-left corner
+                      topRight: Radius.circular(30.0), // Top-right corner
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        offset: Offset(0, 1),
+                        blurRadius: 2,
+                        spreadRadius: 0.8,
+                        color: AppColor.whiteColor,
+                      ),
+                    ]),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(
+                        30.0), // Matches the Container's border radius
+                    topRight: Radius.circular(
+                        30.0), // Matches the Container's border radius
+                  ),
+                  child: BottomNavigationBar(
+                    currentIndex: _bottomNavIndex,
+                    onTap: (index) {
+                      setState(() {
+                        _bottomNavIndex =
+                            index; // Set the current index when tapped
+                        print("This is the set state index");
+
+                        print(_bottomNavIndex);
+                      });
+                      print("_bottomNavIndex 2: $_bottomNavIndex");
+                    },
+                    selectedItemColor: Colors.grey,
+                    unselectedItemColor: Colors.grey,
+                    items: iconList2.map((category) {
+                      return BottomNavigationBarItem(
+                        icon: Image.asset(
+                          category.icon ?? "",
+                          width: 25,
+                          height: 25,
+                          color: _bottomNavIndex == iconList2.indexOf(category)
+                              ? Colors.green
+                              : Colors.grey,
+                        ),
+                        label: category.name,
+                      );
+                    }).toList(),
+                    type: BottomNavigationBarType
+                        .fixed, // Keeps the icons in a fixed position
+                  ),
+                ),
+              ));
   }
 
   Future<void> getPrefValue() async {
-    typeOfOrganizationData = await SharedPref.readPreferenceValue(typeOfOrganization, PrefEnum.STRING);
+    typeOfOrganizationData = await SharedPref.readPreferenceValue(
+        typeOfOrganization, PrefEnum.STRING);
     print("Home TypeOfOrganizationData : $typeOfOrganizationData");
     setState(() {
       typeOfOrganizationData = typeOfOrganizationData;
@@ -400,46 +442,39 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   Future<void> _onItemTapped(int index) async {
-
     print("Home index : $index");
     if (index != 3) {
       setState(() {
         _bottomNavIndex = index;
       });
-      if(_bottomNavIndex == 0) {
+      if (_bottomNavIndex == 0) {
         // Navigator.pop(context);
         var route = ModalRoute.of(context);
         if (route != null) {
-          Navigator
-              .of(context)
-              .pushReplacement(
-              MaterialPageRoute(builder: (BuildContext context) =>
-                  BottomOnePage(aapbarVisibility: true,)));
+          Navigator.of(context).pushReplacement(MaterialPageRoute(
+              builder: (BuildContext context) => BottomOnePage(
+                    aapbarVisibility: true,
+                  )));
         }
-      }
-      else if(_bottomNavIndex == 1) {
+      } else if (_bottomNavIndex == 1) {
         var route = ModalRoute.of(context);
         if (route != null) {
-          Navigator
-              .of(context)
-              .pushReplacement(
-              MaterialPageRoute(builder: (BuildContext context) =>
-                  BottomTwoPage(aapbarVisibility: true,)));
+          Navigator.of(context).pushReplacement(MaterialPageRoute(
+              builder: (BuildContext context) => BottomTwoPage(
+                    aapbarVisibility: true,
+                  )));
         }
-      }
-      else if(_bottomNavIndex == 2) {
+      } else if (_bottomNavIndex == 2) {
         // Navigator.pop(context);
         var route = ModalRoute.of(context);
         if (route != null) {
-          Navigator
-              .of(context)
-              .pushReplacement(
-              MaterialPageRoute(builder: (BuildContext context) =>
-                  BottomThreePage(aapbarVisibility: true,)));
+          Navigator.of(context).pushReplacement(MaterialPageRoute(
+              builder: (BuildContext context) => BottomThreePage(
+                    aapbarVisibility: true,
+                  )));
         }
       }
-    }
-    else if(index == 3){
+    } else if (index == 3) {
       if (_isClickAllowed) {
         Navigator.of(context).push(
           MaterialPageRoute(builder: (context) => const ProfilePage()),
@@ -448,50 +483,45 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         await Future.delayed(Duration(seconds: 2));
         _isClickAllowed = true;
       }
-    }
-    else{
+    } else {
       var route = ModalRoute.of(context);
       if (route != null) {
-        Navigator
-            .of(context)
-            .push(
-            MaterialPageRoute(builder: (BuildContext context) =>
-                BottomCenterEnquiryPage(aapbarVisibility: true, typeOfOrganization: typeOfOrganizationData,)));
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (BuildContext context) => BottomCenterEnquiryPage(
+                  aapbarVisibility: true,
+                  typeOfOrganization: typeOfOrganizationData,
+                )));
       }
     }
   }
 
   void _onItemTappedData(int index) {
-
     print("Home1 index : $index");
     if (index != 3) {
       setState(() {
         _bottomNavIndex = index;
       });
-      if(_bottomNavIndex == 0) {
+      if (_bottomNavIndex == 0) {
         var route = ModalRoute.of(context);
         if (route != null) {
-          Navigator
-              .of(context)
-              .pushReplacement(
-              MaterialPageRoute(builder: (BuildContext context) =>
-                  BottomOnePage(aapbarVisibility: true,)));
+          Navigator.of(context).pushReplacement(MaterialPageRoute(
+              builder: (BuildContext context) => BottomOnePage(
+                    aapbarVisibility: true,
+                  )));
         }
       }
-    }
-    else if(index == 3){
+    } else if (index == 3) {
       Navigator.of(context).push(
         MaterialPageRoute(builder: (context) => const ProfilePage()),
       );
-    }
-    else{
+    } else {
       var route = ModalRoute.of(context);
       if (route != null) {
-        Navigator
-            .of(context)
-            .push(
-            MaterialPageRoute(builder: (BuildContext context) =>
-                BottomCenterEnquiryPage(aapbarVisibility: true, typeOfOrganization: typeOfOrganizationData,)));
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (BuildContext context) => BottomCenterEnquiryPage(
+                  aapbarVisibility: true,
+                  typeOfOrganization: typeOfOrganizationData,
+                )));
       }
     }
   }

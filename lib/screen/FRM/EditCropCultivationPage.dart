@@ -20,7 +20,8 @@ class EditCropCultivationPage extends StatefulWidget {
       geoLocation,
       cultivationType,
       areaInArce,
-      geoLinkArea, id;
+      geoLinkArea,
+      id;
   DateTime date;
 
   EditCropCultivationPage(
@@ -32,7 +33,8 @@ class EditCropCultivationPage extends StatefulWidget {
       required this.geoLocation,
       required this.cultivationType,
       required this.areaInArce,
-      required this.geoLinkArea, required this.id});
+      required this.geoLinkArea,
+      required this.id});
 
   @override
   State<EditCropCultivationPage> createState() =>
@@ -41,7 +43,6 @@ class EditCropCultivationPage extends StatefulWidget {
 
 class _EditCropCultivationPageState extends State<EditCropCultivationPage>
     with TickerProviderStateMixin {
-
   TextEditingController? geoLocationController;
   TextEditingController? areaInArcsController;
   TextEditingController dateOfSowingController = TextEditingController();
@@ -52,7 +53,8 @@ class _EditCropCultivationPageState extends State<EditCropCultivationPage>
   TextEditingController editAreaInArcsController = TextEditingController();
   TextEditingController editVarietyController = TextEditingController();
   TextEditingController editDateOfSowingController = TextEditingController();
-  TextEditingController editGeoLinkAreaOnMapController = TextEditingController();
+  TextEditingController editGeoLinkAreaOnMapController =
+      TextEditingController();
 
   final List<String> items = [
     buildTranslate('organic')!,
@@ -334,7 +336,8 @@ class _EditCropCultivationPageState extends State<EditCropCultivationPage>
                           suffixIcon: IconButton(
                             icon: const Icon(Icons.calendar_today),
                             onPressed: () {
-                              _selectDate(dateOfSowingValue.toString(), context);
+                              _selectDate(
+                                  dateOfSowingValue.toString(), context);
                             }, // Open date picker on icon press
                           ),
                           border: const OutlineInputBorder(
@@ -852,7 +855,8 @@ class _EditCropCultivationPageState extends State<EditCropCultivationPage>
                             suffixIcon: IconButton(
                               icon: const Icon(Icons.calendar_today),
                               onPressed: () {
-                                _selectDate(dateOfSowingValue.toString(), context);
+                                _selectDate(
+                                    dateOfSowingValue.toString(), context);
                               }, // Open date picker on icon press
                             ),
                             border: const OutlineInputBorder(
@@ -1212,7 +1216,8 @@ class _EditCropCultivationPageState extends State<EditCropCultivationPage>
               // }
               Navigator.of(context).pushReplacement(MaterialPageRoute(
                   builder: (BuildContext context) => HomePage(
-                        selectedIndex: 1, typeOfOrganization: "",
+                        selectedIndex: 1,
+                        typeOfOrganization: "",
                       )));
             },
             child: const Align(
@@ -1309,35 +1314,35 @@ class _EditCropCultivationPageState extends State<EditCropCultivationPage>
 
   updateCropCultivationRegisterApiCall() async {
     if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save(); // This triggers onSaved for each TextFormField
+      _formKey.currentState!
+          .save(); // This triggers onSaved for each TextFormField
 
       if (_selectedFarmersName != null &&
           _selectedCrop.toString().isNotEmpty &&
           dateOfSowingController.text.isNotEmpty &&
           selectedItemValue.toString().isNotEmpty &&
           nameOfVarity.isNotEmpty) {
-       print("If condition");
+        print("If condition");
 
-       print("selectFarmer : $_selectedFarmersName");
-       print("selectCrop : $_selectedCrop");
-       print("variety : ${nameOfVarity}");
-       print("date : ${dateOfSowingController.text}");
-       print("type : ${selectedItemValue}");
-       print("geo location : ${geoLocationValue}");
-       print("area in arcs : ${areaInArce}");
-       print("geo link : ${geoLinkArea}");
+        print("selectFarmer : $_selectedFarmersName");
+        print("selectCrop : $_selectedCrop");
+        print("variety : ${nameOfVarity}");
+        print("date : ${dateOfSowingController.text}");
+        print("type : ${selectedItemValue}");
+        print("geo location : ${geoLocationValue}");
+        print("area in arcs : ${areaInArce}");
+        print("geo link : ${geoLinkArea}");
 
-       _updateCropDetailsApiCall(
-           _selectedFarmersName.toString(),
-           _selectedCrop.toString(),
-           nameOfVarity.toString(),
-           dateOfSowingController.text,
-           selectedItemValue.toString(),
-           geoLocationValue.toString(),
-           areaInArce.toString(),
-           geoLinkArea.toString());
-      }
-      else {
+        _updateCropDetailsApiCall(
+            _selectedFarmersName.toString(),
+            _selectedCrop.toString(),
+            nameOfVarity.toString(),
+            dateOfSowingController.text,
+            selectedItemValue.toString(),
+            geoLocationValue.toString(),
+            areaInArce.toString(),
+            geoLinkArea.toString());
+      } else {
         print("else condition");
 
         AlertHelper.showToast("Please enter details.", context);
@@ -1350,15 +1355,18 @@ class _EditCropCultivationPageState extends State<EditCropCultivationPage>
       String _selectedCrop,
       String nameOfVarity,
       String dateOfSowingController,
-      String selectedItemValue, String geoLocationValue, String areaInArce, String geoLinkArea ) async {
-
+      String selectedItemValue,
+      String geoLocationValue,
+      String areaInArce,
+      String geoLinkArea) async {
     if (_selectedFarmersName.isNotEmpty &&
         _selectedCrop.isNotEmpty &&
         nameOfVarity.isNotEmpty &&
         dateOfSowingController.isNotEmpty &&
         selectedItemValue.isNotEmpty &&
         geoLocationValue.isNotEmpty &&
-        areaInArce.isNotEmpty && geoLinkArea.isNotEmpty) {
+        areaInArce.isNotEmpty &&
+        geoLinkArea.isNotEmpty) {
       var headers = {'Content-Type': 'application/json'};
 
       var data = json.encode({
@@ -1374,7 +1382,7 @@ class _EditCropCultivationPageState extends State<EditCropCultivationPage>
 
       var dio = Dio();
       var response = await dio.request(
-        'https://krishiyanback.vercel.app/api/appFarmer/crops/${widget.id}',
+        '${baseUrl}appFarmer/crops/${widget.id}',
         options: Options(
           method: 'PUT',
           headers: headers,
@@ -1383,15 +1391,14 @@ class _EditCropCultivationPageState extends State<EditCropCultivationPage>
       );
 
       if (response.statusCode == 200) {
-        print("crop cultivation details updated : " + json.encode(response.data));
+        print(
+            "crop cultivation details updated : " + json.encode(response.data));
 
         showAlertDialog(context);
-      }
-      else {
+      } else {
         print(response.statusMessage);
       }
-    }
-    else {
+    } else {
       AlertHelper.showToast("Please enter details.", context);
     }
   }
@@ -1399,7 +1406,8 @@ class _EditCropCultivationPageState extends State<EditCropCultivationPage>
   void getData() {
     _selectedCrop = widget.selectedCrop;
     selectedItemValue = widget.cultivationType;
-    dateOfSowingController.text = AppGlobal.convertToCustomDateFormat(widget.date.toString());
+    dateOfSowingController.text =
+        AppGlobal.convertToCustomDateFormat(widget.date.toString());
     print("selectedCrop : ${widget.selectedCrop}");
     print("cultivationType : ${widget.cultivationType}");
   }

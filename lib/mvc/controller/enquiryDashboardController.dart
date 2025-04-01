@@ -12,8 +12,7 @@ import 'package:http/http.dart' as http;
 
 import '../model/GetEnquiryByFilterData.dart';
 
-class EnquiryDashboardController{
-
+class EnquiryDashboardController {
   static Future<List<EnquiryData>> getEnquiryDetails() async {
     final response = await http.get(Uri.parse(ENQUIRY_LIST));
 
@@ -40,8 +39,10 @@ class EnquiryDashboardController{
     }
   }
 
-  static Future<List<EnquiryData>> getEnquiryDetailsByCommodity(String commodity) async {
-    final response = await http.get(Uri.parse("https://krishiyanback.vercel.app/api/commodities/$commodity"));
+  static Future<List<EnquiryData>> getEnquiryDetailsByCommodity(
+      String commodity) async {
+    final response =
+        await http.get(Uri.parse("${baseUrl}commodities/$commodity"));
 
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
@@ -55,11 +56,10 @@ class EnquiryDashboardController{
 
   static Future<List<EnquiryByFilterData>> getEnquiryDetailsByFilterCommodity(
       String commodity, String operation) async {
-
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String dealerNumberData = await prefs.getString(contactNo) ?? '1';
 
-    final response = await http.get(Uri.parse("https://krishiyanback.vercel.app/api/commodities/"
+    final response = await http.get(Uri.parse("${baseUrl}commodities/"
         "$dealerNumberData/$commodity?operation=$operation"));
 
     if (response.statusCode == 200) {
@@ -72,11 +72,9 @@ class EnquiryDashboardController{
     }
   }
 
-  static Future<String?> buySellCommodityData(dynamic data,{required BuildContext context}) async {
-
-    var headers = {
-      'Content-Type': 'application/json'
-    };
+  static Future<String?> buySellCommodityData(dynamic data,
+      {required BuildContext context}) async {
+    var headers = {'Content-Type': 'application/json'};
 
     var dio = Dio();
     var response = await dio.request(
@@ -93,20 +91,18 @@ class EnquiryDashboardController{
     );
 
     if (response.statusCode == 201) {
-      print("Commodity Response : "+json.encode(response.data));
+      print("Commodity Response : " + json.encode(response.data));
 
       APIResponse? apiResponse = APIResponse.fromJson(response.data);
       if (apiResponse.success!) {
         return apiResponse.message.toString();
       }
       if (apiResponse.message != "") {
-        AlertHelper.showToast(apiResponse.message!,context);
+        AlertHelper.showToast(apiResponse.message!, context);
       }
       return "";
-    }
-    else {
-      print("Error : "+response.statusMessage.toString());
+    } else {
+      print("Error : " + response.statusMessage.toString());
     }
   }
-
 }

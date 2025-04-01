@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:krishiyan/localization/AppLocalizations.dart';
 import 'package:krishiyan/screen/Registration/MyRegistrationPage.dart';
+import 'package:krishiyan/utils/Constants.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/style.dart';
 import 'package:krishiyan/mvc/model/GetOtpDetails.dart';
@@ -19,18 +20,18 @@ import '../Login/LoginPage.dart';
 import '../../mvc/controller/otpController.dart';
 
 import 'package:dio/dio.dart';
- // Ensure you have Flutter imports for AlertHelper and setState usage
+// Ensure you have Flutter imports for AlertHelper and setState usage
 import 'dart:convert'; // For json.encode
 
 class MyTraderRegistrationPage extends StatefulWidget {
   const MyTraderRegistrationPage({super.key});
 
   @override
-  State<MyTraderRegistrationPage> createState() => _MyTraderRegistrationPageState();
+  State<MyTraderRegistrationPage> createState() =>
+      _MyTraderRegistrationPageState();
 }
 
 class _MyTraderRegistrationPageState extends State<MyTraderRegistrationPage> {
-
   int _radioSelected = 1;
   String _radioVal = "";
 
@@ -49,57 +50,59 @@ class _MyTraderRegistrationPageState extends State<MyTraderRegistrationPage> {
   TextEditingController userPasswordController = TextEditingController();
   TextEditingController userConfirmPasswordController = TextEditingController();
   late OtpFieldController otpController = OtpFieldController();
-       String enteredOtp = '';
-   String otpData = "";
+  String enteredOtp = '';
+  String otpData = "";
   bool _passwordVisible = false;
   bool _confirmPasswordVisible = false;
 
-    bool isOtpButtonEnabled = true;  // Track OTP button status
-String countdownText = '';      // To show countdown text (e.g., "Wait 1:45")
-Timer? otpCooldownTimer;        // Timer to track cooldown
+  bool isOtpButtonEnabled = true; // Track OTP button status
+  String countdownText = ''; // To show countdown text (e.g., "Wait 1:45")
+  Timer? otpCooldownTimer; // Timer to track cooldown
 
-void startOtpCooldown() {
-  setState(() {
-    isOtpButtonEnabled = false;  // Disable the OTP button
-  });
-
-  // Set the initial cooldown time (2 minutes = 120 seconds)
-  int cooldownTime = 120;  // 2 minutes in seconds
-
-  // Update the countdown text every second
-  otpCooldownTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+  void startOtpCooldown() {
     setState(() {
-      // Calculate minutes and seconds
-      int minutes = cooldownTime ~/ 60;  // Integer division to get minutes
-      int seconds = cooldownTime % 60;  // Modulo operation to get seconds
-
-      // Format as MM:SS, ensuring two digits for minutes and seconds
-      countdownText = "Please wait ${_formatTime(minutes)}:${_formatTime(seconds)} before trying again.";
+      isOtpButtonEnabled = false; // Disable the OTP button
     });
 
-    if (cooldownTime == 0) {
-      timer.cancel();  // Stop the timer when the cooldown is over
+    // Set the initial cooldown time (2 minutes = 120 seconds)
+    int cooldownTime = 120; // 2 minutes in seconds
+
+    // Update the countdown text every second
+    otpCooldownTimer = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
-        isOtpButtonEnabled = true;  // Re-enable the OTP button
-        countdownText = "";  // Clear the countdown text
+        // Calculate minutes and seconds
+        int minutes = cooldownTime ~/ 60; // Integer division to get minutes
+        int seconds = cooldownTime % 60; // Modulo operation to get seconds
+
+        // Format as MM:SS, ensuring two digits for minutes and seconds
+        countdownText =
+            "Please wait ${_formatTime(minutes)}:${_formatTime(seconds)} before trying again.";
       });
-    } else {
-      cooldownTime--;  // Decrease the cooldown time by 1 second
-    }
-  });
-}
+
+      if (cooldownTime == 0) {
+        timer.cancel(); // Stop the timer when the cooldown is over
+        setState(() {
+          isOtpButtonEnabled = true; // Re-enable the OTP button
+          countdownText = ""; // Clear the countdown text
+        });
+      } else {
+        cooldownTime--; // Decrease the cooldown time by 1 second
+      }
+    });
+  }
 
 // Helper function to format time as two digits
-String _formatTime(int time) {
-  return time < 10 ? "0$time" : "$time";
-}
+  String _formatTime(int time) {
+    return time < 10 ? "0$time" : "$time";
+  }
 
-@override
-void dispose() {
-  // Always cancel the timer when the widget is disposed
-  otpCooldownTimer?.cancel();
-  super.dispose();
-}
+  @override
+  void dispose() {
+    // Always cancel the timer when the widget is disposed
+    otpCooldownTimer?.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -112,21 +115,39 @@ void dispose() {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            const SizedBox(height: 40,),
+            const SizedBox(
+              height: 40,
+            ),
             Center(child: Image.asset('assets/images/loginLogo.png')),
-            const SizedBox(height: 30,),
-            Center(child: Text(buildTranslate("createAccount")!,
-              style: const TextStyle(color: Color(0xFF3dc33b), fontSize: 22,
-                  fontFamily: 'poppins-medium'),)),
-            const SizedBox(height: 30,),
+            const SizedBox(
+              height: 30,
+            ),
+            Center(
+                child: Text(
+              buildTranslate("createAccount")!,
+              style: const TextStyle(
+                  color: Color(0xFF3dc33b),
+                  fontSize: 22,
+                  fontFamily: 'poppins-medium'),
+            )),
+            const SizedBox(
+              height: 30,
+            ),
 
             // name
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-              child: Text(buildTranslate("nameOfEntity")!, style: const TextStyle(fontSize: 15,
-                  color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
+              child: Text(
+                buildTranslate("nameOfEntity")!,
+                style: const TextStyle(
+                    fontSize: 15,
+                    color: Color(0xFF666666),
+                    fontFamily: 'poppins-semibold'),
+              ),
             ),
-            const SizedBox(height: 10,),
+            const SizedBox(
+              height: 10,
+            ),
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: TextFormField(
@@ -135,11 +156,15 @@ void dispose() {
                     fillColor: Colors.white,
                     filled: true,
                     border: const OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10.0),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(10.0),
                       ),
                     ),
                     enabledBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey, width: 1.0,),
+                      borderSide: BorderSide(
+                        color: Colors.grey,
+                        width: 1.0,
+                      ),
                       borderRadius: BorderRadius.all(Radius.circular(10.0)),
                     ),
                     hintText: buildTranslate("enterName"),
@@ -147,21 +172,30 @@ void dispose() {
                     focusedBorder: const OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10.0)),
                       borderSide: BorderSide(color: Colors.green, width: 0.5),
-                    )
-                ),
-                validator: (value) => value!.isEmpty ? 'Please, fill this field.' : null,
+                    )),
+                validator: (value) =>
+                    value!.isEmpty ? 'Please, fill this field.' : null,
                 controller: nameOfEntityController,
               ),
             ),
-            const SizedBox(height: 20,),
+            const SizedBox(
+              height: 20,
+            ),
 
             // type
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-              child: Text(buildTranslate("typeOfEntity")!, style: const TextStyle(fontSize: 15,
-                  color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
+              child: Text(
+                buildTranslate("typeOfEntity")!,
+                style: const TextStyle(
+                    fontSize: 15,
+                    color: Color(0xFF666666),
+                    fontFamily: 'poppins-semibold'),
+              ),
             ),
-            const SizedBox(height: 10,),
+            const SizedBox(
+              height: 10,
+            ),
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: DropdownButtonFormField2<String>(
@@ -173,7 +207,8 @@ void dispose() {
                     borderSide: const BorderSide(
                       color: Colors.grey,
                       width: 1.0,
-                    ),),
+                    ),
+                  ),
                   // Add more decoration..
                 ),
                 hint: Text(
@@ -190,14 +225,17 @@ void dispose() {
                         final isSelected = selectedItems.contains(item);
                         return InkWell(
                           onTap: () {
-                            isSelected ? selectedItems.remove(item) : selectedItems.add(item);
+                            isSelected
+                                ? selectedItems.remove(item)
+                                : selectedItems.add(item);
                             //This rebuilds the StatefulWidget to update the button's text
                             setState(() {});
                             //This rebuilds the dropdownMenu Widget to update the check mark
                             menuSetState(() {});
                           },
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 16.0),
                             height: double.infinity,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -231,7 +269,7 @@ void dispose() {
                 onChanged: (value) {},
                 selectedItemBuilder: (context) {
                   return traderItems.map(
-                        (item) {
+                    (item) {
                       return Container(
                         alignment: AlignmentDirectional.centerStart,
                         child: Text(
@@ -257,15 +295,24 @@ void dispose() {
                 ),
               ),
             ),
-            const SizedBox(height: 20,),
+            const SizedBox(
+              height: 20,
+            ),
 
             // mobile number
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-              child: Text(buildTranslate("mobileNumber")!, style: const TextStyle(fontSize: 15,
-                  color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
+              child: Text(
+                buildTranslate("mobileNumber")!,
+                style: const TextStyle(
+                    fontSize: 15,
+                    color: Color(0xFF666666),
+                    fontFamily: 'poppins-semibold'),
+              ),
             ),
-            const SizedBox(height: 10,),
+            const SizedBox(
+              height: 10,
+            ),
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: TextFormField(
@@ -284,11 +331,15 @@ void dispose() {
                   fillColor: Colors.white,
                   filled: true,
                   border: const OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10.0),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10.0),
                     ),
                   ),
                   enabledBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey, width: 1.0,),
+                    borderSide: BorderSide(
+                      color: Colors.grey,
+                      width: 1.0,
+                    ),
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
                   ),
                   hintText: buildTranslate("mobileNumber")!,
@@ -305,8 +356,8 @@ void dispose() {
                         foregroundColor: Colors.white,
                         textStyle: const TextStyle(fontSize: 18),
                         backgroundColor: isOtpButtonEnabled
-                ? const Color(0xFF3FC041) // Green when enabled
-                : Colors.grey,
+                            ? const Color(0xFF3FC041) // Green when enabled
+                            : Colors.grey,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12.0),
                         ),
@@ -316,52 +367,68 @@ void dispose() {
                         setState(() {
                           otpVisible = true;
                         });
-                         if (mobileNumberController.text.isNotEmpty) {
-    if (isOtpButtonEnabled) {
-      getOtpApiCall();
-    } else {
-      AlertHelper.showToast("Please wait before requesting again.", context);
-    }
-  } else {
-    AlertHelper.showToast("Please enter details", context);
-  }
+                        if (mobileNumberController.text.isNotEmpty) {
+                          if (isOtpButtonEnabled) {
+                            getOtpApiCall();
+                          } else {
+                            AlertHelper.showToast(
+                                "Please wait before requesting again.",
+                                context);
+                          }
+                        } else {
+                          AlertHelper.showToast(
+                              "Please enter details", context);
+                        }
                       },
                     ),
                   ),
                 ),
-                validator: (value) => value!.isEmpty ? 'Please, fill this field.' : null,
+                validator: (value) =>
+                    value!.isEmpty ? 'Please, fill this field.' : null,
                 controller: mobileNumberController,
               ),
             ),
 
-                        // Display the countdown timer if the button is disabled
-Visibility(
-  visible: !isOtpButtonEnabled,
-  child: Padding(
-    padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-    child: Text(
-      countdownText, // This is the dynamic countdown text
-      style: const TextStyle(
-        fontSize: 14,
-        color: Color(0xFF666666),
-      ),
-    ),
-  ),
-),
+            // Display the countdown timer if the button is disabled
+            Visibility(
+              visible: !isOtpButtonEnabled,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+                child: Text(
+                  countdownText, // This is the dynamic countdown text
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Color(0xFF666666),
+                  ),
+                ),
+              ),
+            ),
 
-            otpVisible ? const SizedBox(height: 15,) : Container(),
+            otpVisible
+                ? const SizedBox(
+                    height: 15,
+                  )
+                : Container(),
 
             // verify otp
             Visibility(
               visible: otpVisible,
               child: Padding(
                 padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-                child: Text(buildTranslate("verifyOtp")!,
-                  style: const TextStyle(fontSize: 15,
-                      color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
+                child: Text(
+                  buildTranslate("verifyOtp")!,
+                  style: const TextStyle(
+                      fontSize: 15,
+                      color: Color(0xFF666666),
+                      fontFamily: 'poppins-semibold'),
+                ),
               ),
             ),
-            otpVisible ? const SizedBox(height: 15,) : Container(),
+            otpVisible
+                ? const SizedBox(
+                    height: 15,
+                  )
+                : Container(),
             Visibility(
               visible: otpVisible,
               child: Padding(
@@ -387,21 +454,30 @@ Visibility(
                     }),
               ),
             ),
-            const SizedBox(height: 15,),
+            const SizedBox(
+              height: 15,
+            ),
 
             // password
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-              child: Text(buildTranslate("newPassword")!, style: const TextStyle(fontSize: 15,
-                  color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
+              child: Text(
+                buildTranslate("newPassword")!,
+                style: const TextStyle(
+                    fontSize: 15,
+                    color: Color(0xFF666666),
+                    fontFamily: 'poppins-semibold'),
+              ),
             ),
-            const SizedBox(height: 10,),
+            const SizedBox(
+              height: 10,
+            ),
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: TextFormField(
                 keyboardType: TextInputType.text,
                 controller: userPasswordController,
-                validator: (value){
+                validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a password';
                   }
@@ -410,24 +486,31 @@ Visibility(
                   RegExp regExp = RegExp(pattern);
 
                   if (!regExp.hasMatch(value)) {
-                    AlertHelper.showToast('Password must contain at least 1 uppercase letter, 1 '
-                        'lowercase letter, and be at least 8 characters long', context) ;
-                        return 'Weak Password';
+                    AlertHelper.showToast(
+                        'Password must contain at least 1 uppercase letter, 1 '
+                        'lowercase letter, and be at least 8 characters long',
+                        context);
+                    return 'Weak Password';
                   }
 
                   return null;
                 },
-                obscureText: !_passwordVisible,//This will obscure text dynamically
+                obscureText:
+                    !_passwordVisible, //This will obscure text dynamically
                 decoration: InputDecoration(
                   hintText: buildTranslate("enterYourPassword"),
                   hintStyle: const TextStyle(color: Color(0xFFe7e7e7)),
                   fillColor: Colors.white,
                   border: const OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10.0),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10.0),
                     ),
                   ),
                   enabledBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey, width: 1.0,),
+                    borderSide: BorderSide(
+                      color: Colors.grey,
+                      width: 1.0,
+                    ),
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
                   ),
                   focusedBorder: const OutlineInputBorder(
@@ -453,31 +536,45 @@ Visibility(
                 ),
               ),
             ),
-            const SizedBox(height: 20,),
+            const SizedBox(
+              height: 20,
+            ),
 
             // confirm password
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-              child: Text(buildTranslate("confirmPassword")!, style: const TextStyle(fontSize: 15,
-                  color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
+              child: Text(
+                buildTranslate("confirmPassword")!,
+                style: const TextStyle(
+                    fontSize: 15,
+                    color: Color(0xFF666666),
+                    fontFamily: 'poppins-semibold'),
+              ),
             ),
-            const SizedBox(height: 10,),
+            const SizedBox(
+              height: 10,
+            ),
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: TextFormField(
                 keyboardType: TextInputType.text,
                 controller: userConfirmPasswordController,
-                obscureText: !_confirmPasswordVisible,//This will obscure text dynamically
+                obscureText:
+                    !_confirmPasswordVisible, //This will obscure text dynamically
                 decoration: InputDecoration(
                   hintText: buildTranslate("enterConfirmPassword"),
                   hintStyle: const TextStyle(color: Color(0xFFe7e7e7)),
                   fillColor: Colors.white,
                   border: const OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10.0),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10.0),
                     ),
                   ),
                   enabledBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey, width: 1.0,),
+                    borderSide: BorderSide(
+                      color: Colors.grey,
+                      width: 1.0,
+                    ),
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
                   ),
                   focusedBorder: const OutlineInputBorder(
@@ -503,7 +600,9 @@ Visibility(
                 ),
               ),
             ),
-            const SizedBox(height: 20,),
+            const SizedBox(
+              height: 20,
+            ),
 
             Padding(
               padding: const EdgeInsets.only(left: 12.0, right: 12.0),
@@ -525,11 +624,18 @@ Visibility(
                     child: RichText(
                       text: TextSpan(
                         text: buildTranslate("readAgree"),
-                        style: const TextStyle(color: Colors.grey, fontFamily: "poppins-regular", fontSize: 12.0), /*defining default style is optional */
+                        style: const TextStyle(
+                            color: Colors.grey,
+                            fontFamily: "poppins-regular",
+                            fontSize: 12.0),
+                        /*defining default style is optional */
                         children: <TextSpan>[
                           TextSpan(
                               text: buildTranslate("agreementPolicy"),
-                              style: const TextStyle(color: Colors.green, fontFamily: "poppins-regular", fontSize: 12.0)),
+                              style: const TextStyle(
+                                  color: Colors.green,
+                                  fontFamily: "poppins-regular",
+                                  fontSize: 12.0)),
                         ],
                       ),
                     ),
@@ -538,7 +644,9 @@ Visibility(
               ),
             ),
 
-            const SizedBox(height: 15,),
+            const SizedBox(
+              height: 15,
+            ),
 
             Container(
               width: MediaQuery.of(context).size.width,
@@ -546,27 +654,28 @@ Visibility(
               child: ElevatedButton(
                 onPressed: () async {
                   // showAlertDialog(context);
-                  if(nameOfEntityController.text.isNotEmpty
-                      && selectedItems.isNotEmpty
-                      && mobileNumberController.text.isNotEmpty
-                      && userPasswordController.text.isNotEmpty){
+                  if (nameOfEntityController.text.isNotEmpty &&
+                      selectedItems.isNotEmpty &&
+                      mobileNumberController.text.isNotEmpty &&
+                      userPasswordController.text.isNotEmpty) {
+                    bool isOtpVerified = await verifyOtp(
+                        mobileNumberController.text, enteredOtp, context);
 
-bool isOtpVerified = await verifyOtp(mobileNumberController.text, enteredOtp, context);
-        
                     if (isOtpVerified) {
-                      
-                    _registrationApiCall(nameOfEntityController.text,
-                      selectedItems.toString(),
-                      mobileNumberController.text.toString(), userPasswordController.text.toString(),
-                    );
+                      _registrationApiCall(
+                        nameOfEntityController.text,
+                        selectedItems.toString(),
+                        mobileNumberController.text.toString(),
+                        userPasswordController.text.toString(),
+                      );
+                    } else {
+                      // Show error if OTP is not verified
+                      AlertHelper.showToast(
+                          "OTP verification failed. Please try again.",
+                          context);
                     }
-                    else {
-          // Show error if OTP is not verified
-          AlertHelper.showToast("OTP verification failed. Please try again.", context);
-        }
-                  }
-                  else{
-                    AlertHelper.showToast("Please enter details.",context);
+                  } else {
+                    AlertHelper.showToast("Please enter details.", context);
                   }
                 },
                 style: ElevatedButton.styleFrom(
@@ -578,16 +687,23 @@ bool isOtpVerified = await verifyOtp(mobileNumberController.text, enteredOtp, co
                     borderRadius: BorderRadius.circular(12), // <-- Radius
                   ),
                 ),
-                child: Text(buildTranslate("signup")!,
-                  style: const TextStyle(fontSize: 17, fontFamily: 'poppins-medium'),),
+                child: Text(
+                  buildTranslate("signup")!,
+                  style: const TextStyle(
+                      fontSize: 17, fontFamily: 'poppins-medium'),
+                ),
               ),
             ),
-            const SizedBox(height: 20,),
+            const SizedBox(
+              height: 20,
+            ),
 
             Align(
               alignment: Alignment.bottomCenter,
               child: Padding(
-                  padding: const EdgeInsets.only(left: 25.0,),
+                  padding: const EdgeInsets.only(
+                    left: 25.0,
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -599,8 +715,7 @@ bool isOtpVerified = await verifyOtp(mobileNumberController.text, enteredOtp, co
                           fontSize: 14,
                           shadows: [
                             Shadow(
-                                color: Color(0xFF666666),
-                                offset: Offset(0, -5))
+                                color: Color(0xFF666666), offset: Offset(0, -5))
                           ],
                           color: Colors.transparent,
                         ),
@@ -611,14 +726,17 @@ bool isOtpVerified = await verifyOtp(mobileNumberController.text, enteredOtp, co
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => const MyRegistrationPage()),
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const MyRegistrationPage()),
                           );
                         },
                         child: Align(
                           alignment: Alignment.bottomCenter,
                           child: Padding(
-                              padding: const EdgeInsets.only(left: 5.0, right: 25.0, bottom: 5.0),
-                              child:Text(
+                              padding: const EdgeInsets.only(
+                                  left: 5.0, right: 25.0, bottom: 5.0),
+                              child: Text(
                                 buildTranslate("backSignIn")!,
                                 style: const TextStyle(
                                   fontFamily: 'poppins-regular',
@@ -629,22 +747,20 @@ bool isOtpVerified = await verifyOtp(mobileNumberController.text, enteredOtp, co
                                         offset: Offset(0, -5))
                                   ],
                                   color: Colors.transparent,
-                                  decoration:
-                                  TextDecoration.underline,
+                                  decoration: TextDecoration.underline,
                                   decorationColor: Color(0xFF3FC041),
                                   decorationThickness: 4,
-                                  decorationStyle:
-                                  TextDecorationStyle.solid,
+                                  decorationStyle: TextDecorationStyle.solid,
                                 ),
-                              )
-                          ),
+                              )),
                         ),
                       ),
                     ],
-                  )
-              ),
+                  )),
             ),
-            const SizedBox(height: 15,),
+            const SizedBox(
+              height: 15,
+            ),
           ],
         ),
       ),
@@ -677,19 +793,35 @@ bool isOtpVerified = await verifyOtp(mobileNumberController.text, enteredOtp, co
               ),
             ),
           ),
-
-          Center(child: Image.asset('assets/images/check_green.png', width: 100, height: 100,)),
-
-          Text(buildTranslate("youRegisterSuccessfully")!, softWrap: true,
+          Center(
+              child: Image.asset(
+            'assets/images/check_green.png',
+            width: 100,
+            height: 100,
+          )),
+          Text(
+            buildTranslate("youRegisterSuccessfully")!,
+            softWrap: true,
             textAlign: TextAlign.center,
-            style: const TextStyle(fontFamily: "poppins-semibold", fontSize: 15.0, color: Colors.grey),),
-
-          const SizedBox(height: 20,),
-
-          Text(buildTranslate("thankYou")!, softWrap: true,
-            style: const TextStyle(fontFamily: "poppins-semibold", fontSize: 20.0, color: Colors.black),),
-
-          const SizedBox(height: 20,),
+            style: const TextStyle(
+                fontFamily: "poppins-semibold",
+                fontSize: 15.0,
+                color: Colors.grey),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Text(
+            buildTranslate("thankYou")!,
+            softWrap: true,
+            style: const TextStyle(
+                fontFamily: "poppins-semibold",
+                fontSize: 20.0,
+                color: Colors.black),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
         ],
       ),
     );
@@ -703,9 +835,14 @@ bool isOtpVerified = await verifyOtp(mobileNumberController.text, enteredOtp, co
     );
   }
 
-  _registrationApiCall(String name, String type, String number, String password,) async {
+  _registrationApiCall(
+    String name,
+    String type,
+    String number,
+    String password,
+  ) async {
     // Using the PasswordUtils to hash the password
-  String hashedPassword = PasswordUtils.hashPassword(password);
+    String hashedPassword = PasswordUtils.hashPassword(password);
 
     var data = json.encode({
       "typeOfOrganization": "Trader",
@@ -718,7 +855,9 @@ bool isOtpVerified = await verifyOtp(mobileNumberController.text, enteredOtp, co
       "password": hashedPassword
     });
 
-    var farmerRegistration = FarmerDashboardController.farmerGroupRegistration(data, context: context);
+    var farmerRegistration = FarmerDashboardController.farmerGroupRegistration(
+        data,
+        context: context);
 
     if (farmerRegistration.toString().isNotEmpty) {
       Future.delayed(const Duration(seconds: 1), () {
@@ -726,125 +865,128 @@ bool isOtpVerified = await verifyOtp(mobileNumberController.text, enteredOtp, co
 
         showAlertDialog(context);
       });
-    }
-    else {
+    } else {
       print("Api error");
     }
   }
 
-  Future<bool> verifyOtp(String number, String enteredOtp, BuildContext context) async {
-  final dio = Dio(); // Create an instance of Dio
+  Future<bool> verifyOtp(
+      String number, String enteredOtp, BuildContext context) async {
+    final dio = Dio(); // Create an instance of Dio
 
-  // Define the URL for your API endpoint
-  final url = "https://krishiyanback.vercel.app/api/whatsapp/check-otp/";
+    // Define the URL for your API endpoint
+    final url = "${baseUrl}whatsapp/check-otp/";
 
-  // Create the payload data
-  final data = json.encode({
-    "phoneNumber": number,
-    "otp": enteredOtp, // Use the entered OTP from the input
-  });
+    // Create the payload data
+    final data = json.encode({
+      "phoneNumber": number,
+      "otp": enteredOtp, // Use the entered OTP from the input
+    });
 
-  try {
-    // Make the POST request to verify the OTP
-    final response = await dio.post(
-      url,
-      data: data,
-      options: Options(
-        headers: {'Content-Type': 'application/json'},
-      ),
-    );
+    try {
+      // Make the POST request to verify the OTP
+      final response = await dio.post(
+        url,
+        data: data,
+        options: Options(
+          headers: {'Content-Type': 'application/json'},
+        ),
+      );
 
-    // Check the response from the server
-    if (response.statusCode == 200) {
-      // Successfully verified OTP
-      print("OTP verified successfully!");
-      AlertHelper.showToast("OTP verified successfully", context);
-      return true; // Return true for successful verification
-    } else {
-      // Handle OTP verification failure
-      print("OTP verification failed!");
-      AlertHelper.showToast("Invalid OTP. Please try again.", context);
-      return false; // Return false for failure
+      // Check the response from the server
+      if (response.statusCode == 200) {
+        // Successfully verified OTP
+        print("OTP verified successfully!");
+        AlertHelper.showToast("OTP verified successfully", context);
+        return true; // Return true for successful verification
+      } else {
+        // Handle OTP verification failure
+        print("OTP verification failed!");
+        AlertHelper.showToast("Invalid OTP. Please try again.", context);
+        return false; // Return false for failure
+      }
+    } catch (e) {
+      // Handle errors
+      print("Error during OTP verification: $e");
+      AlertHelper.showToast("OTP verification failed!", context);
+      return false; // Return false for errors
     }
-  } catch (e) {
-    // Handle errors
-    print("Error during OTP verification: $e");
-    AlertHelper.showToast("OTP verification failed!", context);
-    return false; // Return false for errors
   }
-}
 
-  
-Future<void> getOtpApiCall() async {
-  String phoneNumber = mobileNumberController.text.toString();
+  Future<void> getOtpApiCall() async {
+    String phoneNumber = mobileNumberController.text.toString();
 
-  // Check if the phone number exists
-  bool exists = await checkPhoneNumber(phoneNumber);
+    // Check if the phone number exists
+    bool exists = await checkPhoneNumber(phoneNumber);
 
-  if(!exists){
-  final body = json.encode({"phoneNumber": mobileNumberController.text.toString()});
+    if (!exists) {
+      final body =
+          json.encode({"phoneNumber": mobileNumberController.text.toString()});
 
-  try {
-    // Get OTP data from the API
-    GetOtpData? userOtp = await OtpController.getOtp(body, context: context);
-    
-    if (userOtp != null) {
-      print("otpData : ${userOtp.otp}");
-      otpData = userOtp.otp ?? "";
-      
-      // Start the timer for 2 minutes (120 seconds)
-        startOtpCooldown();
-      AlertHelper.showToast("OTP sent on your mobile number", context);
+      try {
+        // Get OTP data from the API
+        GetOtpData? userOtp =
+            await OtpController.getOtp(body, context: context);
+
+        if (userOtp != null) {
+          print("otpData : ${userOtp.otp}");
+          otpData = userOtp.otp ?? "";
+
+          // Start the timer for 2 minutes (120 seconds)
+          startOtpCooldown();
+          AlertHelper.showToast("OTP sent on your mobile number", context);
+        } else {
+          print("Failed to get OTP data.");
+          AlertHelper.showToast(
+              "Failed to retrieve OTP. Please try again.", context);
+        }
+      } catch (e) {
+        print("Error during OTP request: $e");
+        // AlertHelper.showToast("Error occurred. Please try again.", context);
+      }
     } else {
-      print("Failed to get OTP data.");
-      AlertHelper.showToast("Failed to retrieve OTP. Please try again.", context);
+      AlertHelper.showToast(
+          "Phone number exists. Please check and try again.", context);
+      // Navigate to the login page
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginPage()),
+      );
     }
-  } catch (e) {
-    print("Error during OTP request: $e");
-    // AlertHelper.showToast("Error occurred. Please try again.", context);
-  }}else{
-    
-    AlertHelper.showToast("Phone number exists. Please check and try again.", context);
-        // Navigate to the login page
-    Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const LoginPage()),
-                          );
   }
-}
 
   Future<bool> checkPhoneNumber(String number) async {
-  final dio = Dio(); // Create an instance of Dio
+    final dio = Dio(); // Create an instance of Dio
 
-  // Define the URL for your API endpoint, appending the number directly
-  final url = "https://krishiyanback.vercel.app/api/check-contact/$number";
+    // Define the URL for your API endpoint, appending the number directly
+    final url = "${baseUrl}check-contact/$number";
 
-  try {
-    // Make the GET request to check the phone number
-    final response = await dio.get(url, options: Options(
-      headers: {'Content-Type': 'application/json'},
-    ));
+    try {
+      // Make the GET request to check the phone number
+      final response = await dio.get(url,
+          options: Options(
+            headers: {'Content-Type': 'application/json'},
+          ));
 
-    // Check the response from the server
-    if (response.statusCode == 200) {
-      // Phone number exists
-      print("Phone number exists!");
-      // AlertHelper.showToast("Phone number is valid.", context);
-      return true; // Return true if the number exists
-    } else {
-      // Phone number does not exist
-      print("Phone number does not exist!");
-      AlertHelper.showToast("Phone number does not exist. Please check and try again.", context);
-      return false; // Return false if the number does not exist
+      // Check the response from the server
+      if (response.statusCode == 200) {
+        // Phone number exists
+        print("Phone number exists!");
+        // AlertHelper.showToast("Phone number is valid.", context);
+        return true; // Return true if the number exists
+      } else {
+        // Phone number does not exist
+        print("Phone number does not exist!");
+        AlertHelper.showToast(
+            "Phone number does not exist. Please check and try again.",
+            context);
+        return false; // Return false if the number does not exist
+      }
+    } catch (e) {
+      // Handle errors
+      print("Error during phone number check: $e");
+      // AlertHelper.showToast("Error occurred. Please try again.", context);
+      return false; // Return false in case of an error
     }
-  } catch (e) {
-    // Handle errors
-    print("Error during phone number check: $e");
-    // AlertHelper.showToast("Error occurred. Please try again.", context);
-    return false; // Return false in case of an error
   }
-}
-
- 
-
 }

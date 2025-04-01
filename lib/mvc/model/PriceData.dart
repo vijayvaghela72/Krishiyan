@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:krishiyan/utils/Constants.dart';
 
 class PriceData {
   final double price;
@@ -19,9 +20,8 @@ class PriceData {
 
 // Function to fetch price history from the API
 Future<List<PriceData>> fetchPriceHistory(String? primaryKey) async {
-  final response = await http.get(
-      Uri.parse('https://krishiyanback.vercel.app/api/market/$primaryKey'));
-  print('https://krishiyanback.vercel.app/api/market/$primaryKey');
+  final response = await http.get(Uri.parse('${baseUrl}market/$primaryKey'));
+  print('${baseUrl}market/$primaryKey');
   if (response.statusCode == 200) {
     final Map<String, dynamic> data = jsonDecode(response.body);
     print('data : $data');

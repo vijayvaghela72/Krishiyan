@@ -29,8 +29,7 @@ class EditSellCommodityPage extends StatefulWidget {
   EditSellCommodityPage({super.key, required this.enquiryData});
 
   @override
-  State<EditSellCommodityPage> createState() =>
-      _EditSellCommodityPageState();
+  State<EditSellCommodityPage> createState() => _EditSellCommodityPageState();
 }
 
 class _EditSellCommodityPageState extends State<EditSellCommodityPage> {
@@ -44,7 +43,7 @@ class _EditSellCommodityPageState extends State<EditSellCommodityPage> {
   TextEditingController dateOfShipmentController = TextEditingController();
   TextEditingController originCommodityController = TextEditingController();
   TextEditingController commentsController = TextEditingController();
-    TextEditingController deliveryLocationController = TextEditingController();
+  TextEditingController deliveryLocationController = TextEditingController();
   bool _isUploading = false;
 
   final List<String> quantityItems = ['Ton', 'Kg', 'Qtl'];
@@ -69,19 +68,22 @@ class _EditSellCommodityPageState extends State<EditSellCommodityPage> {
     getSellCommoditiyValue();
   }
 
-   void getSellCommoditiyValue() {
+  void getSellCommoditiyValue() {
     _selectedCrop = widget.enquiryData.commodity ?? "";
     varietyController.text = widget.enquiryData.variety ?? "";
     quantityController.text = widget.enquiryData.quantity.toString() ?? "";
     moistureController.text = widget.enquiryData.moisture.toString() ?? "";
-    localGradeController.text = widget.enquiryData.localGradeSpecification.toString() ?? "";
+    localGradeController.text =
+        widget.enquiryData.localGradeSpecification.toString() ?? "";
     sizeController.text = widget.enquiryData.size.toString() ?? "";
     countController.text = widget.enquiryData.count.toString() ?? "";
     supplyPriceController.text = widget.enquiryData.price.toString() ?? "";
 
-    dateOfShipmentController.text = AppGlobal.convertToCustomDateFormat(widget.enquiryData.date.toString());
+    dateOfShipmentController.text =
+        AppGlobal.convertToCustomDateFormat(widget.enquiryData.date.toString());
     originCommodityController.text = widget.enquiryData.origin.toString() ?? "";
-    deliveryLocationController.text = widget.enquiryData.location.toString() ?? "";
+    deliveryLocationController.text =
+        widget.enquiryData.location.toString() ?? "";
     commentsController.text = widget.enquiryData.comments.toString() ?? "";
   }
 
@@ -102,7 +104,7 @@ class _EditSellCommodityPageState extends State<EditSellCommodityPage> {
     }
   }
 
-      final ImagePicker _picker = ImagePicker();
+  final ImagePicker _picker = ImagePicker();
   File? _image;
   String? _imageUrl;
   Dio _dio = Dio(); // Create a Dio instance
@@ -114,10 +116,10 @@ class _EditSellCommodityPageState extends State<EditSellCommodityPage> {
     String timestamp = DateFormat("yyyyMMdd_HHmmss").format(DateTime.now());
     String? crop = _selectedCrop;
     // Encode the crop name to handle spaces and special characters
-  String encodedCrop = Uri.encodeComponent(crop ?? "");
+    String encodedCrop = Uri.encodeComponent(crop ?? "");
 
-  // Return the formatted file name with the encoded crop name
-  return "${id}_${encodedCrop}_$timestamp.png";
+    // Return the formatted file name with the encoded crop name
+    return "${id}_${encodedCrop}_$timestamp.png";
   }
 
 // Pick an image from the gallery with permission check
@@ -130,12 +132,13 @@ class _EditSellCommodityPageState extends State<EditSellCommodityPage> {
       print("Storage permission granted");
 
       // Open the image picker
-      final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+      final XFile? pickedFile =
+          await _picker.pickImage(source: ImageSource.gallery);
       if (pickedFile != null) {
         setState(() {
           _image = File(pickedFile.path);
         });
-        uploadImageToAWS(_image!);  // Call your upload function here
+        uploadImageToAWS(_image!); // Call your upload function here
       }
     } else if (status.isDenied) {
       // Permission is denied, request permission
@@ -147,12 +150,13 @@ class _EditSellCommodityPageState extends State<EditSellCommodityPage> {
         print("Storage permission granted after request");
 
         // Proceed with picking an image if permission is granted
-        final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+        final XFile? pickedFile =
+            await _picker.pickImage(source: ImageSource.gallery);
         if (pickedFile != null) {
           setState(() {
             _image = File(pickedFile.path);
           });
-          uploadImageToAWS(_image!);  // Call your upload function here
+          uploadImageToAWS(_image!); // Call your upload function here
         }
       } else {
         print("Storage permission still denied");
@@ -162,37 +166,39 @@ class _EditSellCommodityPageState extends State<EditSellCommodityPage> {
       }
     } else if (status.isPermanentlyDenied) {
       // Permission is permanently denied, show a message or redirect user to settings
-      print("Storage permission permanently denied. Please enable it in settings.");
+      print(
+          "Storage permission permanently denied. Please enable it in settings.");
 
       // Optionally, open the app settings for the user to manually enable the permission
       openAppSettings();
     }
   }
+
   // Upload the image to AWS using Dio
   Future<void> uploadImageToAWS(File image) async {
-     setState(() {
-    _isUploading = true; // Start uploading
-  });
+    setState(() {
+      _isUploading = true; // Start uploading
+    });
     try {
-      String fileName = generateFileName(id);  // Example id (can be dynamic)
+      String fileName = generateFileName(id); // Example id (can be dynamic)
       print("FileName");
       print(fileName);
-      
+
       FormData formData = FormData.fromMap({
         'image': await MultipartFile.fromFile(image.path, filename: fileName),
       });
 
       // Send the POST request to the API
       Response response = await _dio.post(
-        'https://krishiyanback.vercel.app/api/upload',
+        '${baseUrl}upload',
         data: formData,
       );
 
       if (response.statusCode == 200) {
         var jsonResponse = response.data;
         String imageKey = jsonResponse['Key'];
-         // Construct the image URL
-        String imageUrl = 'https://krishiyanback.vercel.app/images/$imageKey';
+        // Construct the image URL
+        String imageUrl = '${baseUrlEnd}images/$imageKey';
 
         // Store the image URL in cache and local storage
         await cacheImage(imageKey, imageUrl);
@@ -212,12 +218,12 @@ class _EditSellCommodityPageState extends State<EditSellCommodityPage> {
     } catch (e) {
       // Handle exceptions
       print("Error uploading image: $e");
-    }finally {
-    // Regardless of success or failure, re-enable the button
-    setState(() {
-      _isUploading = false; // End the upload process
-    });
-  }
+    } finally {
+      // Regardless of success or failure, re-enable the button
+      setState(() {
+        _isUploading = false; // End the upload process
+      });
+    }
   }
 
   // Cache the image locally (stores URL and file)
@@ -233,7 +239,8 @@ class _EditSellCommodityPageState extends State<EditSellCommodityPage> {
       prefs.setInt(imageKey, DateTime.now().millisecondsSinceEpoch);
 
       // Download and store the image locally
-      final response = await _dio.get(imageUrl, options: Options(responseType: ResponseType.bytes));
+      final response = await _dio.get(imageUrl,
+          options: Options(responseType: ResponseType.bytes));
       if (response.statusCode == 200) {
         File(imageCachePath)..writeAsBytesSync(response.data);
       }
@@ -241,7 +248,6 @@ class _EditSellCommodityPageState extends State<EditSellCommodityPage> {
       print("Error caching image: $e");
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -281,9 +287,11 @@ class _EditSellCommodityPageState extends State<EditSellCommodityPage> {
           width: MediaQuery.of(context).size.width,
           padding: const EdgeInsets.only(left: 25.0, right: 25.0),
           child: ElevatedButton(
-            onPressed: _isUploading ? null : () {
-              _sellCommodityApiCall();
-            },
+            onPressed: _isUploading
+                ? null
+                : () {
+                    _sellCommodityApiCall();
+                  },
             style: ElevatedButton.styleFrom(
               foregroundColor: Colors.white,
               padding: const EdgeInsets.all(12),
@@ -935,32 +943,29 @@ class _EditSellCommodityPageState extends State<EditSellCommodityPage> {
                 ),
               ),
             ),
-             if(_image != null)
-                Center(
+            if (_image != null)
+              Center(
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Image.file(
-                    _image!, 
-                    height: 200, 
-                    width: 200, 
+                    _image!,
+                    height: 200,
+                    width: 200,
                     fit: BoxFit.cover,
                   ),
                 ),
               )
-             else if (widget.enquiryData.photoVideoLink != null) 
+            else if (widget.enquiryData.photoVideoLink != null)
               Center(
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Image.network(
-                widget.enquiryData.photoVideoLink!, 
-                height: 200, 
-                width: 200, 
-                fit: BoxFit.cover)
-                ),
+                    padding: const EdgeInsets.all(8.0),
+                    child: Image.network(widget.enquiryData.photoVideoLink!,
+                        height: 200, width: 200, fit: BoxFit.cover)),
               )
-              
-              else 
-               SizedBox(height: 10,),
+            else
+              SizedBox(
+                height: 10,
+              ),
             const SizedBox(
               height: 20,
             ),
@@ -1077,7 +1082,7 @@ class _EditSellCommodityPageState extends State<EditSellCommodityPage> {
 
         showAlertDialog(context);
       } else {
-         print("Error response received:");
+        print("Error response received:");
         print("Status Code: ${response.statusCode}");
         print("Status Message: ${response.statusMessage}");
         print("Response Data: ${response.data}");

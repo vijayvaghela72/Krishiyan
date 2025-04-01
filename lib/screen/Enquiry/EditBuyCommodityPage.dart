@@ -23,17 +23,18 @@ import '../../utils/AppGlobal.dart';
 import '../../utils/Constants.dart';
 
 class EditBuyCommodityPage extends StatefulWidget {
-
   EnquiryByFilterData enquiryData;
 
-  EditBuyCommodityPage({super.key, required this.enquiryData,});
+  EditBuyCommodityPage({
+    super.key,
+    required this.enquiryData,
+  });
 
   @override
   State<EditBuyCommodityPage> createState() => _EditBuyCommodityPageState();
 }
 
 class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
-
   TextEditingController varietyController = TextEditingController();
   TextEditingController quantityController = TextEditingController();
   TextEditingController moistureController = TextEditingController();
@@ -72,14 +73,17 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
     varietyController.text = widget.enquiryData.variety ?? "";
     quantityController.text = widget.enquiryData.quantity.toString() ?? "";
     moistureController.text = widget.enquiryData.moisture.toString() ?? "";
-    localGradeController.text = widget.enquiryData.localGradeSpecification.toString() ?? "";
+    localGradeController.text =
+        widget.enquiryData.localGradeSpecification.toString() ?? "";
     sizeController.text = widget.enquiryData.size.toString() ?? "";
     countController.text = widget.enquiryData.count.toString() ?? "";
     purchasePriceController.text = widget.enquiryData.price.toString() ?? "";
 
-    dateOfDeliveryController.text = AppGlobal.convertToCustomDateFormat(widget.enquiryData.date.toString());
+    dateOfDeliveryController.text =
+        AppGlobal.convertToCustomDateFormat(widget.enquiryData.date.toString());
     originCommodityController.text = widget.enquiryData.origin.toString() ?? "";
-    deliveryLocationController.text = widget.enquiryData.location.toString() ?? "";
+    deliveryLocationController.text =
+        widget.enquiryData.location.toString() ?? "";
     commentsController.text = widget.enquiryData.comments.toString() ?? "";
   }
 
@@ -99,7 +103,8 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
       print('Buy Commodity : Error fetching crop data: $e');
     }
   }
-    final ImagePicker _picker = ImagePicker();
+
+  final ImagePicker _picker = ImagePicker();
   File? _image;
   String? _imageUrl;
   Dio _dio = Dio(); // Create a Dio instance
@@ -111,10 +116,10 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
     String timestamp = DateFormat("yyyyMMdd_HHmmss").format(DateTime.now());
     String? crop = _selectedCrop;
     // Encode the crop name to handle spaces and special characters
-  String encodedCrop = Uri.encodeComponent(crop ?? "");
+    String encodedCrop = Uri.encodeComponent(crop ?? "");
 
-  // Return the formatted file name with the encoded crop name
-  return "${id}_${encodedCrop}_$timestamp.png";
+    // Return the formatted file name with the encoded crop name
+    return "${id}_${encodedCrop}_$timestamp.png";
   }
 
 // Pick an image from the gallery with permission check
@@ -127,12 +132,13 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
       print("Storage permission granted");
 
       // Open the image picker
-      final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+      final XFile? pickedFile =
+          await _picker.pickImage(source: ImageSource.gallery);
       if (pickedFile != null) {
         setState(() {
           _image = File(pickedFile.path);
         });
-        uploadImageToAWS(_image!);  // Call your upload function here
+        uploadImageToAWS(_image!); // Call your upload function here
       }
     } else if (status.isDenied) {
       // Permission is denied, request permission
@@ -144,12 +150,13 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
         print("Storage permission granted after request");
 
         // Proceed with picking an image if permission is granted
-        final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+        final XFile? pickedFile =
+            await _picker.pickImage(source: ImageSource.gallery);
         if (pickedFile != null) {
           setState(() {
             _image = File(pickedFile.path);
           });
-          uploadImageToAWS(_image!);  // Call your upload function here
+          uploadImageToAWS(_image!); // Call your upload function here
         }
       } else {
         print("Storage permission still denied");
@@ -159,7 +166,8 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
       }
     } else if (status.isPermanentlyDenied) {
       // Permission is permanently denied, show a message or redirect user to settings
-      print("Storage permission permanently denied. Please enable it in settings.");
+      print(
+          "Storage permission permanently denied. Please enable it in settings.");
 
       // Optionally, open the app settings for the user to manually enable the permission
       openAppSettings();
@@ -168,29 +176,29 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
 
   // Upload the image to AWS using Dio
   Future<void> uploadImageToAWS(File image) async {
-     setState(() {
-    _isUploading = true; // Start uploading
-  });
+    setState(() {
+      _isUploading = true; // Start uploading
+    });
     try {
-      String fileName = generateFileName(id);  // Example id (can be dynamic)
+      String fileName = generateFileName(id); // Example id (can be dynamic)
       print("FileName");
       print(fileName);
-      
+
       FormData formData = FormData.fromMap({
         'image': await MultipartFile.fromFile(image.path, filename: fileName),
       });
 
       // Send the POST request to the API
       Response response = await _dio.post(
-        'https://krishiyanback.vercel.app/api/upload',
+        '${baseUrl}upload',
         data: formData,
       );
 
       if (response.statusCode == 200) {
         var jsonResponse = response.data;
         String imageKey = jsonResponse['Key'];
-         // Construct the image URL
-        String imageUrl = 'https://krishiyanback.vercel.app/images/$imageKey';
+        // Construct the image URL
+        String imageUrl = '${baseUrlEnd}images/$imageKey';
 
         // Store the image URL in cache and local storage
         await cacheImage(imageKey, imageUrl);
@@ -210,12 +218,12 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
     } catch (e) {
       // Handle exceptions
       print("Error uploading image: $e");
-    }finally {
-    // Regardless of success or failure, re-enable the button
-    setState(() {
-      _isUploading = false; // End the upload process
-    });
-  }
+    } finally {
+      // Regardless of success or failure, re-enable the button
+      setState(() {
+        _isUploading = false; // End the upload process
+      });
+    }
   }
 
   // Cache the image locally (stores URL and file)
@@ -231,7 +239,8 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
       prefs.setInt(imageKey, DateTime.now().millisecondsSinceEpoch);
 
       // Download and store the image locally
-      final response = await _dio.get(imageUrl, options: Options(responseType: ResponseType.bytes));
+      final response = await _dio.get(imageUrl,
+          options: Options(responseType: ResponseType.bytes));
       if (response.statusCode == 200) {
         File(imageCachePath)..writeAsBytesSync(response.data);
       }
@@ -239,6 +248,7 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
       print("Error caching image: $e");
     }
   }
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -258,10 +268,15 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
                   Navigator.of(context).pop();
                 },
                 child: Image.asset('assets/images/back.png')),
-            const SizedBox(width: 10,),
+            const SizedBox(
+              width: 10,
+            ),
             Text(
               buildTranslate("buyCommodity")!,
-              style: const TextStyle(color: Colors.white, fontFamily: 'poppins-semibold', fontSize: 20),
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'poppins-semibold',
+                  fontSize: 20),
             ),
           ],
         ),
@@ -272,9 +287,11 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
           width: MediaQuery.of(context).size.width,
           padding: const EdgeInsets.only(left: 25.0, right: 25.0),
           child: ElevatedButton(
-            onPressed:_isUploading ? null : () {
-              _buyEditCommodityApiCall();
-            },
+            onPressed: _isUploading
+                ? null
+                : () {
+                    _buyEditCommodityApiCall();
+                  },
             style: ElevatedButton.styleFrom(
               foregroundColor: Colors.white,
               padding: const EdgeInsets.all(12),
@@ -284,7 +301,11 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
                 borderRadius: BorderRadius.circular(12), // <-- Radius
               ),
             ),
-            child: Text(buildTranslate("buyCommodity")!, style: const TextStyle(fontSize: 15, fontFamily: 'poppins-medium'),),
+            child: Text(
+              buildTranslate("buyCommodity")!,
+              style:
+                  const TextStyle(fontSize: 15, fontFamily: 'poppins-medium'),
+            ),
           ),
         ),
       ),
@@ -294,84 +315,95 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            const SizedBox(height: 30,),
+            const SizedBox(
+              height: 30,
+            ),
 
             // Select Commodity
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-              child: Text(buildTranslate("selectCommodity")!, style: const TextStyle(fontSize: 15,
-                  color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
-            ),
-            const SizedBox(height: 10,),
-            Padding(
-              padding: const EdgeInsets.only(
-                  left: 25.0, right: 25.0),
-              child: _cropData == null ||
-                  _cropData!.data == null
-                  ? const Center(child: Text('No data available'))
-                  :
-              DropdownButtonFormField2<String>(
-                dropdownStyleData: const DropdownStyleData(maxHeight: 200),
-                hint: const Text('Select Commodity'),
-                decoration: InputDecoration(
-                  contentPadding:
-                  const EdgeInsets.symmetric(
-                      vertical: 16),
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius:
-                    BorderRadius.circular(8),
-                    borderSide: const BorderSide(
-                      color: Colors.black,
-                      width: 1.0,
-                    ),
-                  ),
-                  // Add more decoration..
-                ),
-                buttonStyleData:
-                const ButtonStyleData(
-                  padding:
-                  EdgeInsets.only(right: 8),
-                ),
-                iconStyleData: const IconStyleData(
-                  icon: Icon(
-                    Icons.arrow_drop_down,
-                    color: Colors.black45,
-                  ),
-                  iconSize: 24,
-                ),
-                menuItemStyleData:
-                const MenuItemStyleData(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: 16),
-                ),
-                value: _selectedCrop,
-                items: _cropData!.data!.map((String crop) {
-                  return DropdownMenuItem<String>(
-                    value: crop,
-                    child: Text(crop, style: const TextStyle(
-                        fontSize: 15,
-                        color: Colors.black,
-                        fontFamily: 'poppins-regular')),
-                  );
-                }).toList(),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    _selectedCrop = newValue;
-                  });
-                },
+              child: Text(
+                buildTranslate("selectCommodity")!,
+                style: const TextStyle(
+                    fontSize: 15,
+                    color: Color(0xFF666666),
+                    fontFamily: 'poppins-semibold'),
               ),
             ),
-            const SizedBox(height: 20,),
+            const SizedBox(
+              height: 10,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+              child: _cropData == null || _cropData!.data == null
+                  ? const Center(child: Text('No data available'))
+                  : DropdownButtonFormField2<String>(
+                      dropdownStyleData:
+                          const DropdownStyleData(maxHeight: 200),
+                      hint: const Text('Select Commodity'),
+                      decoration: InputDecoration(
+                        contentPadding:
+                            const EdgeInsets.symmetric(vertical: 16),
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: const BorderSide(
+                            color: Colors.black,
+                            width: 1.0,
+                          ),
+                        ),
+                        // Add more decoration..
+                      ),
+                      buttonStyleData: const ButtonStyleData(
+                        padding: EdgeInsets.only(right: 8),
+                      ),
+                      iconStyleData: const IconStyleData(
+                        icon: Icon(
+                          Icons.arrow_drop_down,
+                          color: Colors.black45,
+                        ),
+                        iconSize: 24,
+                      ),
+                      menuItemStyleData: const MenuItemStyleData(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                      ),
+                      value: _selectedCrop,
+                      items: _cropData!.data!.map((String crop) {
+                        return DropdownMenuItem<String>(
+                          value: crop,
+                          child: Text(crop,
+                              style: const TextStyle(
+                                  fontSize: 15,
+                                  color: Colors.black,
+                                  fontFamily: 'poppins-regular')),
+                        );
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _selectedCrop = newValue;
+                        });
+                      },
+                    ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
 
             // variety
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-              child: Text(buildTranslate("Variety")!, style: const TextStyle(fontSize: 15,
-                  color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
+              child: Text(
+                buildTranslate("Variety")!,
+                style: const TextStyle(
+                    fontSize: 15,
+                    color: Color(0xFF666666),
+                    fontFamily: 'poppins-semibold'),
+              ),
             ),
-            const SizedBox(height: 10,),
+            const SizedBox(
+              height: 10,
+            ),
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: TextFormField(
@@ -379,7 +411,8 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
                 keyboardType: TextInputType.text,
                 controller: varietyController,
                 decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                  contentPadding: const EdgeInsets.symmetric(
+                      vertical: 10.0, horizontal: 10.0),
                   hintText: buildTranslate('Enter name of variety'),
                   hintStyle: const TextStyle(color: Colors.grey),
                   fillColor: Colors.white,
@@ -389,16 +422,24 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
               ),
             ),
 
-            const SizedBox(height: 20,),
+            const SizedBox(
+              height: 20,
+            ),
 
             // Quantity
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-              child: Text(buildTranslate("quantity")!,
-                style: const TextStyle(fontSize: 15,
-                    color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
+              child: Text(
+                buildTranslate("quantity")!,
+                style: const TextStyle(
+                    fontSize: 15,
+                    color: Color(0xFF666666),
+                    fontFamily: 'poppins-semibold'),
+              ),
             ),
-            const SizedBox(height: 10,),
+            const SizedBox(
+              height: 10,
+            ),
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: Row(
@@ -411,7 +452,8 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
                       // initialValue: widget.enquiryData.quantity.toString(),
                       keyboardType: TextInputType.text,
                       decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                        contentPadding: const EdgeInsets.symmetric(
+                            vertical: 10.0, horizontal: 10.0),
                         hintText: buildTranslate('addYourQuantity'),
                         hintStyle: const TextStyle(color: Colors.grey),
                         fillColor: Colors.white,
@@ -420,7 +462,9 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 3,),
+                  const SizedBox(
+                    width: 3,
+                  ),
                   Expanded(
                     flex: 1,
                     child: Container(
@@ -428,11 +472,11 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
                       child: DropdownButtonFormField2<String>(
                         isExpanded: true,
                         decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                          contentPadding:
+                              const EdgeInsets.symmetric(vertical: 10),
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(4),
-                              borderSide: BorderSide.none
-                          ),
+                              borderSide: BorderSide.none),
                           // Add more decoration..
                         ),
                         hint: const Text(
@@ -441,15 +485,13 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
                         ),
                         items: quantityItems
                             .map((item) => DropdownMenuItem<String>(
-                          value: item,
-                          child: Text(
-                            item,
-                            style: const TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey
-                            ),
-                          ),
-                        ))
+                                  value: item,
+                                  child: Text(
+                                    item,
+                                    style: const TextStyle(
+                                        fontSize: 14, color: Colors.grey),
+                                  ),
+                                ))
                             .toList(),
                         validator: (value) {
                           if (value == null) {
@@ -483,15 +525,24 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
               ),
             ),
 
-            const SizedBox(height: 20,),
+            const SizedBox(
+              height: 20,
+            ),
 
             // Moisture
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-              child: Text(buildTranslate("moisture")!, style: const
-              TextStyle(fontSize: 15, color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
+              child: Text(
+                buildTranslate("moisture")!,
+                style: const TextStyle(
+                    fontSize: 15,
+                    color: Color(0xFF666666),
+                    fontFamily: 'poppins-semibold'),
+              ),
             ),
-            const SizedBox(height: 10,),
+            const SizedBox(
+              height: 10,
+            ),
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: TextFormField(
@@ -499,7 +550,8 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
                 // initialValue: widget.enquiryData.moisture,
                 keyboardType: TextInputType.text,
                 decoration: const InputDecoration(
-                  contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                   hintText: '__%',
                   hintStyle: TextStyle(color: Colors.grey),
                   fillColor: Colors.white,
@@ -509,15 +561,24 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
               ),
             ),
 
-            const SizedBox(height: 20,),
+            const SizedBox(
+              height: 20,
+            ),
 
             // Any Local Grade Specification
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-              child: Text(buildTranslate("anyLocalGradeSpecification")!, style: const
-              TextStyle(fontSize: 15, color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
+              child: Text(
+                buildTranslate("anyLocalGradeSpecification")!,
+                style: const TextStyle(
+                    fontSize: 15,
+                    color: Color(0xFF666666),
+                    fontFamily: 'poppins-semibold'),
+              ),
             ),
-            const SizedBox(height: 10,),
+            const SizedBox(
+              height: 10,
+            ),
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: TextFormField(
@@ -525,7 +586,8 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
                 // initialValue: widget.enquiryData.localGradeSpecification,
                 keyboardType: TextInputType.text,
                 decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                  contentPadding: const EdgeInsets.symmetric(
+                      vertical: 10.0, horizontal: 10.0),
                   hintText: buildTranslate("anyLocalGradeSpecification")!,
                   hintStyle: const TextStyle(color: Colors.grey),
                   fillColor: Colors.white,
@@ -535,15 +597,24 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
               ),
             ),
 
-            const SizedBox(height: 20,),
+            const SizedBox(
+              height: 20,
+            ),
 
             // size
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-              child: Text(buildTranslate("size")!, style: const
-              TextStyle(fontSize: 15, color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
+              child: Text(
+                buildTranslate("size")!,
+                style: const TextStyle(
+                    fontSize: 15,
+                    color: Color(0xFF666666),
+                    fontFamily: 'poppins-semibold'),
+              ),
             ),
-            const SizedBox(height: 10,),
+            const SizedBox(
+              height: 10,
+            ),
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: Row(
@@ -556,7 +627,8 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
                       // initialValue: widget.enquiryData.size,
                       keyboardType: TextInputType.text,
                       decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 10.0, horizontal: 10.0),
                         hintText: '',
                         hintStyle: TextStyle(color: Colors.grey),
                         fillColor: Colors.white,
@@ -565,7 +637,9 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 3,),
+                  const SizedBox(
+                    width: 3,
+                  ),
                   Expanded(
                     flex: 1,
                     child: Container(
@@ -573,15 +647,16 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
                       child: DropdownButtonFormField2<String>(
                         isExpanded: true,
                         decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                          contentPadding:
+                              const EdgeInsets.symmetric(vertical: 10),
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(4),
                               borderSide: BorderSide.none
-                            // borderSide: const BorderSide(
-                            //   color: Colors.grey,
-                            //   width: 1.0,
-                            // ),
-                          ),
+                              // borderSide: const BorderSide(
+                              //   color: Colors.grey,
+                              //   width: 1.0,
+                              // ),
+                              ),
                           // Add more decoration..
                         ),
                         hint: const Text(
@@ -590,15 +665,13 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
                         ),
                         items: sizeItems
                             .map((item) => DropdownMenuItem<String>(
-                          value: item,
-                          child: Text(
-                            item,
-                            style: const TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey
-                            ),
-                          ),
-                        ))
+                                  value: item,
+                                  child: Text(
+                                    item,
+                                    style: const TextStyle(
+                                        fontSize: 14, color: Colors.grey),
+                                  ),
+                                ))
                             .toList(),
                         validator: (value) {
                           if (value == null) {
@@ -632,15 +705,24 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
               ),
             ),
 
-            const SizedBox(height: 20,),
+            const SizedBox(
+              height: 20,
+            ),
 
             // Count
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-              child: Text(buildTranslate("count")!, style: const TextStyle(fontSize: 15,
-                  color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
+              child: Text(
+                buildTranslate("count")!,
+                style: const TextStyle(
+                    fontSize: 15,
+                    color: Color(0xFF666666),
+                    fontFamily: 'poppins-semibold'),
+              ),
             ),
-            const SizedBox(height: 10,),
+            const SizedBox(
+              height: 10,
+            ),
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: TextFormField(
@@ -648,7 +730,8 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
                 // initialValue: widget.enquiryData.count,
                 keyboardType: TextInputType.text,
                 decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                  contentPadding: const EdgeInsets.symmetric(
+                      vertical: 10.0, horizontal: 10.0),
                   hintText: buildTranslate('enterCount')!,
                   hintStyle: const TextStyle(color: Colors.grey),
                   fillColor: Colors.white,
@@ -658,15 +741,24 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
               ),
             ),
 
-            const SizedBox(height: 20,),
+            const SizedBox(
+              height: 20,
+            ),
 
             // purchase
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-              child: Text(buildTranslate("purchasePriceInRs")!, style: const TextStyle(fontSize: 15,
-                  color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
+              child: Text(
+                buildTranslate("purchasePriceInRs")!,
+                style: const TextStyle(
+                    fontSize: 15,
+                    color: Color(0xFF666666),
+                    fontFamily: 'poppins-semibold'),
+              ),
             ),
-            const SizedBox(height: 10,),
+            const SizedBox(
+              height: 10,
+            ),
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: Row(
@@ -679,7 +771,8 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
                       // initialValue: widget.enquiryData.price.toString(),
                       keyboardType: TextInputType.text,
                       decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 10.0, horizontal: 10.0),
                         hintText: '',
                         hintStyle: TextStyle(color: Colors.grey),
                         fillColor: Colors.white,
@@ -688,7 +781,9 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 3,),
+                  const SizedBox(
+                    width: 3,
+                  ),
                   Expanded(
                     flex: 1,
                     child: Container(
@@ -696,11 +791,11 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
                       child: DropdownButtonFormField2<String>(
                         isExpanded: true,
                         decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                          contentPadding:
+                              const EdgeInsets.symmetric(vertical: 10),
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(4),
-                              borderSide: BorderSide.none
-                          ),
+                              borderSide: BorderSide.none),
                         ),
                         hint: const Text(
                           'Kg',
@@ -708,15 +803,13 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
                         ),
                         items: purchaseItems
                             .map((item) => DropdownMenuItem<String>(
-                          value: item,
-                          child: Text(
-                            item,
-                            style: const TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey
-                            ),
-                          ),
-                        ))
+                                  value: item,
+                                  child: Text(
+                                    item,
+                                    style: const TextStyle(
+                                        fontSize: 14, color: Colors.grey),
+                                  ),
+                                ))
                             .toList(),
                         validator: (value) {
                           if (value == null) {
@@ -749,15 +842,24 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
                 ],
               ),
             ),
-            const SizedBox(height: 20,),
+            const SizedBox(
+              height: 20,
+            ),
 
             // date of delivery
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-              child: Text(buildTranslate("dateOfExpectedDelivery")!, style: const
-              TextStyle(fontSize: 15, color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
+              child: Text(
+                buildTranslate("dateOfExpectedDelivery")!,
+                style: const TextStyle(
+                    fontSize: 15,
+                    color: Color(0xFF666666),
+                    fontFamily: 'poppins-semibold'),
+              ),
             ),
-            const SizedBox(height: 10,),
+            const SizedBox(
+              height: 10,
+            ),
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: TextFormField(
@@ -766,7 +868,8 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
                 readOnly: true,
                 // initialValue: widget.enquiryData.date,
                 decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                  contentPadding: const EdgeInsets.symmetric(
+                      vertical: 10.0, horizontal: 10.0),
                   hintText: 'DD/MM/YYYY',
                   hintStyle: const TextStyle(color: Colors.grey),
                   fillColor: Colors.white,
@@ -782,15 +885,24 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
               ),
             ),
 
-            const SizedBox(height: 20,),
+            const SizedBox(
+              height: 20,
+            ),
 
             // origin of commodity
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-              child: Text(buildTranslate("originOfCommodity")!, style: const TextStyle(fontSize: 15,
-                  color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
+              child: Text(
+                buildTranslate("originOfCommodity")!,
+                style: const TextStyle(
+                    fontSize: 15,
+                    color: Color(0xFF666666),
+                    fontFamily: 'poppins-semibold'),
+              ),
             ),
-            const SizedBox(height: 10,),
+            const SizedBox(
+              height: 10,
+            ),
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: TextFormField(
@@ -798,7 +910,8 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
                 // initialValue: widget.enquiryData.origin,
                 keyboardType: TextInputType.text,
                 decoration: const InputDecoration(
-                  contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                   hintText: '',
                   hintStyle: TextStyle(color: Colors.grey),
                   fillColor: Colors.white,
@@ -808,15 +921,24 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
               ),
             ),
 
-            const SizedBox(height: 20,),
+            const SizedBox(
+              height: 20,
+            ),
 
             // delivery location
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-              child: Text(buildTranslate("deliveryLocation")!, style: const
-              TextStyle(fontSize: 15, color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
+              child: Text(
+                buildTranslate("deliveryLocation")!,
+                style: const TextStyle(
+                    fontSize: 15,
+                    color: Color(0xFF666666),
+                    fontFamily: 'poppins-semibold'),
+              ),
             ),
-            const SizedBox(height: 10,),
+            const SizedBox(
+              height: 10,
+            ),
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: TextFormField(
@@ -824,7 +946,8 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
                 // initialValue: widget.enquiryData.location,
                 keyboardType: TextInputType.text,
                 decoration: const InputDecoration(
-                  contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                   hintText: '',
                   hintStyle: TextStyle(color: Colors.grey),
                   fillColor: Colors.white,
@@ -833,7 +956,9 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
                 ),
               ),
             ),
-            const SizedBox(height: 20,),
+            const SizedBox(
+              height: 20,
+            ),
 
             Container(
               width: MediaQuery.of(context).size.width,
@@ -851,46 +976,55 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
                     borderRadius: BorderRadius.circular(22), // <-- Radius
                   ),
                 ),
-                child: Text(buildTranslate('uploadImage')!,
-                  style: const TextStyle(fontSize: 15, fontFamily: 'poppins-medium'),),
+                child: Text(
+                  buildTranslate('uploadImage')!,
+                  style: const TextStyle(
+                      fontSize: 15, fontFamily: 'poppins-medium'),
+                ),
               ),
             ),
-            if(_image != null)
-                Center(
+            if (_image != null)
+              Center(
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Image.file(
-                    _image!, 
-                    height: 200, 
-                    width: 200, 
+                    _image!,
+                    height: 200,
+                    width: 200,
                     fit: BoxFit.cover,
                   ),
                 ),
               )
-             else if (widget.enquiryData.photoVideoLink != null) 
+            else if (widget.enquiryData.photoVideoLink != null)
               Center(
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Image.network(
-                widget.enquiryData.photoVideoLink!, 
-                height: 200, 
-                width: 200, 
-                fit: BoxFit.cover)
-                ),
+                    padding: const EdgeInsets.all(8.0),
+                    child: Image.network(widget.enquiryData.photoVideoLink!,
+                        height: 200, width: 200, fit: BoxFit.cover)),
               )
-              
-              else 
-               SizedBox(height: 10,),
-              
-            const SizedBox(height: 20,),
+            else
+              SizedBox(
+                height: 10,
+              ),
+
+            const SizedBox(
+              height: 20,
+            ),
 
             // Add comments
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-              child: Text(buildTranslate("addComments")!, style: const TextStyle(fontSize: 15,
-                  color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
+              child: Text(
+                buildTranslate("addComments")!,
+                style: const TextStyle(
+                    fontSize: 15,
+                    color: Color(0xFF666666),
+                    fontFamily: 'poppins-semibold'),
+              ),
             ),
-            const SizedBox(height: 10,),
+            const SizedBox(
+              height: 10,
+            ),
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: TextFormField(
@@ -900,7 +1034,8 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
                 maxLines: null,
                 minLines: 5,
                 decoration: const InputDecoration(
-                  contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                   hintText: '',
                   hintStyle: TextStyle(color: Colors.grey),
                   fillColor: Colors.white,
@@ -910,7 +1045,9 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
               ),
             ),
 
-            const SizedBox(height: 80,),
+            const SizedBox(
+              height: 80,
+            ),
           ],
         ),
       ),
@@ -923,35 +1060,33 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
       context: context,
       initialDate: DateTime.now(), // Default date is the current date
       firstDate: DateTime(2000), // Earliest selectable date
-      lastDate: DateTime(2101),  // Latest selectable date
+      lastDate: DateTime(2101), // Latest selectable date
       helpText: 'Select a date', // Optional help text
     );
     if (pickedDate != null) {
       setState(() {
         // Format the selected date and display it in the TextFormField
-        dateOfDeliveryController.text = DateFormat('dd-MM-yyyy').format(pickedDate);
+        dateOfDeliveryController.text =
+            DateFormat('dd-MM-yyyy').format(pickedDate);
       });
     }
   }
 
   _buyEditCommodityApiCall() async {
-    if (varietyController.text.trim().isNotEmpty
-        && quantityController.text.trim().isNotEmpty
-        && moistureController.text.trim().isNotEmpty
-        && localGradeController.text.trim().isNotEmpty
-        && sizeController.text.trim().isNotEmpty
-        && countController.text.trim().isNotEmpty
-        && purchasePriceController.text.trim().isNotEmpty
-        && dateOfDeliveryController.text.trim().isNotEmpty
-        && originCommodityController.text.trim().isNotEmpty
-        && deliveryLocationController.text.trim().isNotEmpty
-        && commentsController.text.trim().isNotEmpty
-    ) {
-
-      String contactNumber = (await AppGlobal.getStringPreference('contactNumber'))!;
-      var headers = {
-        'Content-Type': 'application/json'
-      };
+    if (varietyController.text.trim().isNotEmpty &&
+        quantityController.text.trim().isNotEmpty &&
+        moistureController.text.trim().isNotEmpty &&
+        localGradeController.text.trim().isNotEmpty &&
+        sizeController.text.trim().isNotEmpty &&
+        countController.text.trim().isNotEmpty &&
+        purchasePriceController.text.trim().isNotEmpty &&
+        dateOfDeliveryController.text.trim().isNotEmpty &&
+        originCommodityController.text.trim().isNotEmpty &&
+        deliveryLocationController.text.trim().isNotEmpty &&
+        commentsController.text.trim().isNotEmpty) {
+      String contactNumber =
+          (await AppGlobal.getStringPreference('contactNumber'))!;
+      var headers = {'Content-Type': 'application/json'};
 
       var data = json.encode({
         "operation": widget.enquiryData.operation,
@@ -974,7 +1109,7 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
       var dio = Dio();
       var response = await dio.request(
         "https://d1dv04h56lh39n.cloudfront.net/api/commodities/"
-            "$contactNumber/${widget.enquiryData.sId}",
+        "$contactNumber/${widget.enquiryData.sId}",
         options: Options(
           method: 'PUT',
           headers: headers,
@@ -990,9 +1125,8 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
         AlertHelper.showToast(response.statusMessage.toString(), context);
         print(response.statusMessage);
       }
-    }
-    else{
-      AlertHelper.showToast("Please enter details.",context);
+    } else {
+      AlertHelper.showToast("Please enter details.", context);
     }
   }
 
@@ -1018,19 +1152,35 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
               ),
             ),
           ),
-
-          Center(child: Image.asset('assets/images/check_green.png', width: 100, height: 100,)),
-
-          Text(buildTranslate("SuccessfullyUpdate")!, softWrap: true,
+          Center(
+              child: Image.asset(
+            'assets/images/check_green.png',
+            width: 100,
+            height: 100,
+          )),
+          Text(
+            buildTranslate("SuccessfullyUpdate")!,
+            softWrap: true,
             textAlign: TextAlign.center,
-            style: const TextStyle(fontFamily: "poppins-semibold", fontSize: 15.0, color: Colors.grey),),
-
-          const SizedBox(height: 20,),
-
-          Text(buildTranslate("thankYou")!, softWrap: true,
-            style: const TextStyle(fontFamily: "poppins-semibold", fontSize: 20.0, color: Colors.black),),
-
-          const SizedBox(height: 20,),
+            style: const TextStyle(
+                fontFamily: "poppins-semibold",
+                fontSize: 15.0,
+                color: Colors.grey),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Text(
+            buildTranslate("thankYou")!,
+            softWrap: true,
+            style: const TextStyle(
+                fontFamily: "poppins-semibold",
+                fontSize: 20.0,
+                color: Colors.black),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
         ],
       ),
     );
@@ -1043,5 +1193,4 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
       },
     );
   }
-
 }

@@ -24,9 +24,16 @@ class FarmerEditProfilePage extends StatefulWidget {
       geoLocationLeaseFarm,
       pincode,
       state,
-      district,village, bankName,
-      accountName, accountNumber, ifscCode,
-      panNumber, aadhaarNumber, dealerNumber, typeOfCultivationPractice;
+      district,
+      village,
+      bankName,
+      accountName,
+      accountNumber,
+      ifscCode,
+      panNumber,
+      aadhaarNumber,
+      dealerNumber,
+      typeOfCultivationPractice;
 
   String? farmerName, farmerWhatsappNumber;
 
@@ -41,17 +48,24 @@ class FarmerEditProfilePage extends StatefulWidget {
       this.geoLocationLeaseFarm,
       this.pincode,
       this.state,
-      this.district, this.village,
+      this.district,
+      this.village,
       this.farmerName,
-      this.farmerWhatsappNumber, this.bankName, this.accountName, this.dealerNumber,
-        this.accountNumber, this.ifscCode, this.panNumber, this.aadhaarNumber, this.typeOfCultivationPractice});
+      this.farmerWhatsappNumber,
+      this.bankName,
+      this.accountName,
+      this.dealerNumber,
+      this.accountNumber,
+      this.ifscCode,
+      this.panNumber,
+      this.aadhaarNumber,
+      this.typeOfCultivationPractice});
 
   @override
   State<FarmerEditProfilePage> createState() => _FarmerEditProfilePageState();
 }
 
 class _FarmerEditProfilePageState extends State<FarmerEditProfilePage> {
-
   TextEditingController ownedAreaController = TextEditingController();
   TextEditingController goeLocationController = TextEditingController();
   TextEditingController leasedFarmController = TextEditingController();
@@ -100,7 +114,7 @@ class _FarmerEditProfilePageState extends State<FarmerEditProfilePage> {
     aadharNumberController.text = widget.aadhaarNumber ?? "";
 
     selectedItemValue = widget.typeOfCultivationPractice ?? "";
-    if(pincodeController.text.isNotEmpty){
+    if (pincodeController.text.isNotEmpty) {
       _onTextChanged(pincodeController.text);
       _selectedStateName = widget.state;
       _selectedDistrictName = widget.district;
@@ -728,9 +742,7 @@ class _FarmerEditProfilePageState extends State<FarmerEditProfilePage> {
               child: Container(
                 width: MediaQuery.of(context).size.width,
                 child: ElevatedButton(
-                  onPressed: () {
-
-                  },
+                  onPressed: () {},
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.all(12),
@@ -1091,11 +1103,9 @@ class _FarmerEditProfilePageState extends State<FarmerEditProfilePage> {
   _farmerEditRegistrationApiCall() async {
     if (ownedAreaController.text.trim().isNotEmpty &&
         pincodeController.text.trim().isNotEmpty &&
-        villageController.text.trim().isNotEmpty && selectedItemValue.toString().isNotEmpty) {
-
-      var headers = {
-        'Content-Type': 'application/json'
-      };
+        villageController.text.trim().isNotEmpty &&
+        selectedItemValue.toString().isNotEmpty) {
+      var headers = {'Content-Type': 'application/json'};
 
       var data = json.encode({
         "name": widget.name,
@@ -1119,7 +1129,7 @@ class _FarmerEditProfilePageState extends State<FarmerEditProfilePage> {
 
       var dio = Dio();
       var response = await dio.request(
-        'https://krishiyanback.vercel.app/api/appFarmer/farmer/whatsapp/${widget.whatsappNumber}',
+        '${baseUrl}appFarmer/farmer/whatsapp/${widget.whatsappNumber}',
         options: Options(
           method: 'PUT',
           headers: headers,
@@ -1133,7 +1143,8 @@ class _FarmerEditProfilePageState extends State<FarmerEditProfilePage> {
         showAlertDialog(context);
       } else {
         AlertHelper.showToast(response.statusMessage, context);
-        print("Edit Profile Details Error : "+response.statusMessage.toString());
+        print("Edit Profile Details Error : " +
+            response.statusMessage.toString());
       }
     } else {
       AlertHelper.showToast("Please enter details.", context);
@@ -1210,7 +1221,7 @@ class _FarmerEditProfilePageState extends State<FarmerEditProfilePage> {
             onTap: () {
               Navigator.of(context).pop();
               Navigator.of(context).pop('Updated Data from FarmerEdit Profile');
-              },
+            },
             child: const Align(
               alignment: Alignment.topRight,
               child: Icon(

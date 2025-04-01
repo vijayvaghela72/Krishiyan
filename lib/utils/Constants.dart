@@ -17,23 +17,24 @@ const String typeOfOrg = 'typeOfOrg';
 const String token = 'token';
 
 const String prefKeyToken = 'prefToken';
-const String baseUrl = "https://krishiyanback.vercel.app/api/";
+const String baseUrl = "https://krishiyan-backend-teal.vercel.app/api/";
+const String baseUrlEnd = "https://krishiyan-backend-teal.vercel.app/";
 
 const String LOGIN = "${baseUrl}app/sign-in";
 const String SIGNUP = "${baseUrl}fpo";
 
 const String FARMER_NAME = "${baseUrl}appFarmer/names/";
 
-const String CROP_LIST = "https://krishiyanback.vercel.app/api/crop/cropdata";
+const String CROP_LIST = "${baseUrl}crop/cropdata";
 // const String CROP_LIST = "${baseUrl}crop";
 // const String FARMER_DASHBOARD = "${baseUrl}api/appFarmer";
-const String FARMER_DASHBOARD = "https://krishiyanback.vercel.app/api/appFarmer/data";
+const String FARMER_DASHBOARD = "${baseUrl}appFarmer/data";
 
-const String FRM_PROFILE_DETAILS = "https://krishiyanback.vercel.app/api/fpoOrganization/contact/";
-const String FRM_UPDATE_PROFILE_DETAILS = "https://krishiyanback.vercel.app/api/fpoOrganization/contact/";
+const String FRM_PROFILE_DETAILS = "${baseUrl}fpoOrganization/contact/";
+const String FRM_UPDATE_PROFILE_DETAILS = "${baseUrl}fpoOrganization/contact/";
 
-const String PROFILE_DETAILS = "https://krishiyanback.vercel.app/api/entity/contact/";
-const String UPDATE_PROFILE_DETAILS = "https://krishiyanback.vercel.app/api/entity/contact/";
+const String PROFILE_DETAILS = "${baseUrl}entity/contact/";
+const String UPDATE_PROFILE_DETAILS = "${baseUrl}entity/contact/";
 
 const String OTHER_DETAILS = "${baseUrl}otherDetails/";
 const String UPDATE_OTHER_DETAILS = "${baseUrl}otherDetails";
@@ -46,13 +47,13 @@ const String UPDATE_ADDRESS_DETAILS = "${baseUrl}address";
 
 const String RESET_PASSWORD = "${baseUrl}app/reset-password";
 
-const String PincodeToState = "api/farmer/address";
+const String PincodeToState = "${baseUrl}farmer/address";
 
-const String MANDI_PRICE_STATE = "https://krishiyanback.vercel.app/api/mandi/filter";
+const String MANDI_PRICE_STATE = "${baseUrl}mandi/filter";
 
 const bool DEVELOPER_MODE = true;
 
-const String NEWS_LIST = "https://krishiyanback.vercel.app/api/all/news";
+const String NEWS_LIST = "${baseUrl}all/news";
 
 const String ENQUIRY_LIST = "${baseUrl}commodities";
 const String ENQUIRY_LIST_BY_ID = "${baseUrl}commodities/";
@@ -68,4 +69,4 @@ const String FARMER_GROUP_REGISTRATION = "${baseUrl}sign-in";
 
 const String CROP_CULTIVATION_REGISTR = "${baseUrl}appFarmer/crop/register";
 
-const String GET_OTP = "https://krishiyanback.vercel.app/api/whatsapp/send-otp/";
+const String GET_OTP = "${baseUrl}whatsapp/send-otp/";

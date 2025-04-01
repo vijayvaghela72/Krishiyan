@@ -153,7 +153,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
       // Send the request to the API
       Response response = await dio.post(
-        'https://krishiyanback.vercel.app/api/upload',
+        '${baseUrl}upload',
         data: formData,
       );
 
@@ -220,7 +220,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
     // Construct the image URL
     String imageUrl =
-        'https://krishiyanback.vercel.app/images/${organizationName}_profile_image.jpg';
+        '${baseUrlEnd}images/${organizationName}_profile_image.jpg';
     print("Fetching image from URL: $imageUrl");
 
     // Update the UI with the fetched image URL

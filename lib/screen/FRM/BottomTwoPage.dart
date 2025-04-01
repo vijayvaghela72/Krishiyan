@@ -33,9 +33,8 @@ import 'package:krishiyan/mvc/model/GetOtpDetails.dart';
 import '../../mvc/controller/otpController.dart';
 
 import 'package:dio/dio.dart';
- // Ensure you have Flutter imports for AlertHelper and setState usage
+// Ensure you have Flutter imports for AlertHelper and setState usage
 import 'dart:convert'; // For json.encode
-
 
 class BottomTwoPage extends StatefulWidget {
   bool aapbarVisibility;
@@ -118,7 +117,6 @@ class _BottomTwoPageState extends State<BottomTwoPage>
   List<Farmer> sortedFarmers = []; // To hold the sorted farmers list
 
   var farmerDashboardList;
-  
 
   TextEditingController searchByNaneController = TextEditingController();
   TextEditingController nameController = TextEditingController();
@@ -130,8 +128,8 @@ class _BottomTwoPageState extends State<BottomTwoPage>
   TextEditingController areaInArcesController = TextEditingController();
   TextEditingController geoLinkAreaOnMapController = TextEditingController();
   late OtpFieldController otpController = OtpFieldController();
-       String enteredOtp = '';
-   String otpData = "";
+  String enteredOtp = '';
+  String otpData = "";
 
   String? _selectedCrop;
 
@@ -153,54 +151,53 @@ class _BottomTwoPageState extends State<BottomTwoPage>
   String _searchText = '';
   String WhatsappNumberData = '';
 
-    bool isOtpButtonEnabled = true;  // Track OTP button status
-String countdownText = '';      // To show countdown text (e.g., "Wait 1:45")
-Timer? otpCooldownTimer;        // Timer to track cooldown
+  bool isOtpButtonEnabled = true; // Track OTP button status
+  String countdownText = ''; // To show countdown text (e.g., "Wait 1:45")
+  Timer? otpCooldownTimer; // Timer to track cooldown
 
-void startOtpCooldown() {
-  setState(() {
-    isOtpButtonEnabled = false;  // Disable the OTP button
-  });
-
-  // Set the initial cooldown time (2 minutes = 120 seconds)
-  int cooldownTime = 120;  // 2 minutes in seconds
-
-  // Update the countdown text every second
-  otpCooldownTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+  void startOtpCooldown() {
     setState(() {
-      // Calculate minutes and seconds
-      int minutes = cooldownTime ~/ 60;  // Integer division to get minutes
-      int seconds = cooldownTime % 60;  // Modulo operation to get seconds
-
-      // Format as MM:SS, ensuring two digits for minutes and seconds
-      countdownText = "Please wait ${_formatTime(minutes)}:${_formatTime(seconds)} before trying again.";
+      isOtpButtonEnabled = false; // Disable the OTP button
     });
 
-    if (cooldownTime == 0) {
-      timer.cancel();  // Stop the timer when the cooldown is over
+    // Set the initial cooldown time (2 minutes = 120 seconds)
+    int cooldownTime = 120; // 2 minutes in seconds
+
+    // Update the countdown text every second
+    otpCooldownTimer = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
-        isOtpButtonEnabled = true;  // Re-enable the OTP button
-        countdownText = "";  // Clear the countdown text
+        // Calculate minutes and seconds
+        int minutes = cooldownTime ~/ 60; // Integer division to get minutes
+        int seconds = cooldownTime % 60; // Modulo operation to get seconds
+
+        // Format as MM:SS, ensuring two digits for minutes and seconds
+        countdownText =
+            "Please wait ${_formatTime(minutes)}:${_formatTime(seconds)} before trying again.";
       });
-    } else {
-      cooldownTime--;  // Decrease the cooldown time by 1 second
-    }
-  });
-}
+
+      if (cooldownTime == 0) {
+        timer.cancel(); // Stop the timer when the cooldown is over
+        setState(() {
+          isOtpButtonEnabled = true; // Re-enable the OTP button
+          countdownText = ""; // Clear the countdown text
+        });
+      } else {
+        cooldownTime--; // Decrease the cooldown time by 1 second
+      }
+    });
+  }
 
 // Helper function to format time as two digits
-String _formatTime(int time) {
-  return time < 10 ? "0$time" : "$time";
-}
+  String _formatTime(int time) {
+    return time < 10 ? "0$time" : "$time";
+  }
 
-
-
-@override
-void dispose() {
-  // Always cancel the timer when the widget is disposed
-  otpCooldownTimer?.cancel();
-  super.dispose();
-}
+  @override
+  void dispose() {
+    // Always cancel the timer when the widget is disposed
+    otpCooldownTimer?.cancel();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -811,222 +808,243 @@ void dispose() {
                                                         ),
                                                       ),
                                                       SizedBox(height: 10),
-                                                      showCropDataVisible == index ? Padding(
-                                                        padding: const EdgeInsets.only(
-                                                            left: 20.0,
-                                                            right: 20.0,),
-                                                        child: Text(
-                                                          buildTranslate("cropCultivations")!,
-                                                          softWrap: true,
-                                                          textAlign: TextAlign.center,
-                                                          style: TextStyle(
-                                                            color: Colors.black,
-                                                            fontSize: 16,
-                                                            fontFamily:
-                                                            'poppins-semibold',
-                                                          ),
-                                                        ),
-                                                      ) : Container(),
+                                                      showCropDataVisible ==
+                                                              index
+                                                          ? Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .only(
+                                                                left: 20.0,
+                                                                right: 20.0,
+                                                              ),
+                                                              child: Text(
+                                                                buildTranslate(
+                                                                    "cropCultivations")!,
+                                                                softWrap: true,
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                                style:
+                                                                    TextStyle(
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontSize: 16,
+                                                                  fontFamily:
+                                                                      'poppins-semibold',
+                                                                ),
+                                                              ),
+                                                            )
+                                                          : Container(),
                                                       SizedBox(height: 10),
-                                                      showCropDataVisible == index ?
-                                                      ListView.builder(
-                                                          shrinkWrap: true,
-                                                          physics: NeverScrollableScrollPhysics(),
-                                                          itemCount: 1,
-                                                          itemBuilder: (context, cropIndex) {
-                                                            if (cropDetails is List<CropDetails>) {
-                                                              return
-                                                                Column(
-                                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                                children: cropDetails.map((crop) {
-                                                                  return
-                                                                    Padding(
-                                                                      padding: const EdgeInsets.only(
-                                                                        top: 5.0,
-                                                                          left: 20.0,
-                                                                          right: 20.0,
-                                                                          bottom: 12.0),
-                                                                      child: Row(
-                                                                        mainAxisAlignment: MainAxisAlignment.start,
-                                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                                        children: [
-                                                                          Expanded(
-                                                                              child: Row(
-                                                                                mainAxisAlignment:
-                                                                                MainAxisAlignment.start,
-                                                                                crossAxisAlignment:
-                                                                                CrossAxisAlignment.start,
-                                                                                children: [
-                                                                                  Expanded(
-                                                                                    flex:2,
-                                                                                    child: Text(
-                                                                                      "${crop.crops}",
-                                                                                      softWrap: true,
-                                                                                      textAlign: TextAlign.start,
-                                                                                      style: TextStyle(
-                                                                                        color: Color(0xFF666666),
-                                                                                        fontSize: 10,
-                                                                                        fontFamily:
-                                                                                        'poppins-semibold',
-                                                                                      ),
-                                                                                    ),
-                                                                                  ),
-                                                                                  Expanded(
-                                                                                    flex:1,
-                                                                                    child: Text(crop.typeOfCultivationPractice,
-                                                                                      softWrap: true,
-                                                                                      textAlign: TextAlign.start,
-                                                                                      style: TextStyle(
-                                                                                        color: Color(0xFF666666),
-                                                                                        fontSize: 10,
-                                                                                        fontFamily:
-                                                                                        'poppins-semibold',
-                                                                                      ),
-                                                                                    ),
-                                                                                  ),
-                                                                                ],
-                                                                              )),
-                                                                          Expanded(
-                                                                              flex:1,
-                                                                              child: Align(
-                                                                                alignment: Alignment.centerRight,
-                                                                                child: InkWell(
-                                                                                  onTap: () {
-                                                                                    Navigator.of(context).push(
-                                                                                        MaterialPageRoute(
-                                                                                            builder: (context) =>
-                                                                                                EditCropCultivationPage(
-                                                                                                  WhatsappNumber : WhatsappNumberData,
-                                                                                                selectedCrop : crop.crops,
-                                                                                                id: crop.id,
-                                                                                                variety : crop.variety,
-                                                                                                date : crop.dateOfSowing,
-                                                                                                geoLocation : crop.geolocation,
-                                                                                                cultivationType : crop.typeOfCultivationPractice,
-                                                                                                areaInArce : crop.areaInAcres.toString(),
-                                                                                                geoLinkArea : crop.geoLinkAreaOnMap)));
-                                                                                  },
+                                                      showCropDataVisible ==
+                                                              index
+                                                          ? ListView.builder(
+                                                              shrinkWrap: true,
+                                                              physics:
+                                                                  NeverScrollableScrollPhysics(),
+                                                              itemCount: 1,
+                                                              itemBuilder:
+                                                                  (context,
+                                                                      cropIndex) {
+                                                                if (cropDetails
+                                                                    is List<
+                                                                        CropDetails>) {
+                                                                  return Column(
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .start,
+                                                                    children:
+                                                                        cropDetails
+                                                                            .map((crop) {
+                                                                      return Padding(
+                                                                        padding: const EdgeInsets
+                                                                            .only(
+                                                                            top:
+                                                                                5.0,
+                                                                            left:
+                                                                                20.0,
+                                                                            right:
+                                                                                20.0,
+                                                                            bottom:
+                                                                                12.0),
+                                                                        child:
+                                                                            Row(
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.start,
+                                                                          crossAxisAlignment:
+                                                                              CrossAxisAlignment.start,
+                                                                          children: [
+                                                                            Expanded(
+                                                                                child: Row(
+                                                                              mainAxisAlignment: MainAxisAlignment.start,
+                                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                                              children: [
+                                                                                Expanded(
+                                                                                  flex: 2,
                                                                                   child: Text(
-                                                                                    buildTranslate(
-                                                                                        "editCropData")!,
+                                                                                    "${crop.crops}",
                                                                                     softWrap: true,
-                                                                                    style: const TextStyle(
-                                                                                      color: Color(0XFF008000),
-                                                                                      fontSize: 11,
-                                                                                      fontFamily:
-                                                                                      'poppins-semibold',
+                                                                                    textAlign: TextAlign.start,
+                                                                                    style: TextStyle(
+                                                                                      color: Color(0xFF666666),
+                                                                                      fontSize: 10,
+                                                                                      fontFamily: 'poppins-semibold',
                                                                                     ),
                                                                                   ),
                                                                                 ),
-                                                                              )),
-                                                                        ],
-                                                                      ),
-                                                                    );
-                                                                }).toList(),
-                                                              );
-                                                            }
-                                                            else {
-                                                              return Text(cropDetails, softWrap: true,style:
-                                                              TextStyle(color: Colors.black, fontSize: 15.0, fontFamily: "poppins-semibold" ));
-                                                            }
-                                                          }) : Container(),
-                                                      showCropDataVisible == index ? SizedBox(height: 5) : Container(),
-                                                      showCropDataVisible == index  ? Padding(
-                                                        padding: const EdgeInsets.only(
-                                                            left: 10.0,
-                                                            right: 10.0,
-                                                            top: 8.0,
-                                                            bottom: 20.0),
-                                                        child: Row(
-                                                          mainAxisAlignment:
-                                                          MainAxisAlignment.start,
-                                                          crossAxisAlignment:
-                                                          CrossAxisAlignment.start,
-                                                          children: [
-                                                            Expanded(
-                                                                flex: 2,
-                                                                child: InkWell(
-                                                                  highlightColor:
-                                                                  Colors.transparent,
-                                                                  splashColor:
-                                                                  Colors.transparent,
-                                                                  onTap: () {},
-                                                                  child: Container(
-                                                                    decoration: BoxDecoration(
-                                                                        color: const Color(
-                                                                            0XFF3FC041),
-                                                                        border: Border.all(
-                                                                            color: const Color(
-                                                                                0XFF3FC041),
-                                                                            width: 1),
-                                                                        borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(18)),
-                                                                    padding:
-                                                                    const EdgeInsets.all(
-                                                                        8.0),
-                                                                    child: Text(
-                                                                      buildTranslate(
-                                                                          "showMoreCrops")!,
-                                                                      softWrap: true,
-                                                                      textAlign:
-                                                                      TextAlign.center,
-                                                                      style: const TextStyle(
-                                                                          color: Colors.white,
-                                                                          fontSize: 12,
-                                                                          fontFamily:
-                                                                          'poppins-regular'),
-                                                                    ),
-                                                                  ),
-                                                                )),
-                                                            Expanded(
-                                                                flex: 2,
-                                                                child: Align(
-                                                                  alignment:
-                                                                  Alignment.centerRight,
-                                                                  child: InkWell(
-                                                                    highlightColor:
-                                                                    Colors.transparent,
-                                                                    splashColor:
-                                                                    Colors.transparent,
-                                                                    onTap: () {
-                                                                      Navigator.of(context).push(
-                                                                          MaterialPageRoute(
-                                                                              builder: (context) =>
-                                                                                  CropCultivationPage(WhatsappNumber : WhatsappNumberData)));
-                                                                    },
-                                                                    child: Container(
-                                                                      decoration: BoxDecoration(
-                                                                          color: const Color(
-                                                                              0XFF3FC041),
-                                                                          border: Border.all(
-                                                                              color: const Color(
-                                                                                  0XFF3FC041),
-                                                                              width: 1),
-                                                                          borderRadius:
-                                                                          BorderRadius
-                                                                              .circular(
-                                                                              18)),
-                                                                      padding:
-                                                                      const EdgeInsets.all(
-                                                                          8.0),
-                                                                      child: Text(
-                                                                        buildTranslate(
-                                                                            "addNewCultivations")!,
-                                                                        softWrap: true,
-                                                                        style: const TextStyle(
-                                                                          color: Colors.white,
-                                                                          fontSize: 11,
-                                                                          fontFamily:
-                                                                          'poppins-regular',
+                                                                                Expanded(
+                                                                                  flex: 1,
+                                                                                  child: Text(
+                                                                                    crop.typeOfCultivationPractice,
+                                                                                    softWrap: true,
+                                                                                    textAlign: TextAlign.start,
+                                                                                    style: TextStyle(
+                                                                                      color: Color(0xFF666666),
+                                                                                      fontSize: 10,
+                                                                                      fontFamily: 'poppins-semibold',
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            )),
+                                                                            Expanded(
+                                                                                flex: 1,
+                                                                                child: Align(
+                                                                                  alignment: Alignment.centerRight,
+                                                                                  child: InkWell(
+                                                                                    onTap: () {
+                                                                                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => EditCropCultivationPage(WhatsappNumber: WhatsappNumberData, selectedCrop: crop.crops, id: crop.id, variety: crop.variety, date: crop.dateOfSowing, geoLocation: crop.geolocation, cultivationType: crop.typeOfCultivationPractice, areaInArce: crop.areaInAcres.toString(), geoLinkArea: crop.geoLinkAreaOnMap)));
+                                                                                    },
+                                                                                    child: Text(
+                                                                                      buildTranslate("editCropData")!,
+                                                                                      softWrap: true,
+                                                                                      style: const TextStyle(
+                                                                                        color: Color(0XFF008000),
+                                                                                        fontSize: 11,
+                                                                                        fontFamily: 'poppins-semibold',
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                )),
+                                                                          ],
                                                                         ),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                )),
-                                                          ],
-                                                        ),
-                                                      ) : Container(),
+                                                                      );
+                                                                    }).toList(),
+                                                                  );
+                                                                } else {
+                                                                  return Text(
+                                                                      cropDetails,
+                                                                      softWrap:
+                                                                          true,
+                                                                      style: TextStyle(
+                                                                          color: Colors
+                                                                              .black,
+                                                                          fontSize:
+                                                                              15.0,
+                                                                          fontFamily:
+                                                                              "poppins-semibold"));
+                                                                }
+                                                              })
+                                                          : Container(),
+                                                      showCropDataVisible ==
+                                                              index
+                                                          ? SizedBox(height: 5)
+                                                          : Container(),
+                                                      showCropDataVisible ==
+                                                              index
+                                                          ? Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .only(
+                                                                      left:
+                                                                          10.0,
+                                                                      right:
+                                                                          10.0,
+                                                                      top: 8.0,
+                                                                      bottom:
+                                                                          20.0),
+                                                              child: Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .start,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  Expanded(
+                                                                      flex: 2,
+                                                                      child:
+                                                                          InkWell(
+                                                                        highlightColor:
+                                                                            Colors.transparent,
+                                                                        splashColor:
+                                                                            Colors.transparent,
+                                                                        onTap:
+                                                                            () {},
+                                                                        child:
+                                                                            Container(
+                                                                          decoration: BoxDecoration(
+                                                                              color: const Color(0XFF3FC041),
+                                                                              border: Border.all(color: const Color(0XFF3FC041), width: 1),
+                                                                              borderRadius: BorderRadius.circular(18)),
+                                                                          padding: const EdgeInsets
+                                                                              .all(
+                                                                              8.0),
+                                                                          child:
+                                                                              Text(
+                                                                            buildTranslate("showMoreCrops")!,
+                                                                            softWrap:
+                                                                                true,
+                                                                            textAlign:
+                                                                                TextAlign.center,
+                                                                            style: const TextStyle(
+                                                                                color: Colors.white,
+                                                                                fontSize: 12,
+                                                                                fontFamily: 'poppins-regular'),
+                                                                          ),
+                                                                        ),
+                                                                      )),
+                                                                  Expanded(
+                                                                      flex: 2,
+                                                                      child:
+                                                                          Align(
+                                                                        alignment:
+                                                                            Alignment.centerRight,
+                                                                        child:
+                                                                            InkWell(
+                                                                          highlightColor:
+                                                                              Colors.transparent,
+                                                                          splashColor:
+                                                                              Colors.transparent,
+                                                                          onTap:
+                                                                              () {
+                                                                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => CropCultivationPage(WhatsappNumber: WhatsappNumberData)));
+                                                                          },
+                                                                          child:
+                                                                              Container(
+                                                                            decoration: BoxDecoration(
+                                                                                color: const Color(0XFF3FC041),
+                                                                                border: Border.all(color: const Color(0XFF3FC041), width: 1),
+                                                                                borderRadius: BorderRadius.circular(18)),
+                                                                            padding:
+                                                                                const EdgeInsets.all(8.0),
+                                                                            child:
+                                                                                Text(
+                                                                              buildTranslate("addNewCultivations")!,
+                                                                              softWrap: true,
+                                                                              style: const TextStyle(
+                                                                                color: Colors.white,
+                                                                                fontSize: 11,
+                                                                                fontFamily: 'poppins-regular',
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      )),
+                                                                ],
+                                                              ),
+                                                            )
+                                                          : Container(),
                                                     ])));
                                     // cropDetails is String
                                     //     ? firstCardVisibleValue == index ? Center
@@ -1184,8 +1202,10 @@ void dispose() {
                                       foregroundColor: Colors.white,
                                       textStyle: const TextStyle(fontSize: 18),
                                       backgroundColor: isOtpButtonEnabled
-                ? const Color(0xFF3FC041) // Green when enabled
-                : Colors.grey,  // Grey when disabled (cooldown)
+                                          ? const Color(
+                                              0xFF3FC041) // Green when enabled
+                                          : Colors
+                                              .grey, // Grey when disabled (cooldown)
                                       shape: RoundedRectangleBorder(
                                         borderRadius:
                                             BorderRadius.circular(12.0),
@@ -1193,19 +1213,23 @@ void dispose() {
                                     ),
                                     child: Text(buildTranslate("getOtp")!),
                                     onPressed: () {
-                        setState(() {
-                          otpVisible = true;
-                        });
-                        if (whatsAppNumberController.text.isNotEmpty) {
-    if (isOtpButtonEnabled) {
-      getOtpApiCall();
-    } else {
-      AlertHelper.showToast("Please wait before requesting again.", context);
-    }
-  } else {
-    AlertHelper.showToast("Please enter details", context);
-  }
-                      },
+                                      setState(() {
+                                        otpVisible = true;
+                                      });
+                                      if (whatsAppNumberController
+                                          .text.isNotEmpty) {
+                                        if (isOtpButtonEnabled) {
+                                          getOtpApiCall();
+                                        } else {
+                                          AlertHelper.showToast(
+                                              "Please wait before requesting again.",
+                                              context);
+                                        }
+                                      } else {
+                                        AlertHelper.showToast(
+                                            "Please enter details", context);
+                                      }
+                                    },
                                   ),
                                 ),
                               ),
@@ -1216,20 +1240,21 @@ void dispose() {
                             ),
                           ),
 
-                                      // Display the countdown timer if the button is disabled
-Visibility(
-  visible: !isOtpButtonEnabled,
-  child: Padding(
-    padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-    child: Text(
-      countdownText, // This is the dynamic countdown text
-      style: const TextStyle(
-        fontSize: 14,
-        color: Color(0xFF666666),
-      ),
-    ),
-  ),
-),
+                          // Display the countdown timer if the button is disabled
+                          Visibility(
+                            visible: !isOtpButtonEnabled,
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 25.0, right: 25.0),
+                              child: Text(
+                                countdownText, // This is the dynamic countdown text
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Color(0xFF666666),
+                                ),
+                              ),
+                            ),
+                          ),
                           const SizedBox(
                             height: 20,
                           ),
@@ -1255,27 +1280,29 @@ Visibility(
                               : Container(),
                           otpVisible
                               ? Padding(
-                            padding: const EdgeInsets.only(left: 15.0, right: 15.0),
-                                child: OTPTextField(
-                                controller: otpController,
-                                length: 4,
-                                // borderColor: const Color(0xFF3dc33b),
-                                // showFieldAsBox: true,
-                                // filled: true,
-                                width: MediaQuery.of(context).size.width,
-                                textFieldAlignment: MainAxisAlignment.spaceAround,
-                                fieldWidth: 55,
-                                fieldStyle: FieldStyle.box,
-                                outlineBorderRadius: 10,
-                                style: TextStyle(fontSize: 17),
-                                onChanged: (code) {
-                                  print("Changed: " + code);
-                                },
-                                onCompleted: (code) {
-                                  enteredOtp = code;
-                      print("Completed: " + enteredOtp);
-                                }),
-                              )
+                                  padding: const EdgeInsets.only(
+                                      left: 15.0, right: 15.0),
+                                  child: OTPTextField(
+                                      controller: otpController,
+                                      length: 4,
+                                      // borderColor: const Color(0xFF3dc33b),
+                                      // showFieldAsBox: true,
+                                      // filled: true,
+                                      width: MediaQuery.of(context).size.width,
+                                      textFieldAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      fieldWidth: 55,
+                                      fieldStyle: FieldStyle.box,
+                                      outlineBorderRadius: 10,
+                                      style: TextStyle(fontSize: 17),
+                                      onChanged: (code) {
+                                        print("Changed: " + code);
+                                      },
+                                      onCompleted: (code) {
+                                        enteredOtp = code;
+                                        print("Completed: " + enteredOtp);
+                                      }),
+                                )
                               : Container(),
 
                           const SizedBox(
@@ -1288,12 +1315,18 @@ Visibility(
                                   left: 25.0, right: 25.0),
                               child: ElevatedButton(
                                 onPressed: () async {
-                                   bool isOtpVerified = await verifyOtp(whatsAppNumberController.text, enteredOtp, context);
-                                  if(isOtpVerified){
-                                    AlertHelper.showToast("OTP verified", context);
-                                      _farmerRegistrationCall();
-                                  }else{
-                                    AlertHelper.showToast("OTP verification failed. Please try again.", context);
+                                  bool isOtpVerified = await verifyOtp(
+                                      whatsAppNumberController.text,
+                                      enteredOtp,
+                                      context);
+                                  if (isOtpVerified) {
+                                    AlertHelper.showToast(
+                                        "OTP verified", context);
+                                    _farmerRegistrationCall();
+                                  } else {
+                                    AlertHelper.showToast(
+                                        "OTP verification failed. Please try again.",
+                                        context);
                                   }
                                 },
                                 style: ElevatedButton.styleFrom(
@@ -1758,11 +1791,14 @@ Visibility(
                                 child: TextFormField(
                                   keyboardType: TextInputType.number,
                                   inputFormatters: <TextInputFormatter>[
-                                    FilteringTextInputFormatter.allow(RegExp('[0-9]')),
+                                    FilteringTextInputFormatter.allow(
+                                        RegExp('[0-9]')),
                                     //To remove first '0'
-                                    FilteringTextInputFormatter.deny(RegExp(r'^0+')),
+                                    FilteringTextInputFormatter.deny(
+                                        RegExp(r'^0+')),
                                     //To remove first '94' or your country code
-                                    FilteringTextInputFormatter.deny(RegExp(r'^94+')),
+                                    FilteringTextInputFormatter.deny(
+                                        RegExp(r'^94+')),
                                   ],
                                   decoration: const InputDecoration(
                                       alignLabelWithHint: true,
@@ -1860,9 +1896,7 @@ Visibility(
                                   padding: const EdgeInsets.only(
                                       left: 25.0, right: 25.0),
                                   child: ElevatedButton(
-                                    onPressed: () {
-
-                                    },
+                                    onPressed: () {},
                                     style: ElevatedButton.styleFrom(
                                       foregroundColor: Colors.white,
                                       padding: const EdgeInsets.all(12),
@@ -2271,7 +2305,6 @@ Visibility(
                                                     setState(() {
                                                       onSearchPressed();
                                                       searchCropsFlag = true;
-                                                      
                                                     });
                                                   },
                                                   style:
@@ -2324,34 +2357,52 @@ Visibility(
                                           padding: const EdgeInsets.all(10.0),
                                           child: Column(
                                             children: [
-                                             FutureBuilder<FrmInsight?>(
-  future: _futureFrminSight,
-  builder: (context, snapshot) {
-    // Log the connection state and snapshot data
-    print('Connection State: ${snapshot.connectionState}');
-    print('Has data: ${snapshot.hasData}');
-    print('Error: ${snapshot.error}');
-    print('Data: ${snapshot.data}');
+                                              FutureBuilder<FrmInsight?>(
+                                                future: _futureFrminSight,
+                                                builder: (context, snapshot) {
+                                                  // Log the connection state and snapshot data
+                                                  print(
+                                                      'Connection State: ${snapshot.connectionState}');
+                                                  print(
+                                                      'Has data: ${snapshot.hasData}');
+                                                  print(
+                                                      'Error: ${snapshot.error}');
+                                                  print(
+                                                      'Data: ${snapshot.data}');
 
-    if (snapshot.connectionState == ConnectionState.waiting) {
-      return Center(child: CircularProgressIndicator()); // Loading state
-    } else if (snapshot.hasError) {
-      // Handle the error case
-      return Center(child: Text('Error: ${snapshot.error}'));
-    } else if (!snapshot.hasData) {
-      // Handle the case where there's no data
-      return Center(child: Text('No data available.'));
-    } else {
-      FrmInsight? frminSight = snapshot.data;
-      if (frminSight == null) {
-        return Center(child: Text('No data available.'));
-      }
-      print('Has data: ${frminSight.data}');
-      return listWidget(frminSight); // Your list display widget
-    }
-  },
-),
-
+                                                  if (snapshot
+                                                          .connectionState ==
+                                                      ConnectionState.waiting) {
+                                                    return Center(
+                                                        child:
+                                                            CircularProgressIndicator()); // Loading state
+                                                  } else if (snapshot
+                                                      .hasError) {
+                                                    // Handle the error case
+                                                    return Center(
+                                                        child: Text(
+                                                            'Error: ${snapshot.error}'));
+                                                  } else if (!snapshot
+                                                      .hasData) {
+                                                    // Handle the case where there's no data
+                                                    return Center(
+                                                        child: Text(
+                                                            'No data available.'));
+                                                  } else {
+                                                    FrmInsight? frminSight =
+                                                        snapshot.data;
+                                                    if (frminSight == null) {
+                                                      return Center(
+                                                          child: Text(
+                                                              'No data available.'));
+                                                    }
+                                                    print(
+                                                        'Has data: ${frminSight.data}');
+                                                    return listWidget(
+                                                        frminSight); // Your list display widget
+                                                  }
+                                                },
+                                              ),
                                               const SizedBox(
                                                 height: 10,
                                               ),
@@ -2423,42 +2474,65 @@ Visibility(
                                               child: Padding(
                                                 padding:
                                                     const EdgeInsets.all(12.0),
-                                                child: FutureBuilder<FrmInsight?>(
-                                                  future: _futureFrminSight,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator()); // Show loading spinner while waiting
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}')); // Show error message
-        } else if (!snapshot.hasData) {
-          return Center(child: Text('No data available.')); // Show message if no data
-        } 
-else {
-          // Successfully fetched data
-          FrmInsight? frminSight = snapshot.data;
-          int totalFarmers = frminSight?.data.numberOfFarmers ?? 0; // Get total farmers
-          print(totalFarmers);
+                                                child: FutureBuilder<
+                                                        FrmInsight?>(
+                                                    future: _futureFrminSight,
+                                                    builder:
+                                                        (context, snapshot) {
+                                                      if (snapshot
+                                                              .connectionState ==
+                                                          ConnectionState
+                                                              .waiting) {
+                                                        return Center(
+                                                            child:
+                                                                CircularProgressIndicator()); // Show loading spinner while waiting
+                                                      } else if (snapshot
+                                                          .hasError) {
+                                                        return Center(
+                                                            child: Text(
+                                                                'Error: ${snapshot.error}')); // Show error message
+                                                      } else if (!snapshot
+                                                          .hasData) {
+                                                        return Center(
+                                                            child: Text(
+                                                                'No data available.')); // Show message if no data
+                                                      } else {
+                                                        // Successfully fetched data
+                                                        FrmInsight? frminSight =
+                                                            snapshot.data;
+                                                        int totalFarmers = frminSight
+                                                                ?.data
+                                                                .numberOfFarmers ??
+                                                            0; // Get total farmers
+                                                        print(totalFarmers);
 
-                                                 return Column(
-        children: [
-          // Display total farmers inside brackets dynamically
-          Padding(
-            padding: const EdgeInsets.only(left: 20.0),
-            child: Text(
-              "Farmers($totalFarmers)" ?? "Farmers($totalFarmers)", // Fallback to default if buildTranslate fails
-              softWrap: true,
-              style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 14,
-                  fontFamily: 'poppins-semibold'),
-            ),
-          ),
-          // Other UI elements here...
-        ],
-      );}
-      }
-                                                ),
-
+                                                        return Column(
+                                                          children: [
+                                                            // Display total farmers inside brackets dynamically
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .only(
+                                                                      left:
+                                                                          20.0),
+                                                              child: Text(
+                                                                "Farmers($totalFarmers)" ??
+                                                                    "Farmers($totalFarmers)", // Fallback to default if buildTranslate fails
+                                                                softWrap: true,
+                                                                style: const TextStyle(
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontSize:
+                                                                        14,
+                                                                    fontFamily:
+                                                                        'poppins-semibold'),
+                                                              ),
+                                                            ),
+                                                            // Other UI elements here...
+                                                          ],
+                                                        );
+                                                      }
+                                                    }),
                                               ),
                                             ),
                                             const Spacer(),
@@ -2544,41 +2618,63 @@ else {
                                       ),
                                       _buildHeaderTable(),
                                       FutureBuilder<FrmInsight?>(
-  future: _futureFrminSight, // The future that fetches FrmInsight data
-  builder: (context, snapshot) {
-    if (snapshot.connectionState == ConnectionState.waiting) {
-      return Center(child: CircularProgressIndicator()); // Loading state
-    } else if (snapshot.hasError) {
-      return Center(child: Text('Error: ${snapshot.error}')); // Error handling
-    } else if (!snapshot.hasData) {
-      return Center(child: Text('No data available.'));
-    } else {
-      FrmInsight? frminSight = snapshot.data;
-      if (frminSight == null || frminSight.data.farmers.isEmpty) {
-        return Center(child: Text('No farmers data available.'));
-      }
-      // Get the farmers data
-              var farmers = snapshot.data?.data?.farmers ?? [];
-      // Sort the farmers based on the selected sorting option
-              if (selectedSortItemsValue == buildTranslate("highExpYield")) {
-                // Sort in descending order by expectedYield (high to low)
-                farmers.sort((a, b) => b.expectedYield!.compareTo(a.expectedYield!));
-              } else if (selectedSortItemsValue == buildTranslate("lowExpYield")) {
-                // Sort in ascending order by expectedYield (low to high)
-                farmers.sort((a, b) => a.expectedYield!.compareTo(b.expectedYield!));
-              }
+                                        future:
+                                            _futureFrminSight, // The future that fetches FrmInsight data
+                                        builder: (context, snapshot) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return Center(
+                                                child:
+                                                    CircularProgressIndicator()); // Loading state
+                                          } else if (snapshot.hasError) {
+                                            return Center(
+                                                child: Text(
+                                                    'Error: ${snapshot.error}')); // Error handling
+                                          } else if (!snapshot.hasData) {
+                                            return Center(
+                                                child:
+                                                    Text('No data available.'));
+                                          } else {
+                                            FrmInsight? frminSight =
+                                                snapshot.data;
+                                            if (frminSight == null ||
+                                                frminSight
+                                                    .data.farmers.isEmpty) {
+                                              return Center(
+                                                  child: Text(
+                                                      'No farmers data available.'));
+                                            }
+                                            // Get the farmers data
+                                            var farmers =
+                                                snapshot.data?.data?.farmers ??
+                                                    [];
+                                            // Sort the farmers based on the selected sorting option
+                                            if (selectedSortItemsValue ==
+                                                buildTranslate(
+                                                    "highExpYield")) {
+                                              // Sort in descending order by expectedYield (high to low)
+                                              farmers.sort((a, b) => b
+                                                  .expectedYield!
+                                                  .compareTo(a.expectedYield!));
+                                            } else if (selectedSortItemsValue ==
+                                                buildTranslate("lowExpYield")) {
+                                              // Sort in ascending order by expectedYield (low to high)
+                                              farmers.sort((a, b) => a
+                                                  .expectedYield!
+                                                  .compareTo(b.expectedYield!));
+                                            }
 
-      // Pass the fetched FrmInsight data to the table widget
-      return Column(
-        children: [
-          // The header row of the table
-          buildTable(context, frminSight!), // The table with farmer data
-        ],
-      );
-    }
-  },
-)
-
+                                            // Pass the fetched FrmInsight data to the table widget
+                                            return Column(
+                                              children: [
+                                                // The header row of the table
+                                                buildTable(context,
+                                                    frminSight!), // The table with farmer data
+                                              ],
+                                            );
+                                          }
+                                        },
+                                      )
                                     ],
                                   )
                                 : Container(),
@@ -2667,8 +2763,8 @@ else {
     );
   }
 
-Future<FrmInsight?> fetchInsightsData() async {
-   String? number = await AppGlobal.getStringPreference('contactNumber');
+  Future<FrmInsight?> fetchInsightsData() async {
+    String? number = await AppGlobal.getStringPreference('contactNumber');
     var num = number ?? "1";
 
     if (_selectedCrop == null || _selectedVillageName == null) {
@@ -2677,14 +2773,14 @@ Future<FrmInsight?> fetchInsightsData() async {
     }
 
     final url =
-        'https://krishiyanback.vercel.app/api/appFarmer/farmers/insight?dealerNumber=$num&village=$_selectedVillageName&crop=$_selectedCrop&sort=highToLow';
+        '${baseUrl}appFarmer/farmers/insight?dealerNumber=$num&village=$_selectedVillageName&crop=$_selectedCrop&sort=highToLow';
 
     try {
       final response = await Dio().get(url);
       if (response.statusCode == 200) {
         print('API Response: ${response.data}');
-    //     _futureFrminSight = fetchInsightsData();
-    // print('Future initialized: $_futureFrminSight');
+        //     _futureFrminSight = fetchInsightsData();
+        // print('Future initialized: $_futureFrminSight');
         return FrmInsight.fromJson(response.data); // Return the parsed data
       } else {
         print('Failed to load data: ${response.statusCode}');
@@ -2701,18 +2797,17 @@ Future<FrmInsight?> fetchInsightsData() async {
   }
 
   void onSearchPressed() {
-  // Validate if both crop and village are selected
-  if (_selectedCrop != null && _selectedVillageName != null) {
-    setState(() {
-      // Initialize the future here, which will trigger the API request
-      _futureFrminSight = fetchInsightsData();
-    });
-  } else {
-    // Show an error or prompt to select both crop and village
-    print('Please select both crop and village');
+    // Validate if both crop and village are selected
+    if (_selectedCrop != null && _selectedVillageName != null) {
+      setState(() {
+        // Initialize the future here, which will trigger the API request
+        _futureFrminSight = fetchInsightsData();
+      });
+    } else {
+      // Show an error or prompt to select both crop and village
+      print('Please select both crop and village');
+    }
   }
-}
-
 
   Future<void> _fetchFarmerNameData() async {
     try {
@@ -2740,9 +2835,9 @@ Future<FrmInsight?> fetchInsightsData() async {
   Future<void> _fetchVillageData() async {
     try {
       // Replace with your actual API endpoint
-       // Retrieve the dealer number first
-    String? number = await AppGlobal.getStringPreference('contactNumber');
-    var dealerNumber = number ?? "1";  // Default to "1" if no number found
+      // Retrieve the dealer number first
+      String? number = await AppGlobal.getStringPreference('contactNumber');
+      var dealerNumber = number ?? "1"; // Default to "1" if no number found
 
       var response = await Dio().get(VILLAGES_NAMES + dealerNumber);
 
@@ -2779,117 +2874,120 @@ Future<FrmInsight?> fetchInsightsData() async {
     }
   }
 
-    Future<bool> verifyOtp(String number, String enteredOtp, BuildContext context) async {
-  final dio = Dio(); // Create an instance of Dio
+  Future<bool> verifyOtp(
+      String number, String enteredOtp, BuildContext context) async {
+    final dio = Dio(); // Create an instance of Dio
 
-  // Define the URL for your API endpoint
-  final url = "https://krishiyanback.vercel.app/api/whatsapp/check-otp/";
+    // Define the URL for your API endpoint
+    final url = "${baseUrl}whatsapp/check-otp/";
 
-  // Create the payload data
-  final data = json.encode({
-    "phoneNumber": number,
-    "otp": enteredOtp, // Use the entered OTP from the input
-  });
+    // Create the payload data
+    final data = json.encode({
+      "phoneNumber": number,
+      "otp": enteredOtp, // Use the entered OTP from the input
+    });
 
-  try {
-    // Make the POST request to verify the OTP
-    final response = await dio.post(
-      url,
-      data: data,
-      options: Options(
-        headers: {'Content-Type': 'application/json'},
-      ),
-    );
+    try {
+      // Make the POST request to verify the OTP
+      final response = await dio.post(
+        url,
+        data: data,
+        options: Options(
+          headers: {'Content-Type': 'application/json'},
+        ),
+      );
 
-    // Check the response from the server
-    if (response.statusCode == 200) {
-      // Successfully verified OTP
-      print("OTP verified successfully!");
-      AlertHelper.showToast("OTP verified successfully", context);
-      return true; // Return true for successful verification
-    } else {
-      // Handle OTP verification failure
-      print("OTP verification failed!");
-      AlertHelper.showToast("Invalid OTP. Please try again.", context);
-      return false; // Return false for failure
+      // Check the response from the server
+      if (response.statusCode == 200) {
+        // Successfully verified OTP
+        print("OTP verified successfully!");
+        AlertHelper.showToast("OTP verified successfully", context);
+        return true; // Return true for successful verification
+      } else {
+        // Handle OTP verification failure
+        print("OTP verification failed!");
+        AlertHelper.showToast("Invalid OTP. Please try again.", context);
+        return false; // Return false for failure
+      }
+    } catch (e) {
+      // Handle errors
+      print("Error during OTP verification: $e");
+      AlertHelper.showToast("OTP verification failed!", context);
+      return false; // Return false for errors
     }
-  } catch (e) {
-    // Handle errors
-    print("Error during OTP verification: $e");
-    AlertHelper.showToast("OTP verification failed!", context);
-    return false; // Return false for errors
   }
-}
-    Future<bool> checkPhoneNumber(String number) async {
-  final dio = Dio(); // Create an instance of Dio
 
-  // Define the URL for your API endpoint, appending the number directly
-  final url = "https://krishiyanback.vercel.app/api/check-contact/$number";
+  Future<bool> checkPhoneNumber(String number) async {
+    final dio = Dio(); // Create an instance of Dio
 
-  try {
-    // Make the GET request to check the phone number
-    final response = await dio.get(url, options: Options(
-      headers: {'Content-Type': 'application/json'},
-    ));
+    // Define the URL for your API endpoint, appending the number directly
+    final url = "${baseUrl}check-contact/$number";
 
-    // Check the response from the server
-    if (response.statusCode == 200) {
-      // Phone number exists
-      print("Phone number exists!");
-      // AlertHelper.showToast("Phone number is valid.", context);
-      return true; // Return true if the number exists
-    } else {
-      // Phone number does not exist
-      print("Phone number does not exist!");
-      AlertHelper.showToast("Phone number does not exist. Please check and try again.", context);
-      return false; // Return false if the number does not exist
+    try {
+      // Make the GET request to check the phone number
+      final response = await dio.get(url,
+          options: Options(
+            headers: {'Content-Type': 'application/json'},
+          ));
+
+      // Check the response from the server
+      if (response.statusCode == 200) {
+        // Phone number exists
+        print("Phone number exists!");
+        // AlertHelper.showToast("Phone number is valid.", context);
+        return true; // Return true if the number exists
+      } else {
+        // Phone number does not exist
+        print("Phone number does not exist!");
+        AlertHelper.showToast(
+            "Phone number does not exist. Please check and try again.",
+            context);
+        return false; // Return false if the number does not exist
+      }
+    } catch (e) {
+      // Handle errors
+      print("Error during phone number check: $e");
+      // AlertHelper.showToast("Error occurred. Please try again.", context);
+      return false; // Return false in case of an error
     }
-  } catch (e) {
-    // Handle errors
-    print("Error during phone number check: $e");
-    // AlertHelper.showToast("Error occurred. Please try again.", context);
-    return false; // Return false in case of an error
   }
-}
-
 
   Future<void> getOtpApiCall() async {
     String phoneNumber = whatsAppNumberController.text.toString();
 
-  // Check if the phone number exists
-  bool exists = await checkPhoneNumber(phoneNumber);
+    // Check if the phone number exists
+    bool exists = await checkPhoneNumber(phoneNumber);
 
-  if(!exists){
+    if (!exists) {
+      final body = json
+          .encode({"phoneNumber": whatsAppNumberController.text.toString()});
 
-  final body = json.encode({"phoneNumber": whatsAppNumberController.text.toString()});
+      try {
+        // Get OTP data from the API
+        GetOtpData? userOtp =
+            await OtpController.getOtp(body, context: context);
 
-  try {
-    // Get OTP data from the API
-    GetOtpData? userOtp = await OtpController.getOtp(body, context: context);
-    
-    if (userOtp != null) {
-      print("otpData : ${userOtp.otp}");
-      otpData = userOtp.otp ?? "";
-       // Start the timer for 2 minutes (120 seconds)
-        startOtpCooldown();
-      AlertHelper.showToast("OTP sent on your mobile number", context);
+        if (userOtp != null) {
+          print("otpData : ${userOtp.otp}");
+          otpData = userOtp.otp ?? "";
+          // Start the timer for 2 minutes (120 seconds)
+          startOtpCooldown();
+          AlertHelper.showToast("OTP sent on your mobile number", context);
+        } else {
+          print("Failed to get OTP data.");
+          AlertHelper.showToast(
+              "Failed to retrieve OTP. Please try again.", context);
+        }
+      } catch (e) {
+        print("Error during OTP request: $e");
+        // AlertHelper.showToast("Error occurred. Please try again.", context);
+      }
     } else {
-      print("Failed to get OTP data.");
-      AlertHelper.showToast("Failed to retrieve OTP. Please try again.", context);
+      AlertHelper.showToast(
+          "Phone number exists. Please check and try again.", context);
+      // Navigate to the login page
     }
-  } catch (e) {
-    print("Error during OTP request: $e");
-    // AlertHelper.showToast("Error occurred. Please try again.", context);
-  }}else{
-    
-    AlertHelper.showToast("Phone number exists. Please check and try again.", context);
-    // Navigate to the login page
-    
-
   }
-}
-
- 
 
   // Future<void> _fetchCropData() async {
   //   try {
@@ -2994,155 +3092,157 @@ Future<FrmInsight?> fetchInsightsData() async {
     print("Selected Top Page : $selectedTopData");
   }
 
-Widget listWidget(FrmInsight frminSight) {
-  // Extracting required data from the API response
-  int totalfarmers = frminSight.data.numberOfFarmers;
-  int totalLandInAcres = frminSight.data.totalAreaInAcres;
-  int expectedYield = 0; // Default value, can be updated if needed
+  Widget listWidget(FrmInsight frminSight) {
+    // Extracting required data from the API response
+    int totalfarmers = frminSight.data.numberOfFarmers;
+    int totalLandInAcres = frminSight.data.totalAreaInAcres;
+    int expectedYield = 0; // Default value, can be updated if needed
 
-  // You may need to fetch the expected yield for each crop if it's provided in the data
-  // For now, we assume it's a generic value across the crops.
-  return GridView.builder(
-    shrinkWrap: true,
-    physics: const NeverScrollableScrollPhysics(),
-    itemCount: search_crops.length,
-    itemBuilder: (_, index) {
-      String displayText = '';
-      
-      // Condition to decide which value to display based on index
-      if (index == 0) {
-        // First index, show total number of farmers
-        displayText = '$totalfarmers Farmers\n${search_crops[index].name ?? ""}';
-      } else if (index == 1) {
-        // Second index, show total land in acres
-        displayText = '$totalLandInAcres Acres\n${search_crops[index].name ?? ""}';
-      } else if (index == 2) {
-        // Third index, show expected yield
-        displayText = '$expectedYield Expected Yield\n${search_crops[index].name ?? ""}';
-      } else {
-        // For other items, show just the crop name
-        displayText = search_crops[index].name ?? "";
-      }
+    // You may need to fetch the expected yield for each crop if it's provided in the data
+    // For now, we assume it's a generic value across the crops.
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: search_crops.length,
+      itemBuilder: (_, index) {
+        String displayText = '';
 
-      return Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Container(
-          decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0xFFd3d3d3),
-                )
-              ],
-              border: Border.all(color: const Color(0xFFd3d3d3), width: 1.0),
-              borderRadius: BorderRadius.circular(12)),
-          child: InkWell(
-            highlightColor: Colors.transparent,
-            splashColor: Colors.transparent,
-            onTap: () {
-              // Only set selectedTopData to 4 if the index is 0
-              if (index == 0) {
-                setState(() {
-                  selectedTopData = 4;
-                });
-                onSearchPressed();
-              }
-            },
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Image.asset(
-                  search_crops[index].icon ?? "",
-                  width: 35,
-                  height: 35,
-                ),
-                const SizedBox(
-                  height: 5,
-                ),
-                Flexible(
-                  child: Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: Text(
-                      displayText,  // Display the dynamic text based on the index
-                      textAlign: TextAlign.center,
-                      softWrap: true,
-                      maxLines: 2,
-                      style: const TextStyle(
-                          color: Color(0xFF666666),
-                          fontSize: 15,
-                          fontFamily: 'poppins-regular'),
+        // Condition to decide which value to display based on index
+        if (index == 0) {
+          // First index, show total number of farmers
+          displayText =
+              '$totalfarmers Farmers\n${search_crops[index].name ?? ""}';
+        } else if (index == 1) {
+          // Second index, show total land in acres
+          displayText =
+              '$totalLandInAcres Acres\n${search_crops[index].name ?? ""}';
+        } else if (index == 2) {
+          // Third index, show expected yield
+          displayText =
+              '$expectedYield Expected Yield\n${search_crops[index].name ?? ""}';
+        } else {
+          // For other items, show just the crop name
+          displayText = search_crops[index].name ?? "";
+        }
+
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0xFFd3d3d3),
+                  )
+                ],
+                border: Border.all(color: const Color(0xFFd3d3d3), width: 1.0),
+                borderRadius: BorderRadius.circular(12)),
+            child: InkWell(
+              highlightColor: Colors.transparent,
+              splashColor: Colors.transparent,
+              onTap: () {
+                // Only set selectedTopData to 4 if the index is 0
+                if (index == 0) {
+                  setState(() {
+                    selectedTopData = 4;
+                  });
+                  onSearchPressed();
+                }
+              },
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Image.asset(
+                    search_crops[index].icon ?? "",
+                    width: 35,
+                    height: 35,
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Flexible(
+                    child: Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: Text(
+                        displayText, // Display the dynamic text based on the index
+                        textAlign: TextAlign.center,
+                        softWrap: true,
+                        maxLines: 2,
+                        style: const TextStyle(
+                            color: Color(0xFF666666),
+                            fontSize: 15,
+                            fontFamily: 'poppins-regular'),
+                      ),
                     ),
                   ),
-                ),
-                index == 0
-                    ? Image.asset(
-                        "assets/images/right_arrow.png",
-                        width: 25,
-                        height: 25,
-                      )
-                    : Container(),
-              ],
+                  index == 0
+                      ? Image.asset(
+                          "assets/images/right_arrow.png",
+                          width: 25,
+                          height: 25,
+                        )
+                      : Container(),
+                ],
+              ),
             ),
           ),
+        );
+      },
+      gridDelegate:
+          const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+    );
+  }
+
+  Widget buildTable(BuildContext context, FrmInsight frminSight) {
+    return Theme(
+      data: Theme.of(context).copyWith(dividerColor: Colors.black),
+      child: Padding(
+        padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+        child: Table(
+          columnWidths: const {
+            0: FlexColumnWidth(4),
+            1: FlexColumnWidth(5),
+            2: FlexColumnWidth(5),
+          },
+          border: TableBorder.all(),
+          children: [
+            // Data rows: loop over the list of farmers in FrmInsight
+            for (var farmer in frminSight.data.farmers)
+              TableRow(children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    farmer.name ?? 'N/A', // Use 'N/A' if name is null
+                    style: const TextStyle(
+                        fontFamily: "poppins-semibold", fontSize: 12.0),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    farmer.whatsappNumber ??
+                        'N/A', // Use 'N/A' if number is null
+                    style: const TextStyle(
+                        fontFamily: "poppins-regular", fontSize: 12.0),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    farmer.expectedYield != null
+                        ? farmer.expectedYield.toString()
+                        : 'N/A', // Use 'N/A' if yield is null
+                    style: const TextStyle(
+                        fontFamily: "poppins-regular", fontSize: 12.0),
+                  ),
+                ),
+              ]),
+          ],
         ),
-      );
-    },
-    gridDelegate:
-        const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-  );
-}
-
-Widget buildTable(BuildContext context, FrmInsight frminSight) {
-  return Theme(
-    data: Theme.of(context).copyWith(dividerColor: Colors.black),
-    child: Padding(
-      padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-      child: Table(
-        columnWidths: const {
-          0: FlexColumnWidth(4),
-          1: FlexColumnWidth(5),
-          2: FlexColumnWidth(5),
-        },
-        border: TableBorder.all(),
-        children: [
-          
-
-          // Data rows: loop over the list of farmers in FrmInsight
-          for (var farmer in frminSight.data.farmers)
-            TableRow(children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  farmer.name ?? 'N/A', // Use 'N/A' if name is null
-                  style: const TextStyle(
-                      fontFamily: "poppins-semibold", fontSize: 12.0),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  farmer.whatsappNumber ?? 'N/A', // Use 'N/A' if number is null
-                  style: const TextStyle(
-                      fontFamily: "poppins-regular", fontSize: 12.0),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  farmer.expectedYield != null
-                      ? farmer.expectedYield.toString()
-                      : 'N/A', // Use 'N/A' if yield is null
-                  style: const TextStyle(
-                      fontFamily: "poppins-regular", fontSize: 12.0),
-                ),
-              ),
-            ]),
-        ],
       ),
-    ),
-  );
-}
+    );
+  }
 
   Widget _buildHeaderTable() {
     return Padding(
@@ -3267,8 +3367,7 @@ Widget buildTable(BuildContext context, FrmInsight frminSight) {
   }
 
   _cropCultivationRegisterApiCall() async {
-    if(
-    varietyController.text.trim().isNotEmpty &&
+    if (varietyController.text.trim().isNotEmpty &&
         dateController.text.trim().isNotEmpty &&
         geoLocationController.text.trim().isNotEmpty &&
         selectedItemValue.toString().isNotEmpty &&
@@ -3277,7 +3376,8 @@ Widget buildTable(BuildContext context, FrmInsight frminSight) {
       String? number = await AppGlobal.getStringPreference('contactNumber');
 
       // Parse the input date string
-      DateTime parsedDate = DateFormat('dd-MM-yyyy').parse(dateController.text.toString());
+      DateTime parsedDate =
+          DateFormat('dd-MM-yyyy').parse(dateController.text.toString());
       // Format it to YYYY-MM-DD
       String formattedDate = DateFormat('yyyy-MM-dd').format(parsedDate);
 
@@ -3295,8 +3395,8 @@ Widget buildTable(BuildContext context, FrmInsight frminSight) {
       });
 
       var farmerRegistration =
-      FarmerDashboardController.cropCultivationRegister(body,
-          context: context);
+          FarmerDashboardController.cropCultivationRegister(body,
+              context: context);
 
       if (farmerRegistration.toString().isNotEmpty) {
         Future.delayed(const Duration(seconds: 1), () {
@@ -3308,8 +3408,7 @@ Widget buildTable(BuildContext context, FrmInsight frminSight) {
         AlertHelper.showToast("Api error", context);
         print("Api error");
       }
-    }
-    else {
+    } else {
       AlertHelper.showToast("Please enter details.", context);
     }
   }
@@ -3375,7 +3474,7 @@ class _MyDrawerState extends State<MyDrawer> {
   Future<void> _fetchVillageData() async {
     try {
       String? number = await AppGlobal.getStringPreference('contactNumber');
-    var dealerNumber = number ?? "1";  // Default to "1" if no number found
+      var dealerNumber = number ?? "1"; // Default to "1" if no number found
 
       var response = await Dio().get(VILLAGES_NAMES + dealerNumber);
 
@@ -3668,8 +3767,6 @@ class _MyDrawerState extends State<MyDrawer> {
     );
   }
 
-  
-
   Widget CardWidget(String villageName, int index) {
     return InkWell(
       highlightColor: Colors.transparent,
@@ -3777,6 +3874,4 @@ class _MyDrawerState extends State<MyDrawer> {
     });
     // print("Selected Menu Page : $selectedMenuData");
   }
-
-  
 }
