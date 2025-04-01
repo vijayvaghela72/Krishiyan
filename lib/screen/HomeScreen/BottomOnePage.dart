@@ -456,7 +456,7 @@ class _BottomOnePageState extends State<BottomOnePage>
                       Center(
                         child: DotsIndicator(
                           dotsCount: imageSliders.length,
-                          position: currentIndex.toInt(),
+                          position: currentIndex.toDouble(),
                         ),
                       ),
                       FutureBuilder<List<NewsData>>(
