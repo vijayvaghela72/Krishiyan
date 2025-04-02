@@ -31,14 +31,16 @@ class BottomCenterEnquiryPage extends StatefulWidget {
   bool aapbarVisibility;
   final String? typeOfOrganization;
 
-  BottomCenterEnquiryPage({super.key, required this.aapbarVisibility, this.typeOfOrganization});
+  BottomCenterEnquiryPage(
+      {super.key, required this.aapbarVisibility, this.typeOfOrganization});
 
   @override
-  State<BottomCenterEnquiryPage> createState() => _BottomCenterEnquiryPageState();
+  State<BottomCenterEnquiryPage> createState() =>
+      _BottomCenterEnquiryPageState();
 }
 
-class _BottomCenterEnquiryPageState extends State<BottomCenterEnquiryPage> with TickerProviderStateMixin {
-
+class _BottomCenterEnquiryPageState extends State<BottomCenterEnquiryPage>
+    with TickerProviderStateMixin {
   String? selectedItemValue;
 
   final List<String> topData = [
@@ -81,7 +83,8 @@ class _BottomCenterEnquiryPageState extends State<BottomCenterEnquiryPage> with 
   List<bottomCategory> iconList2 = [
     bottomCategory(
         name: buildTranslate("home")!,
-        id: "1", icon: 'assets/images/bottom1.png'),
+        id: "1",
+        icon: 'assets/images/bottom1.png'),
     bottomCategory(
         name: buildTranslate("profile")!,
         id: "2",
@@ -173,10 +176,11 @@ class _BottomCenterEnquiryPageState extends State<BottomCenterEnquiryPage> with 
     getPrefValue();
   }
 
-  
   Future<void> getPrefValue() async {
-    typeOfOrganizationData = await SharedPref.readPreferenceValue(typeOfOrganization, PrefEnum.STRING);
-    print("BottomCenterEnquiry TypeOfOrganizationData : $typeOfOrganizationData");
+    typeOfOrganizationData = await SharedPref.readPreferenceValue(
+        typeOfOrganization, PrefEnum.STRING);
+    print(
+        "BottomCenterEnquiry TypeOfOrganizationData : $typeOfOrganizationData");
     setState(() {
       typeOfOrganizationData = typeOfOrganizationData;
       print(typeOfOrganizationData);
@@ -202,7 +206,6 @@ class _BottomCenterEnquiryPageState extends State<BottomCenterEnquiryPage> with 
 
   @override
   Widget build(BuildContext context) {
-
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
     ));
@@ -214,43 +217,43 @@ class _BottomCenterEnquiryPageState extends State<BottomCenterEnquiryPage> with 
         extendBodyBehindAppBar: false,
         appBar: widget.aapbarVisibility
             ? AppBar(
-          automaticallyImplyLeading: false,
-          title: InkWell(
-            highlightColor: Colors.transparent,
-            splashColor: Colors.transparent,
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                    builder: (context) => const SelectLanguagePage()),
-              );
-            },
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Image.asset(
-                  'assets/images/loginLogo.png',
-                  width: 150,
-                  height: 60,
-                ),
-                const Spacer(),
-                Padding(
-                  padding: const EdgeInsets.only(right: 5.0, top: 12.0),
+                automaticallyImplyLeading: false,
+                title: InkWell(
+                  highlightColor: Colors.transparent,
+                  splashColor: Colors.transparent,
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (context) => const SelectLanguagePage()),
+                    );
+                  },
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Image.asset(
-                        'assets/images/language.png',
-                        width: 35,
-                        height: 35,
+                        'assets/images/loginLogo.png',
+                        width: 150,
+                        height: 60,
+                      ),
+                      const Spacer(),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 5.0, top: 12.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Image.asset(
+                              'assets/images/language.png',
+                              width: 35,
+                              height: 35,
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
                 ),
-              ],
-            ),
-          ),
-        )
+              )
             : null,
         body: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
@@ -283,8 +286,8 @@ class _BottomCenterEnquiryPageState extends State<BottomCenterEnquiryPage> with 
                               padding: const EdgeInsets.all(8),
                               shape: const RoundedRectangleBorder(
                                   borderRadius: BorderRadius.all(
-                                    Radius.circular(17),
-                                  )),
+                                Radius.circular(17),
+                              )),
                               label: Text(topData[index].toString(),
                                   style: TextStyle(
                                     fontSize: 15,
@@ -301,779 +304,915 @@ class _BottomCenterEnquiryPageState extends State<BottomCenterEnquiryPage> with 
               ),
               selectedTopData == 0
                   ? Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Center(
-                    child: Text(
-                      buildTranslate("enquiryDashboard")!,
-                      softWrap: true,
-                      style: const TextStyle(
-                          color: Color(0xFF3FC041),
-                          fontSize: 20,
-                          fontFamily: 'poppins-medium'),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 30.0),
-                    child: Text(
-                      buildTranslate("selectYourCommodity")!,
-                      softWrap: true,
-                      style: const TextStyle(
-                          color: Colors.grey,
-                          fontSize: 15,
-                          fontFamily: 'poppins-semibold'),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        left: 25.0, right: 25.0, top: 10.0),
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(
-                              color: const Color(0xFFd3d3d3), width: 1),
-                          borderRadius: BorderRadius.circular(5)),
-                      child: Container(
-                        width: 240,
-                        height: 50,
-                        color: Colors.white,
-                        child: Container(
-                          color: Colors.white,
-                          child: _cropData == null ||
-                              _cropData!.data == null
-                              ? Center(
-                              child: Text(buildTranslate("noDataAvailable")!))
-                              : DropdownButtonFormField2<String>(
-                            dropdownStyleData:
-                            DropdownStyleData(maxHeight: 200),
-                            hint: Text(buildTranslate("selectYourCommodity")!),
-                            decoration: InputDecoration(
-                              contentPadding:
-                              const EdgeInsets.symmetric(
-                                  vertical: 16),
-                              filled: true,
-                              fillColor: Colors.white,
-                              border: OutlineInputBorder(
-                                borderRadius:
-                                BorderRadius.circular(8),
-                                borderSide: const BorderSide(
-                                  color: Colors.black,
-                                  width: 1.0,
-                                ),
-                              ),
-                            ),
-                            buttonStyleData: const ButtonStyleData(
-                              padding: EdgeInsets.only(right: 8),
-                            ),
-                            iconStyleData: const IconStyleData(
-                              icon: Icon(
-                                Icons.arrow_drop_down,
-                                color: Colors.black45,
-                              ),
-                              iconSize: 24,
-                            ),
-                            menuItemStyleData:
-                            const MenuItemStyleData(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 16),
-                            ),
-                            value: _selectedCrop,
-                            items:
-                            _cropData!.data!.map((String crop) {
-                              return DropdownMenuItem<String>(
-                                value: crop,
-                                child: Text(crop,
-                                    style: const TextStyle(
-                                        fontSize: 15,
-                                        color: Colors.black,
-                                        fontFamily:
-                                        'poppins-regular')),
-                              );
-                            }).toList(),
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                _selectedCrop = newValue;
-                              });
-                            },
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  Container(
-                      width: MediaQuery.of(context).size.width,
-                      padding:
-                      const EdgeInsets.only(left: 30.0, right: 30.0),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (_selectedCrop !=null && _selectedCrop!.isNotEmpty) {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => EnquiryDashboardPage(selectedCrop : _selectedCrop)));
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.all(12),
-                          textStyle: const TextStyle(fontSize: 15),
-                          backgroundColor: const Color(0xFF3FC041),
-                          shape: RoundedRectangleBorder(
-                            borderRadius:
-                            BorderRadius.circular(12), // <-- Radius
-                          ),
-                        ),
-                        child: Text(
-                          buildTranslate('SUBMIT')!,
-                          style: const TextStyle(
-                              fontSize: 18, fontFamily: 'poppins-medium'),
-                        ),
-                      )),
-                ],
-              )
-                  : selectedTopData == 1
-                  ? Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Center(
-                    child: Text(
-                      buildTranslate("postEnquiry")!,
-                      softWrap: true,
-                      style: const TextStyle(
-                          color: Color(0xFF3FC041),
-                          fontSize: 20,
-                          fontFamily: 'poppins-medium'),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  listPostWidget(),
-                ],
-              )
-                  : selectedTopData == 2
-                  ? Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                      Center(
-                        child: Text(
-                          buildTranslate("myEnquiry")!,
-                          softWrap: true,
-                          style: const TextStyle(
-                              color: Color(0xFF3FC041),
-                              fontSize: 20,
-                              fontFamily: 'poppins-medium'),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 30,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 30.0),
-                        child: Text(
-                          buildTranslate("selectYourCommodity")!,
-                          softWrap: true,
-                          style: const TextStyle(
-                              color: Colors.grey,
-                              fontSize: 15,
-                              fontFamily: 'poppins-semibold'),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            left: 25.0, right: 25.0, top: 10.0),
-                        child: Container(
-                          width: MediaQuery.of(context).size.width,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border.all(
-                                  color: const Color(0xFFd3d3d3),
-                                  width: 1),
-                              borderRadius: BorderRadius.circular(5)),
-                          child: Container(
-                            width: 240,
-                            height: 60,
-                            color: Colors.white,
-                            child: Container(
-                              color: Colors.white,
-                              child: _cropData == null ||
-                                  _cropData!.data == null
-                                  ? Center(
-                                  child: Text(buildTranslate("noDataAvailable")!))
-                                  : DropdownButtonFormField2<String>(
-                                dropdownStyleData:
-                                DropdownStyleData(
-                                    maxHeight: 200),
-                                hint: Text(buildTranslate("selectYourCommodity")!),
-                                decoration: InputDecoration(
-                                  contentPadding:
-                                  const EdgeInsets.symmetric(
-                                      vertical: 20),
-                                  filled: true,
-                                  fillColor: Colors.white,
-                                  border: OutlineInputBorder(
-                                    borderRadius:
-                                    BorderRadius.circular(8),
-                                    borderSide: const BorderSide(
-                                      color: Colors.black,
-                                      width: 1.0,
-                                    ),
-                                  ),
-                                ),
-                                buttonStyleData:
-                                const ButtonStyleData(
-                                  padding:
-                                  EdgeInsets.only(right: 8),
-                                ),
-                                iconStyleData:
-                                const IconStyleData(
-                                  icon: Icon(
-                                    Icons.arrow_drop_down,
-                                    color: Colors.black45,
-                                  ),
-                                  iconSize: 24,
-                                ),
-                                menuItemStyleData:
-                                const MenuItemStyleData(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 15),
-                                ),
-                                value: _selectedCrop,
-                                items: _cropData!.data!
-                                    .map((String crop) {
-                                  return DropdownMenuItem<String>(
-                                    value: crop,
-                                    child: Text(crop,
-                                        style: const TextStyle(
-                                            fontSize: 15,
-                                            color: Colors.black,
-                                            fontFamily:
-                                            'poppins-regular')),
-                                  );
-                                }).toList(),
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    _selectedCrop = newValue;
-                                  });
-                                },
-                              ),
-                            ),
+                        Center(
+                          child: Text(
+                            buildTranslate("enquiryDashboard")!,
+                            softWrap: true,
+                            style: const TextStyle(
+                                color: Color(0xFF3FC041),
+                                fontSize: 20,
+                                fontFamily: 'poppins-medium'),
                           ),
                         ),
-                      ),
-                      const SizedBox(
-                        height: 30,
-                      ),
-                      Container(
-                          width: MediaQuery.of(context).size.width,
+                        const SizedBox(
+                          height: 30,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 30.0),
+                          child: Text(
+                            buildTranslate("selectYourCommodity")!,
+                            softWrap: true,
+                            style: const TextStyle(
+                                color: Colors.grey,
+                                fontSize: 15,
+                                fontFamily: 'poppins-semibold'),
+                          ),
+                        ),
+                        Padding(
                           padding: const EdgeInsets.only(
-                              left: 30.0, right: 30.0),
-                          child: ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                if(_currentIndex == 0) {
-                                  futureEnquiryFilterData =
-                                      EnquiryDashboardController
-                                          .getEnquiryDetailsByFilterCommodity(_selectedCrop.toString(), "Buy");
-                                  setState(() {
-                                    futureEnquiryFilterData = futureEnquiryFilterData;
-                                  });
-                                }
-                                else{
-                                  futureEnquiryFilterData =
-                                      EnquiryDashboardController
-                                          .getEnquiryDetailsByFilterCommodity(_selectedCrop.toString(), "Sell");
-                                  setState(() {
-                                    futureEnquiryFilterData = futureEnquiryFilterData;
-                                  });
-                                }
-                                });
-                            },
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.all(12),
-                              textStyle: const TextStyle(fontSize: 15),
-                              backgroundColor: const Color(0xFF3FC041),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                    12), // <-- Radius
-                              ),
-                            ),
-                            child: Text(
-                              buildTranslate('SUBMIT')!,
-                              style: const TextStyle(
-                                  fontSize: 18,
-                                  fontFamily: 'poppins-medium'),
-                            ),
-                          )),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            left: 30.0, right: 30.0),
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              left: 20.0, right: 20.0),
+                              left: 25.0, right: 25.0, top: 10.0),
                           child: Container(
-                            height: 45,
-                            alignment: Alignment.center,
-                            margin: EdgeInsets.zero,
-                            padding: EdgeInsets.zero,
+                            width: MediaQuery.of(context).size.width,
                             decoration: BoxDecoration(
                                 color: Colors.white,
                                 border: Border.all(
-                                    color: const Color(0xFFd3d3d3),
-                                    width: 1),
-                                borderRadius:
-                                BorderRadius.circular(25)),
-                            child: ChipList(
-                              listOfChipNames: _chipNames,
-                              showCheckmark: false,
-                              extraOnToggle: (val) {
-                                _currentIndex = val;
-                                if(_currentIndex == 0) {
-                                  futureEnquiryFilterData =
-                                      EnquiryDashboardController
-                                          .getEnquiryDetailsByFilterCommodity(_selectedCrop.toString(), "Buy");
-                                  setState(() {
-                                    futureEnquiryFilterData = futureEnquiryFilterData;
-                                  });
-                                }
-                                else{
-                                  futureEnquiryFilterData =
-                                      EnquiryDashboardController
-                                          .getEnquiryDetailsByFilterCommodity(_selectedCrop.toString(), "Sell");
-                                  setState(() {
-                                    futureEnquiryFilterData = futureEnquiryFilterData;
-                                  });
-                                }
-                                setState(() {
-                                  futureEnquiryFilterData = futureEnquiryFilterData;
-                                });
-                                print("Chip index : $_currentIndex");
-                              },
-                              padding: const EdgeInsets.only(
-                                  left: 30.0, right: 30.0),
-                              activeBgColorList: const [
-                                Color(0xFF2A9D8F)
-                              ],
-                              inactiveBgColorList: const [
-                                Colors.white
-                              ],
-                              activeTextColorList: const [
-                                Colors.white
-                              ],
-                              inactiveTextColorList: const [
-                                Color(0xFF666666)
-                              ],
-                              // borderColorList: [Theme.of(context).primaryColor],
-                              listOfChipIndicesCurrentlySelected: [_currentIndex],
+                                    color: const Color(0xFFd3d3d3), width: 1),
+                                borderRadius: BorderRadius.circular(5)),
+                            child: Container(
+                              width: 240,
+                              height: 50,
+                              color: Colors.white,
+                              child: Container(
+                                color: Colors.white,
+                                child: _cropData == null ||
+                                        _cropData!.data == null
+                                    ? Center(
+                                        child: Text(
+                                            buildTranslate("noDataAvailable")!))
+                                    : DropdownButtonFormField2<String>(
+                                        dropdownStyleData:
+                                            DropdownStyleData(maxHeight: 200),
+                                        hint: Text(buildTranslate(
+                                            "selectYourCommodity")!),
+                                        decoration: InputDecoration(
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                                  vertical: 16),
+                                          filled: true,
+                                          fillColor: Colors.white,
+                                          border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            borderSide: const BorderSide(
+                                              color: Colors.black,
+                                              width: 1.0,
+                                            ),
+                                          ),
+                                        ),
+                                        buttonStyleData: const ButtonStyleData(
+                                          padding: EdgeInsets.only(right: 8),
+                                        ),
+                                        iconStyleData: const IconStyleData(
+                                          icon: Icon(
+                                            Icons.arrow_drop_down,
+                                            color: Colors.black45,
+                                          ),
+                                          iconSize: 24,
+                                        ),
+                                        menuItemStyleData:
+                                            const MenuItemStyleData(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 16),
+                                        ),
+                                        value: _selectedCrop,
+                                        items:
+                                            _cropData!.data!.map((String crop) {
+                                          return DropdownMenuItem<String>(
+                                            value: crop,
+                                            child: Text(crop,
+                                                style: const TextStyle(
+                                                    fontSize: 15,
+                                                    color: Colors.black,
+                                                    fontFamily:
+                                                        'poppins-regular')),
+                                          );
+                                        }).toList(),
+                                        onChanged: (String? newValue) {
+                                          setState(() {
+                                            _selectedCrop = newValue;
+                                          });
+                                        },
+                                      ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      futureEnquiryFilterData.toString().isNotEmpty ?
-                      FutureBuilder<List<EnquiryByFilterData>>(
-                        future: futureEnquiryFilterData,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
-                            return const Center(child: CircularProgressIndicator());
-                          } else if (snapshot.hasError) {
-                            print("Error: ${snapshot.error}");
-                            return Center(child: Text(buildTranslate("noDataAvailable")!));
-                            
-                            // return Center(child: Text(snapshot.hasError.toString()));
-                          } else if (snapshot.hasData) {
-                            final List<EnquiryByFilterData> enquiry = snapshot.data!;
-                            return ListView.builder(
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: enquiry.length,
-                              shrinkWrap: true,
-                              scrollDirection: Axis.vertical,
-                              itemBuilder: (context, index) {
-                                final enquiryFilterData = enquiry[index];
-                                return Column(
-                                  children: [
-                                    Visibility(
-                                      visible: _currentIndex == 0,
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                            right: 30.0, left: 30.0),
-                                        child: Container(
-                                          decoration: const BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(12))),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                            mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                            children: [
-                                              Stack(children: <Widget>[
-                                                Padding(
-  padding: const EdgeInsets.all(12.0),
-  child: Container(
-    width: MediaQuery.of(context).size.width,
-    height: 180,
-    decoration: BoxDecoration(
-      borderRadius: const BorderRadius.all(Radius.circular(12)),
-      image: DecorationImage(
-        image: enquiryFilterData.photoVideoLink != null && enquiryFilterData.photoVideoLink!.isNotEmpty
-            ? NetworkImage(enquiryFilterData.photoVideoLink!) // Use the URL from the API
-            : const AssetImage("assets/images/enquiryBG.png") as ImageProvider, // Fallback to the default image
-        fit: BoxFit.cover,
-      ),
-    ),
-  ),
-),
-                                                Padding(
-                                                  padding: const EdgeInsets.only(
-                                                      top: 18.0, left: 18.0),
-                                                  child: IntrinsicWidth(
-                                                    child: Container(
-                                                      decoration: const BoxDecoration(
-                                                        color: Color(0xFF008000),
-                                                        borderRadius:
-                                                        BorderRadius.all(
-                                                            Radius.circular(12)),
-                                                      ),
-                                                      child: Align(
-                                                          alignment:
-                                                          Alignment.topLeft,
-                                                          child: Padding(
-                                                            padding: EdgeInsets.only(
-                                                                left: 12.0,
-                                                                right: 12.0,
-                                                                top: 5.0,
-                                                                bottom: 5.0),
-                                                            child: Text(
-                                                              'Price  Rs.${enquiryFilterData.price}',
-                                                              style: TextStyle(
-                                                                  color: Colors.white,
-                                                                  fontSize: 11,
-                                                                  fontFamily:
-                                                                  "poppins-semibold"),
-                                                            ),
-                                                          )),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ]),
-                                              const SizedBox(
-                                                height: 5.0,
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsets.only(left: 20.0),
-                                                child: Text(
-                                                  "Name : ${enquiryFilterData.commodity.toString()} ${enquiryFilterData.variety.toString()}",
-                                                  softWrap: true,
-                                                  style: TextStyle(
-                                                      color: Color(0xFF808080),
-                                                      fontSize: 15,
-                                                      fontFamily: 'poppins-semibold'),
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: 20.0, top: 10.0),
-                                                child: Text(
-                                                  "Purpose:  To ${enquiryFilterData.operation}",
-                                                  softWrap: true,
-                                                  style: TextStyle(
-                                                      color: Color(0xFF808080),
-                                                      fontSize: 15,
-                                                      fontFamily: 'poppins-semibold'),
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: 20.0, top: 10.0),
-                                                child: Text(
-                                                  "Quantity : ${enquiryFilterData.quantity.toString()}",
-                                                  softWrap: true,
-                                                  style: TextStyle(
-                                                      color: Color(0xFF808080),
-                                                      fontSize: 15,
-                                                      fontFamily: 'poppins-semibold'),
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: 20.0, top: 10.0),
-                                                child: Text(
-                                                  "Location : ${enquiryFilterData.location}",
-                                                  softWrap: true,
-                                                  style: TextStyle(
-                                                      color: Color(0xFF808080),
-                                                      fontSize: 15,
-                                                      fontFamily: 'poppins-semibold'),
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 10.0,
-                                                    right: 10.0,
-                                                    top: 20.0),
-                                                child: Container(
-                                                  width: MediaQuery.of(context)
-                                                      .size
-                                                      .width,
-                                                  height: 40,
-                                                  child: Container(
-                                                      width: MediaQuery.of(context)
-                                                          .size
-                                                          .width,
-                                                      child: ElevatedButton(
-                                                        onPressed: () {
-                                                          Navigator.of(context).push(
-                                                              MaterialPageRoute(
-                                                                  builder: (context) =>
-                                                                      EditBuyCommodityPage(enquiryData : enquiryFilterData)));
-                                                        },
-                                                        style:
-                                                        ElevatedButton.styleFrom(
-                                                          foregroundColor:
-                                                          Colors.white,
-                                                          padding:
-                                                          const EdgeInsets.all(3),
-                                                          textStyle: const TextStyle(
-                                                              fontSize: 18),
-                                                          backgroundColor:
-                                                          const Color(0xFF3FC041),
-                                                          shape:
-                                                          RoundedRectangleBorder(
-                                                            borderRadius:
-                                                            BorderRadius.circular(
-                                                                12), // <-- Radius
-                                                          ),
-                                                        ),
-                                                        child: Center(
-                                                          child: Text(
-                                                            buildTranslate('edit')!,
-                                                            textAlign:
-                                                            TextAlign.center,
-                                                            style: TextStyle(
-                                                                fontSize: 17,
-                                                                fontFamily:
-                                                                'poppins-medium'),
-                                                          ),
-                                                        ),
-                                                      )),
-                                                ),
-                                              ),
-                                              const SizedBox(
-                                                height: 15,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Visibility(
-                                      visible: _currentIndex == 1,
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                            right: 30.0, left: 30.0),
-                                        child: Container(
-                                          decoration: const BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(12))),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                            mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                            children: [
-                                              Stack(children: <Widget>[
-                                                 Padding(
-  padding: const EdgeInsets.all(12.0),
-  child: Container(
-    width: MediaQuery.of(context).size.width,
-    height: 180,
-    decoration: BoxDecoration(
-      borderRadius: const BorderRadius.all(Radius.circular(12)),
-      image: DecorationImage(
-        image: enquiryFilterData.photoVideoLink != null && enquiryFilterData.photoVideoLink!.isNotEmpty
-            ? NetworkImage(enquiryFilterData.photoVideoLink!) // Use the URL from the API
-            : const AssetImage("assets/images/enquiryBG.png") as ImageProvider, // Fallback to the default image
-        fit: BoxFit.cover,
-      ),
-    ),
-  ),
-),
-                                                Padding(
-                                                  padding: const EdgeInsets.only(
-                                                      top: 18.0, left: 18.0),
-                                                  child: IntrinsicWidth(
-                                                    child: Container(
-                                                      decoration: const BoxDecoration(
-                                                        color: Color(0xFF008000),
-                                                        borderRadius:
-                                                        BorderRadius.all(
-                                                            Radius.circular(12)),
-                                                      ),
-                                                      child: Align(
-                                                          alignment:
-                                                          Alignment.topLeft,
-                                                          child: Padding(
-                                                            padding: EdgeInsets.only(
-                                                                left: 12.0,
-                                                                right: 12.0,
-                                                                top: 5.0,
-                                                                bottom: 5.0),
-                                                            child: Text(
-                                                              'Price  Rs.${enquiryFilterData.price}',
-                                                              style: TextStyle(
-                                                                  color: Colors.white,
-                                                                  fontSize: 11,
-                                                                  fontFamily:
-                                                                  "poppins-semibold"),
-                                                            ),
-                                                          )),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ]),
-                                              const SizedBox(
-                                                height: 5.0,
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsets.only(left: 20.0),
-                                                child: Text(
-                                                  "Name : ${enquiryFilterData.commodity.toString()} ${enquiryFilterData.variety.toString()}",
-                                                  softWrap: true,
-                                                  style: TextStyle(
-                                                      color: Color(0xFF808080),
-                                                      fontSize: 15,
-                                                      fontFamily: 'poppins-semibold'),
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: 20.0, top: 10.0),
-                                                child: Text(
-                                                  "Purpose:  To ${enquiryFilterData.operation}",
-                                                  softWrap: true,
-                                                  style: TextStyle(
-                                                      color: Color(0xFF808080),
-                                                      fontSize: 15,
-                                                      fontFamily: 'poppins-semibold'),
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: 20.0, top: 10.0),
-                                                child: Text(
-                                                  "Quantity : ${enquiryFilterData.quantity.toString()}",
-                                                  softWrap: true,
-                                                  style: TextStyle(
-                                                      color: Color(0xFF808080),
-                                                      fontSize: 15,
-                                                      fontFamily: 'poppins-semibold'),
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: 20.0, top: 10.0),
-                                                child: Text(
-                                                  "Location : ${enquiryFilterData.location}",
-                                                  softWrap: true,
-                                                  style: TextStyle(
-                                                      color: Color(0xFF808080),
-                                                      fontSize: 15,
-                                                      fontFamily: 'poppins-semibold'),
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 10.0,
-                                                    right: 10.0,
-                                                    top: 20.0),
-                                                child: Container(
-                                                  width: MediaQuery.of(context)
-                                                      .size
-                                                      .width,
-                                                  height: 40,
-                                                  child: Container(
-                                                      width: MediaQuery.of(context)
-                                                          .size
-                                                          .width,
-                                                      child: ElevatedButton(
-                                                        onPressed: () {
-                                                          Navigator.of(context).push(
-                                                              MaterialPageRoute(
-                                                                  builder: (context) =>
-                                                                      EditSellCommodityPage(enquiryData : enquiryFilterData)));
-                                                        },
-                                                        style:
-                                                        ElevatedButton.styleFrom(
-                                                          foregroundColor:
-                                                          Colors.white,
-                                                          padding:
-                                                          const EdgeInsets.all(3),
-                                                          textStyle: const TextStyle(
-                                                              fontSize: 18),
-                                                          backgroundColor:
-                                                          const Color(0xFF3FC041),
-                                                          shape:
-                                                          RoundedRectangleBorder(
-                                                            borderRadius:
-                                                            BorderRadius.circular(
-                                                                12), // <-- Radius
-                                                          ),
-                                                        ),
-                                                        child: Center(
-                                                          child: Text(
-                                                            buildTranslate('edit')!,
-                                                            textAlign:
-                                                            TextAlign.center,
-                                                            style: TextStyle(
-                                                                fontSize: 17,
-                                                                fontFamily:
-                                                                'poppins-medium'),
-                                                          ),
-                                                        ),
-                                                      )),
-                                                ),
-                                              ),
-                                              const SizedBox(
-                                                height: 15,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ) ;
+                        const SizedBox(
+                          height: 30,
+                        ),
+                        Container(
+                            width: MediaQuery.of(context).size.width,
+                            padding:
+                                const EdgeInsets.only(left: 30.0, right: 30.0),
+                            child: ElevatedButton(
+                              onPressed: () {
+                                if (_selectedCrop != null &&
+                                    _selectedCrop!.isNotEmpty) {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) =>
+                                          EnquiryDashboardPage(
+                                              selectedCrop: _selectedCrop)));
+                                }
                               },
-                            );
-                          } else {
-                            return Center(child: Text(buildTranslate("noDataAvailable")!));
-                          }
-                        },
-                      )
-                          : Center(child: Text(buildTranslate("noDataAvailable")!)),
-                      const SizedBox(
-                        height: 40,
-                      ),
-                ],
-              )
-                  : Container(),
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.all(12),
+                                textStyle: const TextStyle(fontSize: 15),
+                                backgroundColor: const Color(0xFF3FC041),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.circular(12), // <-- Radius
+                                ),
+                              ),
+                              child: Text(
+                                buildTranslate('SUBMIT')!,
+                                style: const TextStyle(
+                                    fontSize: 18, fontFamily: 'poppins-medium'),
+                              ),
+                            )),
+                      ],
+                    )
+                  : selectedTopData == 1
+                      ? Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Center(
+                              child: Text(
+                                buildTranslate("postEnquiry")!,
+                                softWrap: true,
+                                style: const TextStyle(
+                                    color: Color(0xFF3FC041),
+                                    fontSize: 20,
+                                    fontFamily: 'poppins-medium'),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            listPostWidget(),
+                          ],
+                        )
+                      : selectedTopData == 2
+                          ? Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Center(
+                                  child: Text(
+                                    buildTranslate("myEnquiry")!,
+                                    softWrap: true,
+                                    style: const TextStyle(
+                                        color: Color(0xFF3FC041),
+                                        fontSize: 20,
+                                        fontFamily: 'poppins-medium'),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 30,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 30.0),
+                                  child: Text(
+                                    buildTranslate("selectYourCommodity")!,
+                                    softWrap: true,
+                                    style: const TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: 15,
+                                        fontFamily: 'poppins-semibold'),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 25.0, right: 25.0, top: 10.0),
+                                  child: Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        border: Border.all(
+                                            color: const Color(0xFFd3d3d3),
+                                            width: 1),
+                                        borderRadius: BorderRadius.circular(5)),
+                                    child: Container(
+                                      width: 240,
+                                      height: 60,
+                                      color: Colors.white,
+                                      child: Container(
+                                        color: Colors.white,
+                                        child: _cropData == null ||
+                                                _cropData!.data == null
+                                            ? Center(
+                                                child: Text(buildTranslate(
+                                                    "noDataAvailable")!))
+                                            : DropdownButtonFormField2<String>(
+                                                dropdownStyleData:
+                                                    DropdownStyleData(
+                                                        maxHeight: 200),
+                                                hint: Text(buildTranslate(
+                                                    "selectYourCommodity")!),
+                                                decoration: InputDecoration(
+                                                  contentPadding:
+                                                      const EdgeInsets
+                                                          .symmetric(
+                                                          vertical: 20),
+                                                  filled: true,
+                                                  fillColor: Colors.white,
+                                                  border: OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8),
+                                                    borderSide:
+                                                        const BorderSide(
+                                                      color: Colors.black,
+                                                      width: 1.0,
+                                                    ),
+                                                  ),
+                                                ),
+                                                buttonStyleData:
+                                                    const ButtonStyleData(
+                                                  padding:
+                                                      EdgeInsets.only(right: 8),
+                                                ),
+                                                iconStyleData:
+                                                    const IconStyleData(
+                                                  icon: Icon(
+                                                    Icons.arrow_drop_down,
+                                                    color: Colors.black45,
+                                                  ),
+                                                  iconSize: 24,
+                                                ),
+                                                menuItemStyleData:
+                                                    const MenuItemStyleData(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 15),
+                                                ),
+                                                value: _selectedCrop,
+                                                items: _cropData!.data!
+                                                    .map((String crop) {
+                                                  return DropdownMenuItem<
+                                                      String>(
+                                                    value: crop,
+                                                    child: Text(crop,
+                                                        style: const TextStyle(
+                                                            fontSize: 15,
+                                                            color: Colors.black,
+                                                            fontFamily:
+                                                                'poppins-regular')),
+                                                  );
+                                                }).toList(),
+                                                onChanged: (String? newValue) {
+                                                  setState(() {
+                                                    _selectedCrop = newValue;
+                                                  });
+                                                },
+                                              ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 30,
+                                ),
+                                Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    padding: const EdgeInsets.only(
+                                        left: 30.0, right: 30.0),
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          if (_currentIndex == 0) {
+                                            futureEnquiryFilterData =
+                                                EnquiryDashboardController
+                                                    .getEnquiryDetailsByFilterCommodity(
+                                                        _selectedCrop
+                                                            .toString(),
+                                                        "Buy");
+                                            setState(() {
+                                              futureEnquiryFilterData =
+                                                  futureEnquiryFilterData;
+                                            });
+                                          } else {
+                                            futureEnquiryFilterData =
+                                                EnquiryDashboardController
+                                                    .getEnquiryDetailsByFilterCommodity(
+                                                        _selectedCrop
+                                                            .toString(),
+                                                        "Sell");
+                                            setState(() {
+                                              futureEnquiryFilterData =
+                                                  futureEnquiryFilterData;
+                                            });
+                                          }
+                                        });
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        foregroundColor: Colors.white,
+                                        padding: const EdgeInsets.all(12),
+                                        textStyle:
+                                            const TextStyle(fontSize: 15),
+                                        backgroundColor:
+                                            const Color(0xFF3FC041),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                              12), // <-- Radius
+                                        ),
+                                      ),
+                                      child: Text(
+                                        buildTranslate('SUBMIT')!,
+                                        style: const TextStyle(
+                                            fontSize: 18,
+                                            fontFamily: 'poppins-medium'),
+                                      ),
+                                    )),
+                                const SizedBox(
+                                  height: 20,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 30.0, right: 30.0),
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 20.0, right: 20.0),
+                                    child: Container(
+                                      height: 45,
+                                      alignment: Alignment.center,
+                                      margin: EdgeInsets.zero,
+                                      padding: EdgeInsets.zero,
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          border: Border.all(
+                                              color: const Color(0xFFd3d3d3),
+                                              width: 1),
+                                          borderRadius:
+                                              BorderRadius.circular(25)),
+                                      child: ChipList(
+                                        listOfChipNames: _chipNames,
+                                        showCheckmark: false,
+                                        extraOnToggle: (val) {
+                                          _currentIndex = val;
+                                          if (_currentIndex == 0) {
+                                            futureEnquiryFilterData =
+                                                EnquiryDashboardController
+                                                    .getEnquiryDetailsByFilterCommodity(
+                                                        _selectedCrop
+                                                            .toString(),
+                                                        "Buy");
+                                            setState(() {
+                                              futureEnquiryFilterData =
+                                                  futureEnquiryFilterData;
+                                            });
+                                          } else {
+                                            futureEnquiryFilterData =
+                                                EnquiryDashboardController
+                                                    .getEnquiryDetailsByFilterCommodity(
+                                                        _selectedCrop
+                                                            .toString(),
+                                                        "Sell");
+                                            setState(() {
+                                              futureEnquiryFilterData =
+                                                  futureEnquiryFilterData;
+                                            });
+                                          }
+                                          setState(() {
+                                            futureEnquiryFilterData =
+                                                futureEnquiryFilterData;
+                                          });
+                                          print("Chip index : $_currentIndex");
+                                        },
+                                        padding: const EdgeInsets.only(
+                                            left: 30.0, right: 30.0),
+                                        activeBgColorList: const [
+                                          Color(0xFF2A9D8F)
+                                        ],
+                                        inactiveBgColorList: const [
+                                          Colors.white
+                                        ],
+                                        activeTextColorList: const [
+                                          Colors.white
+                                        ],
+                                        inactiveTextColorList: const [
+                                          Color(0xFF666666)
+                                        ],
+                                        // borderColorList: [Theme.of(context).primaryColor],
+                                        listOfChipIndicesCurrentlySelected: [
+                                          _currentIndex
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 20,
+                                ),
+                                futureEnquiryFilterData.toString().isNotEmpty
+                                    ? FutureBuilder<List<EnquiryByFilterData>>(
+                                        future: futureEnquiryFilterData,
+                                        builder: (context, snapshot) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return const Center(
+                                                child:
+                                                    CircularProgressIndicator());
+                                          } else if (snapshot.hasError) {
+                                            print("Error: ${snapshot.error}");
+                                            return Center(
+                                                child: Text(buildTranslate(
+                                                    "noDataAvailable")!));
+
+                                            // return Center(child: Text(snapshot.hasError.toString()));
+                                          } else if (snapshot.hasData) {
+                                            final List<EnquiryByFilterData>
+                                                enquiry = snapshot.data!;
+                                            return ListView.builder(
+                                              physics:
+                                                  const NeverScrollableScrollPhysics(),
+                                              itemCount: enquiry.length,
+                                              shrinkWrap: true,
+                                              scrollDirection: Axis.vertical,
+                                              itemBuilder: (context, index) {
+                                                final enquiryFilterData =
+                                                    enquiry[index];
+                                                return Column(
+                                                  children: [
+                                                    Visibility(
+                                                      visible:
+                                                          _currentIndex == 0,
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(
+                                                                right: 30.0,
+                                                                left: 30.0),
+                                                        child: Container(
+                                                          decoration: const BoxDecoration(
+                                                              color:
+                                                                  Colors.white,
+                                                              borderRadius: BorderRadius
+                                                                  .all(Radius
+                                                                      .circular(
+                                                                          12))),
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Stack(
+                                                                  children: <Widget>[
+                                                                    Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .all(
+                                                                          12.0),
+                                                                      child:
+                                                                          Container(
+                                                                        width: MediaQuery.of(context)
+                                                                            .size
+                                                                            .width,
+                                                                        height:
+                                                                            180,
+                                                                        decoration:
+                                                                            BoxDecoration(
+                                                                          borderRadius: const BorderRadius
+                                                                              .all(
+                                                                              Radius.circular(12)),
+                                                                          image:
+                                                                              DecorationImage(
+                                                                            image: enquiryFilterData.photoVideoLink != null && enquiryFilterData.photoVideoLink!.isNotEmpty
+                                                                                ? NetworkImage(enquiryFilterData.photoVideoLink!) // Use the URL from the API
+                                                                                : const AssetImage("assets/images/enquiryBG.png") as ImageProvider, // Fallback to the default image
+                                                                            fit:
+                                                                                BoxFit.cover,
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .only(
+                                                                          top:
+                                                                              18.0,
+                                                                          left:
+                                                                              18.0),
+                                                                      child:
+                                                                          IntrinsicWidth(
+                                                                        child:
+                                                                            Container(
+                                                                          decoration:
+                                                                              const BoxDecoration(
+                                                                            color:
+                                                                                Color(0xFF008000),
+                                                                            borderRadius:
+                                                                                BorderRadius.all(Radius.circular(12)),
+                                                                          ),
+                                                                          child: Align(
+                                                                              alignment: Alignment.topLeft,
+                                                                              child: Padding(
+                                                                                padding: EdgeInsets.only(left: 12.0, right: 12.0, top: 5.0, bottom: 5.0),
+                                                                                child: Text(
+                                                                                  'Price  Rs.${enquiryFilterData.price}',
+                                                                                  style: TextStyle(color: Colors.white, fontSize: 11, fontFamily: "poppins-semibold"),
+                                                                                ),
+                                                                              )),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ]),
+                                                              const SizedBox(
+                                                                height: 5.0,
+                                                              ),
+                                                              Padding(
+                                                                padding: EdgeInsets
+                                                                    .only(
+                                                                        left:
+                                                                            20.0),
+                                                                child: Text(
+                                                                  "Name : ${enquiryFilterData.commodity.toString()} ${enquiryFilterData.variety.toString()}",
+                                                                  softWrap:
+                                                                      true,
+                                                                  style: TextStyle(
+                                                                      color: Color(
+                                                                          0xFF808080),
+                                                                      fontSize:
+                                                                          15,
+                                                                      fontFamily:
+                                                                          'poppins-semibold'),
+                                                                ),
+                                                              ),
+                                                              Padding(
+                                                                padding: EdgeInsets
+                                                                    .only(
+                                                                        left:
+                                                                            20.0,
+                                                                        top:
+                                                                            10.0),
+                                                                child: Text(
+                                                                  "Purpose:  To ${enquiryFilterData.operation}",
+                                                                  softWrap:
+                                                                      true,
+                                                                  style: TextStyle(
+                                                                      color: Color(
+                                                                          0xFF808080),
+                                                                      fontSize:
+                                                                          15,
+                                                                      fontFamily:
+                                                                          'poppins-semibold'),
+                                                                ),
+                                                              ),
+                                                              Padding(
+                                                                padding: EdgeInsets
+                                                                    .only(
+                                                                        left:
+                                                                            20.0,
+                                                                        top:
+                                                                            10.0),
+                                                                child: Text(
+                                                                  "Quantity : ${enquiryFilterData.quantity.toString()}",
+                                                                  softWrap:
+                                                                      true,
+                                                                  style: TextStyle(
+                                                                      color: Color(
+                                                                          0xFF808080),
+                                                                      fontSize:
+                                                                          15,
+                                                                      fontFamily:
+                                                                          'poppins-semibold'),
+                                                                ),
+                                                              ),
+                                                              Padding(
+                                                                padding: EdgeInsets
+                                                                    .only(
+                                                                        left:
+                                                                            20.0,
+                                                                        top:
+                                                                            10.0),
+                                                                child: Text(
+                                                                  "Location : ${enquiryFilterData.location}",
+                                                                  softWrap:
+                                                                      true,
+                                                                  style: TextStyle(
+                                                                      color: Color(
+                                                                          0xFF808080),
+                                                                      fontSize:
+                                                                          15,
+                                                                      fontFamily:
+                                                                          'poppins-semibold'),
+                                                                ),
+                                                              ),
+                                                              Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .only(
+                                                                        left:
+                                                                            10.0,
+                                                                        right:
+                                                                            10.0,
+                                                                        top:
+                                                                            20.0),
+                                                                child:
+                                                                    Container(
+                                                                  width: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width,
+                                                                  height: 40,
+                                                                  child:
+                                                                      Container(
+                                                                          width: MediaQuery.of(context)
+                                                                              .size
+                                                                              .width,
+                                                                          child:
+                                                                              ElevatedButton(
+                                                                            onPressed:
+                                                                                () {
+                                                                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => EditBuyCommodityPage(enquiryData: enquiryFilterData)));
+                                                                            },
+                                                                            style:
+                                                                                ElevatedButton.styleFrom(
+                                                                              foregroundColor: Colors.white,
+                                                                              padding: const EdgeInsets.all(3),
+                                                                              textStyle: const TextStyle(fontSize: 18),
+                                                                              backgroundColor: const Color(0xFF3FC041),
+                                                                              shape: RoundedRectangleBorder(
+                                                                                borderRadius: BorderRadius.circular(12), // <-- Radius
+                                                                              ),
+                                                                            ),
+                                                                            child:
+                                                                                Center(
+                                                                              child: Text(
+                                                                                buildTranslate('edit')!,
+                                                                                textAlign: TextAlign.center,
+                                                                                style: TextStyle(fontSize: 17, fontFamily: 'poppins-medium'),
+                                                                              ),
+                                                                            ),
+                                                                          )),
+                                                                ),
+                                                              ),
+                                                              const SizedBox(
+                                                                height: 15,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Visibility(
+                                                      visible:
+                                                          _currentIndex == 1,
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(
+                                                                right: 30.0,
+                                                                left: 30.0),
+                                                        child: Container(
+                                                          decoration: const BoxDecoration(
+                                                              color:
+                                                                  Colors.white,
+                                                              borderRadius: BorderRadius
+                                                                  .all(Radius
+                                                                      .circular(
+                                                                          12))),
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Stack(
+                                                                  children: <Widget>[
+                                                                    Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .all(
+                                                                          12.0),
+                                                                      child:
+                                                                          Container(
+                                                                        width: MediaQuery.of(context)
+                                                                            .size
+                                                                            .width,
+                                                                        height:
+                                                                            180,
+                                                                        decoration:
+                                                                            BoxDecoration(
+                                                                          borderRadius: const BorderRadius
+                                                                              .all(
+                                                                              Radius.circular(12)),
+                                                                          image:
+                                                                              DecorationImage(
+                                                                            image: enquiryFilterData.photoVideoLink != null && enquiryFilterData.photoVideoLink!.isNotEmpty
+                                                                                ? NetworkImage(enquiryFilterData.photoVideoLink!) // Use the URL from the API
+                                                                                : const AssetImage("assets/images/enquiryBG.png") as ImageProvider, // Fallback to the default image
+                                                                            fit:
+                                                                                BoxFit.cover,
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .only(
+                                                                          top:
+                                                                              18.0,
+                                                                          left:
+                                                                              18.0),
+                                                                      child:
+                                                                          IntrinsicWidth(
+                                                                        child:
+                                                                            Container(
+                                                                          decoration:
+                                                                              const BoxDecoration(
+                                                                            color:
+                                                                                Color(0xFF008000),
+                                                                            borderRadius:
+                                                                                BorderRadius.all(Radius.circular(12)),
+                                                                          ),
+                                                                          child: Align(
+                                                                              alignment: Alignment.topLeft,
+                                                                              child: Padding(
+                                                                                padding: EdgeInsets.only(left: 12.0, right: 12.0, top: 5.0, bottom: 5.0),
+                                                                                child: Text(
+                                                                                  'Price  Rs.${enquiryFilterData.price}',
+                                                                                  style: TextStyle(color: Colors.white, fontSize: 11, fontFamily: "poppins-semibold"),
+                                                                                ),
+                                                                              )),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ]),
+                                                              const SizedBox(
+                                                                height: 5.0,
+                                                              ),
+                                                              Padding(
+                                                                padding: EdgeInsets
+                                                                    .only(
+                                                                        left:
+                                                                            20.0),
+                                                                child: Text(
+                                                                  "Name : ${enquiryFilterData.commodity.toString()} ${enquiryFilterData.variety.toString()}",
+                                                                  softWrap:
+                                                                      true,
+                                                                  style: TextStyle(
+                                                                      color: Color(
+                                                                          0xFF808080),
+                                                                      fontSize:
+                                                                          15,
+                                                                      fontFamily:
+                                                                          'poppins-semibold'),
+                                                                ),
+                                                              ),
+                                                              Padding(
+                                                                padding: EdgeInsets
+                                                                    .only(
+                                                                        left:
+                                                                            20.0,
+                                                                        top:
+                                                                            10.0),
+                                                                child: Text(
+                                                                  "Purpose:  To ${enquiryFilterData.operation}",
+                                                                  softWrap:
+                                                                      true,
+                                                                  style: TextStyle(
+                                                                      color: Color(
+                                                                          0xFF808080),
+                                                                      fontSize:
+                                                                          15,
+                                                                      fontFamily:
+                                                                          'poppins-semibold'),
+                                                                ),
+                                                              ),
+                                                              Padding(
+                                                                padding: EdgeInsets
+                                                                    .only(
+                                                                        left:
+                                                                            20.0,
+                                                                        top:
+                                                                            10.0),
+                                                                child: Text(
+                                                                  "Quantity : ${enquiryFilterData.quantity.toString()}",
+                                                                  softWrap:
+                                                                      true,
+                                                                  style: TextStyle(
+                                                                      color: Color(
+                                                                          0xFF808080),
+                                                                      fontSize:
+                                                                          15,
+                                                                      fontFamily:
+                                                                          'poppins-semibold'),
+                                                                ),
+                                                              ),
+                                                              Padding(
+                                                                padding: EdgeInsets
+                                                                    .only(
+                                                                        left:
+                                                                            20.0,
+                                                                        top:
+                                                                            10.0),
+                                                                child: Text(
+                                                                  "Location : ${enquiryFilterData.location}",
+                                                                  softWrap:
+                                                                      true,
+                                                                  style: TextStyle(
+                                                                      color: Color(
+                                                                          0xFF808080),
+                                                                      fontSize:
+                                                                          15,
+                                                                      fontFamily:
+                                                                          'poppins-semibold'),
+                                                                ),
+                                                              ),
+                                                              Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .only(
+                                                                        left:
+                                                                            10.0,
+                                                                        right:
+                                                                            10.0,
+                                                                        top:
+                                                                            20.0),
+                                                                child:
+                                                                    Container(
+                                                                  width: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width,
+                                                                  height: 40,
+                                                                  child:
+                                                                      Container(
+                                                                          width: MediaQuery.of(context)
+                                                                              .size
+                                                                              .width,
+                                                                          child:
+                                                                              ElevatedButton(
+                                                                            onPressed:
+                                                                                () {
+                                                                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => EditSellCommodityPage(enquiryData: enquiryFilterData)));
+                                                                            },
+                                                                            style:
+                                                                                ElevatedButton.styleFrom(
+                                                                              foregroundColor: Colors.white,
+                                                                              padding: const EdgeInsets.all(3),
+                                                                              textStyle: const TextStyle(fontSize: 18),
+                                                                              backgroundColor: const Color(0xFF3FC041),
+                                                                              shape: RoundedRectangleBorder(
+                                                                                borderRadius: BorderRadius.circular(12), // <-- Radius
+                                                                              ),
+                                                                            ),
+                                                                            child:
+                                                                                Center(
+                                                                              child: Text(
+                                                                                buildTranslate('edit')!,
+                                                                                textAlign: TextAlign.center,
+                                                                                style: TextStyle(fontSize: 17, fontFamily: 'poppins-medium'),
+                                                                              ),
+                                                                            ),
+                                                                          )),
+                                                                ),
+                                                              ),
+                                                              const SizedBox(
+                                                                height: 15,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          } else {
+                                            return Center(
+                                                child: Text(buildTranslate(
+                                                    "noDataAvailable")!));
+                                          }
+                                        },
+                                      )
+                                    : Center(
+                                        child: Text(buildTranslate(
+                                            "noDataAvailable")!)),
+                                const SizedBox(
+                                  height: 40,
+                                ),
+                              ],
+                            )
+                          : Container(),
             ],
           ),
         ),
@@ -1081,7 +1220,8 @@ class _BottomCenterEnquiryPageState extends State<BottomCenterEnquiryPage> with 
           backgroundColor: AppColor.whiteColor.withAlpha(0), // add this line.
           elevation: 0, // also important, removes the shadow
           heroTag: "floatingActionBtn",
-          shape: const RoundedRectangleBorder( // <= Change BeveledRectangleBorder to RoundedRectangularBorder
+          shape: const RoundedRectangleBorder(
+            // <= Change BeveledRectangleBorder to RoundedRectangularBorder
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(30.0),
               topRight: Radius.circular(30.0),
@@ -1095,117 +1235,130 @@ class _BottomCenterEnquiryPageState extends State<BottomCenterEnquiryPage> with 
           onPressed: () {
             print("Center dock");
             setState(() {
-              typeOfOrganizationData == "Farmer groups" ?
-              Navigator
-                  .of(context)
-                  .push(
-                  MaterialPageRoute(builder: (BuildContext context) =>
-                      BottomCenterEnquiryPage(aapbarVisibility: true,))) : Container();
+              typeOfOrganizationData == "Farmer groups"
+                  ? Navigator.of(context).push(MaterialPageRoute(
+                      builder: (BuildContext context) =>
+                          BottomCenterEnquiryPage(
+                            aapbarVisibility: true,
+                          )))
+                  : Container();
               // _onItemTapped(4);
             });
           },
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        bottomNavigationBar:
-        typeOfOrganizationData == "Farmer groups" ?
-        Container(
-          height: 65,
-          decoration: BoxDecoration(
-              color: Colors.grey,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(30.0),  // Top-left corner
-                topRight: Radius.circular(30.0), // Top-right corner
-              ),
-              boxShadow: [
-                BoxShadow(
-                  offset: Offset(0, 1),
-                  blurRadius: 2,
-                  spreadRadius: 0.2,
-                  color: AppColor.whiteColor,
+        bottomNavigationBar: typeOfOrganizationData == "Farmer groups"
+            ? Container(
+                height: 100,
+                decoration: BoxDecoration(
+                    color: Colors.grey,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(30.0), // Top-left corner
+                      topRight: Radius.circular(30.0), // Top-right corner
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        offset: Offset(0, 1),
+                        blurRadius: 2,
+                        spreadRadius: 0.2,
+                        color: AppColor.whiteColor,
+                      ),
+                    ]),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(
+                        30.0), // Matches the Container's border radius
+                    topRight: Radius.circular(
+                        30.0), // Matches the Container's border radius
+                  ),
+                  child: BottomNavigationBar(
+                    currentIndex: _bottomNavIndex,
+                    onTap: (index) {
+                      setState(() {
+                        _bottomNavIndex =
+                            index; // Set the current index when tapped
+                      });
+                      _onItemTapped(_bottomNavIndex);
+                      print("_bottomNavIndex 1: $_bottomNavIndex");
+                    },
+                    selectedLabelStyle: TextStyle(
+                      color: Colors.black,
+                    ),
+                    unselectedLabelStyle: TextStyle(
+                      color: Colors.black,
+                    ),
+                    items: iconList1.map((category) {
+                      return BottomNavigationBarItem(
+                        icon: Image.asset(
+                          category.icon ?? "",
+                          width: 25,
+                          height: 25,
+                          color: _bottomNavIndex == iconList1.indexOf(category)
+                              ? Colors.green
+                              : Colors.grey,
+                        ),
+                        label: category.name,
+                      );
+                    }).toList(),
+                    type: BottomNavigationBarType
+                        .fixed, // Keeps the icons in a fixed position
+                  ),
                 ),
-              ]
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(30.0),  // Matches the Container's border radius
-              topRight: Radius.circular(30.0), // Matches the Container's border radius
-            ),
-            child: BottomNavigationBar(
-              currentIndex: _bottomNavIndex,
-              onTap: (index) {
-                setState(() {
-                  _bottomNavIndex = index; // Set the current index when tapped
-                });
-                _onItemTapped(_bottomNavIndex);
-                print("_bottomNavIndex 1: $_bottomNavIndex");
-              },
-              selectedLabelStyle: TextStyle(
-                color: Colors.black,
-              ),
-              unselectedLabelStyle: TextStyle(
-                color: Colors.black,
-              ),
-              items: iconList1.map((category) {
-                return BottomNavigationBarItem(
-                  icon: Image.asset(category.icon ?? "", width: 25, height: 25,
-                    color: _bottomNavIndex == iconList1.indexOf(category)
-                        ? Colors.green
-                        : Colors.grey,),
-                  label: category.name,
-                );
-              }).toList(),
-              type: BottomNavigationBarType.fixed, // Keeps the icons in a fixed position
-            ),
-          ),
-        )
-            :
-        Container(
-          height: 65,
-          decoration: BoxDecoration(
-              color: Colors.grey,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(30.0),  // Top-left corner
-                topRight: Radius.circular(30.0), // Top-right corner
-              ),
-              boxShadow: [
-                BoxShadow(
-                  offset: Offset(0, 5),
-                  blurRadius: 2,
-                  spreadRadius: 0.8,
-                  color: AppColor.whiteColor,
+              )
+            : Container(
+                height: 100,
+                decoration: BoxDecoration(
+                    color: Colors.grey,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(30.0), // Top-left corner
+                      topRight: Radius.circular(30.0), // Top-right corner
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        offset: Offset(0, 5),
+                        blurRadius: 2,
+                        spreadRadius: 0.8,
+                        color: AppColor.whiteColor,
+                      ),
+                    ]),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(
+                        30.0), // Matches the Container's border radius
+                    topRight: Radius.circular(
+                        30.0), // Matches the Container's border radius
+                  ),
+                  child: BottomNavigationBar(
+                    currentIndex: _bottomNavIndex,
+                    onTap: (index) {
+                      setState(() {
+                        _bottomNavIndex =
+                            index; // Set the current index when tapped
+                        _onItemTappedData(_bottomNavIndex);
+                      });
+                      print("_bottomNavIndex 2: $_bottomNavIndex");
+                    },
+                    selectedItemColor: Colors.grey,
+                    unselectedItemColor: Colors.grey,
+                    items: iconList2.map((category) {
+                      return BottomNavigationBarItem(
+                        icon: Image.asset(
+                          category.icon ?? "",
+                          width: 25,
+                          height: 25,
+                          color: _bottomNavIndex == iconList2.indexOf(category)
+                              ? Colors.green
+                              : Colors.grey,
+                        ),
+                        label: category.name,
+                      );
+                    }).toList(),
+                    type: BottomNavigationBarType
+                        .fixed, // Keeps the icons in a fixed position
+                  ),
                 ),
-              ]
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(30.0),  // Matches the Container's border radius
-              topRight: Radius.circular(30.0), // Matches the Container's border radius
-            ),
-            child: BottomNavigationBar(
-              currentIndex: _bottomNavIndex,
-              onTap: (index) {
-                setState(() {
-                  _bottomNavIndex = index; // Set the current index when tapped
-                  _onItemTappedData(_bottomNavIndex);
-                });
-                print("_bottomNavIndex 2: $_bottomNavIndex");
-              },
-              selectedItemColor: Colors.grey,
-              unselectedItemColor: Colors.grey,
-              items: iconList2.map((category) {
-                return BottomNavigationBarItem(
-                  icon: Image.asset(category.icon ?? "", width: 25, height: 25,
-                    color: _bottomNavIndex == iconList2.indexOf(category)
-                        ? Colors.green
-                        : Colors.grey,),
-                  label: category.name,
-                );
-              }).toList(),
-              type: BottomNavigationBarType.fixed, // Keeps the icons in a fixed position
-            ),
-          ),
-        )
-        
+              )
+
         // bottomNavigationBar: widget.aapbarVisibility && typeOfOrganizationData == "Farmer groups"
         //     ? AnimatedBottomNavigationBar.builder(
         //   height: 70,
@@ -1313,7 +1466,7 @@ class _BottomCenterEnquiryPageState extends State<BottomCenterEnquiryPage> with 
         //   ),
         // )
         //     : null
-    );
+        );
   }
 
   Widget listPostWidget() {
@@ -1370,7 +1523,7 @@ class _BottomCenterEnquiryPageState extends State<BottomCenterEnquiryPage> with 
           );
         },
         gridDelegate:
-        const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+            const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
       ),
     );
   }
@@ -1382,9 +1535,10 @@ class _BottomCenterEnquiryPageState extends State<BottomCenterEnquiryPage> with 
     });
     Navigator.pop(context);
     Navigator.of(context).push(MaterialPageRoute(
-        builder: (BuildContext context) => HomePage(selectedIndex: _bottomNavIndex, typeOfOrganization: typeOfOrganizationData)));
+        builder: (BuildContext context) => HomePage(
+            selectedIndex: _bottomNavIndex,
+            typeOfOrganization: typeOfOrganizationData)));
 
-        
     // if (index != 3) {
     //   setState(() {
     //     _bottomNavIndex = index;
@@ -1427,13 +1581,15 @@ class _BottomCenterEnquiryPageState extends State<BottomCenterEnquiryPage> with 
   }
 
   void _onItemTappedData(int index) {
-     setState(() {
+    setState(() {
       _bottomNavIndex = index;
       print(_bottomNavIndex);
     });
     Navigator.pop(context);
     Navigator.of(context).push(MaterialPageRoute(
-        builder: (BuildContext context) => HomePage(selectedIndex: _bottomNavIndex, typeOfOrganization: typeOfOrganizationData)));
+        builder: (BuildContext context) => HomePage(
+            selectedIndex: _bottomNavIndex,
+            typeOfOrganization: typeOfOrganizationData)));
 
     // if (index != 3) {
     //   setState(() {
@@ -1495,7 +1651,7 @@ class _BottomCenterEnquiryPageState extends State<BottomCenterEnquiryPage> with 
                     )
                   ],
                   border:
-                  Border.all(color: const Color(0xFFd3d3d3), width: 1.0),
+                      Border.all(color: const Color(0xFFd3d3d3), width: 1.0),
                   borderRadius: BorderRadius.circular(12)),
               child: InkWell(
                 highlightColor: Colors.transparent,
@@ -1531,7 +1687,7 @@ class _BottomCenterEnquiryPageState extends State<BottomCenterEnquiryPage> with 
           );
         },
         gridDelegate:
-        const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+            const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
       ),
     );
   }
