@@ -1108,7 +1108,7 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
 
       var dio = Dio();
       var response = await dio.request(
-        "https://d1dv04h56lh39n.cloudfront.net/api/commodities/"
+        "${baseUrl}commodities/"
         "$contactNumber/${widget.enquiryData.sId}",
         options: Options(
           method: 'PUT',

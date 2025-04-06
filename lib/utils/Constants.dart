@@ -20,6 +20,8 @@ const String prefKeyToken = 'prefToken';
 const String baseUrl = "https://krishiyan-backend-teal.vercel.app/api/";
 const String baseUrlEnd = "https://krishiyan-backend-teal.vercel.app/";
 
+// https://d1dv04h56lh39n.cloudfront.net/
+
 const String LOGIN = "${baseUrl}app/sign-in";
 const String SIGNUP = "${baseUrl}fpo";
 

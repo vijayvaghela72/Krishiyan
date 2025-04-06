@@ -269,7 +269,7 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                     ),
                     const Spacer(),
                     Padding(
-                      padding: const EdgeInsets.only(right: 5.0, top: 12.0),
+                      padding: const EdgeInsets.only(right: 5, top: 12),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
@@ -2857,9 +2857,8 @@ class _BottomTwoPageState extends State<BottomTwoPage>
 
   Future<void> fetchCrops() async {
     try {
-      final response = await Dio().get(
-          "https://d1dv04h56lh39n.cloudfront.net/api/crops"); // Replace with your actual API URL
-
+      final response = await Dio()
+          .get("${baseUrl}crops"); 
       if (response.statusCode == 200) {
         if (mounted) {
           setState(() {
@@ -3475,7 +3474,7 @@ class _MyDrawerState extends State<MyDrawer> {
     try {
       String? number = await AppGlobal.getStringPreference('contactNumber');
       var dealerNumber = number ?? "1"; // Default to "1" if no number found
-
+      print('VILLAGES_NAMES + dealerNumber : ${VILLAGES_NAMES + dealerNumber}');
       var response = await Dio().get(VILLAGES_NAMES + dealerNumber);
 
       if (response.statusCode == 200) {
