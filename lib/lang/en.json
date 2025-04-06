@@ -225,5 +225,6 @@
   "primaryContactPersonDesignation": "Primary Contact Person Designation",
   "noDataAvailable": "No data available",
   "screenLocked": "This screen is Locked !",
-  "apply": "Apply"
+  "apply": "Apply",
+  "Delete Account": "Delete Account"
 }

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:krishiyan/screen/AccountSettings/delete_account/delete_account.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../helper/SharedPref.dart';
 import '../../localization/AppLocalizations.dart';
@@ -366,7 +367,39 @@ class _ProfilePageState extends State<ProfilePage>
                 ),
               ),
             ),
-
+            // delete account
+            InkWell(
+              highlightColor: Colors.transparent,
+              splashColor: Colors.transparent,
+              onTap: () async {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => DeleteAccountPage()),
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(
+                    top: 10.0, bottom: 20.0, right: 18.0, left: 18.0),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.delete_outline,
+                      size: 20,
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      buildTranslate('Delete Account')!,
+                      softWrap: true,
+                      style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 17,
+                          fontFamily: 'poppins-regular'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
             // logout
             InkWell(
               highlightColor: Colors.transparent,
