@@ -14,20 +14,16 @@ import 'package:krishiyan/mvc/model/MarketInsight.dart';
 import 'package:krishiyan/screen/home_screen/PriceHistoryPage.dart';
 import 'package:krishiyan/utils/AppGlobal.dart';
 import 'package:krishiyan/utils/Constants.dart';
-import '../../helper/AlertHelper.dart';
-import '../../helper/SharedPref.dart';
-import '../../localization/AppLocalizations.dart';
-import '../../mvc/controller/homeDashboardController.dart';
-import '../../mvc/model/DailyNewsDetails.dart';
-import '../../mvc/model/MandiPriceCommodityData.dart';
-import '../../mvc/model/MandiPriceDistrictData.dart';
-import '../../mvc/model/MandiPriceStateData.dart';
-import '../Enquiry/BottomCenterEnquiryPage.dart';
-import '../CropLibrary/BottomThreePage.dart';
-import '../FRM/BottomTwoPage.dart';
-import '../DailyMarket/DetailNewsPage.dart';
-import '../AccountSettings/ProfilePage.dart';
-import '../Language/SelectLanguagePage.dart';
+import '../../../helper/AlertHelper.dart';
+import '../../../helper/SharedPref.dart';
+import '../../../localization/AppLocalizations.dart';
+import '../../../mvc/controller/homeDashboardController.dart';
+import '../../../mvc/model/DailyNewsDetails.dart';
+import '../../../mvc/model/MandiPriceCommodityData.dart';
+import '../../../mvc/model/MandiPriceDistrictData.dart';
+import '../../../mvc/model/MandiPriceStateData.dart';
+import '../../DailyMarket/DetailNewsPage.dart';
+import '../../Language/SelectLanguagePage.dart';
 import 'package:intl/intl.dart';
 
 class BottomOnePage extends StatefulWidget {
@@ -51,15 +47,6 @@ class _BottomOnePageState extends State<BottomOnePage>
     Image.asset("assets/images/home_banner.png"),
     Image.asset("assets/images/home_banner.png")
   ];
-
-  // late AnimationController _fabAnimationController;
-  // late AnimationController _borderRadiusAnimationController;
-  // late Animation<double> fabAnimation;
-  // late Animation<double> borderRadiusAnimation;
-  // late CurvedAnimation fabCurve;
-  // late CurvedAnimation borderRadiusCurve;
-  // late AnimationController _hideBottomBarAnimationController;
-  var _bottomNavIndex = 0; //default index of a first screen
   int currentIndex = 0;
   int selectedTopData = 0;
 
@@ -125,7 +112,6 @@ class _BottomOnePageState extends State<BottomOnePage>
   late Future<List<NewsData>> futureHomeNewsData;
   String typeOfOrganizationData = "";
 
-  bool _isClickAllowed = true; // Flag to prevent double-clicks
   DateTime? selectedDate;
 
   Future<List<MandiPriceData>>? futureMandiPrice;
@@ -134,43 +120,6 @@ class _BottomOnePageState extends State<BottomOnePage>
   @override
   void initState() {
     super.initState();
-
-    // _fabAnimationController = AnimationController(
-    //   duration: const Duration(milliseconds: 500),
-    //   vsync: this,
-    // );
-    // _borderRadiusAnimationController = AnimationController(
-    //   duration: const Duration(milliseconds: 500),
-    //   vsync: this,
-    // );
-    // fabCurve = CurvedAnimation(
-    //   parent: _fabAnimationController,
-    //   curve: const Interval(0.5, 1.0, curve: Curves.fastOutSlowIn),
-    // );
-    // borderRadiusCurve = CurvedAnimation(
-    //   parent: _borderRadiusAnimationController,
-    //   curve: const Interval(0.5, 1.0, curve: Curves.fastOutSlowIn),
-    // );
-    //
-    // fabAnimation = Tween<double>(begin: 1, end: 1).animate(fabCurve);
-    // borderRadiusAnimation = Tween<double>(begin: 1, end: 1).animate(
-    //   borderRadiusCurve,
-    // );
-    //
-    // _hideBottomBarAnimationController = AnimationController(
-    //   duration: const Duration(milliseconds: 200),
-    //   vsync: this,
-    // );
-    //
-    // Future.delayed(
-    //   const Duration(seconds: 1),
-    //       () => _fabAnimationController.forward(),
-    // );
-    // Future.delayed(
-    //   const Duration(seconds: 1),
-    //       () => _borderRadiusAnimationController.forward(),
-    // );
-
     futureHomeNewsData = HomeDashboardController.getNewsDetails();
     getPrefValue();
     _fetchStateData();
@@ -312,14 +261,6 @@ class _BottomOnePageState extends State<BottomOnePage>
     }
   }
 
-  // @override
-  // void dispose() {
-  //   _fabAnimationController.dispose(); // Dispose the controller
-  //   _borderRadiusAnimationController.dispose(); // Dispose the controller
-  //   _hideBottomBarAnimationController.dispose(); // Dispose the controller
-  //   super.dispose();
-  // }
-
   @override
   Widget build(BuildContext context) {
     // Check if stateItems or stateItems.data is null
@@ -386,15 +327,6 @@ class _BottomOnePageState extends State<BottomOnePage>
                             width: 35,
                             height: 35,
                           ),
-                          // const Text(
-                          //   "Select Language",
-                          //   style: TextStyle(color: Colors.black, fontFamily: 'poppins-semibold', fontSize: 15),
-                          // ),
-                          // const SizedBox(width: 10,),
-                          // Image.asset(
-                          //   'assets/images/appbar_down.png',
-                          //   // color: Colors.white,
-                          // ),
                         ],
                       ),
                     ),
@@ -2561,10 +2493,9 @@ class _BottomOnePageState extends State<BottomOnePage>
                                                                 ),
                                                                 Text(
                                                                   marketInsight[
-                                                                              index]
-                                                                          .todaysPrice
-                                                                          .toString() ??
-                                                                      "",
+                                                                          index]
+                                                                      .todaysPrice
+                                                                      .toString(),
                                                                   softWrap:
                                                                       true,
                                                                   style: TextStyle(
@@ -2577,10 +2508,9 @@ class _BottomOnePageState extends State<BottomOnePage>
                                                                 ),
                                                                 Text(
                                                                   marketInsight[
-                                                                              index]
-                                                                          .todaysPriceChange
-                                                                          .toString() ??
-                                                                      "",
+                                                                          index]
+                                                                      .todaysPriceChange
+                                                                      .toString(),
                                                                   softWrap:
                                                                       true,
                                                                   style: TextStyle(
@@ -2609,10 +2539,9 @@ class _BottomOnePageState extends State<BottomOnePage>
                                                                 ),
                                                                 Text(
                                                                   marketInsight[
-                                                                              index]
-                                                                          .yesterdaysPrice
-                                                                          .toString() ??
-                                                                      "",
+                                                                          index]
+                                                                      .yesterdaysPrice
+                                                                      .toString(),
                                                                   softWrap:
                                                                       true,
                                                                   style: TextStyle(
@@ -2625,10 +2554,9 @@ class _BottomOnePageState extends State<BottomOnePage>
                                                                 ),
                                                                 Text(
                                                                   marketInsight[
-                                                                              index]
-                                                                          .yesterdaysPriceChange
-                                                                          .toString() ??
-                                                                      "",
+                                                                          index]
+                                                                      .yesterdaysPriceChange
+                                                                      .toString(),
                                                                   softWrap:
                                                                       true,
                                                                   style: TextStyle(
@@ -2818,61 +2746,6 @@ class _BottomOnePageState extends State<BottomOnePage>
       selectedTopData = index;
     });
     print("Selected Top Page : $selectedTopData");
-  }
-
-  void _onItemTapped(int index) {
-    if (index == 0) {
-      // Navigator.pop(context);
-      var route = ModalRoute.of(context);
-      if (route != null) {
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (BuildContext context) => BottomOnePage(
-                  aapbarVisibility: true,
-                )));
-      }
-    } else if (index == 1) {
-      // Navigator.pop(context);
-      var route = ModalRoute.of(context);
-      if (route != null) {
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (BuildContext context) => BottomTwoPage(
-                  aapbarVisibility: true,
-                )));
-      }
-    } else if (index == 2) {
-      // Navigator.pop(context);
-      var route = ModalRoute.of(context);
-      if (route != null) {
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (BuildContext context) => BottomThreePage(
-                  aapbarVisibility: true,
-                )));
-      }
-    } else if (index == 3) {
-      if (_isClickAllowed) {
-        _isClickAllowed = false;
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => const ProfilePage()),
-        );
-        // Re-enable clicks after a short delay (e.g., 500ms)
-        Timer(Duration(seconds: 1), () {
-          _isClickAllowed = true;
-        });
-      }
-    } else if (index == 4) {
-      var route = ModalRoute.of(context);
-      if (route != null) {
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (BuildContext context) => BottomCenterEnquiryPage(
-                  aapbarVisibility: true,
-                )));
-      }
-    } else {
-      setState(() {
-        _bottomNavIndex = index;
-      });
-      print("One : bottomNavIndex : $_bottomNavIndex");
-    }
   }
 
   void getValue() {

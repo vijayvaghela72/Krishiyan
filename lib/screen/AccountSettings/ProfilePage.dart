@@ -10,7 +10,7 @@ import '../../localization/AppLocalizations.dart';
 import '../../utils/AppGlobal.dart';
 import '../../utils/Constants.dart';
 import '../Enquiry/BottomCenterEnquiryPage.dart';
-import '../home_screen/BottomOnePage.dart';
+import '../home_screen/home/home.dart';
 import '../CropLibrary/BottomThreePage.dart';
 import '../FRM/BottomTwoPage.dart';
 import 'EditAddressPage.dart';
@@ -19,7 +19,7 @@ import 'EditOtherProfilePage.dart';
 import 'OtherDetailPage.dart';
 import 'EditProfilePage.dart';
 import 'ForgotPasswordPage.dart';
-import '../home_screen/home_page.dart';
+import '../home_screen/dashborad.dart';
 import '../Login/LoginPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

@@ -5,7 +5,7 @@ import '../../helper/SharedPref.dart';
 import '../../localization/AppLocalizations.dart';
 import '../../utils/AppColor.dart';
 import '../../utils/Constants.dart';
-import '../home_screen/home_page.dart';
+import '../home_screen/dashborad.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});

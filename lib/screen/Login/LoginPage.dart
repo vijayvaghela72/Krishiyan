@@ -13,7 +13,7 @@ import '../../mvc/model/LoginData.dart';
 import '../../utils/AppColor.dart';
 import '../../utils/Constants.dart';
 import '../AccountSettings/ForgotPasswordPage.dart';
-import '../home_screen/home_page.dart';
+import '../home_screen/dashborad.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});

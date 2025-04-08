@@ -11,7 +11,7 @@ import '../../mvc/model/CropLibraryData.dart';
 import '../../mvc/model/SelectCropNamesData.dart';
 import '../../utils/Constants.dart';
 import '../Enquiry/BottomCenterEnquiryPage.dart';
-import '../home_screen/BottomOnePage.dart';
+import '../home_screen/home/home.dart';
 import '../FRM/BottomTwoPage.dart';
 import '../FRM/CropProtectionPage.dart';
 import 'FaqPage.dart';

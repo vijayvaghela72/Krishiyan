@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:krishiyan/localization/AppLocalizations.dart';
 import 'package:krishiyan/mvc/model/GetFRMProfileData.dart';
 import 'package:krishiyan/screen/AccountSettings/ProfilePage.dart';
-import 'package:krishiyan/screen/home_screen/home_page.dart';
+import 'package:krishiyan/screen/home_screen/dashborad.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/style.dart';
 import 'package:path_provider/path_provider.dart';

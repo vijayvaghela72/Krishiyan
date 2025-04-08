@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:krishiyan/screen/home_screen/BottomOnePage.dart';
+import 'package:krishiyan/screen/home_screen/home/home.dart';
 import 'package:krishiyan/screen/FRM/BottomTwoPage.dart';
 import 'dart:async';
 import '../../helper/SharedPref.dart';
