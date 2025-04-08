@@ -10,7 +10,7 @@ import '../../mvc/controller/farmerDashboardController.dart';
 import '../../mvc/model/SelectCropNamesData.dart';
 import '../../utils/AppGlobal.dart';
 import '../../utils/Constants.dart';
-import '../HomeScreen/HomePage.dart';
+import '../home_screen/home_page.dart';
 import 'package:intl/intl.dart';
 
 class CropCultivationPage extends StatefulWidget {

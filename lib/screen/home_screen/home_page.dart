@@ -1,7 +1,6 @@
-import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:krishiyan/screen/HomeScreen/BottomOnePage.dart';
+import 'package:krishiyan/screen/home_screen/BottomOnePage.dart';
 import 'package:krishiyan/screen/FRM/BottomTwoPage.dart';
 import 'dart:async';
 import '../../helper/SharedPref.dart';
@@ -90,8 +89,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Locale _locale = const Locale("en");
   String typeOfOrganizationData = "";
 
-  bool _isClickAllowed = true; // Flag to prevent double-clicks
-
   changeLanguage(Locale locale) {
     setState(() {
       _locale = locale;
@@ -105,62 +102,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     typeOfOrganizationData = widget.typeOfOrganization;
     print("AAAAAAAAAAAA");
     print(_bottomNavIndex);
-    // _fabAnimationController = AnimationController(
-    //   duration: const Duration(milliseconds: 500),
-    //   vsync: this,
-    // );
-    // _borderRadiusAnimationController = AnimationController(
-    //   duration: const Duration(milliseconds: 500),
-    //   vsync: this,
-    // );
-    // fabCurve = CurvedAnimation(
-    //   parent: _fabAnimationController,
-    //   curve: const Interval(0.5, 1.0, curve: Curves.fastOutSlowIn),
-    // );
-    // borderRadiusCurve = CurvedAnimation(
-    //   parent: _borderRadiusAnimationController,
-    //   curve: const Interval(0.5, 1.0, curve: Curves.fastOutSlowIn),
-    // );
-    //
-    // fabAnimation = Tween<double>(begin: 1, end: 1).animate(fabCurve);
-    // borderRadiusAnimation = Tween<double>(begin: 1, end: 1).animate(
-    //   borderRadiusCurve,
-    // );
-    //
-    // _hideBottomBarAnimationController = AnimationController(
-    //   duration: const Duration(milliseconds: 200),
-    //   vsync: this,
-    // );
-    //
-    // Future.delayed(
-    //   const Duration(seconds: 1),
-    //       () => _fabAnimationController.forward(),
-    // );
-    // Future.delayed(
-    //   const Duration(seconds: 1),
-    //       () => _borderRadiusAnimationController.forward(),
-    // );
     getPrefValue();
   }
-
-  // bool onScrollNotification(ScrollNotification notification) {
-  //   if (notification is UserScrollNotification &&
-  //       notification.metrics.axis == Axis.vertical) {
-  //     switch (notification.direction) {
-  //       case ScrollDirection.forward:
-  //         _hideBottomBarAnimationController.reverse();
-  //         _fabAnimationController.forward(from: 0);
-  //         break;
-  //       case ScrollDirection.reverse:
-  //         _hideBottomBarAnimationController.forward();
-  //         _fabAnimationController.reverse(from: 1);
-  //         break;
-  //       case ScrollDirection.idle:
-  //         break;
-  //     }
-  //   }
-  //   return false;
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -181,9 +124,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       highlightColor: AppColor.transparentColor,
                       splashColor: AppColor.transparentColor,
                       onTap: () {
-                        // Navigator.of(context).push(
-                        //   MaterialPageRoute(builder: (context) => const MySelectLanguagePage()),
-                        // );
                         Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -232,9 +172,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       highlightColor: AppColor.transparentColor,
                       splashColor: AppColor.transparentColor,
                       onTap: () {
-                        // Navigator.of(context).push(
-                        //   MaterialPageRoute(builder: (context) => const MySelectLanguagePage()),
-                        // );
                         Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -304,7 +241,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           aapbarVisibility: true,
                           typeOfOrganization: typeOfOrganizationData,
                         )));
-                // _onItemTapped(4);
               });
             },
             child: Image.asset(
@@ -439,91 +375,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     setState(() {
       typeOfOrganizationData = typeOfOrganizationData;
     });
-  }
-
-  Future<void> _onItemTapped(int index) async {
-    print("Home index : $index");
-    if (index != 3) {
-      setState(() {
-        _bottomNavIndex = index;
-      });
-      if (_bottomNavIndex == 0) {
-        // Navigator.pop(context);
-        var route = ModalRoute.of(context);
-        if (route != null) {
-          Navigator.of(context).pushReplacement(MaterialPageRoute(
-              builder: (BuildContext context) => BottomOnePage(
-                    aapbarVisibility: true,
-                  )));
-        }
-      } else if (_bottomNavIndex == 1) {
-        var route = ModalRoute.of(context);
-        if (route != null) {
-          Navigator.of(context).pushReplacement(MaterialPageRoute(
-              builder: (BuildContext context) => BottomTwoPage(
-                    aapbarVisibility: true,
-                  )));
-        }
-      } else if (_bottomNavIndex == 2) {
-        // Navigator.pop(context);
-        var route = ModalRoute.of(context);
-        if (route != null) {
-          Navigator.of(context).pushReplacement(MaterialPageRoute(
-              builder: (BuildContext context) => BottomThreePage(
-                    aapbarVisibility: true,
-                  )));
-        }
-      }
-    } else if (index == 3) {
-      if (_isClickAllowed) {
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => const ProfilePage()),
-        );
-        _isClickAllowed = false;
-        await Future.delayed(Duration(seconds: 2));
-        _isClickAllowed = true;
-      }
-    } else {
-      var route = ModalRoute.of(context);
-      if (route != null) {
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (BuildContext context) => BottomCenterEnquiryPage(
-                  aapbarVisibility: true,
-                  typeOfOrganization: typeOfOrganizationData,
-                )));
-      }
-    }
-  }
-
-  void _onItemTappedData(int index) {
-    print("Home1 index : $index");
-    if (index != 3) {
-      setState(() {
-        _bottomNavIndex = index;
-      });
-      if (_bottomNavIndex == 0) {
-        var route = ModalRoute.of(context);
-        if (route != null) {
-          Navigator.of(context).pushReplacement(MaterialPageRoute(
-              builder: (BuildContext context) => BottomOnePage(
-                    aapbarVisibility: true,
-                  )));
-        }
-      }
-    } else if (index == 3) {
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => const ProfilePage()),
-      );
-    } else {
-      var route = ModalRoute.of(context);
-      if (route != null) {
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (BuildContext context) => BottomCenterEnquiryPage(
-                  aapbarVisibility: true,
-                  typeOfOrganization: typeOfOrganizationData,
-                )));
-      }
-    }
   }
 }
 

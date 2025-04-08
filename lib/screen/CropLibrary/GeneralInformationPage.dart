@@ -6,7 +6,7 @@ import '../../localization/AppLocalizations.dart';
 import '../../utils/AppGlobal.dart';
 import '../../utils/DriveImage.dart';
 import '../Enquiry/BottomCenterEnquiryPage.dart';
-import '../HomeScreen/BottomOnePage.dart';
+import '../home_screen/BottomOnePage.dart';
 import 'BottomThreePage.dart';
 import '../FRM/BottomTwoPage.dart';
 import '../AccountSettings/ProfilePage.dart';

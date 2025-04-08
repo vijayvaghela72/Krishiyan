@@ -21,7 +21,7 @@ import '../../mvc/model/SelectVillagesNameData.dart';
 import '../../utils/AppGlobal.dart';
 import '../../utils/Constants.dart';
 import '../Enquiry/BottomCenterEnquiryPage.dart';
-import '../HomeScreen/BottomOnePage.dart';
+import '../home_screen/BottomOnePage.dart';
 import '../CropLibrary/BottomThreePage.dart';
 import 'CropCultivationPage.dart';
 import 'EditCropCultivationPage.dart';

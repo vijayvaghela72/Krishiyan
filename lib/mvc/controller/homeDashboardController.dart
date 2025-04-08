@@ -1,12 +1,11 @@
 import 'dart:convert';
 import 'package:intl/intl.dart';
-import 'package:krishiyan/mvc/model/MarketInsight.dart';
-import 'package:krishiyan/mvc/model/PriceData.dart';
 import '../../utils/Constants.dart';
 import '../model/DailyNewsDetails.dart';
 import 'package:http/http.dart' as http;
-
 import '../model/GetMandiPriceData.dart';
+import 'package:krishiyan/mvc/model/PriceData.dart';
+import 'package:krishiyan/mvc/model/MarketInsight.dart';
 
 class HomeDashboardController {
   static Future<List<NewsData>> getNewsDetails() async {
@@ -59,7 +58,10 @@ class HomeDashboardController {
       String state, String district, String commodity) async {
     final response = await http.get(Uri.parse("${baseUrl}appData/price"
         "?state=$state&district=$district&commodity=$commodity"));
-
+    print("${baseUrl}appData/price"
+        "?state=$state&district=$district&commodity=$commodity");
+    print("response : ${response.body.toString()}");
+    print("response : ${response.statusCode.toString()}");
     print("state : $state");
     print("district : $district");
     print("commodity : $commodity");
@@ -89,7 +91,7 @@ class HomeDashboardController {
         throw Exception('Failed to load price data');
       }
     } else {
-      throw Exception('Failed to load data from the API');
+      throw Exception('No price data found');
     }
   }
 }

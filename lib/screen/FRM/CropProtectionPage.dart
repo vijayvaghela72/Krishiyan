@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 
 import '../../mvc/model/CropLibraryData.dart';
 import '../Enquiry/BottomCenterEnquiryPage.dart';
-import '../HomeScreen/BottomOnePage.dart';
+import '../home_screen/BottomOnePage.dart';
 import '../CropLibrary/BottomThreePage.dart';
 import 'BottomTwoPage.dart';
 import '../CropLibrary/DeficiencyManagementPage.dart';

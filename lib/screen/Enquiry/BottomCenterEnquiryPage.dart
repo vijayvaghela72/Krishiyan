@@ -6,7 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:krishiyan/screen/HomeScreen/HomePage.dart';
+import 'package:krishiyan/screen/home_screen/home_page.dart';
 import 'package:page_transition/page_transition.dart';
 
 import '../../helper/SharedPref.dart';
@@ -16,7 +16,7 @@ import '../../mvc/model/GetEnquiryByFilterData.dart';
 import '../../mvc/model/SelectCropNamesData.dart';
 import '../../utils/AppColor.dart';
 import '../../utils/Constants.dart';
-import '../HomeScreen/BottomOnePage.dart';
+import '../home_screen/BottomOnePage.dart';
 import '../CropLibrary/BottomThreePage.dart';
 import '../FRM/BottomTwoPage.dart';
 import 'EditBuyCommodityPage.dart';

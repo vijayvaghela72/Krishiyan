@@ -1,7 +1,4 @@
 import 'dart:async';
-
-import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
-// import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dio/dio.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -11,9 +8,10 @@ import 'package:flutter/material.dart' hide CarouselController;
 import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:krishiyan/helper/loading.dart';
 import 'package:krishiyan/mvc/model/GetMandiPriceData.dart';
 import 'package:krishiyan/mvc/model/MarketInsight.dart';
-import 'package:krishiyan/screen/HomeScreen/PriceHistoryPage.dart';
+import 'package:krishiyan/screen/home_screen/PriceHistoryPage.dart';
 import 'package:krishiyan/utils/AppGlobal.dart';
 import 'package:krishiyan/utils/Constants.dart';
 import '../../helper/AlertHelper.dart';
@@ -28,10 +26,9 @@ import '../Enquiry/BottomCenterEnquiryPage.dart';
 import '../CropLibrary/BottomThreePage.dart';
 import '../FRM/BottomTwoPage.dart';
 import '../DailyMarket/DetailNewsPage.dart';
-import 'HomePage.dart';
 import '../AccountSettings/ProfilePage.dart';
 import '../Language/SelectLanguagePage.dart';
-import 'package:intl/intl.dart'; // Required for date formatting
+import 'package:intl/intl.dart';
 
 class BottomOnePage extends StatefulWidget {
   bool aapbarVisibility;
@@ -69,16 +66,20 @@ class _BottomOnePageState extends State<BottomOnePage>
   String? selectedStateItemValue;
   MandiPriceStateData? stateItems;
   MandiPriceStateData? stateMarketItems;
+  // for selected state insite marketing
   String? selectedMarketStateItemValue;
 
   MandiPriceDistrictData? districtItems;
   MandiPriceDistrictData? districtMarketItems;
   String? selectedDistrictItemValue;
+  // for selected district inside markting
   String? selectedMarketDistrictItemValue;
 
   MandiPriceCommodityData? commodityItems;
   MandiPriceCommodityData? commodityMarketItems;
+
   String selectedCommodityItemValue = "";
+  // for selected commodity inside markting
   String selectedMarketCommodityItemValue = "";
 
   List<bottomCategory> iconList = [
@@ -254,10 +255,11 @@ class _BottomOnePageState extends State<BottomOnePage>
 
   Future<void> _fetchMarketDistrictData() async {
     try {
+      showLoading();
       // Replace with your actual API endpoint
       var response = await Dio().get("${baseUrlEnd}"
           "api/mandi/filter?stateName=$selectedMarketStateItemValue");
-
+      stopLoading();
       if (response.statusCode == 200) {
         print("fetchDistrictData response : $response");
         setState(() {
@@ -337,7 +339,10 @@ class _BottomOnePageState extends State<BottomOnePage>
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
     ));
-
+    print('selectedMarketStateItemValue : ${selectedMarketStateItemValue}');
+    print(
+        'selectedMarketDistrictItemValue : ${selectedMarketDistrictItemValue}');
+    print('commodityMarketItems : ${commodityMarketItems}');
     return Scaffold(
       backgroundColor: const Color(0xFFf9f9f9),
       resizeToAvoidBottomInset: false,
@@ -1931,7 +1936,7 @@ class _BottomOnePageState extends State<BottomOnePage>
                             children: [
                               Padding(
                                 padding: const EdgeInsets.only(
-                                    top: 10.0, right: 20.0, left: 20.0),
+                                    top: 10, right: 20, left: 20),
                                 child: Container(
                                   width: MediaQuery.of(context).size.width,
                                   decoration: const BoxDecoration(
@@ -1939,7 +1944,7 @@ class _BottomOnePageState extends State<BottomOnePage>
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(18))),
                                   child: Padding(
-                                    padding: const EdgeInsets.all(20.0),
+                                    padding: const EdgeInsets.all(20),
                                     child: Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
@@ -1982,7 +1987,6 @@ class _BottomOnePageState extends State<BottomOnePage>
                                                           BorderRadius.circular(
                                                               8),
                                                     ),
-                                                    // Add more decoration..
                                                   ),
                                                   hint: Text(
                                                     buildTranslate(
@@ -2013,10 +2017,11 @@ class _BottomOnePageState extends State<BottomOnePage>
                                                     return null;
                                                   },
                                                   onChanged: (value) {
-                                                    setState(() {
-                                                      selectedMarketStateItemValue =
-                                                          value;
-                                                    });
+                                                    selectedMarketStateItemValue =
+                                                        value;
+                                                    selectedMarketDistrictItemValue =
+                                                        null;
+                                                    setState(() {});
                                                     if (selectedMarketStateItemValue !=
                                                         null) {
                                                       print(
@@ -2052,7 +2057,6 @@ class _BottomOnePageState extends State<BottomOnePage>
                                         const SizedBox(
                                           height: 20,
                                         ),
-
                                         // select district
                                         Text(
                                           buildTranslate("selectDistrict")!,
@@ -2180,6 +2184,7 @@ class _BottomOnePageState extends State<BottomOnePage>
                                                       selectedMarketDistrictItemValue =
                                                           value;
                                                     });
+                                                    commodityMarketItems = null;
                                                     print(
                                                         "selectedMarketDistrictItemValue : $selectedMarketDistrictItemValue");
                                                     _fetchMarketCommodityData();
@@ -2212,7 +2217,6 @@ class _BottomOnePageState extends State<BottomOnePage>
                                         const SizedBox(
                                           height: 20,
                                         ),
-
                                         // select commodity
                                         Text(
                                           buildTranslate("selectCommodity")!,
@@ -2371,7 +2375,6 @@ class _BottomOnePageState extends State<BottomOnePage>
                                         const SizedBox(
                                           height: 20,
                                         ),
-
                                         const SizedBox(
                                           height: 30,
                                         ),
@@ -2393,8 +2396,7 @@ class _BottomOnePageState extends State<BottomOnePage>
                                                     const Color(0xFF3FC041),
                                                 shape: RoundedRectangleBorder(
                                                   borderRadius:
-                                                      BorderRadius.circular(
-                                                          12), // <-- Radius
+                                                      BorderRadius.circular(12),
                                                 ),
                                               ),
                                               child: Text(

@@ -5,7 +5,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:krishiyan/screen/Welcome/WelcomePage.dart';
 import 'package:krishiyan/utils/Constants.dart';
-import 'package:krishiyan/screen/HomeScreen/HomePage.dart'; // Import your HomePage
+import 'package:krishiyan/screen/home_screen/home_page.dart'; // Import your HomePage
 import 'helper/SharedPref.dart'; // Import your SharedPref
 import 'localization/AppLocalizations.dart';
 import 'localization/NavigationService.dart';
