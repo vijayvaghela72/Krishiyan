@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:krishiyan/helper/loading.dart';
+
 import '../../localization/AppLocalizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -21,7 +23,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-
   TextEditingController mobileNumberController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
@@ -33,8 +34,7 @@ class _LoginPageState extends State<LoginPage> {
   bool _submitted = false;
 
   @override
-  Widget build(BuildContext context)
-  {
+  Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: AppColor.transparentColor,
     ));
@@ -56,12 +56,12 @@ class _LoginPageState extends State<LoginPage> {
             ),
             Center(
                 child: Text(
-                  buildTranslate("signIn")!,
-                  style: const TextStyle(
-                      color: Color(0xFF3dc33b),
-                      fontSize: 25,
-                      fontFamily: 'poppins-medium'),
-                )),
+              buildTranslate("signIn")!,
+              style: const TextStyle(
+                  color: Color(0xFF3dc33b),
+                  fontSize: 25,
+                  fontFamily: 'poppins-medium'),
+            )),
             const SizedBox(
               height: 30,
             ),
@@ -69,7 +69,8 @@ class _LoginPageState extends State<LoginPage> {
             // mobile number
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-              child: Text(buildTranslate("enterMobileNumber")!,
+              child: Text(
+                buildTranslate("enterMobileNumber")!,
                 style: const TextStyle(
                     fontSize: 15,
                     color: Color(0xFF666666),
@@ -114,7 +115,8 @@ class _LoginPageState extends State<LoginPage> {
                     errorText: _usernameErrorText,
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                      borderSide: BorderSide(color: AppColor.greenColor, width: 0.5),
+                      borderSide:
+                          BorderSide(color: AppColor.greenColor, width: 0.5),
                     )),
                 controller: mobileNumberController,
               ),
@@ -157,9 +159,11 @@ class _LoginPageState extends State<LoginPage> {
                   RegExp regExp = RegExp(pattern);
 
                   if (!regExp.hasMatch(value)) {
-                    AlertHelper.showToast('Password must contain at least 1 uppercase letter, 1 '
-                        'lowercase letter, and be at least 8 characters long', context) ;
-                        return 'Weak Password';
+                    AlertHelper.showToast(
+                        'Password must contain at least 1 uppercase letter, 1 '
+                        'lowercase letter, and be at least 8 characters long',
+                        context);
+                    return 'Weak Password';
                   }
 
                   return null;
@@ -183,7 +187,8 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   focusedBorder: const OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                    borderSide: BorderSide(color: AppColor.greenColor, width: 0.5),
+                    borderSide:
+                        BorderSide(color: AppColor.greenColor, width: 0.5),
                   ),
                   // Here is key idea
                   suffixIcon: IconButton(
@@ -262,7 +267,8 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 child: Text(
                   buildTranslate("login")!,
-                  style: const TextStyle(fontSize: 15, fontFamily: 'poppins-regular'),
+                  style: const TextStyle(
+                      fontSize: 15, fontFamily: 'poppins-regular'),
                 ),
               ),
             ),
@@ -332,7 +338,7 @@ class _LoginPageState extends State<LoginPage> {
       _submitted = false;
     });
     if ((mobileNumberController.text.isEmpty) ||
-        (passwordController.text.isEmpty) ) {
+        (passwordController.text.isEmpty)) {
       setState(() {
         _submitted = false;
       });
@@ -344,7 +350,9 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   _loginApiCall() async {
-    if (mobileNumberController.text.trim().isNotEmpty && passwordController.text.trim().isNotEmpty) {
+    if (mobileNumberController.text.trim().isNotEmpty &&
+        passwordController.text.trim().isNotEmpty) {
+      showLoading();
       setState(() {
         _submitted = false;
       });
@@ -355,51 +363,49 @@ class _LoginPageState extends State<LoginPage> {
       });
 
       Data? user = await LoginController.login(body, context: context);
-
+      stopLoading();
       if (user != null) {
         print("user number : " + mobileNumberController.text.toString());
         print("user token : " + user.token.toString());
 
-        Future.delayed(const Duration(seconds: 1), () {
-          setState(() {
-            _submitted = true;
-          });
-          AlertHelper.showToast("Login successfully.",context);
-
-          SharedPref.savePreferenceValue(isLogin, true);
-
-          SharedPref.savePreferenceValue(name, user.fpoOrganization!.nameOfFpo ?? "");
-          SharedPref.savePreferenceValue(email, user.fpoOrganization!.organizationalEmail ?? "");
-          SharedPref.savePreferenceValue(contactNo, user.fpoOrganization!.contactNumber ?? "");
-          SharedPref.savePreferenceValue(id, user.fpoOrganization!.sId ?? "");
-          SharedPref.savePreferenceValue(token, user.token ?? "");
-
-          SharedPref.savePreferenceValue(typeOfOrganization, user.fpoOrganization!.typeOfOrganization ?? "");
-
-          print("Login Api Contact : ${user.fpoOrganization!.contactNumber}");
-
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    HomePage(
-                      selectedIndex: 0,
-                      typeOfOrganization: "",
-                    )),
-          );
+        setState(() {
+          _submitted = true;
         });
-      }
-      else {
+        AlertHelper.showToast("Login successfully.", context);
+
+        SharedPref.savePreferenceValue(isLogin, true);
+
+        SharedPref.savePreferenceValue(
+            name, user.fpoOrganization!.nameOfFpo ?? "");
+        SharedPref.savePreferenceValue(
+            email, user.fpoOrganization!.organizationalEmail ?? "");
+        SharedPref.savePreferenceValue(
+            contactNo, user.fpoOrganization!.contactNumber ?? "");
+        SharedPref.savePreferenceValue(id, user.fpoOrganization!.sId ?? "");
+        SharedPref.savePreferenceValue(token, user.token ?? "");
+
+        SharedPref.savePreferenceValue(
+            typeOfOrganization, user.fpoOrganization!.typeOfOrganization ?? "");
+
+        print("Login Api Contact : ${user.fpoOrganization!.contactNumber}");
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => HomePage(
+                    selectedIndex: 0,
+                    typeOfOrganization: "",
+                  )),
+        );
+      } else {
         print("Api error");
-        AlertHelper.showToast("Login unsuccessful",context);
+        AlertHelper.showToast("Login unsuccessful", context);
         setState(() {
           _submitted = true;
         });
       }
-    }
-    else{
-      AlertHelper.showToast("Please enter details.",context);
+    } else {
+      AlertHelper.showToast("Please enter details.", context);
     }
   }
-
 }
