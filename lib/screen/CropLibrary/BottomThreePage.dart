@@ -12,7 +12,7 @@ import '../../mvc/model/SelectCropNamesData.dart';
 import '../../utils/Constants.dart';
 import '../Enquiry/BottomCenterEnquiryPage.dart';
 import '../home_screen/home/home.dart';
-import '../FRM/BottomTwoPage.dart';
+import '../FRM/buttom_two_page/BottomTwoPage.dart';
 import '../FRM/CropProtectionPage.dart';
 import 'FaqPage.dart';
 import 'GeneralInformationPage.dart';

@@ -9,33 +9,25 @@ import 'package:krishiyan/mvc/model/FarmerDashboardData.dart';
 import 'package:krishiyan/mvc/model/FrmInsight.dart';
 import 'package:krishiyan/mvc/model/InsightData.dart';
 import 'package:krishiyan/screen/AccountSettings/FarmerEditProfilePage.dart';
-import 'package:krishiyan/screen/Login/LoginPage.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/style.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../helper/AlertHelper.dart';
-import '../../localization/AppLocalizations.dart';
-import '../../mvc/controller/farmerDashboardController.dart';
-import '../../mvc/model/SelectVillagesNameData.dart';
-import '../../utils/AppGlobal.dart';
-import '../../utils/Constants.dart';
-import '../Enquiry/BottomCenterEnquiryPage.dart';
-import '../home_screen/home/home.dart';
-import '../CropLibrary/BottomThreePage.dart';
-import 'CropCultivationPage.dart';
-import 'EditCropCultivationPage.dart';
-import 'FarmerProfile.dart';
-import '../AccountSettings/ProfilePage.dart';
-import '../Language/SelectLanguagePage.dart';
+import '../../../helper/AlertHelper.dart';
+import '../../../localization/AppLocalizations.dart';
+import '../../../mvc/controller/farmerDashboardController.dart';
+import '../../../mvc/model/SelectVillagesNameData.dart';
+import '../../../utils/AppGlobal.dart';
+import '../../../utils/Constants.dart';
+import '../CropCultivationPage.dart';
+import '../EditCropCultivationPage.dart';
+import '../FarmerProfile.dart';
+import '../../Language/SelectLanguagePage.dart';
 import 'package:intl/intl.dart';
 import 'package:krishiyan/mvc/model/GetOtpDetails.dart';
-import '../../mvc/controller/otpController.dart';
+import '../../../mvc/controller/otpController.dart';
 
-import 'package:dio/dio.dart';
-// Ensure you have Flutter imports for AlertHelper and setState usage
-import 'dart:convert'; // For json.encode
-
+// ignore: must_be_immutable
 class BottomTwoPage extends StatefulWidget {
   bool aapbarVisibility;
   String? villageName, typeName;
@@ -59,7 +51,6 @@ class _BottomTwoPageState extends State<BottomTwoPage>
     buildTranslate("insights")!
   ];
 
-  var _bottomNavIndex = 1; //default index of a first screen
   Future<FrmInsight?>? _futureFrminSight;
   List<bottomCategory> iconList = [
     bottomCategory(
@@ -471,22 +462,18 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                                   physics: const NeverScrollableScrollPhysics(),
                                   itemBuilder: (context, index) {
                                     final dealerNo = farmers[index]
-                                            .farmerDetails
-                                            .dealerNumber ??
-                                        "";
+                                        .farmerDetails
+                                        .dealerNumber;
                                     final Name =
-                                        farmers[index].farmerDetails.name ?? "";
+                                        farmers[index].farmerDetails.name;
                                     final Address =
-                                        farmers[index].farmerDetails.village ??
-                                            "";
+                                        farmers[index].farmerDetails.village;
                                     WhatsappNumberData = farmers[index]
-                                            .farmerDetails
-                                            .whatsappNumber ??
-                                        "";
+                                        .farmerDetails
+                                        .whatsappNumber;
                                     final GeoLocationOwnedFarm = farmers[index]
-                                            .farmerDetails
-                                            .geoLocationOwnedFarm ??
-                                        "";
+                                        .farmerDetails
+                                        .geoLocationOwnedFarm;
                                     final TotalOwnedFarm = farmers[index]
                                         .farmerDetails
                                         .totalOwnedFarm
@@ -496,46 +483,35 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                                         .totalLeaseFarm
                                         .toString();
                                     final GeoLocationLeaseFarm = farmers[index]
-                                            .farmerDetails
-                                            .geoLocationLeaseFarm ??
-                                        "";
+                                        .farmerDetails
+                                        .geoLocationLeaseFarm;
                                     final Pincode =
-                                        farmers[index].farmerDetails.pincode ??
-                                            "";
+                                        farmers[index].farmerDetails.pincode;
                                     final State =
-                                        farmers[index].farmerDetails.state ??
-                                            "";
+                                        farmers[index].farmerDetails.state;
                                     final Village =
-                                        farmers[index].farmerDetails.village ??
-                                            "";
+                                        farmers[index].farmerDetails.village;
                                     final District =
-                                        farmers[index].farmerDetails.district ??
-                                            "";
+                                        farmers[index].farmerDetails.district;
                                     final BankName =
-                                        farmers[index].farmerDetails.bankName ??
-                                            "";
+                                        farmers[index].farmerDetails.bankName;
                                     final AccountName = farmers[index]
-                                            .farmerDetails
-                                            .accountName ??
-                                        "";
+                                        .farmerDetails
+                                        .accountName;
                                     final AccountNumber = farmers[index]
-                                            .farmerDetails
-                                            .accountNumber ??
-                                        "";
+                                        .farmerDetails
+                                        .accountNumber;
                                     final IfscCode =
-                                        farmers[index].farmerDetails.ifscCode ??
-                                            "";
+                                        farmers[index].farmerDetails.ifscCode;
                                     final PanNumber =
-                                        farmers[index].farmerDetails.pan ?? "";
+                                        farmers[index].farmerDetails.pan;
                                     final AadhaarNumber = farmers[index]
-                                            .farmerDetails
-                                            .aadhaarNumber ??
-                                        "";
+                                        .farmerDetails
+                                        .aadhaarNumber;
                                     final TypeOfCultivationPractice =
                                         farmers[index]
-                                                .farmerDetails
-                                                .typeOfCultivationPractice ??
-                                            "";
+                                            .farmerDetails
+                                            .typeOfCultivationPractice;
 
                                     final cropDetails =
                                         farmers[index].cropCultivationDetails;
@@ -594,7 +570,7 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                                                                         .start,
                                                                 children: [
                                                                   Text(
-                                                                    Name ?? "",
+                                                                    Name,
                                                                     softWrap:
                                                                         true,
                                                                     style: const TextStyle(
@@ -606,8 +582,7 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                                                                             'poppins-semibold'),
                                                                   ),
                                                                   Text(
-                                                                    Address ??
-                                                                        "",
+                                                                    Address,
                                                                     softWrap:
                                                                         true,
                                                                     style: const TextStyle(
@@ -619,8 +594,7 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                                                                             'poppins-semibold'),
                                                                   ),
                                                                   Text(
-                                                                    WhatsappNumberData ??
-                                                                        "",
+                                                                    WhatsappNumberData,
                                                                     softWrap:
                                                                         true,
                                                                     style: const TextStyle(
@@ -2516,8 +2490,7 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                                                                       left:
                                                                           20.0),
                                                               child: Text(
-                                                                "Farmers($totalFarmers)" ??
-                                                                    "Farmers($totalFarmers)", // Fallback to default if buildTranslate fails
+                                                                "Farmers($totalFarmers)", // Fallback to default if buildTranslate fails
                                                                 softWrap: true,
                                                                 style: const TextStyle(
                                                                     color: Colors
@@ -2646,7 +2619,7 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                                             }
                                             // Get the farmers data
                                             var farmers =
-                                                snapshot.data?.data?.farmers ??
+                                                snapshot.data?.data.farmers ??
                                                     [];
                                             // Sort the farmers based on the selected sorting option
                                             if (selectedSortItemsValue ==
@@ -2654,14 +2627,14 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                                                     "highExpYield")) {
                                               // Sort in descending order by expectedYield (high to low)
                                               farmers.sort((a, b) => b
-                                                  .expectedYield!
-                                                  .compareTo(a.expectedYield!));
+                                                  .expectedYield
+                                                  .compareTo(a.expectedYield));
                                             } else if (selectedSortItemsValue ==
                                                 buildTranslate("lowExpYield")) {
                                               // Sort in ascending order by expectedYield (low to high)
                                               farmers.sort((a, b) => a
-                                                  .expectedYield!
-                                                  .compareTo(b.expectedYield!));
+                                                  .expectedYield
+                                                  .compareTo(b.expectedYield));
                                             }
 
                                             // Pass the fetched FrmInsight data to the table widget
@@ -2669,7 +2642,7 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                                               children: [
                                                 // The header row of the table
                                                 buildTable(context,
-                                                    frminSight!), // The table with farmer data
+                                                    frminSight), // The table with farmer data
                                               ],
                                             );
                                           }
@@ -2681,85 +2654,6 @@ class _BottomTwoPageState extends State<BottomTwoPage>
           ],
         ),
       ),
-      // floatingActionButton: widget.aapbarVisibility
-      //     ? FloatingActionButton(
-      //         backgroundColor: Colors.white.withAlpha(0),
-      //         elevation: 0,
-      //         // also important, removes the shadow
-      //         heroTag: "floatingActionBtn",
-      //         shape: const RoundedRectangleBorder(
-      //           // <= Change BeveledRectangleBorder to RoundedRectangularBorder
-      //           borderRadius: BorderRadius.only(
-      //             topLeft: Radius.circular(30.0),
-      //             topRight: Radius.circular(30.0),
-      //             bottomLeft: Radius.circular(30.0),
-      //             bottomRight: Radius.circular(30.0),
-      //           ),
-      //         ),
-      //         child: InkWell(
-      //           highlightColor: Colors.transparent,
-      //           splashColor: Colors.transparent,
-      //           onTap: () {
-      //             setState(() {
-      //               // typeOfOrganization == "Farmer groups" ?  _onItemTapped(4) : _onItemTapped(2);
-      //               _onItemTapped(4);
-      //             });
-      //           },
-      //           child: Image.asset(
-      //             'assets/images/bottomCenter.png',
-      //             // color: Colors.white,
-      //           ),
-      //         ),
-      //         onPressed: () {},
-      //       )
-      //     : null,
-      // floatingActionButtonLocation: widget.aapbarVisibility
-      //     ? FloatingActionButtonLocation.centerDocked
-      //     : null,
-      // bottomNavigationBar: widget.aapbarVisibility
-      //     ? AnimatedBottomNavigationBar.builder(
-      //         height: 70,
-      //         itemCount: iconList.length,
-      //         tabBuilder: (int index, bool isActive) {
-      //           final color = isActive ? Colors.green : Colors.grey;
-      //           return Column(
-      //             mainAxisSize: MainAxisSize.min,
-      //             mainAxisAlignment: MainAxisAlignment.center,
-      //             children: [
-      //               Image.asset(
-      //                 iconList[index].icon ?? "",
-      //                 color: color,
-      //                 width: 30,
-      //                 height: 30,
-      //               ),
-      //               const SizedBox(height: 5),
-      //               Text(
-      //                 iconList[index].name ?? "",
-      //                 textAlign: TextAlign.center,
-      //                 style: const TextStyle(
-      //                     color: Color(0xFF666666),
-      //                     fontSize: 13,
-      //                     fontFamily: 'poppins-regular'),
-      //               ),
-      //             ],
-      //           );
-      //         },
-      //         // backgroundColor: Colors.white,
-      //         activeIndex: _bottomNavIndex,
-      //         // splashColor: Colors.green,
-      //         splashSpeedInMilliseconds: 300,
-      //         notchSmoothness: NotchSmoothness.defaultEdge,
-      //         gapLocation: GapLocation.center,
-      //         leftCornerRadius: 32,
-      //         rightCornerRadius: 32,
-      //         notchMargin: 7,
-      //         onTap: (index) {
-      //           setState(() {
-      //             _onItemTapped(index);
-      //           });
-      //         },
-      //       )
-      //     : null,
     );
   }
 
@@ -3025,56 +2919,6 @@ class _BottomTwoPageState extends State<BottomTwoPage>
     }
   }
 
-  Future<void> _onItemTapped(int index) async {
-    // String typeOfOrganizationData = await SharedPref.readPreferenceValue(typeOfOrganization, PrefEnum.STRING);
-
-    if (index == 0) {
-      // Navigator.pop(context);
-      var route = ModalRoute.of(context);
-      if (route != null) {
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (BuildContext context) => BottomOnePage(
-                  aapbarVisibility: true,
-                )));
-      }
-    } else if (index == 1) {
-      // Navigator.pop(context);
-      var route = ModalRoute.of(context);
-      if (route != null) {
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (BuildContext context) => BottomTwoPage(
-                  aapbarVisibility: true,
-                )));
-      }
-    } else if (index == 2) {
-      // Navigator.pop(context);
-      var route = ModalRoute.of(context);
-      if (route != null) {
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (BuildContext context) => BottomThreePage(
-                  aapbarVisibility: true,
-                )));
-      }
-    } else if (index == 3) {
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => const ProfilePage()),
-      );
-    } else if (index == 4) {
-      var route = ModalRoute.of(context);
-      if (route != null) {
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (BuildContext context) => BottomCenterEnquiryPage(
-                  aapbarVisibility: true,
-                )));
-      }
-    } else {
-      setState(() {
-        _bottomNavIndex = index;
-      });
-      print("Two : bottomNavIndex : $_bottomNavIndex");
-    }
-  }
-
   void _onSelectedTopDataTapped(int index) {
     setState(() {
       selectedTopData = index;
@@ -3211,7 +3055,7 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    farmer.name ?? 'N/A', // Use 'N/A' if name is null
+                    farmer.name,
                     style: const TextStyle(
                         fontFamily: "poppins-semibold", fontSize: 12.0),
                   ),
@@ -3219,8 +3063,7 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    farmer.whatsappNumber ??
-                        'N/A', // Use 'N/A' if number is null
+                    farmer.whatsappNumber, // Use 'N/A' if number is null
                     style: const TextStyle(
                         fontFamily: "poppins-regular", fontSize: 12.0),
                   ),
@@ -3228,9 +3071,7 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    farmer.expectedYield != null
-                        ? farmer.expectedYield.toString()
-                        : 'N/A', // Use 'N/A' if yield is null
+                    farmer.expectedYield.toString(),
                     style: const TextStyle(
                         fontFamily: "poppins-regular", fontSize: 12.0),
                   ),
