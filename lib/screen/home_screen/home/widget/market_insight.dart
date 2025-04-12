@@ -54,6 +54,9 @@ class _MarketInsightScreenState extends State<MarketInsightScreen> {
                   ),
                   InkWell(
                     onTap: () {
+                      homeProvider!.selectedDistrictMasterList = null;
+                      homeProvider!.selectedPriceMandiCoodityData = null;
+
                       selectState(
                         context,
                         widget.update,
@@ -116,6 +119,7 @@ class _MarketInsightScreenState extends State<MarketInsightScreen> {
                   ),
                   GestureDetector(
                     onTap: () {
+                      homeProvider!.selectedPriceMandiCoodityData = null;
                       selectDistrict(
                         context,
                         widget.update,

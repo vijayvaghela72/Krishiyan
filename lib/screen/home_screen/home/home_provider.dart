@@ -97,7 +97,7 @@ class HomeProvider extends ChangeNotifier {
         selectedPriceMandiCoodityData != null) {
       await getMarketInsideDetail(
         selectedMandiStateList.toString(),
-        selectedPriceMandiCoodityData.toString(),
+        selectedDistrictMasterList.toString(),
         selectedPriceMandiCoodityData.toString(),
       );
       update();
@@ -179,13 +179,30 @@ class HomeProvider extends ChangeNotifier {
 // get mandi price detail
   List<MandiPriceData> mandiPriceData = [];
   Future<void> getMandiPriceDetails(String state, String district,
-      String commodity, String initialDate, String finalDate) async {
-    DateTime initialDateTime = DateTime.parse(initialDate);
-    String initialFormattedDate =
+    String commodity, String initialDate, String finalDate) async {
+    print('initialDate :|${initialDate}|');
+    // print('?state=$state&district=$district&commodity=$commodity');
+    // print(' "&initialDate=&finalDate="');
+    print('finalDate :|${finalDate}|');
+    
+    // Parse date in dd-MM-yyyy format
+    List<String> initialParts = initialDate.split('-');
+    DateTime initialDateTime = DateTime(
+      int.parse(initialParts[2]), // year
+      int.parse(initialParts[1]), // month 
+      int.parse(initialParts[0])  // day
+    );
+    String initialFormattedDate = 
         DateFormat('dd/MM/yyyy').format(initialDateTime);
 
-    DateTime finalDateTime = DateTime.parse(finalDate);
-    String finalFormattedDate = DateFormat('dd/MM/yyyy').format(finalDateTime);
+    List<String> finalParts = finalDate.split('-');
+    DateTime finalDateTime = DateTime(
+      int.parse(finalParts[2]), // year
+      int.parse(finalParts[1]), // month
+      int.parse(finalParts[0])  // day
+    );
+    String finalFormattedDate = 
+        DateFormat('dd/MM/yyyy').format(finalDateTime);
 
     final response = await getAPICall(
         apiUrl: "${baseUrl}mandi/mandiPrices"

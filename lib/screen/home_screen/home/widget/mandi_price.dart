@@ -42,7 +42,7 @@ class _MandiPriceScreenState extends State<MandiPriceScreen> {
         // Format the selected date and display it in the TextFormField
         homeProvider!.fromDateController.text =
             DateFormat('dd-MM-yyyy').format(pickedDate);
-        homeProvider!.dateOfFromValue = " homeProvider!. ${pickedDate}Z";
+        homeProvider!.dateOfFromValue = homeProvider!.fromDateController.text;
 
         // Validate To Date
         if (homeProvider!.toDateController.text.isNotEmpty) {
@@ -79,7 +79,7 @@ class _MandiPriceScreenState extends State<MandiPriceScreen> {
         // Format the selected date and display it in the TextFormField
         homeProvider!.toDateController.text =
             DateFormat('dd-MM-yyyy').format(pickedDate);
-        homeProvider!.dateOfToValue = "${pickedDate}Z";
+        homeProvider!.dateOfToValue = homeProvider!.toDateController.text;
 
         // Validate From Date
         if (homeProvider!.fromDateController.text.isNotEmpty) {
@@ -100,6 +100,7 @@ class _MandiPriceScreenState extends State<MandiPriceScreen> {
   // for selected commodity inside markting
 
   void getValue() async {
+    print('Data : 1');
     if (homeProvider!.selectedMandiStateList != null &&
         homeProvider!.selectedDistrictMasterList != null &&
         homeProvider!.selectedPriceMandiCoodityData != null &&
@@ -153,6 +154,8 @@ class _MandiPriceScreenState extends State<MandiPriceScreen> {
                   ),
                   InkWell(
                     onTap: () {
+                      homeProvider!.selectedDistrictMasterList = null;
+                      homeProvider!.selectedPriceMandiCoodityData = null;
                       selectState(
                         context,
                         widget.update,
@@ -215,6 +218,7 @@ class _MandiPriceScreenState extends State<MandiPriceScreen> {
                   ),
                   GestureDetector(
                     onTap: () {
+                      homeProvider!.selectedPriceMandiCoodityData = null;
                       selectDistrict(
                         context,
                         widget.update,
@@ -550,7 +554,6 @@ class _MandiPriceScreenState extends State<MandiPriceScreen> {
                           ))
                       .toList(),
                   onChanged: (value) {
-                    //Do something when selected item is changed.
                     setState(() {
                       homeProvider!.selectedSortItemsValue = value.toString();
                     });
@@ -561,9 +564,6 @@ class _MandiPriceScreenState extends State<MandiPriceScreen> {
                     homeProvider!.selectedSortItemsValue = value.toString();
                     print({homeProvider!.selectedSortItemsValue});
                   },
-                  // customButton: Align(
-                  //     alignment: Alignment.centerRight,
-                  //     child: Image.asset('assets/images/sortBy.png', height: 20, width: 20,)),
                   buttonStyleData: const ButtonStyleData(
                     padding: EdgeInsets.only(right: 10),
                   ),
@@ -572,14 +572,6 @@ class _MandiPriceScreenState extends State<MandiPriceScreen> {
                     iconSize: 18,
                     iconEnabledColor: Colors.black,
                   ),
-                  // iconStyleData: IconStyleData(
-                  //   openMenuIcon: Image.asset('assets/images/sortBy.png', height: 20, width: 20,),
-                  //   // icon: Icon(
-                  //   //   Icons.arrow_drop_down,
-                  //   //   color: Colors.black45,
-                  //   // ),
-                  //   iconSize: 0,
-                  // ),
                   menuItemStyleData: const MenuItemStyleData(
                     padding: EdgeInsets.symmetric(horizontal: 16),
                   ),
