@@ -2,7 +2,6 @@ import '../../PriceHistoryPage.dart';
 import 'package:flutter/material.dart';
 import 'package:krishiyan/helper/provider.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:krishiyan/mvc/model/MarketInsight.dart';
 import 'package:krishiyan/localization/AppLocalizations.dart';
 
 // ignore: must_be_immutable
@@ -405,222 +404,201 @@ class _MarketInsightScreenState extends State<MarketInsightScreen> {
         const SizedBox(
           height: 15,
         ),
-        homeProvider!.futureMarketInsight.toString().isEmpty
+        homeProvider!.marketInsightList.isEmpty
             ? Center(child: Text(buildTranslate("noDataAvailable")!))
-            : FutureBuilder<List<MarketInsight>>(
-                future: homeProvider!.futureMarketInsight,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
-                  } else if (snapshot.hasData) {
-                    final List<MarketInsight> marketInsight = snapshot.data!;
-                    return ListView.builder(
-                      itemCount: marketInsight.length,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.only(
-                            top: 10.0,
-                            right: 20.0,
-                            left: 20.0,
+            : ListView.builder(
+                itemCount: homeProvider!.marketInsightList.length,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.only(
+                      top: 10.0,
+                      right: 20.0,
+                      left: 20.0,
+                    ),
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      decoration: const BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(Radius.circular(18))),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(
+                            height: 10,
                           ),
-                          child: Container(
-                            width: MediaQuery.of(context).size.width,
-                            decoration: const BoxDecoration(
-                                color: Colors.white,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(18))),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(left: 15.0, right: 15.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 15.0, right: 15.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            marketInsight[index].state ??
-                                                "Not Available",
-                                            softWrap: true,
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 12,
-                                                fontFamily: 'poppins-semibold'),
-                                          ),
-                                          Container(
-                                            width:
-                                                80, // Set the specific width here
-                                            child: Text(
-                                              marketInsight[index].market ?? "",
-                                              softWrap: true,
-                                              style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 12,
-                                                fontFamily: 'poppins-semibold',
-                                              ),
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                      Text(
-                                        marketInsight[index].commodity ??
-                                            "Not Available",
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      homeProvider!
+                                              .marketInsightList[index].state ??
+                                          "Not Available",
+                                      softWrap: true,
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 12,
+                                          fontFamily: 'poppins-semibold'),
+                                    ),
+                                    Container(
+                                      width: 80, // Set the specific width here
+                                      child: Text(
+                                        homeProvider!.marketInsightList[index]
+                                                .market ??
+                                            "",
                                         softWrap: true,
                                         style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 12,
-                                            fontFamily: 'poppins-semibold'),
-                                      ),
-                                      Column(
-                                        children: [
-                                          Text(
-                                            "Today",
-                                            softWrap: true,
-                                            style: TextStyle(
-                                                color: Colors.green,
-                                                fontSize: 12,
-                                                fontFamily: 'poppins-semibold'),
-                                          ),
-                                          Text(
-                                            marketInsight[index]
-                                                .todaysPrice
-                                                .toString(),
-                                            softWrap: true,
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 12,
-                                                fontFamily: 'poppins-semibold'),
-                                          ),
-                                          Text(
-                                            marketInsight[index]
-                                                .todaysPriceChange
-                                                .toString(),
-                                            softWrap: true,
-                                            style: TextStyle(
-                                                color: Colors.green,
-                                                fontSize: 12,
-                                                fontFamily: 'poppins-semibold'),
-                                          ),
-                                        ],
-                                      ),
-                                      Column(
-                                        children: [
-                                          Text(
-                                            "Yesterday",
-                                            softWrap: true,
-                                            style: TextStyle(
-                                                color: Colors.red,
-                                                fontSize: 12,
-                                                fontFamily: 'poppins-semibold'),
-                                          ),
-                                          Text(
-                                            marketInsight[index]
-                                                .yesterdaysPrice
-                                                .toString(),
-                                            softWrap: true,
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 12,
-                                                fontFamily: 'poppins-semibold'),
-                                          ),
-                                          Text(
-                                            marketInsight[index]
-                                                .yesterdaysPriceChange
-                                                .toString(),
-                                            softWrap: true,
-                                            style: TextStyle(
-                                                color: Colors.red,
-                                                fontSize: 12,
-                                                fontFamily: 'poppins-semibold'),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 15,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 15.0, right: 15.0, top: 15.0),
-                                  child: TextButton(
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              PriceHistoryPage(
-                                            commodityId: marketInsight[index]
-                                                .primaryKey, // Pass the primary key here
-                                          ),
+                                          color: Colors.black,
+                                          fontSize: 12,
+                                          fontFamily: 'poppins-semibold',
                                         ),
-                                      );
-                                    },
-                                    style: TextButton.styleFrom(
-                                      foregroundColor: const Color(
-                                          0xFF959595), // Keep the text color the same
-                                      overlayColor: Colors
-                                          .transparent, // Remove the hover effect
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                Text(
+                                  homeProvider!
+                                          .marketInsightList[index].commodity ??
+                                      "Not Available",
+                                  softWrap: true,
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 12,
+                                      fontFamily: 'poppins-semibold'),
+                                ),
+                                Column(
+                                  children: [
+                                    Text(
+                                      "Today",
+                                      softWrap: true,
+                                      style: TextStyle(
+                                          color: Colors.green,
+                                          fontSize: 12,
+                                          fontFamily: 'poppins-semibold'),
                                     ),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
-                                      children: [
-                                        Image.asset(
-                                          "assets/images/right_arrow.png",
-                                          width: 10,
-                                          height: 10,
-                                        ),
-                                        const SizedBox(
-                                          width: 5,
-                                        ),
-                                        Text(
-                                          "View More",
-                                          softWrap: true,
-                                          style: TextStyle(
-                                              color: Color(0xFF959595),
-                                              fontSize: 11,
-                                              fontFamily: 'poppins-regular'),
-                                        ),
-                                      ],
+                                    Text(
+                                      homeProvider!
+                                          .marketInsightList[index].todaysPrice
+                                          .toString(),
+                                      softWrap: true,
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 12,
+                                          fontFamily: 'poppins-semibold'),
                                     ),
-                                  ),
+                                    Text(
+                                      homeProvider!.marketInsightList[index]
+                                          .todaysPriceChange
+                                          .toString(),
+                                      softWrap: true,
+                                      style: TextStyle(
+                                          color: Colors.green,
+                                          fontSize: 12,
+                                          fontFamily: 'poppins-semibold'),
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(
-                                  height: 15,
+                                Column(
+                                  children: [
+                                    Text(
+                                      "Yesterday",
+                                      softWrap: true,
+                                      style: TextStyle(
+                                          color: Colors.red,
+                                          fontSize: 12,
+                                          fontFamily: 'poppins-semibold'),
+                                    ),
+                                    Text(
+                                      homeProvider!.marketInsightList[index]
+                                          .yesterdaysPrice
+                                          .toString(),
+                                      softWrap: true,
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 12,
+                                          fontFamily: 'poppins-semibold'),
+                                    ),
+                                    Text(
+                                      homeProvider!.marketInsightList[index]
+                                          .yesterdaysPriceChange
+                                          .toString(),
+                                      softWrap: true,
+                                      style: TextStyle(
+                                          color: Colors.red,
+                                          fontSize: 12,
+                                          fontFamily: 'poppins-semibold'),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
                           ),
-                        );
-                      },
-                    );
-                  } else {
-                    return Center(
-                        child: Padding(
-                      padding: EdgeInsets.only(bottom: 40.0),
-                      child: Text(buildTranslate("noDataAvailable")!),
-                    ));
-                  }
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                left: 15.0, right: 15.0, top: 15.0),
+                            child: TextButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => PriceHistoryPage(
+                                      commodityId: homeProvider!
+                                          .marketInsightList[index]
+                                          .primaryKey, // Pass the primary key here
+                                    ),
+                                  ),
+                                );
+                              },
+                              style: TextButton.styleFrom(
+                                foregroundColor: const Color(
+                                    0xFF959595), // Keep the text color the same
+                                overlayColor: Colors
+                                    .transparent, // Remove the hover effect
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Image.asset(
+                                    "assets/images/right_arrow.png",
+                                    width: 10,
+                                    height: 10,
+                                  ),
+                                  const SizedBox(
+                                    width: 5,
+                                  ),
+                                  Text(
+                                    "View More",
+                                    softWrap: true,
+                                    style: TextStyle(
+                                        color: Color(0xFF959595),
+                                        fontSize: 11,
+                                        fontFamily: 'poppins-regular'),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
                 },
               ),
         const SizedBox(

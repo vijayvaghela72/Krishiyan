@@ -1,18 +1,18 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:krishiyan/helper/loading.dart';
 import 'package:krishiyan/helper/provider.dart';
 import 'package:krishiyan/helper/snackbar.dart';
 import 'package:krishiyan/utils/Constants.dart';
-import 'package:krishiyan/helper/AlertHelper.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:krishiyan/mvc/model/MarketInsight.dart';
+import '../../../mvc/model/GetMandiPriceData.dart';
 import '../../../mvc/model/MandiPriceDistrictData.dart';
 import 'package:krishiyan/mvc/model/DailyNewsDetails.dart';
 import 'package:krishiyan/localization/AppLocalizations.dart';
 import 'package:krishiyan/mvc/model/MandiPriceCommodityData.dart';
 import 'package:krishiyan/screen/home_screen/home/home_model.dart';
-import 'package:krishiyan/mvc/controller/homeDashboardController.dart';
 
 class HomeProvider extends ChangeNotifier {
   // common data
@@ -74,8 +74,6 @@ class HomeProvider extends ChangeNotifier {
   MandiPriceDistrictData? districtMarketItems;
 
   String selectedMarketCommodityItemValue = "";
-
-  Future<List<MarketInsight>>? futureMarketInsight;
 
   String? selectedStateItemValue;
   String? selectedDistrictItemValue;
@@ -159,23 +157,18 @@ class HomeProvider extends ChangeNotifier {
     }
   }
 
-  void getMarketInsight(Function update, BuildContext context) {
-    print("object");
+  void getMarketInsight(Function update, BuildContext context) async {
     if (homeProvider!.selectedMarketStateItemValue.toString().isNotEmpty &&
         selectedMarketDistrictItemValue.toString().isNotEmpty &&
         selectedMarketCommodityItemValue.toString().isNotEmpty) {
-      futureMarketInsight = HomeDashboardController.getMarketInsightDetails(
-          selectedMarketStateItemValue.toString(),
-          selectedMarketDistrictItemValue.toString(),
-          selectedMarketCommodityItemValue.toString());
-
-      futureMarketInsight = futureMarketInsight;
-      print("DATA");
-      print(homeProvider!.futureMarketInsight);
-
+      await getMarketInsideDetail(
+        selectedMarketStateItemValue.toString(),
+        selectedMarketDistrictItemValue.toString(),
+        selectedMarketCommodityItemValue.toString(),
+      );
       update();
     } else {
-      AlertHelper.showToast("Please enter details.", context);
+      setSnackbar("Please enter details.");
     }
   }
 
@@ -203,5 +196,54 @@ class HomeProvider extends ChangeNotifier {
     }
   }
 
+//*************************************************************************** */
+//*************************************************************************** */
+  List<MarketInsight> marketInsightList = [];
+// market inside detail
+  getMarketInsideDetail(String state, String district, String commodity) async {
+    final response = await getAPICall(
+        apiUrl: "${baseUrl}appData/price"
+            "?state=$state&district=$district&commodity=$commodity");
+
+    if (response.statusCode == 200) {
+      print("200");
+      final List<dynamic> jsonResponse = json.decode(response.body);
+      print("Get Market Price Details: $jsonResponse");
+      marketInsightList =
+          jsonResponse.map((item) => MarketInsight.fromJson(item)).toList();
+    } else {
+      marketInsightList = [];
+      setSnackbar('Failed to load data');
+    }
+  }
+
+//*************************************************************************** */
+// get mandi price detail
+  List<MandiPriceData> mandiPriceData = [];
+  Future<void> getMandiPriceDetails(String state, String district,
+      String commodity, String initialDate, String finalDate) async {
+    DateTime initialDateTime = DateTime.parse(initialDate);
+    String initialFormattedDate =
+        DateFormat('dd/MM/yyyy').format(initialDateTime);
+
+    DateTime finalDateTime = DateTime.parse(finalDate);
+    String finalFormattedDate = DateFormat('dd/MM/yyyy').format(finalDateTime);
+
+    final response = await getAPICall(
+        apiUrl: "${baseUrl}mandi/mandiPrices"
+            "?state=$state&district=$district&commodity=$commodity"
+            "&initialDate=$initialFormattedDate&finalDate=$finalFormattedDate");
+
+    if (response.statusCode == 200) {
+      final jsonResponse = json.decode(response.body);
+      final List<dynamic> data = jsonResponse['data'];
+      print("Get Mandi Price Details : $data");
+      mandiPriceData =
+          data.map((item) => MandiPriceData.fromJson(item)).toList();
+    } else {
+      mandiPriceData = [];
+      setSnackbar('Failed to load data');
+    }
+  }
 //*************************************************************************** */
 }

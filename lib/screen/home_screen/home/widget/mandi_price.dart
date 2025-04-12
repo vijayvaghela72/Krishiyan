@@ -7,11 +7,9 @@ import 'package:krishiyan/utils/Constants.dart';
 import 'package:krishiyan/helper/AlertHelper.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:krishiyan/mvc/model/GetMandiPriceData.dart';
 import 'package:krishiyan/localization/AppLocalizations.dart';
 import 'package:krishiyan/mvc/model/MandiPriceDistrictData.dart';
 import 'package:krishiyan/mvc/model/MandiPriceCommodityData.dart';
-import 'package:krishiyan/mvc/controller/homeDashboardController.dart';
 
 // ignore: must_be_immutable
 class MandiPriceScreen extends StatefulWidget {
@@ -103,26 +101,22 @@ class _MandiPriceScreenState extends State<MandiPriceScreen> {
 
   // for selected commodity inside markting
 
-  Future<List<MandiPriceData>>? futureMandiPrice;
-  void getValue() {
+  void getValue() async {
     if (homeProvider!.selectedStateItemValue.toString().isNotEmpty &&
         homeProvider!.selectedDistrictItemValue.toString().isNotEmpty &&
         homeProvider!.selectedCommodityItemValue.toString().isNotEmpty &&
         homeProvider!.dateOfFromValue.isNotEmpty &&
         homeProvider!.dateOfToValue.isNotEmpty) {
-      futureMandiPrice = HomeDashboardController.getMandiPriceDetails(
+      await homeProvider!.getMandiPriceDetails(
           homeProvider!.selectedStateItemValue.toString(),
           homeProvider!.selectedDistrictItemValue.toString(),
           homeProvider!.selectedCommodityItemValue.toString(),
           homeProvider!.dateOfFromValue,
           homeProvider!.dateOfToValue);
 
-      setState(() {
-        futureMandiPrice = futureMandiPrice;
-        print(futureMandiPrice);
-      });
+      setState(() {});
     } else {
-      AlertHelper.showToast("Please enter details.", context);
+      setSnackbar("Please enter details.");
     }
   }
 
@@ -807,300 +801,255 @@ class _MandiPriceScreenState extends State<MandiPriceScreen> {
             ],
           ),
         ),
-        futureMandiPrice.toString().isEmpty
+        homeProvider!.mandiPriceData.isEmpty
             ? Center(child: Text(buildTranslate("noDataAvailable")!))
-            : FutureBuilder<List<MandiPriceData>>(
-                future: futureMandiPrice,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
-                    // return Center(child: Text('Error: ${snapshot.error}'));
-                    return Center(
-                        child: Padding(
-                            padding: EdgeInsets.only(bottom: 40.0),
-                            child: Text(
-                              buildTranslate("noDataAvailable")!,
-                            )));
-                  } else if (snapshot.hasData) {
-                    final List<MandiPriceData> mandiPrice = snapshot.data!;
-                    // Sort the data based on selected criteria
-                    // Print the unsorted data for debugging
-                    print(
-                        "Before sorting: ${mandiPrice.map((e) => e.modalPrice)}");
-                    print(homeProvider!.selectedSortItemsValue.trim());
+            : ListView.builder(
+                itemCount: homeProvider!.mandiPriceData.length,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemBuilder: (context, index) {
+                  // Sort the data based on selected criteria
+                  if (homeProvider!.selectedSortItemsValue.trim() ==
+                      'Low To High Price') {
+                    homeProvider!.mandiPriceData.sort((a, b) {
+                      final priceA = a.modalPrice ?? double.infinity;
+                      final priceB = b.modalPrice ?? double.infinity;
+                      return priceA.compareTo(priceB);
+                    });
+                  } else {
+                    homeProvider!.mandiPriceData.sort((a, b) {
+                      final priceA = a.modalPrice ?? -double.infinity;
+                      final priceB = b.modalPrice ?? -double.infinity;
+                      return priceB.compareTo(priceA);
+                    });
+                  }
 
-                    if (homeProvider!.selectedSortItemsValue.trim() ==
-                        'Low To High Price') {
-                      print(homeProvider!.selectedSortItemsValue);
-                      mandiPrice.sort((a, b) {
-                        final priceA = a.modalPrice ?? double.infinity;
-                        final priceB = b.modalPrice ?? double.infinity;
-                        print('aaaaaaaaaaaa');
-                        print(priceA.compareTo(priceB));
-                        return priceA.compareTo(priceB);
-                      });
-                    } else {
-                      mandiPrice.sort((a, b) {
-                        final priceA = a.modalPrice ?? -double.infinity;
-                        final priceB = b.modalPrice ?? -double.infinity;
-                        return priceB.compareTo(priceA);
-                      });
-                    }
-                    // Print the sorted data for debugging
-                    print(
-                        "After sorting: ${mandiPrice.map((e) => e.modalPrice)}");
-                    return ListView.builder(
-                      itemCount: mandiPrice.length,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.only(
-                            top: 10.0,
-                            right: 20.0,
-                            left: 20.0,
+                  return Padding(
+                    padding: const EdgeInsets.only(
+                      top: 10.0,
+                      right: 20.0,
+                      left: 20.0,
+                    ),
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      decoration: const BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(Radius.circular(18))),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(
+                            height: 10,
                           ),
-                          child: Container(
-                            width: MediaQuery.of(context).size.width,
-                            decoration: const BoxDecoration(
-                                color: Colors.white,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(18))),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                left: 15.0, right: 15.0, top: 15.0),
+                            child: Row(
                               children: [
-                                const SizedBox(
-                                  height: 10,
+                                Row(
+                                  children: [
+                                    Image.asset(
+                                      "assets/images/location.png",
+                                      width: 15,
+                                      height: 15,
+                                    ),
+                                    const SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text(
+                                      homeProvider!
+                                              .mandiPriceData[index].market ??
+                                          "",
+                                      softWrap: true,
+                                      style: TextStyle(
+                                          color: Color(0xFF959595),
+                                          fontSize: 11,
+                                          fontFamily: 'poppins-semibold'),
+                                    ),
+                                  ],
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 15.0, right: 15.0, top: 15.0),
+                                Expanded(
                                   child: Row(
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Image.asset(
-                                            "assets/images/location.png",
-                                            width: 15,
-                                            height: 15,
-                                          ),
-                                          const SizedBox(
-                                            width: 5,
-                                          ),
-                                          Text(
-                                            mandiPrice[index].market ?? "",
-                                            softWrap: true,
-                                            style: TextStyle(
-                                                color: Color(0xFF959595),
-                                                fontSize: 11,
-                                                fontFamily: 'poppins-semibold'),
-                                          ),
-                                        ],
-                                      ),
-                                      Expanded(
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.end,
-                                          children: [
-                                            Image.asset(
-                                              "assets/images/calendar.png",
-                                              width: 15,
-                                              height: 15,
-                                            ),
-                                            const SizedBox(
-                                              width: 5,
-                                            ),
-                                            Text(
-                                              mandiPrice[index].arrivalDate ??
-                                                  "",
-                                              softWrap: true,
-                                              style: TextStyle(
-                                                  color: Color(0xFF959595),
-                                                  fontSize: 11,
-                                                  fontFamily:
-                                                      'poppins-semibold'),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                    left: 15.0,
-                                    right: 15.0,
-                                  ),
-                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
                                       Image.asset(
-                                        "assets/images/mandiBG.png",
+                                        "assets/images/calendar.png",
+                                        width: 15,
+                                        height: 15,
                                       ),
                                       const SizedBox(
                                         width: 5,
                                       ),
                                       Text(
-                                        mandiPrice[index].commodity ?? "",
+                                        homeProvider!.mandiPriceData[index]
+                                                .arrivalDate ??
+                                            "",
                                         softWrap: true,
                                         style: TextStyle(
-                                            color: Color(0xFF808080),
-                                            fontSize: 14,
+                                            color: Color(0xFF959595),
+                                            fontSize: 11,
                                             fontFamily: 'poppins-semibold'),
                                       ),
                                     ],
                                   ),
                                 ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 15.0,
+                              right: 15.0,
+                            ),
+                            child: Row(
+                              children: [
+                                Image.asset(
+                                  "assets/images/mandiBG.png",
+                                ),
                                 const SizedBox(
-                                  height: 15,
+                                  width: 5,
                                 ),
-                                const Center(
-                                  child: Text(
-                                    "Price Per Quintal",
-                                    softWrap: true,
-                                    style: TextStyle(
-                                        color: Color(0xFF808080),
-                                        fontSize: 17,
-                                        fontFamily: 'poppins-semibold'),
-                                  ),
+                                Text(
+                                  homeProvider!
+                                          .mandiPriceData[index].commodity ??
+                                      "",
+                                  softWrap: true,
+                                  style: TextStyle(
+                                      color: Color(0xFF808080),
+                                      fontSize: 14,
+                                      fontFamily: 'poppins-semibold'),
                                 ),
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                                Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  height: 50,
-                                  decoration: const BoxDecoration(
-                                      color: Color(0xFF116B38),
-                                      borderRadius: BorderRadius.only(
-                                          bottomLeft: Radius.circular(10),
-                                          bottomRight: Radius.circular(10))),
-                                  child: Row(
+                              ],
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          const Center(
+                            child: Text(
+                              "Price Per Quintal",
+                              softWrap: true,
+                              style: TextStyle(
+                                  color: Color(0xFF808080),
+                                  fontSize: 17,
+                                  fontFamily: 'poppins-semibold'),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Container(
+                            width: MediaQuery.of(context).size.width,
+                            height: 50,
+                            decoration: const BoxDecoration(
+                                color: Color(0xFF116B38),
+                                borderRadius: BorderRadius.only(
+                                    bottomLeft: Radius.circular(10),
+                                    bottomRight: Radius.circular(10))),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
                                     children: [
-                                      Expanded(
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              "Min ₹:",
-                                              textAlign: TextAlign.center,
-                                              softWrap: true,
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 12,
-                                                  fontFamily:
-                                                      'poppins-regular'),
-                                            ),
-                                            Text(
-                                              mandiPrice[index]
-                                                  .minPrice
-                                                  .toString(),
-                                              textAlign: TextAlign.center,
-                                              softWrap: true,
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 12,
-                                                  fontFamily:
-                                                      'poppins-regular'),
-                                            ),
-                                          ],
-                                        ),
+                                      Text(
+                                        "Min ₹:",
+                                        textAlign: TextAlign.center,
+                                        softWrap: true,
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12,
+                                            fontFamily: 'poppins-regular'),
                                       ),
-                                      Expanded(
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              "Average ₹:",
-                                              textAlign: TextAlign.center,
-                                              softWrap: true,
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 12,
-                                                  fontFamily:
-                                                      'poppins-regular'),
-                                            ),
-                                            Text(
-                                              mandiPrice[index]
-                                                  .modalPrice
-                                                  .toString(),
-                                              textAlign: TextAlign.center,
-                                              softWrap: true,
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 12,
-                                                  fontFamily:
-                                                      'poppins-regular'),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              "Max ₹:",
-                                              textAlign: TextAlign.center,
-                                              softWrap: true,
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 12,
-                                                  fontFamily:
-                                                      'poppins-regular'),
-                                            ),
-                                            Text(
-                                              mandiPrice[index]
-                                                  .maxPrice
-                                                  .toString(),
-                                              textAlign: TextAlign.center,
-                                              softWrap: true,
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 12,
-                                                  fontFamily:
-                                                      'poppins-regular'),
-                                            ),
-                                          ],
-                                        ),
+                                      Text(
+                                        homeProvider!
+                                            .mandiPriceData[index].minPrice
+                                            .toString(),
+                                        textAlign: TextAlign.center,
+                                        softWrap: true,
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12,
+                                            fontFamily: 'poppins-regular'),
                                       ),
                                     ],
                                   ),
                                 ),
-                                // const SizedBox(
-                                //   height: 20,
-                                // ),
+                                Expanded(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "Average ₹:",
+                                        textAlign: TextAlign.center,
+                                        softWrap: true,
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12,
+                                            fontFamily: 'poppins-regular'),
+                                      ),
+                                      Text(
+                                        homeProvider!
+                                            .mandiPriceData[index].modalPrice
+                                            .toString(),
+                                        textAlign: TextAlign.center,
+                                        softWrap: true,
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12,
+                                            fontFamily: 'poppins-regular'),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "Max ₹:",
+                                        textAlign: TextAlign.center,
+                                        softWrap: true,
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12,
+                                            fontFamily: 'poppins-regular'),
+                                      ),
+                                      Text(
+                                        homeProvider!
+                                            .mandiPriceData[index].maxPrice
+                                            .toString(),
+                                        textAlign: TextAlign.center,
+                                        softWrap: true,
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12,
+                                            fontFamily: 'poppins-regular'),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ],
                             ),
                           ),
-                        );
-                      },
-                    );
-                  } else {
-                    return Center(
-                        child: Padding(
-                      padding: EdgeInsets.only(bottom: 40.0),
-                      child: Text(buildTranslate("noDataAvailable")!),
-                    ));
-                  }
+                        ],
+                      ),
+                    ),
+                  );
                 },
               ),
-        const SizedBox(
+        SizedBox(
           height: 60,
         ),
       ],
