@@ -1,13 +1,15 @@
-import 'package:dio/dio.dart';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:krishiyan/helper/loading.dart';
 import 'package:krishiyan/helper/provider.dart';
+import 'package:krishiyan/helper/snackbar.dart';
+import 'package:krishiyan/mvc/model/DailyNewsDetails.dart';
 import 'package:krishiyan/utils/Constants.dart';
 import 'package:krishiyan/helper/AlertHelper.dart';
+import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:krishiyan/mvc/model/MarketInsight.dart';
 import '../../../mvc/model/MandiPriceDistrictData.dart';
 import 'package:krishiyan/localization/AppLocalizations.dart';
-import 'package:krishiyan/mvc/model/MandiPriceStateData.dart';
 import 'package:krishiyan/mvc/model/MandiPriceCommodityData.dart';
 import 'package:krishiyan/screen/home_screen/home/home_model.dart';
 import 'package:krishiyan/mvc/controller/homeDashboardController.dart';
@@ -60,8 +62,6 @@ class HomeProvider extends ChangeNotifier {
     buildTranslate('highToLowPrice')!,
   ];
 
-  MandiPriceStateData? stateMarketItems;
-
   // for selected state insite marketing
   String? selectedMarketStateItemValue;
 
@@ -78,17 +78,40 @@ class HomeProvider extends ChangeNotifier {
 
   Future<List<MarketInsight>>? futureMarketInsight;
 
+//*************************************************************************** */
+
+// News
+  List<NewsData> newsListData = [];
+
+  Future<void> getNewsDetails() async {
+    var response = await getAPICall(apiUrl: NEWS_LIST);
+
+    if (response.statusCode == 200) {
+      final jsonResponse = json.decode(response.body);
+      final List<dynamic> data = jsonResponse['data'];
+      print("News response : ${data}");
+      newsListData = data.map((item) => NewsData.fromJson(item)).toList();
+    } else {
+      newsListData = [];
+      setSnackbar('Fail to load news data');
+    }
+  }
+
+//*************************************************************************** */
+
   Future<void> fetchMarketDistrictData(Function update) async {
     try {
       showLoading();
       // Replace with your actual API endpoint
-      var response = await Dio().get("${baseUrlEnd}"
-          "api/mandi/filter?stateName=${homeProvider!.selectedMarketStateItemValue}");
+      var response = await getAPICall(
+          apiUrl: "${baseUrlEnd}"
+              "api/mandi/filter?stateName=${homeProvider!.selectedMarketStateItemValue}");
       stopLoading();
       if (response.statusCode == 200) {
+        var data = jsonDecode(response.body.toString());
+
         print("fetchDistrictData response : $response");
-        homeProvider!.districtMarketItems =
-            MandiPriceDistrictData.fromJson(response.data);
+        districtMarketItems = MandiPriceDistrictData.fromJson(data);
         update();
       } else {
         throw Exception('Failed to load state');
@@ -100,15 +123,16 @@ class HomeProvider extends ChangeNotifier {
 
   Future<void> fetchMarketCommodityData(Function update) async {
     try {
-      // Replace with your actual API endpoint
-      var response = await Dio().get("${baseUrlEnd}"
-          "api/mandi/filter?stateName=${homeProvider!.selectedMarketStateItemValue}&districtName=${homeProvider!.selectedMarketDistrictItemValue}");
+      var response = await getAPICall(
+          apiUrl: "${baseUrlEnd}"
+              "api/mandi/filter?stateName=${homeProvider!.selectedMarketStateItemValue}&districtName=${homeProvider!.selectedMarketDistrictItemValue}");
 
       if (response.statusCode == 200) {
+        var data = jsonDecode(response.body.toString());
+
         print("fetchCommodityData response : $response");
 
-        homeProvider!.commodityMarketItems =
-            MandiPriceCommodityData.fromJson(response.data);
+        commodityMarketItems = MandiPriceCommodityData.fromJson(data);
         update();
       } else {
         throw Exception('Failed to load state');
@@ -121,15 +145,14 @@ class HomeProvider extends ChangeNotifier {
   void getMarketInsight(Function update, BuildContext context) {
     print("object");
     if (homeProvider!.selectedMarketStateItemValue.toString().isNotEmpty &&
-        homeProvider!.selectedMarketDistrictItemValue.toString().isNotEmpty &&
-        homeProvider!.selectedMarketCommodityItemValue.toString().isNotEmpty) {
-      homeProvider!.futureMarketInsight =
-          HomeDashboardController.getMarketInsightDetails(
-              homeProvider!.selectedMarketStateItemValue.toString(),
-              homeProvider!.selectedMarketDistrictItemValue.toString(),
-              homeProvider!.selectedMarketCommodityItemValue.toString());
+        selectedMarketDistrictItemValue.toString().isNotEmpty &&
+        selectedMarketCommodityItemValue.toString().isNotEmpty) {
+      futureMarketInsight = HomeDashboardController.getMarketInsightDetails(
+          selectedMarketStateItemValue.toString(),
+          selectedMarketDistrictItemValue.toString(),
+          selectedMarketCommodityItemValue.toString());
 
-      homeProvider!.futureMarketInsight = homeProvider!.futureMarketInsight;
+      futureMarketInsight = futureMarketInsight;
       print("DATA");
       print(homeProvider!.futureMarketInsight);
 
@@ -138,4 +161,29 @@ class HomeProvider extends ChangeNotifier {
       AlertHelper.showToast("Please enter details.", context);
     }
   }
+
+//*************************************************************************** */
+  // state listing
+  List<String> mandiStateList = [];
+  Future<void> fetchStateData(Function update) async {
+    try {
+      var response = await getAPICall(apiUrl: MANDI_PRICE_STATE);
+      // Replace with your actual API endpoint
+
+      if (response.statusCode == 200) {
+        var jsonData = jsonDecode(response.body);
+        print("fetchStateData response : $response");
+        mandiStateList = List<String>.from(jsonData['data'] ?? []);
+        print(' data:');
+      } else {
+        mandiStateList = [];
+        setSnackbar('Failed to load state');
+      }
+      update();
+    } catch (e) {
+      setSnackbar('Mandi Price : Error fetching state data: $e');
+    }
+  }
+
+//*************************************************************************** */
 }

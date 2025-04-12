@@ -20,8 +20,6 @@ class MarketInsightScreen extends StatefulWidget {
 class _MarketInsightScreenState extends State<MarketInsightScreen> {
   @override
   Widget build(BuildContext context) {
-    List<String> uniqueMarketStateItems =
-        homeProvider!.stateMarketItems!.data!.toSet().toList();
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -53,8 +51,7 @@ class _MarketInsightScreenState extends State<MarketInsightScreen> {
                   const SizedBox(
                     height: 10,
                   ),
-                  homeProvider!.stateMarketItems == null ||
-                          homeProvider!.stateMarketItems!.data == null
+                  homeProvider!.mandiStateList.isEmpty
                       ? Center(child: Text(buildTranslate("noDataAvailable")!))
                       : Container(
                           color: Colors.white,
@@ -74,7 +71,8 @@ class _MarketInsightScreenState extends State<MarketInsightScreen> {
                               style: const TextStyle(
                                   fontSize: 13, fontFamily: "poppins-regular"),
                             ),
-                            items: uniqueMarketStateItems.map((String crop1) {
+                            items: homeProvider!.mandiStateList
+                                .map((String crop1) {
                               return DropdownMenuItem<String>(
                                 value: crop1,
                                 child: Text(crop1,
@@ -195,7 +193,6 @@ class _MarketInsightScreenState extends State<MarketInsightScreen> {
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                              // Add more decoration..
                             ),
                             hint: Text(
                               buildTranslate("selectDistrict")!,

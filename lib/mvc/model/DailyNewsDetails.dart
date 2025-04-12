@@ -38,12 +38,12 @@ class NewsData {
 
   NewsData(
       {this.sId,
-        this.title,
-        this.description,
-        this.imageURL,
-        this.priority,
-        this.createdAt,
-        this.iV});
+      this.title,
+      this.description,
+      this.imageURL,
+      this.priority,
+      this.createdAt,
+      this.iV});
 
   NewsData.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];

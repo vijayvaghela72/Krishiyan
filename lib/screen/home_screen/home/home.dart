@@ -1,9 +1,9 @@
 import 'dart:async';
-import 'package:dio/dio.dart';
+import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
-import 'package:krishiyan/screen/home_screen/home/home_provider.dart';
+import 'package:krishiyan/helper/loading.dart';
 import 'package:provider/provider.dart';
 import '../../../helper/SharedPref.dart';
 import '../../../helper/AlertHelper.dart';
@@ -14,8 +14,8 @@ import '../../Language/SelectLanguagePage.dart';
 import 'package:krishiyan/utils/Constants.dart';
 import '../../../mvc/model/DailyNewsDetails.dart';
 import 'package:dots_indicator/dots_indicator.dart';
-import '../../../mvc/model/MandiPriceStateData.dart';
 import '../../../localization/AppLocalizations.dart';
+import 'package:krishiyan/helper/api_base_helper.dart';
 import '../../../mvc/model/MandiPriceDistrictData.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:krishiyan/mvc/model/MarketInsight.dart';
@@ -24,6 +24,7 @@ import 'package:krishiyan/mvc/model/GetMandiPriceData.dart';
 import '../../../mvc/controller/homeDashboardController.dart';
 import 'package:flutter/material.dart' hide CarouselController;
 import 'package:krishiyan/screen/home_screen/PriceHistoryPage.dart';
+import 'package:krishiyan/screen/home_screen/home/home_provider.dart';
 
 // ignore: must_be_immutable
 class BottomOnePage extends StatefulWidget {
@@ -47,7 +48,6 @@ class _BottomOnePageState extends State<BottomOnePage>
   int selectedTopData = 0;
 
   String? selectedStateItemValue;
-  MandiPriceStateData? stateItems;
   String? selectedDistrictItemValue;
 
   String selectedCommodityItemValue = "";
@@ -59,7 +59,6 @@ class _BottomOnePageState extends State<BottomOnePage>
   String dateOfFromValue = "", dateOfToValue = "";
 
   String selectedSortItemsValue = "";
-  late Future<List<NewsData>> futureHomeNewsData;
   String typeOfOrganizationData = "";
 
   DateTime? selectedDate;
@@ -70,10 +69,15 @@ class _BottomOnePageState extends State<BottomOnePage>
   void initState() {
     homeProvider = Provider.of<HomeProvider>(context, listen: false);
     super.initState();
-    futureHomeNewsData = HomeDashboardController.getNewsDetails();
-    getPrefValue();
-    _fetchStateData();
-    _fetchMarketStateData();
+    getData();
+  }
+
+  getData() async {
+    showLoading();
+    await getPrefValue();
+    await homeProvider!.getNewsDetails();
+    await homeProvider!.fetchStateData(update);
+    stopLoading();
   }
 
   Future<void> getPrefValue() async {
@@ -83,43 +87,6 @@ class _BottomOnePageState extends State<BottomOnePage>
     setState(() {
       typeOfOrganizationData = typeOfOrganizationData;
     });
-  }
-
-  Future<void> _fetchStateData() async {
-    try {
-      // Replace with your actual API endpoint
-      var response = await Dio().get(MANDI_PRICE_STATE);
-
-      if (response.statusCode == 200) {
-        print("fetchStateData response : $response");
-        setState(() {
-          stateItems = MandiPriceStateData.fromJson(response.data);
-        });
-      } else {
-        throw Exception('Failed to load state');
-      }
-    } catch (e) {
-      print('HomePage Mandi Price : Error fetching state data: $e');
-    }
-  }
-
-  Future<void> _fetchMarketStateData() async {
-    try {
-      // Replace with your actual API endpoint
-      var response = await Dio().get(MANDI_PRICE_STATE);
-
-      if (response.statusCode == 200) {
-        print("fetchStateData response : $response");
-        setState(() {
-          homeProvider!.stateMarketItems =
-              MandiPriceStateData.fromJson(response.data);
-        });
-      } else {
-        throw Exception('Failed to load state');
-      }
-    } catch (e) {
-      print('HomePage Mandi Price : Error fetching state data: $e');
-    }
   }
 
   String convertToDirectImageUrl(String fileUrl) {
@@ -136,15 +103,16 @@ class _BottomOnePageState extends State<BottomOnePage>
 
   Future<void> _fetchDistrictData() async {
     try {
-      // Replace with your actual API endpoint
-      var response = await Dio().get("${baseUrlEnd}"
-          "api/mandi/filter?stateName=$selectedStateItemValue");
+      var response = await getAPICall(
+          apiUrl: "${baseUrlEnd}"
+              "api/mandi/filter?stateName=$selectedStateItemValue");
 
       if (response.statusCode == 200) {
+        var data = jsonDecode(response.body.toString());
+
         print("fetchDistrictData response : $response");
         setState(() {
-          homeProvider!.districtItems =
-              MandiPriceDistrictData.fromJson(response.data);
+          homeProvider!.districtItems = MandiPriceDistrictData.fromJson(data);
         });
       } else {
         throw Exception('Failed to load state');
@@ -156,15 +124,17 @@ class _BottomOnePageState extends State<BottomOnePage>
 
   Future<void> _fetchCommodityData() async {
     try {
+      var response = await getAPICall(
+          apiUrl: "${baseUrlEnd}"
+              "api/mandi/filter?stateName=$selectedStateItemValue&districtName=$selectedDistrictItemValue");
+
       // Replace with your actual API endpoint
-      var response = await Dio().get("${baseUrlEnd}"
-          "api/mandi/filter?stateName=$selectedStateItemValue&districtName=$selectedDistrictItemValue");
 
       if (response.statusCode == 200) {
+        var data = jsonDecode(response.body.toString());
         print("fetchCommodityData response : $response");
         setState(() {
-          homeProvider!.commodityItems =
-              MandiPriceCommodityData.fromJson(response.data);
+          homeProvider!.commodityItems = MandiPriceCommodityData.fromJson(data);
         });
       } else {
         throw Exception('Failed to load state');
@@ -178,19 +148,6 @@ class _BottomOnePageState extends State<BottomOnePage>
   Widget build(BuildContext context) {
     print('homeProvider : ${homeProvider} ');
     // Check if stateItems or stateItems.data is null
-    if (stateItems == null || stateItems!.data == null) {
-      // Show a loading indicator or placeholder if stateItems is null
-      return Center(
-        child:
-            CircularProgressIndicator(), // Or any other widget you'd like to show while loading
-      );
-    }
-
-    // Ensure the list has unique items
-    List<String> uniqueStateItems = stateItems!.data!.toSet().toList();
-    List<String> uniqueMarketStateItems =
-        homeProvider!.stateMarketItems!.data!.toSet().toList();
-
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
     ));
@@ -311,326 +268,263 @@ class _BottomOnePageState extends State<BottomOnePage>
                           position: currentIndex.toDouble(),
                         ),
                       ),
-                      FutureBuilder<List<NewsData>>(
-                        future: futureHomeNewsData,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(
-                                child: CircularProgressIndicator());
-                          } else if (snapshot.hasError) {
-                            return Center(
-                                child: Text('Error: ${snapshot.error}'));
-                          } else if (snapshot.hasData) {
-                            final List<NewsData> news = snapshot.data!;
-                            return Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 20.0, right: 20.0),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    color: const Color(0xFFC4C4C4)
-                                        .withOpacity(0.4),
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(10))),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.max,
+                      Padding(
+                        padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: const Color(0xFFC4C4C4).withOpacity(0.4),
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(10))),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 20, right: 20, top: 10, bottom: 10),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 20.0,
-                                          right: 20.0,
-                                          top: 10.0,
-                                          bottom: 10.0),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Expanded(
-                                              child: Text(
-                                            buildTranslate("latestNews")!,
-                                            softWrap: true,
-                                            style: const TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 20,
-                                                fontFamily: 'poppins-medium'),
-                                          )),
-                                          const VerticalDivider(width: 1.0),
-                                        ],
-                                      ),
-                                    ),
-                                    ListView.builder(
-                                      physics:
-                                          const NeverScrollableScrollPhysics(),
-                                      itemCount: news.length,
-                                      shrinkWrap: true,
-                                      padding: EdgeInsets
-                                          .zero, // This removes the default padding
-                                      scrollDirection: Axis.vertical,
-                                      itemBuilder: (context, index) {
-                                        final newsData = news[index];
-                                        // Truncate the title and add "Read more" link if it's too long
-                                        String truncatedTitle =
-                                            newsData.title ?? '';
-                                        bool isLongTitle =
-                                            truncatedTitle.length >
-                                                50; // Truncate at 50 characters
-                                        if (isLongTitle) {
-                                          truncatedTitle =
-                                              truncatedTitle.substring(0, 50) +
-                                                  '...';
-                                        }
-
-                                        // Truncate the description and add "Read more" link if it's too long
-                                        String truncatedDescription =
-                                            newsData.description ?? '';
-                                        bool isLongDescription =
-                                            truncatedDescription.length > 60;
-                                        if (isLongDescription) {
-                                          truncatedDescription =
-                                              truncatedDescription.substring(
-                                                      0, 60) +
-                                                  '.....';
-                                        }
-                                        return InkWell(
-                                          highlightColor: Colors.transparent,
-                                          splashColor: Colors.transparent,
-                                          onTap: () {
-                                            Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                  builder: (context) => DetailNewsPage(
-                                                      title: newsData.title,
-                                                      description:
-                                                          newsData.description,
-                                                      imageLink:
-                                                          convertToDirectImageUrl(
-                                                              newsData.imageURL
-                                                                  .toString()))),
-                                            );
-                                          },
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            mainAxisSize: MainAxisSize.max,
-                                            children: [
-                                              SizedBox(
-                                                width: 10,
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: [
-                                                  Expanded(
-                                                    flex: 3,
-                                                    child: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        // Title with truncation and "Read more" link
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .only(
-                                                                  left: 20.0),
-                                                          child: RichText(
-                                                            text: TextSpan(
-                                                              style:
-                                                                  const TextStyle(
-                                                                fontSize: 16,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                color: Colors
-                                                                    .black,
-                                                                fontFamily:
-                                                                    "poppins-medium",
-                                                              ),
-                                                              children: [
-                                                                TextSpan(
-                                                                    text:
-                                                                        truncatedTitle),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .only(
-                                                                  left: 20.0,
-                                                                  right: 10.0),
-                                                          child: RichText(
-                                                            text: TextSpan(
-                                                              style: TextStyle(
-                                                                fontSize: 13,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w700,
-                                                                fontFamily:
-                                                                    "poppins-regular",
-                                                                color:
-                                                                    Colors.grey,
-                                                              ),
-                                                              children: [
-                                                                TextSpan(
-                                                                    text:
-                                                                        truncatedDescription),
-                                                                if (isLongDescription)
-                                                                  TextSpan(
-                                                                    text:
-                                                                        " Read more",
-                                                                    style:
-                                                                        TextStyle(
-                                                                      color: Colors
-                                                                          .green
-                                                                          .shade300,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                    ),
-                                                                    recognizer:
-                                                                        TapGestureRecognizer()
-                                                                          ..onTap =
-                                                                              () {
-                                                                            // Navigate to the detail page with full description
-                                                                            Navigator.of(context).push(
-                                                                              MaterialPageRoute(
-                                                                                builder: (context) => DetailNewsPage(
-                                                                                  title: newsData.title,
-                                                                                  description: newsData.description,
-                                                                                  imageLink: newsData.imageURL,
-                                                                                ),
-                                                                              ),
-                                                                            );
-                                                                          },
-                                                                  ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                      flex: 1,
-                                                      // child: Image.asset(
-                                                      //   'assets/images/homeItem.png',
-                                                      //   width: 50,
-                                                      //   height: 50,
-                                                      // ),
-                                                      child: Container(
-                                                        width:
-                                                            50, // Set the width of the container
-                                                        height:
-                                                            100, // Set the height of the container
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius.circular(
-                                                                  12), // Set border radius for rounded corners
-                                                        ),
-                                                        child: ClipRRect(
-                                                          borderRadius:
-                                                              BorderRadius.circular(
-                                                                  12), // Apply the same border radius here
-                                                          child: Image.network(
-                                                            convertToDirectImageUrl(
-                                                                newsData
-                                                                    .imageURL
-                                                                    .toString()), // Use the converted URL
-                                                            width: double
-                                                                .infinity, // Ensure the image takes up the entire width
-                                                            height: double
-                                                                .infinity, // Ensure the image takes up the entire height
-                                                            fit: BoxFit
-                                                                .cover, // Makes the image cover the container, cropping if needed
-                                                            loadingBuilder:
-                                                                (context, child,
-                                                                    loadingProgress) {
-                                                              if (loadingProgress ==
-                                                                  null) {
-                                                                return child; // When image is fully loaded, show it
-                                                              } else {
-                                                                return Center(
-                                                                    child:
-                                                                        CircularProgressIndicator()); // Show loading indicator while image loads
-                                                              }
-                                                            },
-                                                            errorBuilder:
-                                                                (context, error,
-                                                                    stackTrace) {
-                                                              return Column(
-                                                                children: [
-                                                                  Icon(
-                                                                      Icons
-                                                                          .error,
-                                                                      color: Colors
-                                                                          .red),
-                                                                  Text(
-                                                                      'Image not found',
-                                                                      style: TextStyle(
-                                                                          color:
-                                                                              Colors.red)),
-                                                                ],
-                                                              );
-                                                            },
-                                                          ),
-                                                        ),
-                                                      )),
-                                                  SizedBox(
-                                                    width: 10,
-                                                  )
-                                                ],
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: 20.0, right: 20.0),
-                                                child: Text(
-                                                  AppGlobal
-                                                      .convertToCustomDateFormat(
-                                                          newsData.createdAt
-                                                              .toString()),
-                                                  softWrap: true,
-                                                  style: TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize: 13,
-                                                      fontFamily:
-                                                          'poppins-medium'),
-                                                ),
-                                              ),
-                                              const Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: 20.0, right: 20.0),
-                                                child: Divider(
-                                                  color: Colors.black,
-                                                  thickness: 2,
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: 10,
-                                              ),
-                                            ],
-                                          ),
-                                        );
-                                      },
-                                    ),
+                                    Expanded(
+                                        child: Text(
+                                      buildTranslate("latestNews")!,
+                                      softWrap: true,
+                                      style: const TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 20,
+                                          fontFamily: 'poppins-medium'),
+                                    )),
+                                    const VerticalDivider(width: 1.0),
                                   ],
                                 ),
                               ),
-                            );
-                          } else {
-                            return Center(
-                                child:
-                                    Text(buildTranslate("noDataAvailable")!));
-                          }
-                        },
+                              ListView.builder(
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: homeProvider!.newsListData.length,
+                                shrinkWrap: true,
+                                padding: EdgeInsets.zero,
+                                scrollDirection: Axis.vertical,
+                                itemBuilder: (context, index) {
+                                  final newsData =
+                                      homeProvider!.newsListData[index];
+                                  String truncatedTitle = newsData.title ?? '';
+                                  bool isLongTitle = truncatedTitle.length > 50;
+                                  if (isLongTitle) {
+                                    truncatedTitle =
+                                        truncatedTitle.substring(0, 50) + '...';
+                                  }
+
+                                  String truncatedDescription =
+                                      newsData.description ?? '';
+                                  bool isLongDescription =
+                                      truncatedDescription.length > 60;
+                                  if (isLongDescription) {
+                                    truncatedDescription =
+                                        truncatedDescription.substring(0, 60) +
+                                            '.....';
+                                  }
+                                  return InkWell(
+                                    highlightColor: Colors.transparent,
+                                    splashColor: Colors.transparent,
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                DetailNewsPage(
+                                                    title: newsData.title,
+                                                    description:
+                                                        newsData.description,
+                                                    imageLink:
+                                                        convertToDirectImageUrl(
+                                                            newsData.imageURL
+                                                                .toString()))),
+                                      );
+                                    },
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: [
+                                        SizedBox(width: 10),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Expanded(
+                                              flex: 3,
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 20.0),
+                                                    child: RichText(
+                                                      text: TextSpan(
+                                                        style: const TextStyle(
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Colors.black,
+                                                          fontFamily:
+                                                              "poppins-medium",
+                                                        ),
+                                                        children: [
+                                                          TextSpan(
+                                                              text:
+                                                                  truncatedTitle),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 20.0,
+                                                            right: 10.0),
+                                                    child: RichText(
+                                                      text: TextSpan(
+                                                        style: TextStyle(
+                                                          fontSize: 13,
+                                                          fontWeight:
+                                                              FontWeight.w700,
+                                                          fontFamily:
+                                                              "poppins-regular",
+                                                          color: Colors.grey,
+                                                        ),
+                                                        children: [
+                                                          TextSpan(
+                                                              text:
+                                                                  truncatedDescription),
+                                                          if (isLongDescription)
+                                                            TextSpan(
+                                                              text:
+                                                                  " Read more",
+                                                              style: TextStyle(
+                                                                color: Colors
+                                                                    .green
+                                                                    .shade300,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                              recognizer:
+                                                                  TapGestureRecognizer()
+                                                                    ..onTap =
+                                                                        () {
+                                                                      Navigator.of(
+                                                                              context)
+                                                                          .push(
+                                                                        MaterialPageRoute(
+                                                                          builder: (context) =>
+                                                                              DetailNewsPage(
+                                                                            title:
+                                                                                newsData.title,
+                                                                            description:
+                                                                                newsData.description,
+                                                                            imageLink:
+                                                                                newsData.imageURL,
+                                                                          ),
+                                                                        ),
+                                                                      );
+                                                                    },
+                                                            ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Expanded(
+                                                flex: 1,
+                                                child: Container(
+                                                  width: 50,
+                                                  height: 100,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            12),
+                                                  ),
+                                                  child: ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            12),
+                                                    child: Image.network(
+                                                      convertToDirectImageUrl(
+                                                          newsData.imageURL
+                                                              .toString()),
+                                                      width: double.infinity,
+                                                      height: double.infinity,
+                                                      fit: BoxFit.cover,
+                                                      loadingBuilder: (context,
+                                                          child,
+                                                          loadingProgress) {
+                                                        if (loadingProgress ==
+                                                            null) {
+                                                          return child;
+                                                        } else {
+                                                          return Center(
+                                                              child:
+                                                                  CircularProgressIndicator());
+                                                        }
+                                                      },
+                                                      errorBuilder: (context,
+                                                          error, stackTrace) {
+                                                        return Column(
+                                                          children: [
+                                                            Icon(Icons.error,
+                                                                color:
+                                                                    Colors.red),
+                                                            Text(
+                                                                'Image not found',
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .red)),
+                                                          ],
+                                                        );
+                                                      },
+                                                    ),
+                                                  ),
+                                                )),
+                                            SizedBox(width: 10)
+                                          ],
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 20.0, right: 20.0),
+                                          child: Text(
+                                            AppGlobal.convertToCustomDateFormat(
+                                                newsData.createdAt.toString()),
+                                            softWrap: true,
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 13,
+                                                fontFamily: 'poppins-medium'),
+                                          ),
+                                        ),
+                                        const Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 20.0, right: 20.0),
+                                          child: Divider(
+                                            color: Colors.black,
+                                            thickness: 2,
+                                          ),
+                                        ),
+                                        SizedBox(height: 10),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                       SizedBox(
                         height: 80,
@@ -671,8 +565,7 @@ class _BottomOnePageState extends State<BottomOnePage>
                                     const SizedBox(
                                       height: 10,
                                     ),
-                                    stateItems == null ||
-                                            stateItems!.data == null
+                                    homeProvider!.mandiStateList.isEmpty
                                         ? Center(
                                             child: Text(buildTranslate(
                                                 "noDataAvailable")!))
@@ -701,7 +594,8 @@ class _BottomOnePageState extends State<BottomOnePage>
                                                     fontFamily:
                                                         "poppins-regular"),
                                               ),
-                                              items: uniqueStateItems
+                                              items: homeProvider!
+                                                  .mandiStateList
                                                   .map((String crop) {
                                                 return DropdownMenuItem<String>(
                                                   value: crop,
@@ -1804,11 +1698,7 @@ class _BottomOnePageState extends State<BottomOnePage>
                                         const SizedBox(
                                           height: 10,
                                         ),
-                                        homeProvider!.stateMarketItems ==
-                                                    null ||
-                                                homeProvider!.stateMarketItems!
-                                                        .data ==
-                                                    null
+                                        homeProvider!.mandiStateList.isEmpty
                                             ? Center(
                                                 child: Text(buildTranslate(
                                                     "noDataAvailable")!))
@@ -1839,7 +1729,8 @@ class _BottomOnePageState extends State<BottomOnePage>
                                                         fontFamily:
                                                             "poppins-regular"),
                                                   ),
-                                                  items: uniqueMarketStateItems
+                                                  items: homeProvider!
+                                                      .mandiStateList
                                                       .map((String crop1) {
                                                     return DropdownMenuItem<
                                                         String>(
