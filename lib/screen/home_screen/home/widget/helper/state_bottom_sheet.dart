@@ -1,0 +1,144 @@
+import 'package:flutter/material.dart';
+import 'package:krishiyan/helper/btm_sheet_helper.dart';
+import 'package:krishiyan/helper/provider.dart';
+
+selectCities(
+  BuildContext context,
+  Function setState,
+  int index,
+) {
+  TextEditingController searchValue = TextEditingController();
+  showModalBottomSheet(
+    isScrollControlled: true,
+    isDismissible: false,
+    enableDrag: false,
+    context: context,
+    backgroundColor: Colors.transparent,
+    builder: (BuildContext context) {
+      return StatefulBuilder(
+        builder: (BuildContext context, StateSetter setStater) {
+          return Container(
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(25),
+                topRight: Radius.circular(25),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                getCommanButtomTitleHeading('City', context),
+                const Divider(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8.0,
+                  ),
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height * 0.065,
+                    decoration: BoxDecoration(
+                        color: Color(0xffefeeee),
+                        borderRadius: BorderRadius.circular(15)),
+                    margin: const EdgeInsetsDirectional.only(bottom: 20),
+                    child: TextFormField(
+                      controller: searchValue,
+                      onTap: () {},
+                      onChanged: (value) {
+                        setStater(() {});
+                      },
+                      keyboardType: TextInputType.text,
+                      cursorColor: Colors.black,
+                      decoration: InputDecoration(
+                        hintText: 'Search',
+                        contentPadding: EdgeInsets.all(10),
+                        border: InputBorder.none,
+                      ),
+                    ),
+                  ),
+                ),
+                homeProvider!.mandiStateList.isNotEmpty
+                    ? Flexible(
+                        child: SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.6,
+                          child: SingleChildScrollView(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: getList(
+                                setState,
+                                context,
+                                searchValue.text.toLowerCase(),
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                    : const Padding(
+                        padding: EdgeInsets.symmetric(
+                          vertical: 20.0,
+                          horizontal: 10.0,
+                        ),
+                        child: Text("No Item Found...!"),
+                      )
+              ],
+            ),
+          );
+        },
+      );
+    },
+  );
+}
+
+getList(
+  Function setState,
+  BuildContext context,
+  String searchValue,
+) {
+  return homeProvider!.mandiStateList
+      .asMap()
+      .map(
+        (index, element) => MapEntry(
+          index,
+          homeProvider!.mandiStateList[index].toLowerCase().contains(
+                    searchValue,
+                  )
+              ? InkWell(
+                  onTap: () {
+                    homeProvider!.selectedMandiStateList =
+                        homeProvider!.mandiStateList[index];
+
+                    Navigator.pop(context);
+                    setState();
+                  },
+                  child: Column(
+                    children: [
+                      Divider(
+                        color: Colors.green,
+                      ),
+                      SizedBox(
+                        width: double.maxFinite,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            "${homeProvider!.mandiStateList[index]}",
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleSmall
+                                ?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  overflow: TextOverflow.ellipsis,
+                                  fontSize: 16,
+                                ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              : Container(),
+        ),
+      )
+      .values
+      .toList();
+}

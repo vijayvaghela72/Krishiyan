@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:krishiyan/helper/loading.dart';
 import 'package:krishiyan/helper/provider.dart';
 import 'package:krishiyan/helper/snackbar.dart';
-import 'package:krishiyan/mvc/model/DailyNewsDetails.dart';
 import 'package:krishiyan/utils/Constants.dart';
 import 'package:krishiyan/helper/AlertHelper.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:krishiyan/mvc/model/MarketInsight.dart';
 import '../../../mvc/model/MandiPriceDistrictData.dart';
+import 'package:krishiyan/mvc/model/DailyNewsDetails.dart';
 import 'package:krishiyan/localization/AppLocalizations.dart';
 import 'package:krishiyan/mvc/model/MandiPriceCommodityData.dart';
 import 'package:krishiyan/screen/home_screen/home/home_model.dart';
@@ -68,7 +68,6 @@ class HomeProvider extends ChangeNotifier {
   // for selected district inside markting
   String? selectedMarketDistrictItemValue;
 
-  MandiPriceCommodityData? commodityItems;
   MandiPriceCommodityData? commodityMarketItems;
 
   MandiPriceDistrictData? districtItems;
@@ -77,6 +76,24 @@ class HomeProvider extends ChangeNotifier {
   String selectedMarketCommodityItemValue = "";
 
   Future<List<MarketInsight>>? futureMarketInsight;
+
+  String? selectedStateItemValue;
+  String? selectedDistrictItemValue;
+
+  String selectedCommodityItemValue = "";
+
+  String selectedSortItemsValue = "";
+  // String typeOfOrganizationData = "";
+
+  MandiPriceCommodityData? commodityItems;
+//*************************************************************************** */
+
+  TextEditingController fromDateController = TextEditingController();
+  TextEditingController toDateController = TextEditingController();
+
+  String dateOfFromValue = "", dateOfToValue = "";
+
+  DateTime? selectedDate;
 
 //*************************************************************************** */
 
@@ -165,6 +182,7 @@ class HomeProvider extends ChangeNotifier {
 //*************************************************************************** */
   // state listing
   List<String> mandiStateList = [];
+  String selectedMandiStateList = '';
   Future<void> fetchStateData(Function update) async {
     try {
       var response = await getAPICall(apiUrl: MANDI_PRICE_STATE);

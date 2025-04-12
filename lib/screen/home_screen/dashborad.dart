@@ -1,17 +1,17 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:krishiyan/screen/home_screen/home/home.dart';
-import 'package:krishiyan/screen/FRM/buttom_two_page/bottom_two_page.dart';
 import 'dart:async';
-import '../../helper/SharedPref.dart';
-import '../../localization/AppLocalizations.dart';
 import '../../utils/AppColor.dart';
 import '../../utils/Constants.dart';
-import '../Enquiry/BottomCenterEnquiryPage.dart';
+import '../../helper/SharedPref.dart';
+import 'package:flutter/material.dart';
 import '../CropLibrary/BottomThreePage.dart';
 import '../AccountSettings/ProfilePage.dart';
 import '../Language/SelectLanguagePage.dart';
+import '../Enquiry/BottomCenterEnquiryPage.dart';
+import '../../localization/AppLocalizations.dart';
+import 'package:krishiyan/screen/home_screen/home/home.dart';
+import 'package:krishiyan/screen/FRM/buttom_two_page/bottom_two_page.dart';
 
+// ignore: must_be_immutable
 class HomePage extends StatefulWidget {
   final String typeOfOrganization;
   int selectedIndex;
