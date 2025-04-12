@@ -2,12 +2,9 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart' hide CarouselController;
-import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:krishiyan/helper/loading.dart';
 import 'package:krishiyan/mvc/model/GetMandiPriceData.dart';
 import 'package:krishiyan/mvc/model/MarketInsight.dart';
@@ -26,6 +23,7 @@ import '../../DailyMarket/DetailNewsPage.dart';
 import '../../Language/SelectLanguagePage.dart';
 import 'package:intl/intl.dart';
 
+// ignore: must_be_immutable
 class BottomOnePage extends StatefulWidget {
   bool aapbarVisibility;
 
@@ -1716,10 +1714,10 @@ class _BottomOnePageState extends State<BottomOnePage>
                                                                         'poppins-regular'),
                                                               ),
                                                               Text(
-                                                                mandiPrice[index]
-                                                                        .minPrice
-                                                                        .toString() ??
-                                                                    "",
+                                                                mandiPrice[
+                                                                        index]
+                                                                    .minPrice
+                                                                    .toString(),
                                                                 textAlign:
                                                                     TextAlign
                                                                         .center,
@@ -1759,10 +1757,10 @@ class _BottomOnePageState extends State<BottomOnePage>
                                                                         'poppins-regular'),
                                                               ),
                                                               Text(
-                                                                mandiPrice[index]
-                                                                        .modalPrice
-                                                                        .toString() ??
-                                                                    "",
+                                                                mandiPrice[
+                                                                        index]
+                                                                    .modalPrice
+                                                                    .toString(),
                                                                 textAlign:
                                                                     TextAlign
                                                                         .center,
@@ -1802,10 +1800,10 @@ class _BottomOnePageState extends State<BottomOnePage>
                                                                         'poppins-regular'),
                                                               ),
                                                               Text(
-                                                                mandiPrice[index]
-                                                                        .maxPrice
-                                                                        .toString() ??
-                                                                    "",
+                                                                mandiPrice[
+                                                                        index]
+                                                                    .maxPrice
+                                                                    .toString(),
                                                                 textAlign:
                                                                     TextAlign
                                                                         .center,

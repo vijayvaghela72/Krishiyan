@@ -8,7 +8,7 @@ import '../../mvc/model/CropLibraryData.dart';
 import '../Enquiry/BottomCenterEnquiryPage.dart';
 import '../home_screen/home/home.dart';
 import '../CropLibrary/BottomThreePage.dart';
-import 'buttom_two_page/BottomTwoPage.dart';
+import 'buttom_two_page/bottom_two_page.dart';
 import '../CropLibrary/DeficiencyManagementPage.dart';
 import '../CropLibrary/DiseaseManagementPage.dart';
 import '../CropLibrary/GeneralInformationPage.dart';

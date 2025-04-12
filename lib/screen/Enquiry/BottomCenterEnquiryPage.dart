@@ -18,7 +18,7 @@ import '../../utils/AppColor.dart';
 import '../../utils/Constants.dart';
 import '../home_screen/home/home.dart';
 import '../CropLibrary/BottomThreePage.dart';
-import '../FRM/buttom_two_page/BottomTwoPage.dart';
+import '../FRM/buttom_two_page/bottom_two_page.dart';
 import 'EditBuyCommodityPage.dart';
 import 'EditSellCommodityPage.dart';
 import 'BuyCommodityPage.dart';

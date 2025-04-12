@@ -6,7 +6,7 @@ import 'package:krishiyan/mvc/model/CropLibraryData.dart';
 import '../Enquiry/BottomCenterEnquiryPage.dart';
 import '../home_screen/home/home.dart';
 import 'BottomThreePage.dart';
-import '../FRM/buttom_two_page/BottomTwoPage.dart';
+import '../FRM/buttom_two_page/bottom_two_page.dart';
 import '../AccountSettings/ProfilePage.dart';
 import '../Language/SelectLanguagePage.dart';
 
