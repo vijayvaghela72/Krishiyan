@@ -9,6 +9,7 @@ List<SingleChildWidget> providerList = [
   ChangeNotifierProvider<HomeProvider>(create: (context) => HomeProvider()),
 ];
 
-intializeAllProviders(BuildContext context) async {
+Future<void> intializeAllProviders(BuildContext context) async {
   homeProvider = Provider.of<HomeProvider>(context, listen: false);
+  print('homeProvider :::::: ${homeProvider}');
 }

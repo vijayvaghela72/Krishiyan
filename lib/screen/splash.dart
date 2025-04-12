@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:krishiyan/helper/provider.dart';
 import '../helper/SharedPref.dart';
 import '../utils/Constants.dart';
 import 'home_screen/dashborad.dart';
@@ -14,7 +13,6 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    intializeAllProviders(context);
     _checkWelcomePage();
   }
 

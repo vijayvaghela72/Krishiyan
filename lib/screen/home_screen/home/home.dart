@@ -1,27 +1,29 @@
 import 'dart:async';
 import 'package:dio/dio.dart';
-import 'package:dots_indicator/dots_indicator.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart' hide CarouselController;
-import 'package:flutter/services.dart';
-import 'package:krishiyan/helper/loading.dart';
-import 'package:krishiyan/mvc/model/GetMandiPriceData.dart';
-import 'package:krishiyan/mvc/model/MarketInsight.dart';
-import 'package:krishiyan/screen/home_screen/PriceHistoryPage.dart';
-import 'package:krishiyan/utils/AppGlobal.dart';
-import 'package:krishiyan/utils/Constants.dart';
-import '../../../helper/AlertHelper.dart';
-import '../../../helper/SharedPref.dart';
-import '../../../localization/AppLocalizations.dart';
-import '../../../mvc/controller/homeDashboardController.dart';
-import '../../../mvc/model/DailyNewsDetails.dart';
-import '../../../mvc/model/MandiPriceCommodityData.dart';
-import '../../../mvc/model/MandiPriceDistrictData.dart';
-import '../../../mvc/model/MandiPriceStateData.dart';
-import '../../DailyMarket/DetailNewsPage.dart';
-import '../../Language/SelectLanguagePage.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/gestures.dart';
+import 'package:flutter/services.dart';
+import 'package:krishiyan/screen/home_screen/home/home_provider.dart';
+import 'package:provider/provider.dart';
+import '../../../helper/SharedPref.dart';
+import '../../../helper/AlertHelper.dart';
+import '../../DailyMarket/DetailNewsPage.dart';
+import 'package:krishiyan/helper/provider.dart';
+import 'package:krishiyan/utils/AppGlobal.dart';
+import '../../Language/SelectLanguagePage.dart';
+import 'package:krishiyan/utils/Constants.dart';
+import '../../../mvc/model/DailyNewsDetails.dart';
+import 'package:dots_indicator/dots_indicator.dart';
+import '../../../mvc/model/MandiPriceStateData.dart';
+import '../../../localization/AppLocalizations.dart';
+import '../../../mvc/model/MandiPriceDistrictData.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:krishiyan/mvc/model/MarketInsight.dart';
+import '../../../mvc/model/MandiPriceCommodityData.dart';
+import 'package:krishiyan/mvc/model/GetMandiPriceData.dart';
+import '../../../mvc/controller/homeDashboardController.dart';
+import 'package:flutter/material.dart' hide CarouselController;
+import 'package:krishiyan/screen/home_screen/PriceHistoryPage.dart';
 
 // ignore: must_be_immutable
 class BottomOnePage extends StatefulWidget {
@@ -35,77 +37,27 @@ class BottomOnePage extends StatefulWidget {
 
 class _BottomOnePageState extends State<BottomOnePage>
     with TickerProviderStateMixin {
-  final List<String> topData = [
-    buildTranslate("dailyMarket")!,
-    buildTranslate("mandiPrice")!,
-    buildTranslate("marketInsight")!
-  ];
+  update() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
 
-  final imageSliders = [
-    Image.asset("assets/images/home_banner.png"),
-    Image.asset("assets/images/home_banner.png")
-  ];
   int currentIndex = 0;
   int selectedTopData = 0;
 
   String? selectedStateItemValue;
   MandiPriceStateData? stateItems;
-  MandiPriceStateData? stateMarketItems;
-  // for selected state insite marketing
-  String? selectedMarketStateItemValue;
-
-  MandiPriceDistrictData? districtItems;
-  MandiPriceDistrictData? districtMarketItems;
   String? selectedDistrictItemValue;
-  // for selected district inside markting
-  String? selectedMarketDistrictItemValue;
-
-  MandiPriceCommodityData? commodityItems;
-  MandiPriceCommodityData? commodityMarketItems;
 
   String selectedCommodityItemValue = "";
   // for selected commodity inside markting
-  String selectedMarketCommodityItemValue = "";
-
-  List<bottomCategory> iconList = [
-    bottomCategory(
-        name: buildTranslate("home")!,
-        id: "1",
-        icon: 'assets/images/bottom1.png'),
-    bottomCategory(
-        name: buildTranslate("frm")!,
-        id: "2",
-        icon: 'assets/images/bottom2.png'),
-    bottomCategory(
-        name: buildTranslate("crop")!,
-        id: "3",
-        icon: 'assets/images/bottom3.png'),
-    bottomCategory(
-        name: buildTranslate("profile")!,
-        id: "4",
-        icon: 'assets/images/bottom4.png'),
-  ];
-
-  List<bottomCategory> iconList2 = [
-    bottomCategory(
-        name: buildTranslate("home")!,
-        id: "1",
-        icon: 'assets/images/bottom1.png'),
-    bottomCategory(
-        name: buildTranslate("profile")!,
-        id: "2",
-        icon: 'assets/images/bottom4.png'),
-  ];
 
   TextEditingController fromDateController = TextEditingController();
   TextEditingController toDateController = TextEditingController();
 
   String dateOfFromValue = "", dateOfToValue = "";
 
-  final List<String> sortItems = [
-    buildTranslate('lowToHighPrice')!,
-    buildTranslate('highToLowPrice')!,
-  ];
   String selectedSortItemsValue = "";
   late Future<List<NewsData>> futureHomeNewsData;
   String typeOfOrganizationData = "";
@@ -113,10 +65,10 @@ class _BottomOnePageState extends State<BottomOnePage>
   DateTime? selectedDate;
 
   Future<List<MandiPriceData>>? futureMandiPrice;
-  Future<List<MarketInsight>>? futureMarketInsight;
 
   @override
   void initState() {
+    homeProvider = Provider.of<HomeProvider>(context, listen: false);
     super.initState();
     futureHomeNewsData = HomeDashboardController.getNewsDetails();
     getPrefValue();
@@ -159,7 +111,8 @@ class _BottomOnePageState extends State<BottomOnePage>
       if (response.statusCode == 200) {
         print("fetchStateData response : $response");
         setState(() {
-          stateMarketItems = MandiPriceStateData.fromJson(response.data);
+          homeProvider!.stateMarketItems =
+              MandiPriceStateData.fromJson(response.data);
         });
       } else {
         throw Exception('Failed to load state');
@@ -190,27 +143,8 @@ class _BottomOnePageState extends State<BottomOnePage>
       if (response.statusCode == 200) {
         print("fetchDistrictData response : $response");
         setState(() {
-          districtItems = MandiPriceDistrictData.fromJson(response.data);
-        });
-      } else {
-        throw Exception('Failed to load state');
-      }
-    } catch (e) {
-      print('HomePage Mandi Price : Error fetching state data: $e');
-    }
-  }
-
-  Future<void> _fetchMarketDistrictData() async {
-    try {
-      showLoading();
-      // Replace with your actual API endpoint
-      var response = await Dio().get("${baseUrlEnd}"
-          "api/mandi/filter?stateName=$selectedMarketStateItemValue");
-      stopLoading();
-      if (response.statusCode == 200) {
-        print("fetchDistrictData response : $response");
-        setState(() {
-          districtMarketItems = MandiPriceDistrictData.fromJson(response.data);
+          homeProvider!.districtItems =
+              MandiPriceDistrictData.fromJson(response.data);
         });
       } else {
         throw Exception('Failed to load state');
@@ -229,26 +163,7 @@ class _BottomOnePageState extends State<BottomOnePage>
       if (response.statusCode == 200) {
         print("fetchCommodityData response : $response");
         setState(() {
-          commodityItems = MandiPriceCommodityData.fromJson(response.data);
-        });
-      } else {
-        throw Exception('Failed to load state');
-      }
-    } catch (e) {
-      print('HomePage Mandi Price : Error fetching state data: $e');
-    }
-  }
-
-  Future<void> _fetchMarketCommodityData() async {
-    try {
-      // Replace with your actual API endpoint
-      var response = await Dio().get("${baseUrlEnd}"
-          "api/mandi/filter?stateName=$selectedMarketStateItemValue&districtName=$selectedMarketDistrictItemValue");
-
-      if (response.statusCode == 200) {
-        print("fetchCommodityData response : $response");
-        setState(() {
-          commodityMarketItems =
+          homeProvider!.commodityItems =
               MandiPriceCommodityData.fromJson(response.data);
         });
       } else {
@@ -261,6 +176,7 @@ class _BottomOnePageState extends State<BottomOnePage>
 
   @override
   Widget build(BuildContext context) {
+    print('homeProvider : ${homeProvider} ');
     // Check if stateItems or stateItems.data is null
     if (stateItems == null || stateItems!.data == null) {
       // Show a loading indicator or placeholder if stateItems is null
@@ -273,15 +189,16 @@ class _BottomOnePageState extends State<BottomOnePage>
     // Ensure the list has unique items
     List<String> uniqueStateItems = stateItems!.data!.toSet().toList();
     List<String> uniqueMarketStateItems =
-        stateMarketItems!.data!.toSet().toList();
+        homeProvider!.stateMarketItems!.data!.toSet().toList();
 
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
     ));
-    print('selectedMarketStateItemValue : ${selectedMarketStateItemValue}');
     print(
-        'selectedMarketDistrictItemValue : ${selectedMarketDistrictItemValue}');
-    print('commodityMarketItems : ${commodityMarketItems}');
+        'selectedMarketStateItemValue : ${homeProvider!.selectedMarketStateItemValue}');
+    print(
+        'selectedMarketDistrictItemValue : ${homeProvider!.selectedMarketDistrictItemValue}');
+    print('commodityMarketItems : ${homeProvider!.commodityMarketItems}');
     return Scaffold(
       backgroundColor: const Color(0xFFf9f9f9),
       resizeToAvoidBottomInset: false,
@@ -338,13 +255,13 @@ class _BottomOnePageState extends State<BottomOnePage>
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.max,
-          children: <Widget>[
+          children: [
             Padding(
               padding: const EdgeInsets.only(left: 10.0, right: 20.0),
               child: Container(
                 height: 80,
                 child: ListView.builder(
-                  itemCount: topData.length,
+                  itemCount: homeProvider!.topData.length,
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (context, index) {
                     return InkWell(
@@ -370,7 +287,7 @@ class _BottomOnePageState extends State<BottomOnePage>
                                 borderRadius: const BorderRadius.all(
                                   Radius.circular(12),
                                 )),
-                            label: Text(topData[index].toString(),
+                            label: Text(homeProvider!.topData[index].toString(),
                                 style: TextStyle(
                                   fontSize: 15,
                                   fontFamily: "poppins-regular",
@@ -390,7 +307,7 @@ class _BottomOnePageState extends State<BottomOnePage>
                     children: [
                       Center(
                         child: DotsIndicator(
-                          dotsCount: imageSliders.length,
+                          dotsCount: homeProvider!.imageSliders.length,
                           position: currentIndex.toDouble(),
                         ),
                       ),
@@ -854,8 +771,9 @@ class _BottomOnePageState extends State<BottomOnePage>
                                     const SizedBox(
                                       height: 10,
                                     ),
-                                    districtItems == null ||
-                                            districtItems!.data == null
+                                    homeProvider!.districtItems == null ||
+                                            homeProvider!.districtItems!.data ==
+                                                null
                                         ? Container(
                                             color: Colors.white,
                                             child: DropdownButtonFormField2<
@@ -937,7 +855,8 @@ class _BottomOnePageState extends State<BottomOnePage>
                                                     fontFamily:
                                                         "poppins-regular"),
                                               ),
-                                              items: districtItems!.data!
+                                              items: homeProvider!
+                                                  .districtItems!.data!
                                                   .map((String crop) {
                                                 return DropdownMenuItem<String>(
                                                   value: crop,
@@ -1004,8 +923,10 @@ class _BottomOnePageState extends State<BottomOnePage>
                                     const SizedBox(
                                       height: 10,
                                     ),
-                                    commodityItems == null ||
-                                            commodityItems!.data == null
+                                    homeProvider!.commodityItems == null ||
+                                            homeProvider!
+                                                    .commodityItems!.data ==
+                                                null
                                         ? Container(
                                             color: Colors.white,
                                             child: DropdownButtonFormField2<
@@ -1087,7 +1008,8 @@ class _BottomOnePageState extends State<BottomOnePage>
                                                     fontFamily:
                                                         "poppins-regular"),
                                               ),
-                                              items: commodityItems!.data!
+                                              items: homeProvider!
+                                                  .commodityItems!.data!
                                                   .map((String crop) {
                                                 return DropdownMenuItem<String>(
                                                   value: crop,
@@ -1387,7 +1309,7 @@ class _BottomOnePageState extends State<BottomOnePage>
                                     value: selectedSortItemsValue.isNotEmpty
                                         ? selectedSortItemsValue
                                         : null,
-                                    items: sortItems
+                                    items: homeProvider!.sortItems
                                         .map((item) => DropdownMenuItem<String>(
                                               value: item,
                                               child: Text(
@@ -1882,8 +1804,11 @@ class _BottomOnePageState extends State<BottomOnePage>
                                         const SizedBox(
                                           height: 10,
                                         ),
-                                        stateMarketItems == null ||
-                                                stateMarketItems!.data == null
+                                        homeProvider!.stateMarketItems ==
+                                                    null ||
+                                                homeProvider!.stateMarketItems!
+                                                        .data ==
+                                                    null
                                             ? Center(
                                                 child: Text(buildTranslate(
                                                     "noDataAvailable")!))
@@ -1935,20 +1860,26 @@ class _BottomOnePageState extends State<BottomOnePage>
                                                     return null;
                                                   },
                                                   onChanged: (value) {
-                                                    selectedMarketStateItemValue =
+                                                    homeProvider!
+                                                            .selectedMarketStateItemValue =
                                                         value;
-                                                    selectedMarketDistrictItemValue =
+                                                    homeProvider!
+                                                            .selectedMarketDistrictItemValue =
                                                         null;
                                                     setState(() {});
-                                                    if (selectedMarketStateItemValue !=
+                                                    if (homeProvider!
+                                                            .selectedMarketStateItemValue !=
                                                         null) {
                                                       print(
-                                                          "selectedMarketStateItemValue : $selectedMarketStateItemValue");
-                                                      _fetchMarketDistrictData();
+                                                          "selectedMarketStateItemValue : ${homeProvider!.selectedMarketStateItemValue}");
+                                                      homeProvider!
+                                                          .fetchMarketDistrictData(
+                                                              update);
                                                     }
                                                   },
                                                   onSaved: (value) {
-                                                    selectedMarketStateItemValue =
+                                                    homeProvider!
+                                                            .selectedMarketStateItemValue =
                                                         value.toString();
                                                   },
                                                   buttonStyleData:
@@ -1987,8 +1918,11 @@ class _BottomOnePageState extends State<BottomOnePage>
                                         const SizedBox(
                                           height: 10,
                                         ),
-                                        districtMarketItems == null ||
-                                                districtMarketItems!.data ==
+                                        homeProvider!.districtMarketItems ==
+                                                    null ||
+                                                homeProvider!
+                                                        .districtMarketItems!
+                                                        .data ==
                                                     null
                                             ? Container(
                                                 color: Colors.white,
@@ -2076,7 +2010,8 @@ class _BottomOnePageState extends State<BottomOnePage>
                                                         fontFamily:
                                                             "poppins-regular"),
                                                   ),
-                                                  items: districtMarketItems!
+                                                  items: homeProvider!
+                                                      .districtMarketItems!
                                                       .data!
                                                       .map((String crop) {
                                                     return DropdownMenuItem<
@@ -2099,16 +2034,22 @@ class _BottomOnePageState extends State<BottomOnePage>
                                                   },
                                                   onChanged: (value) {
                                                     setState(() {
-                                                      selectedMarketDistrictItemValue =
+                                                      homeProvider!
+                                                              .selectedMarketDistrictItemValue =
                                                           value;
                                                     });
-                                                    commodityMarketItems = null;
+                                                    homeProvider!
+                                                            .commodityMarketItems =
+                                                        null;
                                                     print(
-                                                        "selectedMarketDistrictItemValue : $selectedMarketDistrictItemValue");
-                                                    _fetchMarketCommodityData();
+                                                        "selectedMarketDistrictItemValue : ${homeProvider!.selectedMarketDistrictItemValue}");
+                                                    homeProvider!
+                                                        .fetchMarketCommodityData(
+                                                            update);
                                                   },
                                                   onSaved: (value) {
-                                                    selectedMarketDistrictItemValue =
+                                                    homeProvider!
+                                                            .selectedMarketDistrictItemValue =
                                                         value.toString();
                                                   },
                                                   buttonStyleData:
@@ -2147,8 +2088,11 @@ class _BottomOnePageState extends State<BottomOnePage>
                                         const SizedBox(
                                           height: 10,
                                         ),
-                                        commodityMarketItems == null ||
-                                                commodityMarketItems!.data ==
+                                        homeProvider!.commodityMarketItems ==
+                                                    null ||
+                                                homeProvider!
+                                                        .commodityMarketItems!
+                                                        .data ==
                                                     null
                                             ? Container(
                                                 color: Colors.white,
@@ -2236,7 +2180,8 @@ class _BottomOnePageState extends State<BottomOnePage>
                                                         fontFamily:
                                                             "poppins-regular"),
                                                   ),
-                                                  items: commodityMarketItems!
+                                                  items: homeProvider!
+                                                      .commodityMarketItems!
                                                       .data!
                                                       .map((String crop) {
                                                     return DropdownMenuItem<
@@ -2259,14 +2204,16 @@ class _BottomOnePageState extends State<BottomOnePage>
                                                   },
                                                   onChanged: (value) {
                                                     setState(() {
-                                                      selectedMarketCommodityItemValue =
+                                                      homeProvider!
+                                                              .selectedMarketCommodityItemValue =
                                                           value!;
                                                     });
                                                     print(
-                                                        "selectedMarketCommodityItemValue : $selectedMarketCommodityItemValue");
+                                                        "selectedMarketCommodityItemValue : ${homeProvider!.selectedMarketCommodityItemValue}");
                                                   },
                                                   onSaved: (value) {
-                                                    selectedMarketCommodityItemValue =
+                                                    homeProvider!
+                                                            .selectedMarketCommodityItemValue =
                                                         value.toString();
                                                   },
                                                   buttonStyleData:
@@ -2302,7 +2249,8 @@ class _BottomOnePageState extends State<BottomOnePage>
                                                 .width,
                                             child: ElevatedButton(
                                               onPressed: () {
-                                                getMarketInsight();
+                                                homeProvider!.getMarketInsight(
+                                                    update, context);
                                               },
                                               style: ElevatedButton.styleFrom(
                                                 foregroundColor: Colors.white,
@@ -2333,12 +2281,14 @@ class _BottomOnePageState extends State<BottomOnePage>
                               const SizedBox(
                                 height: 15,
                               ),
-                              futureMarketInsight.toString().isEmpty
+                              homeProvider!.futureMarketInsight
+                                      .toString()
+                                      .isEmpty
                                   ? Center(
                                       child: Text(
                                           buildTranslate("noDataAvailable")!))
                                   : FutureBuilder<List<MarketInsight>>(
-                                      future: futureMarketInsight,
+                                      future: homeProvider!.futureMarketInsight,
                                       builder: (context, snapshot) {
                                         if (snapshot.connectionState ==
                                             ConnectionState.waiting) {
@@ -2755,36 +2705,4 @@ class _BottomOnePageState extends State<BottomOnePage>
       AlertHelper.showToast("Please enter details.", context);
     }
   }
-
-  void getMarketInsight() {
-    print("object");
-    if (selectedMarketStateItemValue.toString().isNotEmpty &&
-        selectedMarketDistrictItemValue.toString().isNotEmpty &&
-        selectedMarketCommodityItemValue.toString().isNotEmpty) {
-      futureMarketInsight = HomeDashboardController.getMarketInsightDetails(
-          selectedMarketStateItemValue.toString(),
-          selectedMarketDistrictItemValue.toString(),
-          selectedMarketCommodityItemValue.toString());
-
-      setState(() {
-        futureMarketInsight = futureMarketInsight;
-        print("DATA");
-        print(futureMarketInsight);
-      });
-    } else {
-      AlertHelper.showToast("Please enter details.", context);
-    }
-  }
-}
-
-class bottomCategory {
-  String? name;
-  String? icon;
-  String? id;
-
-  bottomCategory({
-    required this.name,
-    required this.icon,
-    required this.id,
-  });
 }
