@@ -32,8 +32,9 @@ class MyLocalizations {
   }
 }
 
-String? buildTranslate(String? key) => MyLocalizations.of(NavigationService.navigatorKey.
-currentContext!)!.getString(key);
+String? buildTranslate(String? key) =>
+    MyLocalizations.of(NavigationService.navigatorKey.currentContext!)!
+        .getString(key);
 
 class MyLocalizationsDelegate extends LocalizationsDelegate<MyLocalizations> {
   const MyLocalizationsDelegate();

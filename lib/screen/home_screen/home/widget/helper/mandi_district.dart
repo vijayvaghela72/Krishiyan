@@ -3,7 +3,7 @@ import 'package:krishiyan/helper/loading.dart';
 import 'package:krishiyan/helper/provider.dart';
 import 'package:krishiyan/helper/btm_sheet_helper.dart';
 
-selectState(
+selectDistrict(
   BuildContext context,
   Function setState,
 ) {
@@ -29,7 +29,7 @@ selectState(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                getCommanButtomTitleHeading('State', context),
+                getCommanButtomTitleHeading('District', context),
                 const Divider(),
                 Padding(
                   padding: const EdgeInsets.symmetric(
@@ -58,7 +58,7 @@ selectState(
                     ),
                   ),
                 ),
-                homeProvider!.mandiStateList.isNotEmpty
+                homeProvider!.districtMasterList.isNotEmpty
                     ? Flexible(
                         child: SizedBox(
                           height: MediaQuery.of(context).size.height * 0.6,
@@ -95,20 +95,20 @@ getList(
   BuildContext context,
   String searchValue,
 ) {
-  return homeProvider!.mandiStateList
+  return homeProvider!.districtMasterList
       .asMap()
       .map(
         (index, element) => MapEntry(
           index,
-          homeProvider!.mandiStateList[index].toLowerCase().contains(
+          homeProvider!.districtMasterList[index].toLowerCase().contains(
                     searchValue,
                   )
               ? InkWell(
                   onTap: () async {
-                    homeProvider!.selectedMandiStateList =
-                        homeProvider!.mandiStateList[index];
+                    homeProvider!.selectedDistrictMasterList =
+                        homeProvider!.districtMasterList[index];
                     showLoading();
-                    await homeProvider!.fetchDistrictData(setState);
+                    await homeProvider!.fetchCommodityData(setState);
                     stopLoading();
                     Navigator.pop(context);
                     setState();
@@ -123,7 +123,7 @@ getList(
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
-                            "${homeProvider!.mandiStateList[index]}",
+                            "${homeProvider!.districtMasterList[index]}",
                             style: Theme.of(context)
                                 .textTheme
                                 .titleSmall

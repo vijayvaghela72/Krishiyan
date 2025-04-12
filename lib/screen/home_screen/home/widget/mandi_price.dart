@@ -1,15 +1,13 @@
-import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import '../../../../helper/provider.dart';
 import 'package:krishiyan/helper/snackbar.dart';
-import 'package:krishiyan/utils/Constants.dart';
 import 'package:krishiyan/helper/AlertHelper.dart';
-import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:krishiyan/localization/AppLocalizations.dart';
-import 'package:krishiyan/mvc/model/MandiPriceDistrictData.dart';
-import 'package:krishiyan/mvc/model/MandiPriceCommodityData.dart';
+import 'package:krishiyan/screen/home_screen/home/widget/helper/mandi_district.dart';
+import 'package:krishiyan/screen/home_screen/home/widget/helper/commodity_sheet.dart';
+import 'package:krishiyan/screen/home_screen/home/widget/helper/state_bottom_sheet.dart';
 
 // ignore: must_be_immutable
 class MandiPriceScreen extends StatefulWidget {
@@ -102,65 +100,21 @@ class _MandiPriceScreenState extends State<MandiPriceScreen> {
   // for selected commodity inside markting
 
   void getValue() async {
-    if (homeProvider!.selectedStateItemValue.toString().isNotEmpty &&
-        homeProvider!.selectedDistrictItemValue.toString().isNotEmpty &&
-        homeProvider!.selectedCommodityItemValue.toString().isNotEmpty &&
+    if (homeProvider!.selectedMandiStateList != null &&
+        homeProvider!.selectedDistrictMasterList != null &&
+        homeProvider!.selectedPriceMandiCoodityData != null &&
         homeProvider!.dateOfFromValue.isNotEmpty &&
         homeProvider!.dateOfToValue.isNotEmpty) {
       await homeProvider!.getMandiPriceDetails(
-          homeProvider!.selectedStateItemValue.toString(),
-          homeProvider!.selectedDistrictItemValue.toString(),
-          homeProvider!.selectedCommodityItemValue.toString(),
+          homeProvider!.selectedMandiStateList.toString(),
+          homeProvider!.selectedDistrictMasterList.toString(),
+          homeProvider!.selectedPriceMandiCoodityData.toString(),
           homeProvider!.dateOfFromValue,
           homeProvider!.dateOfToValue);
 
       setState(() {});
     } else {
       setSnackbar("Please enter details.");
-    }
-  }
-
-  // MandiPriceCommodityData? commodityItems;
-  Future<void> _fetchCommodityData() async {
-    try {
-      var response = await getAPICall(
-          apiUrl: "${baseUrlEnd}"
-              "api/mandi/filter?stateName=${homeProvider!.selectedStateItemValue}&districtName=${homeProvider!.selectedDistrictItemValue}");
-
-      // Replace with your actual API endpoint
-
-      if (response.statusCode == 200) {
-        var data = jsonDecode(response.body.toString());
-        print("fetchCommodityData response : $response");
-        setState(() {
-          homeProvider!.commodityItems = MandiPriceCommodityData.fromJson(data);
-        });
-      } else {
-        throw Exception('Failed to load state');
-      }
-    } catch (e) {
-      print('HomePage Mandi Price : Error fetching state data: $e');
-    }
-  }
-
-  Future<void> _fetchDistrictData() async {
-    try {
-      var response = await getAPICall(
-          apiUrl: "${baseUrlEnd}"
-              "api/mandi/filter?stateName=${homeProvider!.selectedStateItemValue}");
-
-      if (response.statusCode == 200) {
-        var data = jsonDecode(response.body.toString());
-
-        print("fetchDistrictData response : $response");
-        setState(() {
-          homeProvider!.districtItems = MandiPriceDistrictData.fromJson(data);
-        });
-      } else {
-        throw Exception('Failed to load state');
-      }
-    } catch (e) {
-      print('HomePage Mandi Price : Error fetching state data: $e');
     }
   }
 
@@ -197,78 +151,56 @@ class _MandiPriceScreenState extends State<MandiPriceScreen> {
                   const SizedBox(
                     height: 10,
                   ),
-                  homeProvider!.mandiStateList.isEmpty
-                      ? Center(child: Text(buildTranslate("noDataAvailable")!))
-                      : Container(
-                          color: Colors.white,
-                          child: DropdownButtonFormField2<String>(
-                            isExpanded: true,
-                            dropdownStyleData:
-                                const DropdownStyleData(maxHeight: 200),
-                            decoration: InputDecoration(
-                              contentPadding:
-                                  const EdgeInsets.symmetric(vertical: 10),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
+                  InkWell(
+                    onTap: () {
+                      selectState(
+                        context,
+                        widget.update,
+                      );
+                    },
+                    child: Container(
+                      color: Colors.white,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey.shade400),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                homeProvider!.selectedMandiStateList ??
+                                    buildTranslate("selectState")!,
+                                style: TextStyle(
+                                  fontSize:
+                                      homeProvider!.selectedMandiStateList !=
+                                              null
+                                          ? 15
+                                          : 13,
+                                  fontFamily: "poppins-regular",
+                                  color: homeProvider!.selectedMandiStateList !=
+                                          null
+                                      ? Colors.black
+                                      : Colors.black54,
+                                ),
                               ),
-                              // Add more decoration..
-                            ),
-                            hint: Text(
-                              buildTranslate("selectState")!,
-                              style: const TextStyle(
-                                  fontSize: 13, fontFamily: "poppins-regular"),
-                            ),
-                            items:
-                                homeProvider!.mandiStateList.map((String crop) {
-                              return DropdownMenuItem<String>(
-                                value: crop,
-                                child: Text(crop,
-                                    style: const TextStyle(
-                                        fontSize: 15,
-                                        color: Colors.black,
-                                        fontFamily: 'poppins-regular')),
-                              );
-                            }).toList(),
-                            validator: (value) {
-                              if (value == null) {
-                                return 'Please select type of state.';
-                              }
-                              return null;
-                            },
-                            onChanged: (value) {
-                              setState(() {
-                                homeProvider!.selectedStateItemValue = value;
-                              });
-                              if (homeProvider!.selectedStateItemValue !=
-                                  null) {
-                                print(
-                                    "SelectedStateItemValue : ${homeProvider!.selectedStateItemValue}");
-                                _fetchDistrictData();
-                              }
-                            },
-                            onSaved: (value) {
-                              homeProvider!.selectedStateItemValue =
-                                  value.toString();
-                            },
-                            buttonStyleData: const ButtonStyleData(
-                              padding: EdgeInsets.only(right: 8),
-                            ),
-                            iconStyleData: const IconStyleData(
-                              icon: Icon(
+                              const Icon(
                                 Icons.arrow_drop_down,
                                 color: Colors.black45,
+                                size: 24,
                               ),
-                              iconSize: 24,
-                            ),
-                            menuItemStyleData: const MenuItemStyleData(
-                              padding: EdgeInsets.symmetric(horizontal: 16),
-                            ),
+                            ],
                           ),
                         ),
+                      ),
+                    ),
+                  ),
                   const SizedBox(
                     height: 20,
                   ),
-
                   // select district
                   Text(
                     buildTranslate("selectDistrict")!,
@@ -281,118 +213,60 @@ class _MandiPriceScreenState extends State<MandiPriceScreen> {
                   const SizedBox(
                     height: 10,
                   ),
-                  homeProvider!.districtItems == null ||
-                          homeProvider!.districtItems!.data == null
-                      ? Container(
-                          color: Colors.white,
-                          child: DropdownButtonFormField2<String>(
-                            isExpanded: true,
-                            dropdownStyleData:
-                                const DropdownStyleData(maxHeight: 200),
-                            decoration: InputDecoration(
-                              contentPadding:
-                                  const EdgeInsets.symmetric(vertical: 10),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
+                  GestureDetector(
+                    onTap: () {
+                      selectDistrict(
+                        context,
+                        widget.update,
+                      );
+                    },
+                    child: Container(
+                      color: Colors.white,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey.shade400),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  homeProvider!.selectedDistrictMasterList ??
+                                      buildTranslate("selectDistrict")!,
+                                  style: TextStyle(
+                                    fontSize: homeProvider!
+                                                .selectedDistrictMasterList !=
+                                            null
+                                        ? 15
+                                        : 13,
+                                    fontFamily: "poppins-regular",
+                                    color: homeProvider!
+                                                .selectedDistrictMasterList !=
+                                            null
+                                        ? Colors.black
+                                        : Colors.black54,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
-                              // Add more decoration..
-                            ),
-                            hint: Text(
-                              buildTranslate("selectDistrict")!,
-                              style: const TextStyle(
-                                  fontSize: 13, fontFamily: "poppins-regular"),
-                            ),
-                            validator: (value) {
-                              if (value == null) {
-                                return 'Please select type of district.';
-                              }
-                              return null;
-                            },
-                            onChanged: (value) {},
-                            onSaved: (value) {},
-                            buttonStyleData: const ButtonStyleData(
-                              padding: EdgeInsets.only(right: 8),
-                            ),
-                            iconStyleData: const IconStyleData(
-                              icon: Icon(
+                              const Icon(
                                 Icons.arrow_drop_down,
                                 color: Colors.black45,
+                                size: 24,
                               ),
-                              iconSize: 24,
-                            ),
-                            menuItemStyleData: const MenuItemStyleData(
-                              padding: EdgeInsets.symmetric(horizontal: 16),
-                            ),
-                            items: [],
-                          ),
-                        )
-                      : Container(
-                          color: Colors.white,
-                          child: DropdownButtonFormField2<String>(
-                            isExpanded: true,
-                            dropdownStyleData:
-                                const DropdownStyleData(maxHeight: 200),
-                            decoration: InputDecoration(
-                              contentPadding:
-                                  const EdgeInsets.symmetric(vertical: 10),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              // Add more decoration..
-                            ),
-                            hint: Text(
-                              buildTranslate("selectDistrict")!,
-                              style: const TextStyle(
-                                  fontSize: 13, fontFamily: "poppins-regular"),
-                            ),
-                            items: homeProvider!.districtItems!.data!
-                                .map((String crop) {
-                              return DropdownMenuItem<String>(
-                                value: crop,
-                                child: Text(crop,
-                                    style: const TextStyle(
-                                        fontSize: 15,
-                                        color: Colors.black,
-                                        fontFamily: 'poppins-regular')),
-                              );
-                            }).toList(),
-                            validator: (value) {
-                              if (value == null) {
-                                return 'Please select type of district.';
-                              }
-                              return null;
-                            },
-                            onChanged: (value) {
-                              setState(() {
-                                homeProvider!.selectedDistrictItemValue = value;
-                              });
-                              print(
-                                  "selectedDistrictItemValue : ${homeProvider!.selectedDistrictItemValue}");
-                              _fetchCommodityData();
-                            },
-                            onSaved: (value) {
-                              homeProvider!.selectedDistrictItemValue =
-                                  value.toString();
-                            },
-                            buttonStyleData: const ButtonStyleData(
-                              padding: EdgeInsets.only(right: 8),
-                            ),
-                            iconStyleData: const IconStyleData(
-                              icon: Icon(
-                                Icons.arrow_drop_down,
-                                color: Colors.black45,
-                              ),
-                              iconSize: 24,
-                            ),
-                            menuItemStyleData: const MenuItemStyleData(
-                              padding: EdgeInsets.symmetric(horizontal: 16),
-                            ),
+                            ],
                           ),
                         ),
+                      ),
+                    ),
+                  ),
                   const SizedBox(
                     height: 20,
                   ),
-
                   // select commodity
                   Text(
                     buildTranslate("selectCommodity")!,
@@ -405,118 +279,60 @@ class _MandiPriceScreenState extends State<MandiPriceScreen> {
                   const SizedBox(
                     height: 10,
                   ),
-                  homeProvider!.commodityItems == null ||
-                          homeProvider!.commodityItems!.data == null
-                      ? Container(
-                          color: Colors.white,
-                          child: DropdownButtonFormField2<String>(
-                            isExpanded: true,
-                            dropdownStyleData:
-                                const DropdownStyleData(maxHeight: 200),
-                            decoration: InputDecoration(
-                              contentPadding:
-                                  const EdgeInsets.symmetric(vertical: 10),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
+                  GestureDetector(
+                    onTap: () {
+                      selectCommodity(
+                        context,
+                        widget.update,
+                      );
+                    },
+                    child: Container(
+                      color: Colors.white,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey.shade400),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  homeProvider!.selectedPriceMandiCoodityData ??
+                                      buildTranslate("selectCommodity")!,
+                                  style: TextStyle(
+                                    fontSize: homeProvider!
+                                                .selectedPriceMandiCoodityData !=
+                                            null
+                                        ? 15
+                                        : 13,
+                                    fontFamily: "poppins-regular",
+                                    color: homeProvider!
+                                                .selectedPriceMandiCoodityData !=
+                                            null
+                                        ? Colors.black
+                                        : Colors.black54,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
-                              // Add more decoration..
-                            ),
-                            hint: Text(
-                              buildTranslate("selectCommodity")!,
-                              style: const TextStyle(
-                                  fontSize: 13, fontFamily: "poppins-regular"),
-                            ),
-                            items: [],
-                            validator: (value) {
-                              if (value == null) {
-                                return 'Please select type of district.';
-                              }
-                              return null;
-                            },
-                            onChanged: (value) {},
-                            onSaved: (value) {},
-                            buttonStyleData: const ButtonStyleData(
-                              padding: EdgeInsets.only(right: 8),
-                            ),
-                            iconStyleData: const IconStyleData(
-                              icon: Icon(
+                              const Icon(
                                 Icons.arrow_drop_down,
                                 color: Colors.black45,
+                                size: 24,
                               ),
-                              iconSize: 24,
-                            ),
-                            menuItemStyleData: const MenuItemStyleData(
-                              padding: EdgeInsets.symmetric(horizontal: 16),
-                            ),
-                          ),
-                        )
-                      : Container(
-                          color: Colors.white,
-                          child: DropdownButtonFormField2<String>(
-                            isExpanded: true,
-                            dropdownStyleData:
-                                const DropdownStyleData(maxHeight: 200),
-                            decoration: InputDecoration(
-                              contentPadding:
-                                  const EdgeInsets.symmetric(vertical: 10),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              // Add more decoration..
-                            ),
-                            hint: Text(
-                              buildTranslate("selectCommodity")!,
-                              style: const TextStyle(
-                                  fontSize: 13, fontFamily: "poppins-regular"),
-                            ),
-                            items: homeProvider!.commodityItems!.data!
-                                .map((String crop) {
-                              return DropdownMenuItem<String>(
-                                value: crop,
-                                child: Text(crop,
-                                    style: const TextStyle(
-                                        fontSize: 15,
-                                        color: Colors.black,
-                                        fontFamily: 'poppins-regular')),
-                              );
-                            }).toList(),
-                            validator: (value) {
-                              if (value == null) {
-                                return 'Please select type of district.';
-                              }
-                              return null;
-                            },
-                            onChanged: (value) {
-                              setState(() {
-                                homeProvider!.selectedCommodityItemValue =
-                                    value!;
-                              });
-                              print(
-                                  "selectedCommodityItemValue : ${homeProvider!.selectedCommodityItemValue}");
-                            },
-                            onSaved: (value) {
-                              homeProvider!.selectedCommodityItemValue =
-                                  value.toString();
-                            },
-                            buttonStyleData: const ButtonStyleData(
-                              padding: EdgeInsets.only(right: 8),
-                            ),
-                            iconStyleData: const IconStyleData(
-                              icon: Icon(
-                                Icons.arrow_drop_down,
-                                color: Colors.black45,
-                              ),
-                              iconSize: 24,
-                            ),
-                            menuItemStyleData: const MenuItemStyleData(
-                              padding: EdgeInsets.symmetric(horizontal: 16),
-                            ),
+                            ],
                           ),
                         ),
+                      ),
+                    ),
+                  ),
                   const SizedBox(
                     height: 20,
                   ),
-
                   // Search By Date Range
                   Text(
                     buildTranslate("searchByDateRange")!,
@@ -791,7 +607,7 @@ class _MandiPriceScreenState extends State<MandiPriceScreen> {
                 width: 5,
               ),
               Text(
-                homeProvider!.selectedStateItemValue?.toString() ?? '',
+                homeProvider!.selectedMandiStateList ?? '',
                 softWrap: true,
                 style: TextStyle(
                     color: Color(0xFF808080),

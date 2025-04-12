@@ -1,17 +1,14 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:krishiyan/helper/loading.dart';
+import 'package:flutter/material.dart';
 import 'package:krishiyan/helper/provider.dart';
 import 'package:krishiyan/helper/snackbar.dart';
 import 'package:krishiyan/utils/Constants.dart';
+import '../../../mvc/model/GetMandiPriceData.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:krishiyan/mvc/model/MarketInsight.dart';
-import '../../../mvc/model/GetMandiPriceData.dart';
-import '../../../mvc/model/MandiPriceDistrictData.dart';
 import 'package:krishiyan/mvc/model/DailyNewsDetails.dart';
 import 'package:krishiyan/localization/AppLocalizations.dart';
-import 'package:krishiyan/mvc/model/MandiPriceCommodityData.dart';
 import 'package:krishiyan/screen/home_screen/home/home_model.dart';
 
 class HomeProvider extends ChangeNotifier {
@@ -62,28 +59,8 @@ class HomeProvider extends ChangeNotifier {
     buildTranslate('highToLowPrice')!,
   ];
 
-  // for selected state insite marketing
-  String? selectedMarketStateItemValue;
-
-  // for selected district inside markting
-  String? selectedMarketDistrictItemValue;
-
-  MandiPriceCommodityData? commodityMarketItems;
-
-  MandiPriceDistrictData? districtItems;
-  MandiPriceDistrictData? districtMarketItems;
-
-  String selectedMarketCommodityItemValue = "";
-
-  String? selectedStateItemValue;
-  String? selectedDistrictItemValue;
-
-  String selectedCommodityItemValue = "";
-
   String selectedSortItemsValue = "";
-  // String typeOfOrganizationData = "";
 
-  MandiPriceCommodityData? commodityItems;
 //*************************************************************************** */
 
   TextEditingController fromDateController = TextEditingController();
@@ -114,57 +91,14 @@ class HomeProvider extends ChangeNotifier {
 
 //*************************************************************************** */
 
-  Future<void> fetchMarketDistrictData(Function update) async {
-    try {
-      showLoading();
-      // Replace with your actual API endpoint
-      var response = await getAPICall(
-          apiUrl: "${baseUrlEnd}"
-              "api/mandi/filter?stateName=${homeProvider!.selectedMarketStateItemValue}");
-      stopLoading();
-      if (response.statusCode == 200) {
-        var data = jsonDecode(response.body.toString());
-
-        print("fetchDistrictData response : $response");
-        districtMarketItems = MandiPriceDistrictData.fromJson(data);
-        update();
-      } else {
-        throw Exception('Failed to load state');
-      }
-    } catch (e) {
-      print('HomePage Mandi Price : Error fetching state data: $e');
-    }
-  }
-
-  Future<void> fetchMarketCommodityData(Function update) async {
-    try {
-      var response = await getAPICall(
-          apiUrl: "${baseUrlEnd}"
-              "api/mandi/filter?stateName=${homeProvider!.selectedMarketStateItemValue}&districtName=${homeProvider!.selectedMarketDistrictItemValue}");
-
-      if (response.statusCode == 200) {
-        var data = jsonDecode(response.body.toString());
-
-        print("fetchCommodityData response : $response");
-
-        commodityMarketItems = MandiPriceCommodityData.fromJson(data);
-        update();
-      } else {
-        throw Exception('Failed to load state');
-      }
-    } catch (e) {
-      print('HomePage Mandi Price : Error fetching state data: $e');
-    }
-  }
-
   void getMarketInsight(Function update, BuildContext context) async {
-    if (homeProvider!.selectedMarketStateItemValue.toString().isNotEmpty &&
-        selectedMarketDistrictItemValue.toString().isNotEmpty &&
-        selectedMarketCommodityItemValue.toString().isNotEmpty) {
+    if (homeProvider!.selectedMandiStateList != null &&
+        selectedPriceMandiCoodityData != null &&
+        selectedPriceMandiCoodityData != null) {
       await getMarketInsideDetail(
-        selectedMarketStateItemValue.toString(),
-        selectedMarketDistrictItemValue.toString(),
-        selectedMarketCommodityItemValue.toString(),
+        selectedMandiStateList.toString(),
+        selectedPriceMandiCoodityData.toString(),
+        selectedPriceMandiCoodityData.toString(),
       );
       update();
     } else {
@@ -175,7 +109,7 @@ class HomeProvider extends ChangeNotifier {
 //*************************************************************************** */
   // state listing
   List<String> mandiStateList = [];
-  String selectedMandiStateList = '';
+  String? selectedMandiStateList;
   Future<void> fetchStateData(Function update) async {
     try {
       var response = await getAPICall(apiUrl: MANDI_PRICE_STATE);
@@ -197,6 +131,30 @@ class HomeProvider extends ChangeNotifier {
   }
 
 //*************************************************************************** */
+// for price mandi
+  List<String> districtMasterList = [];
+  String? selectedDistrictMasterList;
+  Future<void> fetchDistrictData(Function update) async {
+    try {
+      var response = await getAPICall(
+          apiUrl: "${baseUrlEnd}"
+              "api/mandi/filter?stateName=${homeProvider!.selectedMandiStateList}");
+
+      if (response.statusCode == 200) {
+        var jsonData = jsonDecode(response.body);
+        print("fetchDistrictData response : $response");
+
+        districtMasterList = List<String>.from(jsonData['data'] ?? []);
+        update();
+      } else {
+        districtMasterList = [];
+        setSnackbar('Failed to load state');
+      }
+    } catch (e) {
+      setSnackbar(' Mandi Price : Error fetching state data: $e');
+    }
+  }
+
 //*************************************************************************** */
   List<MarketInsight> marketInsightList = [];
 // market inside detail
@@ -245,5 +203,27 @@ class HomeProvider extends ChangeNotifier {
       setSnackbar('Failed to load data');
     }
   }
+
 //*************************************************************************** */
+  List<String> priceMandiCoodityData = [];
+  String? selectedPriceMandiCoodityData;
+  Future<void> fetchCommodityData(Function update) async {
+    try {
+      var response = await getAPICall(
+          apiUrl: "${baseUrlEnd}"
+              "api/mandi/filter?stateName=${homeProvider!.selectedMandiStateList}&districtName=${homeProvider!.selectedDistrictMasterList}");
+
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body.toString());
+        print("fetchCommodityData response : $response");
+        priceMandiCoodityData = List<String>.from(data['data'] ?? []);
+      } else {
+        priceMandiCoodityData = [];
+        setSnackbar('Failed to load state');
+      }
+      update();
+    } catch (e) {
+      setSnackbar(' Mandi Price : Error fetching state data: $e');
+    }
+  } //*************************************************************************** */
 }

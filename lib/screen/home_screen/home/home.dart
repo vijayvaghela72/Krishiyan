@@ -51,11 +51,6 @@ class _BottomOnePageState extends State<BottomOnePage>
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
     ));
-    print(
-        'selectedMarketStateItemValue : ${homeProvider!.selectedMarketStateItemValue}');
-    print(
-        'selectedMarketDistrictItemValue : ${homeProvider!.selectedMarketDistrictItemValue}');
-    print('commodityMarketItems : ${homeProvider!.commodityMarketItems}');
     return Scaffold(
       backgroundColor: const Color(0xFFf9f9f9),
       resizeToAvoidBottomInset: false,
