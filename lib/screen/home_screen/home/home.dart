@@ -442,18 +442,6 @@ class _BottomOnePageState extends State<BottomOnePage>
                                                 fontFamily: 'poppins-medium'),
                                           )),
                                           const VerticalDivider(width: 1.0),
-                                          // Expanded(
-                                          //     child: Align(
-                                          //       alignment: Alignment.centerRight,
-                                          //       child: Text(
-                                          //         buildTranslate("showMore")!,
-                                          //         softWrap: true,
-                                          //         style: const TextStyle(
-                                          //             color: Colors.grey,
-                                          //             fontSize: 15,
-                                          //             fontFamily: 'poppins-regular'),
-                                          //       ),
-                                          //     )),
                                         ],
                                       ),
                                     ),

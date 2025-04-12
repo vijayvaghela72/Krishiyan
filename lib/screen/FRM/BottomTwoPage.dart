@@ -290,7 +290,7 @@ class _BottomTwoPageState extends State<BottomTwoPage>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
+          children: [
             Padding(
               padding: const EdgeInsets.only(left: 10.0, right: 20.0),
               child: Container(
@@ -2366,7 +2366,7 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                                                   print(
                                                       'Has data: ${snapshot.hasData}');
                                                   print(
-                                                      'Error: ${snapshot.error}');
+                                                      'Error:: ${snapshot.error}');
                                                   print(
                                                       'Data: ${snapshot.data}');
 
@@ -2857,8 +2857,7 @@ class _BottomTwoPageState extends State<BottomTwoPage>
 
   Future<void> fetchCrops() async {
     try {
-      final response = await Dio()
-          .get("${baseUrl}crops"); 
+      final response = await Dio().get("${baseUrl}crops");
       if (response.statusCode == 200) {
         if (mounted) {
           setState(() {

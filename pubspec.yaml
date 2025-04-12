@@ -33,9 +33,9 @@ dependencies:
   page_transition: ^2.2.1
   dropdown_button2: ^2.3.9
   shared_preferences: ^2.5.3
-  permission_handler: ^11.4.0
   flutter_easyloading: ^3.0.5
   cached_network_image: ^3.4.1
+  permission_handler: ^12.0.0+1
   animated_bottom_navigation_bar: ^1.4.0
 
 dev_dependencies:
