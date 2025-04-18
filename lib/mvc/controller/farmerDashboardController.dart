@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../helper/AlertHelper.dart';
 import '../../utils/Constants.dart';
@@ -15,32 +16,26 @@ class FarmerDashboardController {
     String dealerNumberData = await prefs.getString(contactNo) ?? '1';
 
     final String endUrl = "${baseUrl}appFarmer/data/$dealerNumberData";
-
     try {
-      final Dio dio = Dio();
       var response;
       if (villageName != null && typeName != null) {
-        response = await dio.get(endUrl, queryParameters: {
-          'village': villageName,
-          'typeOfCultivationPractice': typeName,
-        });
-        print("Farmer Response If: ${response}");
+        var queryString =
+            "$endUrl?village=$villageName&typeOfCultivationPractice=$typeName";
+        response = await getAPICall(apiUrl: queryString);
+        print("Farmer Response If: ${response.body}");
       } else if (villageName != null && villageName.isNotEmpty) {
-        response = await dio.get(endUrl, queryParameters: {
-          'village': villageName,
-        });
-        print("Farmer Response Else If 1 : ${response}");
+        var queryString = "$endUrl?village=$villageName";
+        response = await getAPICall(apiUrl: queryString);
+        print("Farmer Response Else If 1 : ${response.body}");
       } else if (typeName != null && typeName.isNotEmpty) {
-        response = await dio.get(endUrl, queryParameters: {
-          'typeOfCultivationPractice': typeName,
-        });
-        print("Farmer Response Else If 1 : ${response}");
+        var queryString = "$endUrl?typeOfCultivationPractice=$typeName";
+        response = await getAPICall(apiUrl: queryString);
+        print("Farmer Response Else If 1 : ${response.body}");
       } else {
-        response = await dio.get(endUrl);
+        response = await getAPICall(apiUrl: endUrl);
       }
-
       if (response.statusCode == 200) {
-        List jsonResponse = response.data['data'];
+        List jsonResponse = json.decode(response.body)['data'];
         print("Farmer Dashboard Response : ${jsonResponse}");
         return jsonResponse
             .map((data) => FarmerDetails.fromJson(data))
@@ -62,14 +57,13 @@ class FarmerDashboardController {
         "?whatsappNumber=$whatsappNumber";
 
     try {
-      final Dio dio = Dio();
-      var response = await dio.get(endUrl);
+      var response = await getAPICall(apiUrl: endUrl);
 
-      print("fetchSearchFarmerDashboard If: ${response.toString()}");
+      print("fetchSearchFarmerDashboard If: ${response.body}");
 
       print("fetchSearchFarmerDashboard response : $response");
       if (response.statusCode == 200) {
-        List jsonResponse = response.data['data'];
+        List jsonResponse = json.decode(response.body)['data'];
         print("Farmer Dashboard Search Response : ${jsonResponse}");
         return jsonResponse
             .map((data) => FarmerDetails.fromJson(data))

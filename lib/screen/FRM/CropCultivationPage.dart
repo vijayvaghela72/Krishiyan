@@ -14,7 +14,6 @@ import '../home_screen/dashborad.dart';
 import 'package:intl/intl.dart';
 
 class CropCultivationPage extends StatefulWidget {
-
   String WhatsappNumber;
 
   CropCultivationPage({super.key, required this.WhatsappNumber});
@@ -23,8 +22,8 @@ class CropCultivationPage extends StatefulWidget {
   State<CropCultivationPage> createState() => _CropCultivationPageState();
 }
 
-class _CropCultivationPageState extends State<CropCultivationPage> with TickerProviderStateMixin {
-
+class _CropCultivationPageState extends State<CropCultivationPage>
+    with TickerProviderStateMixin {
   TextEditingController geoLocationController = TextEditingController();
   TextEditingController areaInArcsController = TextEditingController();
   TextEditingController varietyController = TextEditingController();
@@ -48,13 +47,13 @@ class _CropCultivationPageState extends State<CropCultivationPage> with TickerPr
   @override
   void initState() {
     super.initState();
+    print('crop : crop');
     _fetchFarmerNameData();
     _fetchCropData();
   }
 
   @override
   Widget build(BuildContext context) {
-
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
     ));
@@ -75,10 +74,15 @@ class _CropCultivationPageState extends State<CropCultivationPage> with TickerPr
                   Navigator.of(context).pop();
                 },
                 child: Image.asset('assets/images/back.png')),
-            const SizedBox(width: 10,),
+            const SizedBox(
+              width: 10,
+            ),
             Text(
               buildTranslate("cropCultivationData")!,
-              style: const TextStyle(color: Colors.white, fontFamily: 'poppins-medium', fontSize: 20),
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'poppins-medium',
+                  fontSize: 20),
             ),
           ],
         ),
@@ -88,15 +92,13 @@ class _CropCultivationPageState extends State<CropCultivationPage> with TickerPr
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
             const SizedBox(
               height: 20,
             ),
 
             // select farmer
             Padding(
-              padding: const EdgeInsets.only(
-                  left: 25.0, right: 25.0),
+              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: Text(
                 buildTranslate("selectFarmer")!,
                 style: const TextStyle(
@@ -109,24 +111,18 @@ class _CropCultivationPageState extends State<CropCultivationPage> with TickerPr
               height: 10,
             ),
             Padding(
-              padding: const EdgeInsets.only(
-                  left: 25.0, right: 25.0),
+              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: Container(
                   color: Colors.white,
                   child: DropdownButtonFormField2<String>(
-                    dropdownStyleData:
-                    const DropdownStyleData(
-                        maxHeight: 200),
+                    dropdownStyleData: const DropdownStyleData(maxHeight: 200),
                     hint: const Text('Select a farmer'),
                     decoration: InputDecoration(
-                      contentPadding:
-                      const EdgeInsets.symmetric(
-                          vertical: 16),
+                      contentPadding: const EdgeInsets.symmetric(vertical: 16),
                       filled: true,
                       fillColor: Colors.white,
                       border: OutlineInputBorder(
-                        borderRadius:
-                        BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(8),
                         borderSide: const BorderSide(
                           color: Colors.black,
                           width: 1.0,
@@ -144,10 +140,8 @@ class _CropCultivationPageState extends State<CropCultivationPage> with TickerPr
                       ),
                       iconSize: 24,
                     ),
-                    menuItemStyleData:
-                    const MenuItemStyleData(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 16),
+                    menuItemStyleData: const MenuItemStyleData(
+                      padding: EdgeInsets.symmetric(horizontal: 16),
                     ),
                     value: _selectedFarmersName,
                     items: dropdownItems,
@@ -162,8 +156,7 @@ class _CropCultivationPageState extends State<CropCultivationPage> with TickerPr
 
             // crops
             Padding(
-              padding: const EdgeInsets.only(
-                  left: 25.0, right: 25.0),
+              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: Text(
                 buildTranslate("selectCrops")!,
                 style: const TextStyle(
@@ -176,66 +169,56 @@ class _CropCultivationPageState extends State<CropCultivationPage> with TickerPr
               height: 10,
             ),
             Padding(
-              padding: const EdgeInsets.only(
-                  left: 25.0, right: 25.0),
-              child: _cropData == null ||
-                  _cropData!.data == null
-                  ? const Center(
-                  child: Text('No data available'))
+              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+              child: _cropData == null || _cropData!.data == null
+                  ? const Center(child: Text('No data available'))
                   : DropdownButtonFormField2<String>(
-                dropdownStyleData:
-                DropdownStyleData(maxHeight: 200),
-                hint: const Text('Select a Crop'),
-                decoration: InputDecoration(
-                  contentPadding:
-                  const EdgeInsets.symmetric(
-                      vertical: 16),
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius:
-                    BorderRadius.circular(8),
-                    borderSide: const BorderSide(
-                      color: Colors.black,
-                      width: 1.0,
-                    ),
-                  ),
-                  // Add more decoration..
-                ),
-                buttonStyleData: const ButtonStyleData(
-                  padding: EdgeInsets.only(right: 8),
-                ),
-                iconStyleData: const IconStyleData(
-                  icon: Icon(
-                    Icons.arrow_drop_down,
-                    color: Colors.black45,
-                  ),
-                  iconSize: 24,
-                ),
-                menuItemStyleData:
-                const MenuItemStyleData(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: 16),
-                ),
-                value: _selectedCrop,
-                items:
-                _cropData!.data!.map((String crop) {
-                  return DropdownMenuItem<String>(
-                    value: crop,
-                    child: Text(crop,
-                        style: const TextStyle(
-                            fontSize: 15,
+                      dropdownStyleData: DropdownStyleData(maxHeight: 200),
+                      hint: const Text('Select a Crop'),
+                      decoration: InputDecoration(
+                        contentPadding:
+                            const EdgeInsets.symmetric(vertical: 16),
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: const BorderSide(
                             color: Colors.black,
-                            fontFamily:
-                            'poppins-regular')),
-                  );
-                }).toList(),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    _selectedCrop = newValue;
-                  });
-                },
-              ),
+                            width: 1.0,
+                          ),
+                        ),
+                        // Add more decoration..
+                      ),
+                      buttonStyleData: const ButtonStyleData(
+                        padding: EdgeInsets.only(right: 8),
+                      ),
+                      iconStyleData: const IconStyleData(
+                        icon: Icon(
+                          Icons.arrow_drop_down,
+                          color: Colors.black45,
+                        ),
+                        iconSize: 24,
+                      ),
+                      menuItemStyleData: const MenuItemStyleData(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                      ),
+                      value: _selectedCrop,
+                      items: _cropData!.data!.map((String crop) {
+                        return DropdownMenuItem<String>(
+                          value: crop,
+                          child: Text(crop,
+                              style: const TextStyle(
+                                  fontSize: 15,
+                                  color: Colors.black,
+                                  fontFamily: 'poppins-regular')),
+                        );
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _selectedCrop = newValue;
+                        });
+                      },
+                    ),
             ),
             const SizedBox(
               height: 20,
@@ -243,8 +226,7 @@ class _CropCultivationPageState extends State<CropCultivationPage> with TickerPr
 
             // varity
             Padding(
-              padding: const EdgeInsets.only(
-                  left: 25.0, right: 25.0),
+              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: Text(
                 buildTranslate("variety")!,
                 style: const TextStyle(
@@ -257,8 +239,7 @@ class _CropCultivationPageState extends State<CropCultivationPage> with TickerPr
               height: 10,
             ),
             Padding(
-              padding: const EdgeInsets.only(
-                  left: 25.0, right: 25.0),
+              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: TextFormField(
                 decoration: InputDecoration(
                     alignLabelWithHint: true,
@@ -274,21 +255,16 @@ class _CropCultivationPageState extends State<CropCultivationPage> with TickerPr
                         color: Colors.grey,
                         width: 1.0,
                       ),
-                      borderRadius: BorderRadius.all(
-                          Radius.circular(8.0)),
+                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
                     ),
                     hintText: buildTranslate("enterVariety")!,
-                    hintStyle: const TextStyle(
-                        color: Color(0xFFe7e7e7)),
+                    hintStyle: const TextStyle(color: Color(0xFFe7e7e7)),
                     focusedBorder: const OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
-                          Radius.circular(8.0)),
-                      borderSide: BorderSide(
-                          color: Colors.green, width: 0.5),
+                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                      borderSide: BorderSide(color: Colors.green, width: 0.5),
                     )),
-                validator: (value) => value!.isEmpty
-                    ? 'Please, fill this field.'
-                    : null,
+                validator: (value) =>
+                    value!.isEmpty ? 'Please, fill this field.' : null,
                 controller: varietyController,
               ),
             ),
@@ -311,8 +287,7 @@ class _CropCultivationPageState extends State<CropCultivationPage> with TickerPr
               height: 10,
             ),
             Padding(
-              padding: const EdgeInsets.only(
-                  left: 25.0, right: 25.0),
+              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: TextFormField(
                 decoration: InputDecoration(
                     alignLabelWithHint: true,
@@ -334,20 +309,16 @@ class _CropCultivationPageState extends State<CropCultivationPage> with TickerPr
                         color: Colors.grey,
                         width: 1.0,
                       ),
-                      borderRadius: BorderRadius.all(
-                          Radius.circular(8.0)),
+                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
                     ),
                     hintText: 'DD/MM/YYYY',
                     hintStyle: const TextStyle(color: Color(0xFFe7e7e7)),
                     focusedBorder: const OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
-                          Radius.circular(8.0)),
-                      borderSide: BorderSide(
-                          color: Colors.green, width: 0.5),
+                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                      borderSide: BorderSide(color: Colors.green, width: 0.5),
                     )),
-                validator: (value) => value!.isEmpty
-                    ? 'Please, fill this field.'
-                    : null,
+                validator: (value) =>
+                    value!.isEmpty ? 'Please, fill this field.' : null,
                 controller: dateOfSowingController,
                 readOnly: true,
               ),
@@ -371,8 +342,7 @@ class _CropCultivationPageState extends State<CropCultivationPage> with TickerPr
               height: 10,
             ),
             Padding(
-              padding: const EdgeInsets.only(
-                  left: 25.0, right: 25.0),
+              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: TextFormField(
                 decoration: const InputDecoration(
                     alignLabelWithHint: true,
@@ -388,21 +358,16 @@ class _CropCultivationPageState extends State<CropCultivationPage> with TickerPr
                         color: Colors.grey,
                         width: 1.0,
                       ),
-                      borderRadius: BorderRadius.all(
-                          Radius.circular(8.0)),
+                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
                     ),
                     hintText: '----',
-                    hintStyle:
-                    TextStyle(color: Color(0xFFe7e7e7)),
+                    hintStyle: TextStyle(color: Color(0xFFe7e7e7)),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
-                          Radius.circular(8.0)),
-                      borderSide: BorderSide(
-                          color: Colors.green, width: 0.5),
+                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                      borderSide: BorderSide(color: Colors.green, width: 0.5),
                     )),
-                validator: (value) => value!.isEmpty
-                    ? 'Please, fill this field.'
-                    : null,
+                validator: (value) =>
+                    value!.isEmpty ? 'Please, fill this field.' : null,
                 controller: geoLocationController,
               ),
             ),
@@ -437,7 +402,8 @@ class _CropCultivationPageState extends State<CropCultivationPage> with TickerPr
                       borderSide: const BorderSide(
                         color: Colors.grey,
                         width: 1.0,
-                      ),),
+                      ),
+                    ),
                     // Add more decoration..
                   ),
                   hint: const Text(
@@ -446,15 +412,13 @@ class _CropCultivationPageState extends State<CropCultivationPage> with TickerPr
                   ),
                   items: items
                       .map((item) => DropdownMenuItem<String>(
-                    value: item,
-                    child: Text(
-                      item,
-                      style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey
-                      ),
-                    ),
-                  ))
+                            value: item,
+                            child: Text(
+                              item,
+                              style: const TextStyle(
+                                  fontSize: 14, color: Colors.grey),
+                            ),
+                          ))
                       .toList(),
                   validator: (value) {
                     if (value == null) {
@@ -507,8 +471,7 @@ class _CropCultivationPageState extends State<CropCultivationPage> with TickerPr
               height: 10,
             ),
             Padding(
-              padding: const EdgeInsets.only(
-                  left: 25.0, right: 25.0),
+              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: TextFormField(
                 keyboardType: TextInputType.number,
                 inputFormatters: <TextInputFormatter>[
@@ -532,20 +495,16 @@ class _CropCultivationPageState extends State<CropCultivationPage> with TickerPr
                         color: Colors.grey,
                         width: 1.0,
                       ),
-                      borderRadius: BorderRadius.all(
-                          Radius.circular(8.0)),
+                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
                     ),
                     hintText: buildTranslate('enterAreaInAcres'),
                     hintStyle: const TextStyle(color: Color(0xFFe7e7e7)),
                     focusedBorder: const OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
-                          Radius.circular(8.0)),
-                      borderSide: BorderSide(
-                          color: Colors.green, width: 0.5),
+                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                      borderSide: BorderSide(color: Colors.green, width: 0.5),
                     )),
-                validator: (value) => value!.isEmpty
-                    ? 'Please, fill this field.'
-                    : null,
+                validator: (value) =>
+                    value!.isEmpty ? 'Please, fill this field.' : null,
                 controller: areaInArcsController,
               ),
             ),
@@ -555,8 +514,7 @@ class _CropCultivationPageState extends State<CropCultivationPage> with TickerPr
 
             // geo Link Area On Map
             Padding(
-              padding: const EdgeInsets.only(
-                  left: 25.0, right: 25.0),
+              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: Text(
                 buildTranslate("geoLinkAreaOnMap")!,
                 style: const TextStyle(
@@ -569,8 +527,7 @@ class _CropCultivationPageState extends State<CropCultivationPage> with TickerPr
               height: 10,
             ),
             Padding(
-              padding: const EdgeInsets.only(
-                  left: 25.0, right: 25.0),
+              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: TextFormField(
                 decoration: const InputDecoration(
                     alignLabelWithHint: true,
@@ -586,21 +543,16 @@ class _CropCultivationPageState extends State<CropCultivationPage> with TickerPr
                         color: Colors.grey,
                         width: 1.0,
                       ),
-                      borderRadius: BorderRadius.all(
-                          Radius.circular(8.0)),
+                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
                     ),
                     hintText: 'Enter geoLink area on map',
-                    hintStyle:
-                    TextStyle(color: Color(0xFFe7e7e7)),
+                    hintStyle: TextStyle(color: Color(0xFFe7e7e7)),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
-                          Radius.circular(8.0)),
-                      borderSide: BorderSide(
-                          color: Colors.green, width: 0.5),
+                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                      borderSide: BorderSide(color: Colors.green, width: 0.5),
                     )),
-                validator: (value) => value!.isEmpty
-                    ? 'Please, fill this field.'
-                    : null,
+                validator: (value) =>
+                    value!.isEmpty ? 'Please, fill this field.' : null,
                 controller: geoLinkAreaOnMapController,
               ),
             ),
@@ -610,8 +562,7 @@ class _CropCultivationPageState extends State<CropCultivationPage> with TickerPr
 
             Container(
                 width: MediaQuery.of(context).size.width,
-                padding: const EdgeInsets.only(
-                    left: 25.0, right: 25.0),
+                padding: const EdgeInsets.only(left: 25.0, right: 25.0),
                 child: ElevatedButton(
                   onPressed: () {
                     _cropCultivationRegisterApiCall();
@@ -628,8 +579,7 @@ class _CropCultivationPageState extends State<CropCultivationPage> with TickerPr
                   child: Text(
                     buildTranslate('SUBMIT')!,
                     style: const TextStyle(
-                        fontSize: 15,
-                        fontFamily: 'poppins-medium'),
+                        fontSize: 15, fontFamily: 'poppins-medium'),
                   ),
                 )),
             const SizedBox(
@@ -647,13 +597,14 @@ class _CropCultivationPageState extends State<CropCultivationPage> with TickerPr
       context: context,
       initialDate: DateTime.now(), // Default date is the current date
       firstDate: DateTime(2000), // Earliest selectable date
-      lastDate: DateTime.now(),  // Latest selectable date
+      lastDate: DateTime.now(), // Latest selectable date
       helpText: 'Select a date', // Optional help text
     );
     if (pickedDate != null) {
       setState(() {
         // Format the selected date and display it in the TextFormField
-        dateOfSowingController.text = DateFormat('dd-MM-yyyy').format(pickedDate);
+        dateOfSowingController.text =
+            DateFormat('dd-MM-yyyy').format(pickedDate);
       });
     }
   }
@@ -681,7 +632,10 @@ class _CropCultivationPageState extends State<CropCultivationPage> with TickerPr
               //   );
               // }
               Navigator.of(context).pushReplacement(MaterialPageRoute(
-                  builder: (BuildContext context) => HomePage(selectedIndex: 1, typeOfOrganization: typeOfOrganizationData,)));
+                  builder: (BuildContext context) => HomePage(
+                        selectedIndex: 1,
+                        typeOfOrganization: typeOfOrganizationData,
+                      )));
             },
             child: const Align(
               alignment: Alignment.topRight,
@@ -692,21 +646,35 @@ class _CropCultivationPageState extends State<CropCultivationPage> with TickerPr
               ),
             ),
           ),
-
-          Center(child: Image.asset('assets/images/check_green.png', width: 100, height: 100,)),
-
-          Text(buildTranslate("successfullySaved")!, softWrap: true,
+          Center(
+              child: Image.asset(
+            'assets/images/check_green.png',
+            width: 100,
+            height: 100,
+          )),
+          Text(
+            buildTranslate("successfullySaved")!,
+            softWrap: true,
             textAlign: TextAlign.center,
-            style: const TextStyle(fontFamily: "poppins-semibold",
-                fontSize: 15.0, color: Colors.grey),),
-
-          const SizedBox(height: 20,),
-
-          Text(buildTranslate("thankYou")!, softWrap: true,
-            style: const TextStyle(fontFamily: "poppins-semibold",
-                fontSize: 20.0, color: Colors.black),),
-
-          const SizedBox(height: 20,),
+            style: const TextStyle(
+                fontFamily: "poppins-semibold",
+                fontSize: 15.0,
+                color: Colors.grey),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Text(
+            buildTranslate("thankYou")!,
+            softWrap: true,
+            style: const TextStyle(
+                fontFamily: "poppins-semibold",
+                fontSize: 20.0,
+                color: Colors.black),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
         ],
       ),
     );
@@ -724,17 +692,17 @@ class _CropCultivationPageState extends State<CropCultivationPage> with TickerPr
     try {
       String? number = await AppGlobal.getStringPreference('contactNumber');
       var num = number ?? "1";
-      var response = await Dio().get(FARMER_NAME+num);
+      var response = await Dio().get(FARMER_NAME + num);
 
       print("Farmer name : $response");
       if (response.statusCode == 200) {
         dropdownItems =
             response.data['data'].map<DropdownMenuItem<String>>((item) {
-              return DropdownMenuItem<String>(
-                value: item['name'],
-                child: Text(item['name']),
-              );
-            }).toList();
+          return DropdownMenuItem<String>(
+            value: item['name'],
+            child: Text(item['name']),
+          );
+        }).toList();
       } else {
         throw Exception('Failed to load farmers name');
       }
@@ -760,17 +728,17 @@ class _CropCultivationPageState extends State<CropCultivationPage> with TickerPr
   }
 
   _cropCultivationRegisterApiCall() async {
-    if(
-        varietyController.text.trim().isNotEmpty &&
+    if (varietyController.text.trim().isNotEmpty &&
         dateOfSowingController.text.trim().isNotEmpty &&
         geoLocationController.text.trim().isNotEmpty &&
         selectedItemValue.toString().isNotEmpty &&
         areaInArcsController.text.trim().isNotEmpty &&
-            geoLinkAreaOnMapController.text.trim().isNotEmpty) {
+        geoLinkAreaOnMapController.text.trim().isNotEmpty) {
       String? number = await AppGlobal.getStringPreference('contactNumber');
 
       // Parse the input date string
-      DateTime parsedDate = DateFormat('dd-MM-yyyy').parse(dateOfSowingController.text.toString());
+      DateTime parsedDate = DateFormat('dd-MM-yyyy')
+          .parse(dateOfSowingController.text.toString());
       // Format it to YYYY-MM-DD
       String formattedDate = DateFormat('yyyy-MM-dd').format(parsedDate);
 
@@ -788,8 +756,8 @@ class _CropCultivationPageState extends State<CropCultivationPage> with TickerPr
       });
 
       var farmerRegistration =
-      FarmerDashboardController.cropCultivationRegister(body,
-          context: context);
+          FarmerDashboardController.cropCultivationRegister(body,
+              context: context);
 
       if (farmerRegistration.toString().isNotEmpty) {
         Future.delayed(const Duration(seconds: 1), () {
@@ -801,12 +769,10 @@ class _CropCultivationPageState extends State<CropCultivationPage> with TickerPr
         AlertHelper.showToast("Api error", context);
         print("Api error");
       }
-    }
-    else {
+    } else {
       AlertHelper.showToast("Please enter details.", context);
     }
   }
-
 }
 
 class cropsCategory {
