@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:krishiyan/helper/api_base_helper.dart';
 import '../FarmerProfile.dart';
 import 'package:intl/intl.dart';
 import '../CropCultivationPage.dart';
@@ -2706,12 +2707,12 @@ class _BottomTwoPageState extends State<BottomTwoPage>
     try {
       String? number = await AppGlobal.getStringPreference('contactNumber');
       var num = number ?? "1";
-      var response = await Dio().get(FARMER_NAME + num);
+      var response = await getAPICall(apiUrl: FARMER_NAME + num);
       print(num);
 
       if (response.statusCode == 200) {
-        dropdownItems =
-            response.data['data'].map<DropdownMenuItem<String>>((item) {
+        var jsonData = json.decode(response.body);
+        dropdownItems = jsonData['data'].map<DropdownMenuItem<String>>((item) {
           return DropdownMenuItem<String>(
             value: item['name'],
             child: Text(item['name']),
@@ -2732,12 +2733,13 @@ class _BottomTwoPageState extends State<BottomTwoPage>
       String? number = await AppGlobal.getStringPreference('contactNumber');
       var dealerNumber = number ?? "1"; // Default to "1" if no number found
 
-      var response = await Dio().get(VILLAGES_NAMES + dealerNumber);
+      var response = await getAPICall(apiUrl: VILLAGES_NAMES + dealerNumber);
 
       if (response.statusCode == 200) {
         if (mounted) {
           setState(() {
-            _villageNameData = SelectVillagesNameData.fromJson(response.data);
+            _villageNameData =
+                SelectVillagesNameData.fromJson(jsonDecode(response.body));
           });
         }
       } else {
@@ -2750,11 +2752,11 @@ class _BottomTwoPageState extends State<BottomTwoPage>
 
   Future<void> fetchCrops() async {
     try {
-      final response = await Dio().get("${baseUrl}crops");
+      final response = await getAPICall(apiUrl: "${baseUrl}crops");
       if (response.statusCode == 200) {
         if (mounted) {
           setState(() {
-            crops = List<String>.from(response.data['data']);
+            crops = List<String>.from(jsonDecode(response.body)['data']);
           });
         }
       } else {
@@ -2767,8 +2769,6 @@ class _BottomTwoPageState extends State<BottomTwoPage>
 
   Future<bool> verifyOtp(
       String number, String enteredOtp, BuildContext context) async {
-    final dio = Dio(); // Create an instance of Dio
-
     // Define the URL for your API endpoint
     final url = "${baseUrl}whatsapp/check-otp/";
 
@@ -2780,12 +2780,9 @@ class _BottomTwoPageState extends State<BottomTwoPage>
 
     try {
       // Make the POST request to verify the OTP
-      final response = await dio.post(
-        url,
-        data: data,
-        options: Options(
-          headers: {'Content-Type': 'application/json'},
-        ),
+      final response = await postAPICall(
+        apiUrl: url,
+        parameter: data,
       );
 
       // Check the response from the server

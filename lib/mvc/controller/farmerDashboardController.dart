@@ -78,109 +78,95 @@ class FarmerDashboardController {
 
   static Future<FRMRegistrationData?> farmerRegistration(dynamic data,
       {required BuildContext context}) async {
-    var headers = {'Content-Type': 'application/json'};
+    try {
+      var response = await postAPICall(
+        apiUrl: FARMER_REGISTRATION,
+        parameter: data,
+      );
 
-    var dio = Dio();
-    var response = await dio.request(
-      FARMER_REGISTRATION,
-      options: Options(
-        method: 'POST',
-        followRedirects: false,
-        validateStatus: (status) {
-          return status! < 500;
-        },
-        headers: headers,
-      ),
-      data: data,
-    );
+      if (response.statusCode == 201) {
+        print("FRM Registration Response : " + response.body);
 
-    if (response.statusCode == 201) {
-      print("FRM Registration Response : " + json.encode(response.data));
-
-      APIResponse? apiResponse = APIResponse.fromJson(response.data);
-      if (apiResponse.success!) {
-        if (apiResponse.frmRegistrationData != null) {
-          return apiResponse.frmRegistrationData;
-        } else {
+        APIResponse? apiResponse =
+            APIResponse.fromJson(json.decode(response.body));
+        if (apiResponse.success!) {
+          if (apiResponse.frmRegistrationData != null) {
+            return apiResponse.frmRegistrationData;
+          } else {
+            AlertHelper.showToast(apiResponse.message!, context);
+          }
+        }
+        if (apiResponse.message != "") {
           AlertHelper.showToast(apiResponse.message!, context);
         }
+        return null;
+      } else {
+        print("Error : " + response.statusCode.toString());
+        return null;
       }
-      if (apiResponse.message != "") {
-        AlertHelper.showToast(apiResponse.message!, context);
-      }
+    } catch (e) {
+      print("Error : $e");
       return null;
-    } else {
-      print("Error : " + response.statusMessage.toString());
     }
   }
 
   static Future<String?> farmerGroupRegistration(dynamic data,
       {required BuildContext context}) async {
-    var headers = {'Content-Type': 'application/json'};
+    try {
+      var response = await postAPICall(
+        apiUrl: SIGNUP,
+        parameter: data,
+      );
 
-    var dio = Dio();
-    var response = await dio.request(
-      SIGNUP,
-      options: Options(
-        method: 'POST',
-        followRedirects: false,
-        validateStatus: (status) {
-          return status! < 500;
-        },
-        headers: headers,
-      ),
-      data: data,
-    );
+      if (response.statusCode == 201) {
+        print("Farmer group registration Response : " + response.body);
 
-    if (response.statusCode == 201) {
-      print(
-          "Farmer group registration Response : " + json.encode(response.data));
-
-      APIResponse? apiResponse = APIResponse.fromJson(response.data);
-      if (apiResponse.success!) {
-        return apiResponse.message.toString();
+        APIResponse? apiResponse =
+            APIResponse.fromJson(json.decode(response.body));
+        if (apiResponse.success!) {
+          return apiResponse.message.toString();
+        }
+        if (apiResponse.message != "") {
+          AlertHelper.showToast(apiResponse.message!, context);
+        }
+        return "";
+      } else {
+        print("Error : " + response.statusCode.toString());
+        return null;
       }
-      if (apiResponse.message != "") {
-        AlertHelper.showToast(apiResponse.message!, context);
-      }
-      return "";
-    } else {
-      print("Error : " + response.statusMessage.toString());
+    } catch (e) {
+      print("Error : $e");
+      return null;
     }
   }
 
   static Future<String?> cropCultivationRegister(dynamic data,
       {required BuildContext context}) async {
-    var headers = {'Content-Type': 'application/json'};
+    try {
+      var response = await postAPICall(
+        apiUrl: CROP_CULTIVATION_REGISTR,
+        parameter: data,
+      );
 
-    var dio = Dio();
-    var response = await dio.request(
-      CROP_CULTIVATION_REGISTR,
-      options: Options(
-        method: 'POST',
-        followRedirects: false,
-        validateStatus: (status) {
-          return status! < 500;
-        },
-        headers: headers,
-      ),
-      data: data,
-    );
+      if (response.statusCode == 201) {
+        print("Crop cultivation register response : " + response.body);
 
-    if (response.statusCode == 201) {
-      print(
-          "Crop cultivation register response : " + json.encode(response.data));
-
-      APIResponse? apiResponse = APIResponse.fromJson(response.data);
-      if (apiResponse.success!) {
-        return apiResponse.message.toString();
+        APIResponse? apiResponse =
+            APIResponse.fromJson(json.decode(response.body));
+        if (apiResponse.success!) {
+          return apiResponse.message.toString();
+        }
+        if (apiResponse.message != "") {
+          AlertHelper.showToast(apiResponse.message!, context);
+        }
+        return "";
+      } else {
+        print("Error : " + response.statusCode.toString());
+        return null;
       }
-      if (apiResponse.message != "") {
-        AlertHelper.showToast(apiResponse.message!, context);
-      }
-      return "";
-    } else {
-      print("Error : " + response.statusMessage.toString());
+    } catch (e) {
+      print("Error : $e");
+      return null;
     }
   }
 }

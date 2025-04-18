@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../helper/AlertHelper.dart';
@@ -74,26 +75,14 @@ class EnquiryDashboardController {
 
   static Future<String?> buySellCommodityData(dynamic data,
       {required BuildContext context}) async {
-    var headers = {'Content-Type': 'application/json'};
-
-    var dio = Dio();
-    var response = await dio.request(
-      BUY_COMMODITY,
-      options: Options(
-        method: 'POST',
-        followRedirects: false,
-        validateStatus: (status) {
-          return status! < 500;
-        },
-        headers: headers,
-      ),
-      data: data,
-    );
+    var response =
+        await postAPICall(apiUrl: BUY_COMMODITY, parameter: json.encode(data));
 
     if (response.statusCode == 201) {
-      print("Commodity Response : " + json.encode(response.data));
+      print("Commodity Response : " + response.body);
 
-      APIResponse? apiResponse = APIResponse.fromJson(response.data);
+      APIResponse? apiResponse =
+          APIResponse.fromJson(json.decode(response.body));
       if (apiResponse.success!) {
         return apiResponse.message.toString();
       }
@@ -102,7 +91,7 @@ class EnquiryDashboardController {
       }
       return "";
     } else {
-      print("Error : " + response.statusMessage.toString());
+      print("Error : " + response.reasonPhrase.toString());
     }
   }
 }
