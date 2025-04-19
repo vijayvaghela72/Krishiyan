@@ -1,17 +1,17 @@
 import 'dart:io';
+import 'helper/SharedPref.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:krishiyan/helper/provider.dart';
-import 'package:krishiyan/screen/Welcome/WelcomePage.dart';
-import 'package:krishiyan/utils/Constants.dart';
-import 'package:krishiyan/screen/home_screen/dashborad.dart'; // Import your HomePage
 import 'package:provider/provider.dart';
-import 'helper/SharedPref.dart'; // Import your SharedPref
 import 'localization/AppLocalizations.dart';
 import 'localization/NavigationService.dart';
+import 'package:krishiyan/helper/provider.dart';
+import 'package:krishiyan/utils/Constants.dart';
+import 'package:krishiyan/screen/Welcome/WelcomePage.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:krishiyan/screen/home_screen/dashborad.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -52,7 +52,7 @@ class MyApp extends StatelessWidget {
             );
           },
         ),
-        navigatorKey: NavigationService.navigatorKey, // set property
+        navigatorKey: NavigationService.navigatorKey,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
           useMaterial3: true,
@@ -82,10 +82,11 @@ class MyApp extends StatelessWidget {
               // Navigate based on the login status
               if (snapshot.data == true) {
                 return SafeArea(
-                    child: HomePage(
-                  selectedIndex: 0,
-                  typeOfOrganization: "",
-                )); // User is logged in
+                  child: HomePage(
+                    selectedIndex: 0,
+                    typeOfOrganization: "",
+                  ),
+                ); // User is logged in
               } else {
                 return const WelcomePage(); // User is not logged in
               }

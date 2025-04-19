@@ -1,7 +1,6 @@
 import 'dart:developer';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../mvc/model/LoginData.dart';
 import 'Constants.dart';
 import 'package:intl/intl.dart';
 

@@ -2752,7 +2752,7 @@ class _BottomTwoPageState extends State<BottomTwoPage>
 
   Future<void> fetchCrops() async {
     try {
-      final response = await getAPICall(apiUrl: "${baseUrl}crops");
+      final response = await getAPICall(apiUrl: "${baseUrl}/all/crops");
       if (response.statusCode == 200) {
         if (mounted) {
           setState(() {

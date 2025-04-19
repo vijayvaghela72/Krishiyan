@@ -100,7 +100,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     super.initState();
     _bottomNavIndex = widget.selectedIndex;
     typeOfOrganizationData = widget.typeOfOrganization;
-    print("AAAAAAAAAAAA");
     print(_bottomNavIndex);
     getPrefValue();
   }
