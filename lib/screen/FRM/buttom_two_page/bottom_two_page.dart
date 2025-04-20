@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:krishiyan/helper/api_base_helper.dart';
+import 'package:krishiyan/helper/loading.dart';
+import 'package:krishiyan/helper/snackbar.dart';
 import '../FarmerProfile.dart';
 import 'package:intl/intl.dart';
 import '../CropCultivationPage.dart';
@@ -19,6 +20,7 @@ import '../../../localization/AppLocalizations.dart';
 import 'package:krishiyan/mvc/model/FrmInsight.dart';
 import 'package:krishiyan/mvc/model/InsightData.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:krishiyan/mvc/model/GetOtpDetails.dart';
 import '../../../mvc/model/SelectVillagesNameData.dart';
@@ -195,9 +197,15 @@ class _BottomTwoPageState extends State<BottomTwoPage>
     super.initState();
     futureFarmerProfiles = FarmerDashboardController.fetchFarmerDashboard(
         context, widget.villageName, widget.typeName);
-    fetchCrops();
-    _fetchFarmerNameData();
-    _fetchVillageData();
+    getAllData();
+  }
+
+  getAllData() async {
+    showLoading();
+    await fetchCrops();
+    await _fetchFarmerNameData();
+    await _fetchVillageData();
+    stopLoading();
   }
 
   // onTextChanged function to call the API
@@ -426,18 +434,21 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                             ),
                             const Spacer(),
                             InkWell(
-                                highlightColor: Colors.transparent,
-                                splashColor: Colors.transparent,
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    PageTransition(
-                                      type: PageTransitionType.leftToRight,
-                                      child: const MyDrawer(),
-                                    ),
-                                  );
-                                },
-                                child: Image.asset('assets/images/filter.png')),
+                              highlightColor: Colors.transparent,
+                              splashColor: Colors.transparent,
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  PageTransition(
+                                    type: PageTransitionType.leftToRight,
+                                    child: const MyDrawer(),
+                                  ),
+                                );
+                              },
+                              child: Image.asset(
+                                'assets/images/filter.png',
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -449,7 +460,6 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                               return const Center(
                                   child: CircularProgressIndicator());
                             } else if (snapshot.hasError) {
-                              // return Center(child: Text(snapshot.error.toString()));
                               return Center(
                                   child:
                                       Text(buildTranslate("noDataAvailable")!));
@@ -1896,7 +1906,6 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                               const SizedBox(
                                 height: 20,
                               ),
-
                               Container(
                                   width: MediaQuery.of(context).size.width,
                                   padding: const EdgeInsets.only(
@@ -1911,8 +1920,7 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                                       textStyle: const TextStyle(fontSize: 18),
                                       backgroundColor: const Color(0xFF3FC041),
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(
-                                            12), // <-- Radius
+                                        borderRadius: BorderRadius.circular(12),
                                       ),
                                     ),
                                     child: Text(
@@ -3218,7 +3226,8 @@ class _BottomTwoPageState extends State<BottomTwoPage>
 
       var body = json.encode({
         "dealerNumber": number ?? "1",
-        "fid": WhatsappNumberData,
+        // "fid": WhatsappNumberData,
+        "fid": number,
         "farmerName": _selectedFarmersName.toString(),
         "crops": _selectedCrop.toString(),
         "variety": varietyController.text.toString(),
@@ -3228,20 +3237,29 @@ class _BottomTwoPageState extends State<BottomTwoPage>
         "areaInAcres": areaInArcesController.text.toString(),
         "geoLinkAreaOnMap": geoLinkAreaOnMapController.text.toString()
       });
+      showLoading();
+      var response = await postAPICall(
+        apiUrl: CROP_CULTIVATION_REGISTR,
+        parameter: body,
+      );
+      stopLoading();
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        _selectedFarmersName = null;
+        _selectedCrop = null;
+        varietyController.text = '';
+        formattedDate = '';
+        geoLocationController.text = '';
+        selectedItemValue = null;
+        areaInArcesController.text = '';
+        geoLinkAreaOnMapController.text = '';
+        setState(() {});
 
-      var farmerRegistration =
-          FarmerDashboardController.cropCultivationRegister(body,
-              context: context);
-
-      if (farmerRegistration.toString().isNotEmpty) {
         Future.delayed(const Duration(seconds: 1), () {
           print('crop cultivation registered successfully');
-
-          showAlertDialog(context, farmerRegistration.toString());
+          showAlertDialog(context, 'crop cultivation registered successfully');
         });
       } else {
-        AlertHelper.showToast("Api error", context);
-        print("Api error");
+        setSnackbar('Something wrong! ${response.body.toString()}');
       }
     } else {
       AlertHelper.showToast("Please enter details.", context);
@@ -3311,11 +3329,13 @@ class _MyDrawerState extends State<MyDrawer> {
       String? number = await AppGlobal.getStringPreference('contactNumber');
       var dealerNumber = number ?? "1"; // Default to "1" if no number found
       print('VILLAGES_NAMES + dealerNumber : ${VILLAGES_NAMES + dealerNumber}');
-      var response = await Dio().get(VILLAGES_NAMES + dealerNumber);
-
+      showLoading();
+      var response = await getAPICall(apiUrl: VILLAGES_NAMES + dealerNumber);
+      stopLoading();
       if (response.statusCode == 200) {
         setState(() {
-          _villageNameData = SelectVillagesNameData.fromJson(response.data);
+          _villageNameData =
+              SelectVillagesNameData.fromJson(jsonDecode(response.body));
         });
       } else {
         throw Exception('Failed to load villages');
