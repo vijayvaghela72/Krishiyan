@@ -1,27 +1,23 @@
-import 'dart:convert';
 import 'dart:io';
-
+import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:krishiyan/localization/AppLocalizations.dart';
-import 'package:krishiyan/mvc/model/GetEnquiryByFilterData.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../../helper/AlertHelper.dart';
-import '../../mvc/controller/cropController.dart';
-import '../../mvc/controller/enquiryDashboardController.dart';
-import '../../mvc/model/CropLibraryData.dart';
-import '../../mvc/model/SelectCropNamesData.dart';
 import '../../utils/AppGlobal.dart';
 import '../../utils/Constants.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import '../../helper/AlertHelper.dart';
+import 'package:image_picker/image_picker.dart';
+import '../../mvc/model/SelectCropNamesData.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:krishiyan/helper/api_base_helper.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:krishiyan/localization/AppLocalizations.dart';
+import 'package:krishiyan/mvc/model/GetEnquiryByFilterData.dart';
 
+// ignore: must_be_immutable
 class EditBuyCommodityPage extends StatefulWidget {
   EnquiryByFilterData enquiryData;
 
@@ -71,30 +67,28 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
   void getBuyCommoditiyValue() {
     _selectedCrop = widget.enquiryData.commodity ?? "";
     varietyController.text = widget.enquiryData.variety ?? "";
-    quantityController.text = widget.enquiryData.quantity.toString() ?? "";
-    moistureController.text = widget.enquiryData.moisture.toString() ?? "";
+    quantityController.text = widget.enquiryData.quantity.toString();
+    moistureController.text = widget.enquiryData.moisture.toString();
     localGradeController.text =
-        widget.enquiryData.localGradeSpecification.toString() ?? "";
-    sizeController.text = widget.enquiryData.size.toString() ?? "";
-    countController.text = widget.enquiryData.count.toString() ?? "";
-    purchasePriceController.text = widget.enquiryData.price.toString() ?? "";
-
+        widget.enquiryData.localGradeSpecification.toString();
+    sizeController.text = widget.enquiryData.size.toString();
+    countController.text = widget.enquiryData.count.toString();
+    purchasePriceController.text = widget.enquiryData.price.toString();
     dateOfDeliveryController.text =
         AppGlobal.convertToCustomDateFormat(widget.enquiryData.date.toString());
-    originCommodityController.text = widget.enquiryData.origin.toString() ?? "";
-    deliveryLocationController.text =
-        widget.enquiryData.location.toString() ?? "";
-    commentsController.text = widget.enquiryData.comments.toString() ?? "";
+    originCommodityController.text = widget.enquiryData.origin.toString();
+    deliveryLocationController.text = widget.enquiryData.location.toString();
+    commentsController.text = widget.enquiryData.comments.toString();
   }
 
   Future<void> _fetchCropData() async {
     try {
       // Replace with your actual API endpoint
-      var response = await Dio().get(CROPS_NAMES);
+      var response = await getAPICall(apiUrl: CROPS_NAMES);
 
       if (response.statusCode == 200) {
         setState(() {
-          _cropData = SelectCropNamesData.fromJson(response.data);
+          _cropData = SelectCropNamesData.fromJson(jsonDecode(response.body));
         });
       } else {
         throw Exception('Failed to load crops');
@@ -107,7 +101,7 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
   final ImagePicker _picker = ImagePicker();
   File? _image;
   String? _imageUrl;
-  Dio _dio = Dio(); // Create a Dio instance
+  Dio _dio = Dio();
   // Cache expiration in days
   final int cacheExpirationDays = 10;
 
@@ -189,9 +183,20 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
       });
 
       // Send the POST request to the API
+      final timestamp = DateTime.now().millisecondsSinceEpoch.toString();
+      final signature = hmacSha256(encryptionKey, timestamp);
+
       Response response = await _dio.post(
         '${baseUrl}upload',
         data: formData,
+        options: Options(headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+          "Connection": "application/json",
+          "Authorization": 'Bearer',
+          'x-timestamp': timestamp,
+          'x-signature': signature,
+        }),
       );
 
       if (response.statusCode == 200) {
@@ -239,10 +244,9 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
       prefs.setInt(imageKey, DateTime.now().millisecondsSinceEpoch);
 
       // Download and store the image locally
-      final response = await _dio.get(imageUrl,
-          options: Options(responseType: ResponseType.bytes));
+      final response = await getAPICall(apiUrl: imageUrl);
       if (response.statusCode == 200) {
-        File(imageCachePath)..writeAsBytesSync(response.data);
+        File(imageCachePath).writeAsBytesSync(response.bodyBytes);
       }
     } catch (e) {
       print("Error caching image: $e");
@@ -1086,8 +1090,6 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
         commentsController.text.trim().isNotEmpty) {
       String contactNumber =
           (await AppGlobal.getStringPreference('contactNumber'))!;
-      var headers = {'Content-Type': 'application/json'};
-
       var data = json.encode({
         "operation": widget.enquiryData.operation,
         "commodity": _selectedCrop,
@@ -1106,24 +1108,16 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
         "verified": true
       });
 
-      var dio = Dio();
-      var response = await dio.request(
-        "${baseUrl}commodities/"
-        "$contactNumber/${widget.enquiryData.sId}",
-        options: Options(
-          method: 'PUT',
-          headers: headers,
-        ),
-        data: data,
-      );
+      var url =
+          "${baseUrl}commodities/$contactNumber/${widget.enquiryData.sId}";
+      var response = await putAPICall(apiUrl: url, parameter: data);
 
       if (response.statusCode == 200) {
-        print("Enquiry details updated : " + json.encode(response.data));
-
+        print("Enquiry details updated : " + response.body);
         showAlertDialog(context);
       } else {
-        AlertHelper.showToast(response.statusMessage.toString(), context);
-        print(response.statusMessage);
+        AlertHelper.showToast(response.reasonPhrase.toString(), context);
+        print(response.reasonPhrase);
       }
     } else {
       AlertHelper.showToast("Please enter details.", context);

@@ -1,9 +1,8 @@
 import 'dart:convert';
-
-import 'package:dio/dio.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:krishiyan/helper/api_base_helper.dart';
 import '../../helper/AlertHelper.dart';
 import '../../localization/AppLocalizations.dart';
 import '../../mvc/controller/farmerDashboardController.dart';
@@ -13,6 +12,7 @@ import '../../utils/Constants.dart';
 import '../home_screen/dashborad.dart';
 import 'package:intl/intl.dart';
 
+// ignore: must_be_immutable
 class CropCultivationPage extends StatefulWidget {
   String WhatsappNumber;
 
@@ -620,17 +620,6 @@ class _CropCultivationPageState extends State<CropCultivationPage>
             onTap: () async {
               Navigator.of(context).pop();
               Navigator.of(context).pop();
-              // Navigator.of(context).popUntil((route) => route.isFirst);
-
-              // if (typeOfOrganizationData == "Farmer groups") {
-              //   Navigator.of(context).pushReplacement(MaterialPageRoute(
-              //       builder: (BuildContext context) => MyHomePage(selectedIndex: 1,)));
-              // }
-              // else{
-              //   Navigator.push(context, MaterialPageRoute(builder:
-              //       (context) => MyOtherHomePage(selectedIndex: 0,)),
-              //   );
-              // }
               Navigator.of(context).pushReplacement(MaterialPageRoute(
                   builder: (BuildContext context) => HomePage(
                         selectedIndex: 1,
@@ -692,12 +681,12 @@ class _CropCultivationPageState extends State<CropCultivationPage>
     try {
       String? number = await AppGlobal.getStringPreference('contactNumber');
       var num = number ?? "1";
-      var response = await Dio().get(FARMER_NAME + num);
+      var response = await getAPICall(apiUrl: FARMER_NAME + num);
 
-      print("Farmer name : $response");
+      print("Farmer name : ${response.body}");
       if (response.statusCode == 200) {
-        dropdownItems =
-            response.data['data'].map<DropdownMenuItem<String>>((item) {
+        var jsonData = jsonDecode(response.body);
+        dropdownItems = jsonData['data'].map<DropdownMenuItem<String>>((item) {
           return DropdownMenuItem<String>(
             value: item['name'],
             child: Text(item['name']),
@@ -713,11 +702,11 @@ class _CropCultivationPageState extends State<CropCultivationPage>
 
   Future<void> _fetchCropData() async {
     try {
-      var response = await Dio().get(CROPS_NAMES);
+      var response = await getAPICall(apiUrl: CROPS_NAMES);
 
       if (response.statusCode == 200) {
         setState(() {
-          _cropData = SelectCropNamesData.fromJson(response.data);
+          _cropData = SelectCropNamesData.fromJson(jsonDecode(response.body));
         });
       } else {
         throw Exception('Failed to load crops');

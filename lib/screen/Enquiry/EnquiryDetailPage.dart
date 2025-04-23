@@ -1,15 +1,13 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:krishiyan/mvc/model/GetAllEnquiryData.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../../helper/AlertHelper.dart';
 
+// ignore: must_be_immutable
 class EnquiryDetailPage extends StatefulWidget {
-
   EnquiryData commodity;
 
   EnquiryDetailPage({super.key, required this.commodity});
@@ -20,7 +18,6 @@ class EnquiryDetailPage extends StatefulWidget {
 
 class _EnquiryDetailPageState extends State<EnquiryDetailPage>
     with TickerProviderStateMixin {
-
   @override
   void initState() {
     super.initState();
@@ -73,7 +70,7 @@ class _EnquiryDetailPageState extends State<EnquiryDetailPage>
             // user card
             Padding(
               padding:
-              const EdgeInsets.only(top: 10.0, right: 10.0, left: 10.0),
+                  const EdgeInsets.only(top: 10.0, right: 10.0, left: 10.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -86,8 +83,8 @@ class _EnquiryDetailPageState extends State<EnquiryDetailPage>
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(12)),
                           image: DecorationImage(
-                              image:
-                              NetworkImage(widget.commodity.photoVideoLink ?? ''),
+                              image: NetworkImage(
+                                  widget.commodity.photoVideoLink ?? ''),
                               fit: BoxFit.cover)),
                     ),
                   ),
@@ -188,7 +185,7 @@ class _EnquiryDetailPageState extends State<EnquiryDetailPage>
                         Expanded(
                           flex: 2,
                           child: Text(
-                            widget.commodity.price.toString() ?? "",
+                            widget.commodity.price.toString(),
                             softWrap: true,
                             style: const TextStyle(
                                 color: Color(0xFF008000),
@@ -440,7 +437,7 @@ class _EnquiryDetailPageState extends State<EnquiryDetailPage>
                         Expanded(
                           flex: 2,
                           child: Text(
-                            widget.commodity.price.toString() ?? "",
+                            widget.commodity.price.toString(),
                             softWrap: true,
                             style: const TextStyle(
                                 color: Color(0xFF808080),
@@ -505,7 +502,8 @@ class _EnquiryDetailPageState extends State<EnquiryDetailPage>
                                 width: MediaQuery.of(context).size.width,
                                 child: ElevatedButton(
                                   onPressed: () {
-                                    AlertHelper.showToast("This feature is locked", context);
+                                    AlertHelper.showToast(
+                                        "This feature is locked", context);
                                   },
                                   style: ElevatedButton.styleFrom(
                                     foregroundColor: Colors.white,
@@ -518,10 +516,9 @@ class _EnquiryDetailPageState extends State<EnquiryDetailPage>
                                     ),
                                   ),
                                   child: Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.center,
+                                        CrossAxisAlignment.center,
                                     children: [
                                       const Text(
                                         'Chat',
@@ -549,47 +546,56 @@ class _EnquiryDetailPageState extends State<EnquiryDetailPage>
                                 width: MediaQuery.of(context).size.width,
                                 child: ElevatedButton(
                                   onPressed: () async {
-                                      PermissionStatus phonePermissionStatus = await Permission.phone.status;
+                                    PermissionStatus phonePermissionStatus =
+                                        await Permission.phone.status;
 
-      if (phonePermissionStatus.isGranted) {
-        // Ensure `uid` is a valid phone number
-        if (widget.commodity.uid != null && widget.commodity.uid!.isNotEmpty) {
-          final phoneNumber = widget.commodity.uid!;
-          final Uri url = Uri.parse('tel:$phoneNumber'); 
+                                    if (phonePermissionStatus.isGranted) {
+                                      // Ensure `uid` is a valid phone number
+                                      if (widget.commodity.uid != null &&
+                                          widget.commodity.uid!.isNotEmpty) {
+                                        final phoneNumber =
+                                            widget.commodity.uid!;
+                                        final Uri url =
+                                            Uri.parse('tel:$phoneNumber');
 
-          // Launch the URL to open the dialer
-          if (await canLaunchUrl(url)) {
-            await launchUrl(url);
-          } else {
-            // Handle case when the dialer cannot be launched
-            print("Could not launch the phone dialer");
-          }
-        } else {
-          // Handle the case when the uid is empty or null
-          print("No valid phone number");
-        }
-      }else {
-                // Handle the case when phone permission is not granted
-                print("Phone permission not granted");
-                AlertHelper.showToast("Phone permission is not granted. Please enable it in settings.", context);
+                                        // Launch the URL to open the dialer
+                                        if (await canLaunchUrl(url)) {
+                                          await launchUrl(url);
+                                        } else {
+                                          // Handle case when the dialer cannot be launched
+                                          print(
+                                              "Could not launch the phone dialer");
+                                        }
+                                      } else {
+                                        // Handle the case when the uid is empty or null
+                                        print("No valid phone number");
+                                      }
+                                    } else {
+                                      // Handle the case when phone permission is not granted
+                                      print("Phone permission not granted");
+                                      AlertHelper.showToast(
+                                          "Phone permission is not granted. Please enable it in settings.",
+                                          context);
 
-                // Optionally, request the permission
-                await Permission.phone.request();
+                                      // Optionally, request the permission
+                                      await Permission.phone.request();
 
-                // Recheck the permission after requesting
-                if (await Permission.phone.isGranted) {
-                  // Retry calling the number after permission is granted
-                  final phoneNumber = widget.commodity.uid!;
-                  final Uri url = Uri.parse('tel:$phoneNumber');
-                  if (await canLaunchUrl(url)) {
-                    await launchUrl(url);
-                  }
-                } else {
-                  // If still not granted, guide user to settings
-                  openAppSettings();
-                }
-              }
-      },
+                                      // Recheck the permission after requesting
+                                      if (await Permission.phone.isGranted) {
+                                        // Retry calling the number after permission is granted
+                                        final phoneNumber =
+                                            widget.commodity.uid!;
+                                        final Uri url =
+                                            Uri.parse('tel:$phoneNumber');
+                                        if (await canLaunchUrl(url)) {
+                                          await launchUrl(url);
+                                        }
+                                      } else {
+                                        // If still not granted, guide user to settings
+                                        openAppSettings();
+                                      }
+                                    }
+                                  },
                                   style: ElevatedButton.styleFrom(
                                     foregroundColor: Colors.white,
                                     padding: const EdgeInsets.all(3),
@@ -601,10 +607,9 @@ class _EnquiryDetailPageState extends State<EnquiryDetailPage>
                                     ),
                                   ),
                                   child: Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.center,
+                                        CrossAxisAlignment.center,
                                     children: [
                                       const Text(
                                         'Call',
@@ -631,9 +636,7 @@ class _EnquiryDetailPageState extends State<EnquiryDetailPage>
                             child: Container(
                                 width: MediaQuery.of(context).size.width,
                                 child: ElevatedButton(
-                                  onPressed: () {
-
-                                  },
+                                  onPressed: () {},
                                   style: ElevatedButton.styleFrom(
                                     foregroundColor: Colors.white,
                                     padding: const EdgeInsets.all(5),
@@ -645,14 +648,13 @@ class _EnquiryDetailPageState extends State<EnquiryDetailPage>
                                     ),
                                   ),
                                   child: Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.center,
+                                        CrossAxisAlignment.center,
                                     children: [
                                       const Flexible(
                                         child: Padding(
-                                          padding: EdgeInsets.only(left:2.0),
+                                          padding: EdgeInsets.only(left: 2.0),
                                           child: Text(
                                             'Interested',
                                             softWrap: true,
@@ -697,7 +699,6 @@ class _EnquiryDetailPageState extends State<EnquiryDetailPage>
     );
   }
 }
-
 
 String convertDate(String dateString) {
   // Parse the date string into a DateTime object

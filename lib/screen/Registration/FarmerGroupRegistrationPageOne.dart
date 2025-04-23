@@ -1,8 +1,8 @@
 import 'dart:async';
-
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:krishiyan/localization/AppLocalizations.dart';
 import 'package:krishiyan/screen/Login/LoginPage.dart';
 import 'package:krishiyan/screen/Registration/MyRegistrationPage.dart';
@@ -14,10 +14,7 @@ import '../../helper/AlertHelper.dart';
 import 'FarmerGroupRegistrationPageTwo.dart';
 import 'package:krishiyan/mvc/model/GetOtpDetails.dart';
 import '../../mvc/controller/otpController.dart';
-
-import 'package:dio/dio.dart';
-// Ensure you have Flutter imports for AlertHelper and setState usage
-import 'dart:convert'; // For json.encode
+import 'dart:convert';
 
 class FarmerGroupRegistrationPageOne extends StatefulWidget {
   const FarmerGroupRegistrationPageOne({super.key});
@@ -663,8 +660,6 @@ class _FarmerGroupRegistrationPageOneState
 
   Future<bool> verifyOtp(
       String number, String enteredOtp, BuildContext context) async {
-    final dio = Dio(); // Create an instance of Dio
-
     // Define the URL for your API endpoint
     final url = "${baseUrl}whatsapp/check-otp/";
 
@@ -676,12 +671,9 @@ class _FarmerGroupRegistrationPageOneState
 
     try {
       // Make the POST request to verify the OTP
-      final response = await dio.post(
-        url,
-        data: data,
-        options: Options(
-          headers: {'Content-Type': 'application/json'},
-        ),
+      final response = await postAPICall(
+        apiUrl: url,
+        parameter: data,
       );
 
       // Check the response from the server
@@ -749,17 +741,14 @@ class _FarmerGroupRegistrationPageOneState
   }
 
   Future<bool> checkPhoneNumber(String number) async {
-    final dio = Dio(); // Create an instance of Dio
-
     // Define the URL for your API endpoint, appending the number directly
     final url = "${baseUrl}check-contact/$number";
 
     try {
       // Make the GET request to check the phone number
-      final response = await dio.get(url,
-          options: Options(
-            headers: {'Content-Type': 'application/json'},
-          ));
+      final response = await getAPICall(
+        apiUrl: url,
+      );
 
       // Check the response from the server
       if (response.statusCode == 200) {
@@ -780,6 +769,6 @@ class _FarmerGroupRegistrationPageOneState
       print("Error during phone number check: $e");
       // AlertHelper.showToast("Error occurred. Please try again.", context);
       return false; // Return false in case of an error
-    }
+    } finally {}
   }
 }

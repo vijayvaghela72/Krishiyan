@@ -1,22 +1,18 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:krishiyan/localization/AppLocalizations.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../helper/AlertHelper.dart';
-import '../../mvc/controller/cropController.dart';
 import '../../mvc/controller/enquiryDashboardController.dart';
-import '../../mvc/model/CropLibraryData.dart';
 import '../../mvc/model/SelectCropNamesData.dart';
 import '../../utils/AppGlobal.dart';
 import '../../utils/Constants.dart';
@@ -67,11 +63,11 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
   Future<void> _fetchCropData() async {
     try {
       // Replace with your actual API endpoint
-      var response = await Dio().get(CROPS_NAMES);
+      var response = await getAPICall(apiUrl: CROPS_NAMES);
 
       if (response.statusCode == 200) {
         setState(() {
-          _cropData = SelectCropNamesData.fromJson(response.data);
+          _cropData = SelectCropNamesData.fromJson(jsonDecode(response.body));
         });
       } else {
         throw Exception('Failed to load crops');
@@ -84,7 +80,7 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
   final ImagePicker _picker = ImagePicker();
   File? _image;
   String? _imageUrl;
-  Dio _dio = Dio(); // Create a Dio instance
+  Dio _dio = Dio();
   // Cache expiration in days
   final int cacheExpirationDays = 10;
 
@@ -164,12 +160,20 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
       FormData formData = FormData.fromMap({
         'image': await MultipartFile.fromFile(image.path, filename: fileName),
       });
+      final timestamp = DateTime.now().millisecondsSinceEpoch.toString();
+      final signature = hmacSha256(encryptionKey, timestamp);
 
       // Send the POST request to the API
-      Response response = await _dio.post(
-        '${baseUrl}upload',
-        data: formData,
-      );
+      Response response = await _dio.post('${baseUrl}upload',
+          data: formData,
+          options: Options(headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "Connection": "application/json",
+            "Authorization": 'Bearer',
+            'x-timestamp': timestamp,
+            'x-signature': signature,
+          }));
 
       if (response.statusCode == 200) {
         var jsonResponse = response.data;
@@ -216,10 +220,9 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
       prefs.setInt(imageKey, DateTime.now().millisecondsSinceEpoch);
 
       // Download and store the image locally
-      final response = await _dio.get(imageUrl,
-          options: Options(responseType: ResponseType.bytes));
+      final response = await getAPICall(apiUrl: imageUrl);
       if (response.statusCode == 200) {
-        File(imageCachePath)..writeAsBytesSync(response.data);
+        File(imageCachePath)..writeAsBytes(response.bodyBytes);
       }
     } catch (e) {
       print("Error caching image: $e");
@@ -1066,8 +1069,8 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
         "moisture": moistureController.text.toString().isNotEmpty
             ? moistureController.text.toString()
             : 0,
-        "localGradeSpecification": localGradeController.text.toString() ?? "",
-        "size": sizeController.text.toString() ?? "",
+        "localGradeSpecification": localGradeController.text.toString(),
+        "size": sizeController.text.toString(),
         "count": countController.text.toString().isNotEmpty
             ? countController.toString()
             : 0,

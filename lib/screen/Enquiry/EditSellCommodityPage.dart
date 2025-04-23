@@ -13,11 +13,13 @@ import '../../mvc/model/SelectCropNamesData.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../localization/AppLocalizations.dart';
 import '../../mvc/controller/cropController.dart';
+import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:krishiyan/mvc/model/GetEnquiryByFilterData.dart';
 
+// ignore: must_be_immutable
 class EditSellCommodityPage extends StatefulWidget {
   EnquiryByFilterData enquiryData;
 
@@ -66,30 +68,29 @@ class _EditSellCommodityPageState extends State<EditSellCommodityPage> {
   void getSellCommoditiyValue() {
     _selectedCrop = widget.enquiryData.commodity ?? "";
     varietyController.text = widget.enquiryData.variety ?? "";
-    quantityController.text = widget.enquiryData.quantity.toString() ?? "";
-    moistureController.text = widget.enquiryData.moisture.toString() ?? "";
+    quantityController.text = widget.enquiryData.quantity.toString();
+    moistureController.text = widget.enquiryData.moisture.toString();
     localGradeController.text =
-        widget.enquiryData.localGradeSpecification.toString() ?? "";
-    sizeController.text = widget.enquiryData.size.toString() ?? "";
-    countController.text = widget.enquiryData.count.toString() ?? "";
-    supplyPriceController.text = widget.enquiryData.price.toString() ?? "";
+        widget.enquiryData.localGradeSpecification.toString();
+    sizeController.text = widget.enquiryData.size.toString();
+    countController.text = widget.enquiryData.count.toString();
+    supplyPriceController.text = widget.enquiryData.price.toString();
 
     dateOfShipmentController.text =
         AppGlobal.convertToCustomDateFormat(widget.enquiryData.date.toString());
-    originCommodityController.text = widget.enquiryData.origin.toString() ?? "";
-    deliveryLocationController.text =
-        widget.enquiryData.location.toString() ?? "";
-    commentsController.text = widget.enquiryData.comments.toString() ?? "";
+    originCommodityController.text = widget.enquiryData.origin.toString();
+    deliveryLocationController.text = widget.enquiryData.location.toString();
+    commentsController.text = widget.enquiryData.comments.toString();
   }
 
   Future<void> _fetchCropData() async {
     try {
       // Replace with your actual API endpoint
-      var response = await Dio().get(CROPS_NAMES);
+      var response = await getAPICall(apiUrl: CROPS_NAMES);
 
       if (response.statusCode == 200) {
         setState(() {
-          _cropData = SelectCropNamesData.fromJson(response.data);
+          _cropData = SelectCropNamesData.fromJson(jsonDecode(response.body));
         });
       } else {
         throw Exception('Failed to load crops');
@@ -102,8 +103,7 @@ class _EditSellCommodityPageState extends State<EditSellCommodityPage> {
   final ImagePicker _picker = ImagePicker();
   File? _image;
   String? _imageUrl;
-  Dio _dio = Dio(); // Create a Dio instance
-  // Cache expiration in days
+  Dio _dio = Dio();
   final int cacheExpirationDays = 10;
 
   // Generate a unique file name for the image
@@ -182,12 +182,20 @@ class _EditSellCommodityPageState extends State<EditSellCommodityPage> {
       FormData formData = FormData.fromMap({
         'image': await MultipartFile.fromFile(image.path, filename: fileName),
       });
+      final timestamp = DateTime.now().millisecondsSinceEpoch.toString();
+      final signature = hmacSha256(encryptionKey, timestamp);
 
       // Send the POST request to the API
-      Response response = await _dio.post(
-        '${baseUrl}upload',
-        data: formData,
-      );
+      Response response = await _dio.post('${baseUrl}upload',
+          data: formData,
+          options: Options(headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "Connection": "application/json",
+            "Authorization": 'Bearer',
+            'x-timestamp': timestamp,
+            'x-signature': signature,
+          }));
 
       if (response.statusCode == 200) {
         var jsonResponse = response.data;
@@ -234,10 +242,9 @@ class _EditSellCommodityPageState extends State<EditSellCommodityPage> {
       prefs.setInt(imageKey, DateTime.now().millisecondsSinceEpoch);
 
       // Download and store the image locally
-      final response = await _dio.get(imageUrl,
-          options: Options(responseType: ResponseType.bytes));
+      final response = await getAPICall(apiUrl: imageUrl);
       if (response.statusCode == 200) {
-        File(imageCachePath)..writeAsBytesSync(response.data);
+        File(imageCachePath)..writeAsBytesSync(response.bodyBytes);
       }
     } catch (e) {
       print("Error caching image: $e");
@@ -1041,7 +1048,6 @@ class _EditSellCommodityPageState extends State<EditSellCommodityPage> {
         commentsController.text.trim().isNotEmpty) {
       String contactNumber =
           (await AppGlobal.getStringPreference('contactNumber'))!;
-      var headers = {'Content-Type': 'application/json'};
 
       var data = json.encode({
         "operation": widget.enquiryData.operation,
@@ -1061,28 +1067,19 @@ class _EditSellCommodityPageState extends State<EditSellCommodityPage> {
         "verified": true
       });
 
-      var dio = Dio();
-      var response = await dio.request(
-        "${baseUrl}commodities/"
-        "$contactNumber/${widget.enquiryData.sId}",
-        options: Options(
-          method: 'PUT',
-          headers: headers,
-        ),
-        data: data,
-      );
+      var url =
+          "${baseUrl}commodities/$contactNumber/${widget.enquiryData.sId}";
+      var response = await putAPICall(apiUrl: url, parameter: data);
 
       if (response.statusCode == 200) {
-        print("Enquiry sell details updated : " + json.encode(response.data));
-
+        print("Enquiry sell details updated : " + response.body);
         showAlertDialog(context);
       } else {
         print("Error response received:");
         print("Status Code: ${response.statusCode}");
-        print("Status Message: ${response.statusMessage}");
-        print("Response Data: ${response.data}");
-        AlertHelper.showToast(response.statusMessage.toString(), context);
-        print(response.statusMessage);
+        print("Response Body: ${response.body}");
+        AlertHelper.showToast(response.reasonPhrase.toString(), context);
+        print(response.reasonPhrase);
       }
     } else {
       AlertHelper.showToast("Please enter details.", context);

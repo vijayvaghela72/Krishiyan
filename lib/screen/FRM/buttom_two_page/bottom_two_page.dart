@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:dio/dio.dart';
 import 'package:krishiyan/helper/loading.dart';
 import 'package:krishiyan/helper/snackbar.dart';
 import '../FarmerProfile.dart';
@@ -1030,11 +1029,6 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                                                             )
                                                           : Container(),
                                                     ])));
-                                    // cropDetails is String
-                                    //     ? firstCardVisibleValue == index ? Center
-                                    //         (child: Text(cropDetails, softWrap: true,style:
-                                    // TextStyle(color: Colors.black, fontSize: 15.0, fontFamily: "poppins-semibold" ),)) : Container()
-                                    //     :
                                   });
                             } else {
                               return Center(
@@ -2167,77 +2161,6 @@ class _BottomTwoPageState extends State<BottomTwoPage>
                                                         });
                                                       },
                                                     ),
-                                                    //     DropdownButtonFormField2<
-                                                    //         String>(
-                                                    //   isExpanded: true,
-                                                    //   decoration:
-                                                    //       InputDecoration(
-                                                    //     contentPadding:
-                                                    //         const EdgeInsets
-                                                    //             .symmetric(
-                                                    //             vertical: 10),
-                                                    //     border:
-                                                    //         OutlineInputBorder(
-                                                    //       borderRadius:
-                                                    //           BorderRadius
-                                                    //               .circular(8),
-                                                    //     ),
-                                                    //   ),
-                                                    //   hint: Text(
-                                                    //     buildTranslate(
-                                                    //         'selectVillages')!,
-                                                    //     style: const TextStyle(
-                                                    //         fontSize: 14),
-                                                    //   ),
-                                                    //   items: villageItems
-                                                    //       .map((item) =>
-                                                    //           DropdownMenuItem<
-                                                    //               String>(
-                                                    //             value: item,
-                                                    //             child: Text(
-                                                    //               item,
-                                                    //               style:
-                                                    //                   const TextStyle(
-                                                    //                 fontSize:
-                                                    //                     14,
-                                                    //               ),
-                                                    //             ),
-                                                    //           ))
-                                                    //       .toList(),
-                                                    //   validator: (value) {
-                                                    //     if (value == null) {
-                                                    //       return 'Please select type of Entity.';
-                                                    //     }
-                                                    //     return null;
-                                                    //   },
-                                                    //   onChanged: (value) {
-                                                    //     //Do something when selected item is changed.
-                                                    //   },
-                                                    //   onSaved: (value) {
-                                                    //     selectedVillageItemValue =
-                                                    //         value.toString();
-                                                    //   },
-                                                    //   buttonStyleData:
-                                                    //       const ButtonStyleData(
-                                                    //     padding:
-                                                    //         EdgeInsets.only(
-                                                    //             right: 8),
-                                                    //   ),
-                                                    //   iconStyleData:
-                                                    //       const IconStyleData(
-                                                    //     icon: Icon(
-                                                    //       Icons.arrow_drop_down,
-                                                    //       color: Colors.black45,
-                                                    //     ),
-                                                    //     iconSize: 24,
-                                                    //   ),
-                                                    //   menuItemStyleData:
-                                                    //       const MenuItemStyleData(
-                                                    //     padding: EdgeInsets
-                                                    //         .symmetric(
-                                                    //             horizontal: 16),
-                                                    //   ),
-                                                    // ),
                                                   ),
                                                 ),
                                                 const VerticalDivider(
@@ -2678,22 +2601,16 @@ class _BottomTwoPageState extends State<BottomTwoPage>
         '${baseUrl}appFarmer/farmers/insight?dealerNumber=$num&village=$_selectedVillageName&crop=$_selectedCrop&sort=highToLow';
 
     try {
-      final response = await Dio().get(url);
+      final response = await getAPICall(apiUrl: url);
       if (response.statusCode == 200) {
-        print('API Response: ${response.data}');
-        //     _futureFrminSight = fetchInsightsData();
-        // print('Future initialized: $_futureFrminSight');
-        return FrmInsight.fromJson(response.data); // Return the parsed data
+        print('API Response: ${response.body}');
+        return FrmInsight.fromJson(jsonDecode(response.body));
       } else {
         print('Failed to load data: ${response.statusCode}');
         return null;
       }
     } catch (e) {
-      if (e is DioError) {
-        print('Dio Error: ${e.message}');
-      } else {
-        print('Unknown Error: $e');
-      }
+      print('Error: $e');
       return null;
     }
   }
@@ -2814,17 +2731,14 @@ class _BottomTwoPageState extends State<BottomTwoPage>
   }
 
   Future<bool> checkPhoneNumber(String number) async {
-    final dio = Dio(); // Create an instance of Dio
-
     // Define the URL for your API endpoint, appending the number directly
     final url = "${baseUrl}check-contact/$number";
 
     try {
       // Make the GET request to check the phone number
-      final response = await dio.get(url,
-          options: Options(
-            headers: {'Content-Type': 'application/json'},
-          ));
+      final response = await getAPICall(
+        apiUrl: url,
+      );
 
       // Check the response from the server
       if (response.statusCode == 200) {
@@ -2884,24 +2798,6 @@ class _BottomTwoPageState extends State<BottomTwoPage>
       // Navigate to the login page
     }
   }
-
-  // Future<void> _fetchCropData() async {
-  //   try {
-  //     var response = await Dio().get(CROPS_NAMES);
-  //
-  //     if (response.statusCode == 200) {
-  //       if (mounted) {
-  //         setState(() {
-  //           _cropData = SelectCropNamesData.fromJson(response.data);
-  //         });
-  //       }
-  //     } else {
-  //       throw Exception('Failed to load crops');
-  //     }
-  //   } catch (e) {
-  //     print('My BottomTwoPage : Error fetching crop data: $e');
-  //   }
-  // }
 
   Future<void> _selectDate(BuildContext context) async {
     // Show the date picker dialog

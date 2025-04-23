@@ -1,18 +1,17 @@
 import 'dart:convert';
-
-import 'package:dio/dio.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:krishiyan/helper/api_base_helper.dart';
 import '../../helper/AlertHelper.dart';
 import '../../localization/AppLocalizations.dart';
-import '../../mvc/controller/farmerDashboardController.dart';
 import '../../mvc/model/SelectCropNamesData.dart';
 import '../../utils/AppGlobal.dart';
 import '../../utils/Constants.dart';
 import '../home_screen/dashborad.dart';
 import 'package:intl/intl.dart';
 
+// ignore: must_be_immutable
 class EditCropCultivationPage extends StatefulWidget {
   String WhatsappNumber,
       selectedCrop,
@@ -1275,12 +1274,12 @@ class _EditCropCultivationPageState extends State<EditCropCultivationPage>
     try {
       String? number = await AppGlobal.getStringPreference('contactNumber');
       var num = number ?? "1";
-      var response = await Dio().get(FARMER_NAME + num);
+      var response = await getAPICall(apiUrl: FARMER_NAME + num);
 
-      print("Farmer name : $response");
+      print("Farmer name : ${response.body}");
       if (response.statusCode == 200) {
-        dropdownItems =
-            response.data['data'].map<DropdownMenuItem<String>>((item) {
+        var data = json.decode(response.body);
+        dropdownItems = data['data'].map<DropdownMenuItem<String>>((item) {
           return DropdownMenuItem<String>(
             value: item['name'],
             child: Text(item['name']),
@@ -1298,11 +1297,11 @@ class _EditCropCultivationPageState extends State<EditCropCultivationPage>
 
   Future<void> _fetchCropData() async {
     try {
-      var response = await Dio().get(CROPS_NAMES);
+      var response = await getAPICall(apiUrl: CROPS_NAMES);
 
       if (response.statusCode == 200) {
         setState(() {
-          _cropData = SelectCropNamesData.fromJson(response.data);
+          _cropData = SelectCropNamesData.fromJson(json.decode(response.body));
         });
       } else {
         throw Exception('Failed to load crops');
@@ -1367,8 +1366,6 @@ class _EditCropCultivationPageState extends State<EditCropCultivationPage>
         geoLocationValue.isNotEmpty &&
         areaInArce.isNotEmpty &&
         geoLinkArea.isNotEmpty) {
-      var headers = {'Content-Type': 'application/json'};
-
       var data = json.encode({
         "farmerName": _selectedFarmersName,
         "crops": _selectedCrop,
@@ -1380,23 +1377,16 @@ class _EditCropCultivationPageState extends State<EditCropCultivationPage>
         "geoLinkAreaOnMap": geoLinkArea
       });
 
-      var dio = Dio();
-      var response = await dio.request(
-        '${baseUrl}appFarmer/crops/${widget.id}',
-        options: Options(
-          method: 'PUT',
-          headers: headers,
-        ),
-        data: data,
+      var response = await putAPICall(
+        apiUrl: '${baseUrl}appFarmer/crops/${widget.id}',
+        parameter: data,
       );
 
       if (response.statusCode == 200) {
-        print(
-            "crop cultivation details updated : " + json.encode(response.data));
-
+        print("crop cultivation details updated : ${response.body}");
         showAlertDialog(context);
       } else {
-        print(response.statusMessage);
+        print(response.reasonPhrase);
       }
     } else {
       AlertHelper.showToast("Please enter details.", context);

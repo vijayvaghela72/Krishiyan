@@ -1,4 +1,4 @@
-import 'package:dio/dio.dart';
+import 'dart:convert';
 import 'BuyCommodityPage.dart';
 import 'SellCommodityPage.dart';
 import '../../utils/AppColor.dart';
@@ -14,6 +14,7 @@ import '../Language/SelectLanguagePage.dart';
 import '../../mvc/model/SelectCropNamesData.dart';
 import '../../localization/AppLocalizations.dart';
 import '../../mvc/model/GetEnquiryByFilterData.dart';
+import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:krishiyan/screen/home_screen/dashborad.dart';
 import '../../mvc/controller/enquiryDashboardController.dart';
@@ -138,12 +139,11 @@ class _BottomCenterEnquiryPageState extends State<BottomCenterEnquiryPage>
 
   Future<void> _fetchCropData() async {
     try {
-      // Replace with your actual API endpoint
-      var response = await Dio().get(CROPS_NAMES);
+      final response = await getAPICall(apiUrl: CROPS_NAMES);
 
       if (response.statusCode == 200) {
         setState(() {
-          _cropData = SelectCropNamesData.fromJson(response.data);
+          _cropData = SelectCropNamesData.fromJson(jsonDecode(response.body));
         });
       } else {
         throw Exception('Failed to load crops');

@@ -1,8 +1,8 @@
+import 'Constants.dart';
 import 'dart:developer';
+import 'package:intl/intl.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'Constants.dart';
-import 'package:intl/intl.dart';
 
 class AppGlobal {
   static printLog(dynamic val) {

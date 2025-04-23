@@ -1,7 +1,5 @@
 import 'dart:convert';
-
 import 'package:krishiyan/helper/loading.dart';
-
 import '../../localization/AppLocalizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -31,7 +29,6 @@ class _LoginPageState extends State<LoginPage> {
 
   bool _passwordVisible = false;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  bool _submitted = false;
 
   @override
   Widget build(BuildContext context) {
@@ -334,18 +331,12 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   _login() {
-    setState(() {
-      _submitted = false;
-    });
+    setState(() {});
     if ((mobileNumberController.text.isEmpty) ||
         (passwordController.text.isEmpty)) {
-      setState(() {
-        _submitted = false;
-      });
+      setState(() {});
     } else {
-      setState(() {
-        _submitted = true;
-      });
+      setState(() {});
     }
   }
 
@@ -353,9 +344,7 @@ class _LoginPageState extends State<LoginPage> {
     if (mobileNumberController.text.trim().isNotEmpty &&
         passwordController.text.trim().isNotEmpty) {
       showLoading();
-      setState(() {
-        _submitted = false;
-      });
+      setState(() {});
 
       var body = json.encode({
         "contactNumber": mobileNumberController.text.trim(),
@@ -368,9 +357,7 @@ class _LoginPageState extends State<LoginPage> {
         print("user number : " + mobileNumberController.text.toString());
         print("user token : " + user.token.toString());
 
-        setState(() {
-          _submitted = true;
-        });
+        setState(() {});
         AlertHelper.showToast("Login successfully.", context);
 
         SharedPref.savePreferenceValue(isLogin, true);
@@ -400,9 +387,7 @@ class _LoginPageState extends State<LoginPage> {
       } else {
         print("Api error");
         AlertHelper.showToast("Login unsuccessful", context);
-        setState(() {
-          _submitted = true;
-        });
+        setState(() {});
       }
     } else {
       AlertHelper.showToast("Please enter details.", context);

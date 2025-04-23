@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:krishiyan/localization/AppLocalizations.dart';
-
 import 'FarmerGroupRegistrationPageOne.dart';
 import 'ManufactureRegistrationPage.dart';
 import 'OtherRegistrationPage.dart';

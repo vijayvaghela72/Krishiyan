@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:krishiyan/screen/Registration/MyRegistrationPage.dart';
 import 'package:krishiyan/utils/Constants.dart';
 import 'package:otp_text_field/otp_field.dart';
@@ -13,11 +14,6 @@ import '../../utils/hashPassword.dart';
 import '../Login/LoginPage.dart';
 import 'package:krishiyan/mvc/model/GetOtpDetails.dart';
 import '../../mvc/controller/otpController.dart';
-import 'package:dio/dio.dart';
-import 'package:crypto/crypto.dart';
-
-// Ensure you have Flutter imports for AlertHelper and setState usage
-import 'dart:convert'; // For json.encode
 
 class OtherRegistrationPage extends StatefulWidget {
   const OtherRegistrationPage({super.key});
@@ -28,7 +24,6 @@ class OtherRegistrationPage extends StatefulWidget {
 
 class _OtherRegistrationPageState extends State<OtherRegistrationPage> {
   int _radioSelected = 1;
-  String _radioVal = "";
 
   bool otpVisible = false;
 
@@ -532,7 +527,6 @@ class _OtherRegistrationPageState extends State<OtherRegistrationPage> {
                     onChanged: (value) {
                       setState(() {
                         _radioSelected = value!;
-                        _radioVal = 'agreed';
                       });
                     },
                   ),
@@ -786,8 +780,6 @@ class _OtherRegistrationPageState extends State<OtherRegistrationPage> {
 
   Future<bool> verifyOtp(
       String number, String enteredOtp, BuildContext context) async {
-    final dio = Dio(); // Create an instance of Dio
-
     // Define the URL for your API endpoint
     final url = "${baseUrl}whatsapp/check-otp/";
 
@@ -799,12 +791,9 @@ class _OtherRegistrationPageState extends State<OtherRegistrationPage> {
 
     try {
       // Make the POST request to verify the OTP
-      final response = await dio.post(
-        url,
-        data: data,
-        options: Options(
-          headers: {'Content-Type': 'application/json'},
-        ),
+      final response = await postAPICall(
+        apiUrl: url,
+        parameter: data,
       );
 
       // Check the response from the server
@@ -824,7 +813,7 @@ class _OtherRegistrationPageState extends State<OtherRegistrationPage> {
       print("Error during OTP verification: $e");
       AlertHelper.showToast("OTP verification failed!", context);
       return false; // Return false for errors
-    }
+    } finally {}
   }
 
   Future<void> getOtpApiCall() async {
@@ -869,17 +858,14 @@ class _OtherRegistrationPageState extends State<OtherRegistrationPage> {
   }
 
   Future<bool> checkPhoneNumber(String number) async {
-    final dio = Dio(); // Create an instance of Dio
-
     // Define the URL for your API endpoint, appending the number directly
     final url = "${baseUrl}check-contact/$number";
 
     try {
       // Make the GET request to check the phone number
-      final response = await dio.get(url,
-          options: Options(
-            headers: {'Content-Type': 'application/json'},
-          ));
+      final response = await getAPICall(
+        apiUrl: url,
+      );
 
       // Check the response from the server
       if (response.statusCode == 200) {

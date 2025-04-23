@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:krishiyan/localization/AppLocalizations.dart';
 import 'package:krishiyan/screen/Registration/MyRegistrationPage.dart';
 import 'package:krishiyan/utils/Constants.dart';
@@ -12,16 +12,9 @@ import 'package:otp_text_field/style.dart';
 import 'package:krishiyan/mvc/model/GetOtpDetails.dart';
 import '../../helper/AlertHelper.dart';
 import '../../mvc/controller/farmerDashboardController.dart';
-import '../../mvc/controller/loginController.dart';
-import '../../mvc/model/LoginData.dart';
 import '../../utils/hashPassword.dart';
 import '../Login/LoginPage.dart';
-
 import '../../mvc/controller/otpController.dart';
-
-import 'package:dio/dio.dart';
-// Ensure you have Flutter imports for AlertHelper and setState usage
-import 'dart:convert'; // For json.encode
 
 class MyTraderRegistrationPage extends StatefulWidget {
   const MyTraderRegistrationPage({super.key});
@@ -33,7 +26,6 @@ class MyTraderRegistrationPage extends StatefulWidget {
 
 class _MyTraderRegistrationPageState extends State<MyTraderRegistrationPage> {
   int _radioSelected = 1;
-  String _radioVal = "";
 
   final List<String> traderItems = [
     'Trader',
@@ -616,7 +608,6 @@ class _MyTraderRegistrationPageState extends State<MyTraderRegistrationPage> {
                     onChanged: (value) {
                       setState(() {
                         _radioSelected = value!;
-                        _radioVal = 'agreed';
                       });
                     },
                   ),
@@ -872,8 +863,6 @@ class _MyTraderRegistrationPageState extends State<MyTraderRegistrationPage> {
 
   Future<bool> verifyOtp(
       String number, String enteredOtp, BuildContext context) async {
-    final dio = Dio(); // Create an instance of Dio
-
     // Define the URL for your API endpoint
     final url = "${baseUrl}whatsapp/check-otp/";
 
@@ -885,12 +874,9 @@ class _MyTraderRegistrationPageState extends State<MyTraderRegistrationPage> {
 
     try {
       // Make the POST request to verify the OTP
-      final response = await dio.post(
-        url,
-        data: data,
-        options: Options(
-          headers: {'Content-Type': 'application/json'},
-        ),
+      final response = await postAPICall(
+        apiUrl: url,
+        parameter: data,
       );
 
       // Check the response from the server
@@ -956,17 +942,14 @@ class _MyTraderRegistrationPageState extends State<MyTraderRegistrationPage> {
   }
 
   Future<bool> checkPhoneNumber(String number) async {
-    final dio = Dio(); // Create an instance of Dio
-
     // Define the URL for your API endpoint, appending the number directly
     final url = "${baseUrl}check-contact/$number";
 
     try {
       // Make the GET request to check the phone number
-      final response = await dio.get(url,
-          options: Options(
-            headers: {'Content-Type': 'application/json'},
-          ));
+      final response = await getAPICall(
+        apiUrl: url,
+      );
 
       // Check the response from the server
       if (response.statusCode == 200) {

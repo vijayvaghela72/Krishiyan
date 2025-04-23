@@ -1,11 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:krishiyan/screen/Login/LoginPage.dart';
-import '../../helper/SharedPref.dart';
-import '../../localization/AppLocalizations.dart';
 import '../../utils/AppColor.dart';
 import '../../utils/Constants.dart';
+import '../../helper/SharedPref.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../home_screen/dashborad.dart';
+import '../../localization/AppLocalizations.dart';
+import 'package:krishiyan/screen/Login/LoginPage.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});

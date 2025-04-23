@@ -1,10 +1,8 @@
 import 'dart:convert';
-
-import 'package:dio/dio.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
+import 'package:krishiyan/helper/api_base_helper.dart';
 import '../../helper/AlertHelper.dart';
 import '../../helper/SharedPref.dart';
 import '../../localization/AppLocalizations.dart';
@@ -13,23 +11,18 @@ import '../../mvc/model/FarmerRegistrationData.dart';
 import '../../mvc/model/PincodeToStateData.dart';
 import '../../utils/AppGlobal.dart';
 import '../../utils/Constants.dart';
-import 'package:http/http.dart' as http;
 
+// ignore: must_be_immutable
 class FarmerProfilePage extends StatefulWidget {
-
   String? farmerName, farmerWhatsappNumber;
 
-  FarmerProfilePage(
-      {super.key,
-        this.farmerName,
-        this.farmerWhatsappNumber});
+  FarmerProfilePage({super.key, this.farmerName, this.farmerWhatsappNumber});
 
   @override
   State<FarmerProfilePage> createState() => _FarmerProfilePageState();
 }
 
 class _FarmerProfilePageState extends State<FarmerProfilePage> {
-
   TextEditingController ownedAreaController = TextEditingController();
   TextEditingController goeLocationController = TextEditingController();
   TextEditingController leasedFarmController = TextEditingController();
@@ -150,7 +143,7 @@ class _FarmerProfilePageState extends State<FarmerProfilePage> {
                       borderSide: BorderSide(color: Colors.white, width: 0.5),
                     )),
                 validator: (value) =>
-                value!.isEmpty ? 'Please, fill this field.' : null,
+                    value!.isEmpty ? 'Please, fill this field.' : null,
                 controller: ownedAreaController,
               ),
             ),
@@ -194,13 +187,13 @@ class _FarmerProfilePageState extends State<FarmerProfilePage> {
                     hintText: '----',
                     hintStyle: TextStyle(color: Color(0xFFe7e7e7)),
                     contentPadding:
-                    EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                        EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(8.0)),
                       borderSide: BorderSide(color: Colors.white, width: 0.5),
                     )),
                 validator: (value) =>
-                value!.isEmpty ? 'Please, fill this field.' : null,
+                    value!.isEmpty ? 'Please, fill this field.' : null,
                 controller: goeLocationController,
               ),
             ),
@@ -251,7 +244,7 @@ class _FarmerProfilePageState extends State<FarmerProfilePage> {
                       borderSide: BorderSide(color: Colors.white, width: 0.5),
                     )),
                 validator: (value) =>
-                value!.isEmpty ? 'Please, fill this field.' : null,
+                    value!.isEmpty ? 'Please, fill this field.' : null,
                 controller: leasedFarmController,
               ),
             ),
@@ -293,7 +286,7 @@ class _FarmerProfilePageState extends State<FarmerProfilePage> {
                       borderRadius: BorderRadius.all(Radius.circular(8.0)),
                     ),
                     contentPadding:
-                    EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                        EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                     hintText: '----',
                     hintStyle: TextStyle(color: Color(0xFFe7e7e7)),
                     focusedBorder: OutlineInputBorder(
@@ -301,7 +294,7 @@ class _FarmerProfilePageState extends State<FarmerProfilePage> {
                       borderSide: BorderSide(color: Colors.white, width: 0.5),
                     )),
                 validator: (value) =>
-                value!.isEmpty ? 'Please, fill this field.' : null,
+                    value!.isEmpty ? 'Please, fill this field.' : null,
                 controller: goeLocationLeasedController,
               ),
             ),
@@ -344,7 +337,7 @@ class _FarmerProfilePageState extends State<FarmerProfilePage> {
                       borderRadius: BorderRadius.all(Radius.circular(8.0)),
                     ),
                     contentPadding:
-                    EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                        EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                     hintText: '----',
                     hintStyle: TextStyle(color: Color(0xFFe7e7e7)),
                     focusedBorder: OutlineInputBorder(
@@ -352,7 +345,7 @@ class _FarmerProfilePageState extends State<FarmerProfilePage> {
                       borderSide: BorderSide(color: Colors.white, width: 0.5),
                     )),
                 validator: (value) =>
-                value!.isEmpty ? 'Please, fill this field.' : null,
+                    value!.isEmpty ? 'Please, fill this field.' : null,
                 controller: pincodeController,
                 onChanged: _onTextChanged,
               ),
@@ -620,7 +613,7 @@ class _FarmerProfilePageState extends State<FarmerProfilePage> {
                       borderSide: BorderSide(color: Colors.white, width: 0.5),
                     )),
                 validator: (value) =>
-                value!.isEmpty ? buildTranslate('enterVillage') : null,
+                    value!.isEmpty ? buildTranslate('enterVillage') : null,
                 controller: villageController,
               ),
             ),
@@ -670,7 +663,7 @@ class _FarmerProfilePageState extends State<FarmerProfilePage> {
                       borderSide: BorderSide(color: Colors.white, width: 0.5),
                     )),
                 validator: (value) =>
-                value!.isEmpty ? buildTranslate('enterAddress') : null,
+                    value!.isEmpty ? buildTranslate('enterAddress') : null,
                 controller: addressController,
               ),
             ),
@@ -711,13 +704,13 @@ class _FarmerProfilePageState extends State<FarmerProfilePage> {
                   ),
                   items: items
                       .map((item) => DropdownMenuItem<String>(
-                    value: item,
-                    child: Text(
-                      item,
-                      style: const TextStyle(
-                          fontSize: 14, color: Colors.grey),
-                    ),
-                  ))
+                            value: item,
+                            child: Text(
+                              item,
+                              style: const TextStyle(
+                                  fontSize: 14, color: Colors.grey),
+                            ),
+                          ))
                       .toList(),
                   validator: (value) {
                     if (value == null) {
@@ -828,7 +821,7 @@ class _FarmerProfilePageState extends State<FarmerProfilePage> {
                       borderSide: BorderSide(color: Colors.white, width: 0.5),
                     )),
                 validator: (value) =>
-                value!.isEmpty ? buildTranslate('enterBankName')! : null,
+                    value!.isEmpty ? buildTranslate('enterBankName')! : null,
                 controller: bankNameController,
               ),
             ),
@@ -878,7 +871,7 @@ class _FarmerProfilePageState extends State<FarmerProfilePage> {
                       borderSide: BorderSide(color: Colors.white, width: 0.5),
                     )),
                 validator: (value) =>
-                value!.isEmpty ? buildTranslate('enterAccountName')! : null,
+                    value!.isEmpty ? buildTranslate('enterAccountName')! : null,
                 controller: accountNameController,
               ),
             ),
@@ -1028,7 +1021,7 @@ class _FarmerProfilePageState extends State<FarmerProfilePage> {
                       borderSide: BorderSide(color: Colors.white, width: 0.5),
                     )),
                 validator: (value) =>
-                value!.isEmpty ? buildTranslate('enterPanNumber') : null,
+                    value!.isEmpty ? buildTranslate('enterPanNumber') : null,
                 controller: panNumberController,
               ),
             ),
@@ -1078,7 +1071,7 @@ class _FarmerProfilePageState extends State<FarmerProfilePage> {
                       borderSide: BorderSide(color: Colors.white, width: 0.5),
                     )),
                 validator: (value) =>
-                value!.isEmpty ? 'Enter Aadhaar Code' : null,
+                    value!.isEmpty ? 'Enter Aadhaar Code' : null,
                 controller: aadharNumberController,
               ),
             ),
@@ -1125,8 +1118,8 @@ class _FarmerProfilePageState extends State<FarmerProfilePage> {
   _farmerRegistrationApiCall() async {
     if (ownedAreaController.text.trim().isNotEmpty &&
         pincodeController.text.trim().isNotEmpty &&
-        villageController.text.trim().isNotEmpty && selectedItemValue.toString().isNotEmpty) {
-
+        villageController.text.trim().isNotEmpty &&
+        selectedItemValue.toString().isNotEmpty) {
       String? number = await AppGlobal.getStringPreference('contactNumber');
 
       var body = json.encode({
@@ -1152,8 +1145,8 @@ class _FarmerProfilePageState extends State<FarmerProfilePage> {
       });
 
       FRMRegistrationData? user =
-      await FarmerDashboardController.farmerRegistration(body,
-          context: context);
+          await FarmerDashboardController.farmerRegistration(body,
+              context: context);
 
       if (user != null) {
         Future.delayed(const Duration(seconds: 1), () {
@@ -1177,29 +1170,28 @@ class _FarmerProfilePageState extends State<FarmerProfilePage> {
 
   void _onTextChanged(String text) async {
     try {
-      Dio _dio = Dio();
-      _dio.options.baseUrl = baseUrl;
-      final response = await _dio.post(
-        PincodeToState,
-        data: {'pincode': text},
+      final response = await postAPICall(
+        apiUrl: baseUrl + PincodeToState,
+        parameter: json.encode({'pincode': text}),
       );
 
       if (response.statusCode == 200) {
         // Handle successful response
-        print('_onTextChanged API call successful: ${response.data}');
+        final data = json.decode(response.body);
+        print('_onTextChanged API call successful: $data');
 
-        if (response.data['PostOffice'].isNotEmpty) {
+        if (data['PostOffice'].isNotEmpty) {
           dropdownStateItems = [
             DropdownMenuItem<String>(
-              value: response.data['PostOffice'][0]['State'],
-              child: Text(response.data['PostOffice'][0]['State']),
+              value: data['PostOffice'][0]['State'],
+              child: Text(data['PostOffice'][0]['State']),
             ),
           ];
 
           dropdownDistrictItems = [
             DropdownMenuItem<String>(
-              value: response.data['PostOffice'][0]['District'],
-              child: Text(response.data['PostOffice'][0]['District']),
+              value: data['PostOffice'][0]['District'],
+              child: Text(data['PostOffice'][0]['District']),
             ),
           ];
         }
@@ -1219,17 +1211,15 @@ class _FarmerProfilePageState extends State<FarmerProfilePage> {
   }
 
   Future<List<PostOffice>> fetchItems() async {
-    Dio _dio = Dio();
-    _dio.options.baseUrl = baseUrl;
-    final response = await _dio.post(
-      PincodeToState,
-      data: {'pincode': '360001'},
+    final response = await postAPICall(
+      apiUrl: baseUrl + PincodeToState,
+      parameter: json.encode({'pincode': '360001'}),
     );
 
     if (response.statusCode == 200) {
-      List data = jsonDecode(response.data);
+      List data = json.decode(response.body);
       List<PostOffice> items =
-      data.map((item) => PostOffice.fromJson(item)).toList();
+          data.map((item) => PostOffice.fromJson(item)).toList();
       return items;
     } else {
       throw Exception('Failed to load items');
@@ -1260,10 +1250,10 @@ class _FarmerProfilePageState extends State<FarmerProfilePage> {
           ),
           Center(
               child: Image.asset(
-                'assets/images/check_green.png',
-                width: 100,
-                height: 100,
-              )),
+            'assets/images/check_green.png',
+            width: 100,
+            height: 100,
+          )),
           Text(
             buildTranslate("SuccessfullyUpdate")!,
             softWrap: true,
