@@ -20,7 +20,6 @@ Map<String, String> commonHeader = {
   "Content-Type": "application/json",
   "Connection": "application/json",
   "test": 'false',
-  'ArdentSport': 'QXJkZW50U3BvcnQ',
   "Authorization": 'Bearer',
 };
 bool isSuccessStatus(int statusCode) => statusCode >= 200 && statusCode <= 204;
