@@ -1,18 +1,14 @@
 import 'dart:convert';
-
-import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
-import 'package:krishiyan/localization/AppLocalizations.dart';
-
-import '../../helper/AlertHelper.dart';
-import '../../mvc/controller/accountSettingController.dart';
-import '../../mvc/model/GetOtherDetails.dart';
+import 'ProfilePage.dart';
 import '../../utils/AppGlobal.dart';
 import '../../utils/Constants.dart';
-import 'ProfilePage.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import '../../helper/AlertHelper.dart';
+import '../../mvc/model/GetOtherDetails.dart';
+import 'package:krishiyan/helper/api_base_helper.dart';
+import '../../mvc/controller/accountSettingController.dart';
+import 'package:krishiyan/localization/AppLocalizations.dart';
 
 class OtherDetailPage extends StatefulWidget {
   const OtherDetailPage({super.key});
@@ -22,14 +18,13 @@ class OtherDetailPage extends StatefulWidget {
 }
 
 class _OtherDetailPageState extends State<OtherDetailPage> {
-
   TextFormField? panCardController;
   TextFormField? gstController;
   TextFormField? udyamController;
 
-  TextEditingController editPanCardController  = TextEditingController();
-  TextEditingController editGstController  = TextEditingController();
-  TextEditingController editUdyamController  = TextEditingController();
+  TextEditingController editPanCardController = TextEditingController();
+  TextEditingController editGstController = TextEditingController();
+  TextEditingController editUdyamController = TextEditingController();
 
   String number = "";
 
@@ -67,10 +62,15 @@ class _OtherDetailPageState extends State<OtherDetailPage> {
                   Navigator.of(context).pop();
                 },
                 child: Image.asset('assets/images/back.png')),
-            const SizedBox(width: 10,),
+            const SizedBox(
+              width: 10,
+            ),
             Text(
               buildTranslate("otherDetails")!,
-              style: TextStyle(color: Colors.white, fontFamily: 'poppins-semibold', fontSize: 20),
+              style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'poppins-semibold',
+                  fontSize: 20),
             ),
           ],
         ),
@@ -80,137 +80,188 @@ class _OtherDetailPageState extends State<OtherDetailPage> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            const SizedBox(height: 30,),
-
+            const SizedBox(
+              height: 30,
+            ),
             FutureBuilder<OtherData?>(
               future: futureOtherDetails,
               builder: (context, snapshot) {
-
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   // While the future is still loading
                   return const Center(child: CircularProgressIndicator());
-                }
-                else if (snapshot.hasData) {
+                } else if (snapshot.hasData) {
                   if (snapshot.data!.toString().isEmpty) {
                     // If the future returns data, but it's empty
                     return const Center(child: Text("No data found"));
-                  }
-                  else {
+                  } else {
                     // If the future returns data, and it's non-empty
                     return Form(
                         key: _formKey,
-                        child:  Column(
+                        child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             // pan card fpo
                             Padding(
-                              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-                              child: Text(buildTranslate("PANCardForFPO")!, style: const TextStyle(fontSize: 15,
-                                  color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
+                              padding: const EdgeInsets.only(
+                                  left: 25.0, right: 25.0),
+                              child: Text(
+                                buildTranslate("PANCardForFPO")!,
+                                style: const TextStyle(
+                                    fontSize: 15,
+                                    color: Color(0xFF666666),
+                                    fontFamily: 'poppins-semibold'),
+                              ),
                             ),
-                            const SizedBox(height: 10,),
+                            const SizedBox(
+                              height: 10,
+                            ),
                             Padding(
-                              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+                              padding: const EdgeInsets.only(
+                                  left: 25.0, right: 25.0),
                               child: TextFormField(
                                 decoration: InputDecoration(
                                     alignLabelWithHint: true,
                                     fillColor: Colors.white,
                                     filled: true,
                                     enabledBorder: const OutlineInputBorder(
-                                      borderSide: BorderSide(color: Colors.grey, width: 1.0,),
+                                      borderSide: BorderSide(
+                                        color: Colors.grey,
+                                        width: 1.0,
+                                      ),
                                       // borderRadius: BorderRadius.all(Radius.circular(10.0)),
                                     ),
-                                    contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        vertical: 10.0, horizontal: 10.0),
                                     hintText: buildTranslate('panCard')!,
-                                    hintStyle: const TextStyle(color: Colors.grey),
+                                    hintStyle:
+                                        const TextStyle(color: Colors.grey),
                                     focusedBorder: const OutlineInputBorder(
                                       // borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                                      borderSide: BorderSide(color: Colors.green, width: 0.5),
-                                    )
-                                ),
-                                validator: (value) => value!.isEmpty ? 'Please, fill this field.' : null,
-                                initialValue: snapshot.data!.panCardNumber.toString(),
+                                      borderSide: BorderSide(
+                                          color: Colors.green, width: 0.5),
+                                    )),
+                                validator: (value) => value!.isEmpty
+                                    ? 'Please, fill this field.'
+                                    : null,
+                                initialValue:
+                                    snapshot.data!.panCardNumber.toString(),
                                 onSaved: (value) => panCard = value,
                               ),
                             ),
 
-                            const SizedBox(height: 20,),
+                            const SizedBox(
+                              height: 20,
+                            ),
 
                             // gst number
                             Padding(
-                              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-                              child: Text(buildTranslate("GSTNumber")!, style: const TextStyle(fontSize: 15,
-                                  color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
+                              padding: const EdgeInsets.only(
+                                  left: 25.0, right: 25.0),
+                              child: Text(
+                                buildTranslate("GSTNumber")!,
+                                style: const TextStyle(
+                                    fontSize: 15,
+                                    color: Color(0xFF666666),
+                                    fontFamily: 'poppins-semibold'),
+                              ),
                             ),
-                            const SizedBox(height: 10,),
+                            const SizedBox(
+                              height: 10,
+                            ),
                             Padding(
-                              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+                              padding: const EdgeInsets.only(
+                                  left: 25.0, right: 25.0),
                               child: TextFormField(
                                 keyboardType: TextInputType.text,
                                 initialValue: snapshot.data!.gstNumber ?? "",
                                 onSaved: (value) => gstNumber = value,
                                 decoration: InputDecoration(
-                                  contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      vertical: 10.0, horizontal: 10.0),
                                   hintText: buildTranslate("GSTNumber")!,
-                                  hintStyle: const TextStyle(color: Colors.grey),
+                                  hintStyle:
+                                      const TextStyle(color: Colors.grey),
                                   fillColor: Colors.white,
                                   filled: true,
-                                  border: const OutlineInputBorder(
-                                  ),
+                                  border: const OutlineInputBorder(),
                                   enabledBorder: const OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.grey, width: 1.0,),
+                                    borderSide: BorderSide(
+                                      color: Colors.grey,
+                                      width: 1.0,
+                                    ),
                                   ),
                                   focusedBorder: const OutlineInputBorder(
                                     // borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                                    borderSide: BorderSide(color: Colors.green, width: 0.5),
+                                    borderSide: BorderSide(
+                                        color: Colors.green, width: 0.5),
                                   ),
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 20,),
+                            const SizedBox(
+                              height: 20,
+                            ),
 
                             // udhyam aadhaar
                             Padding(
-                              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-                              child: Text(buildTranslate("udyamAadhaar")!, style: const TextStyle(fontSize: 15,
-                                  color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
+                              padding: const EdgeInsets.only(
+                                  left: 25.0, right: 25.0),
+                              child: Text(
+                                buildTranslate("udyamAadhaar")!,
+                                style: const TextStyle(
+                                    fontSize: 15,
+                                    color: Color(0xFF666666),
+                                    fontFamily: 'poppins-semibold'),
+                              ),
                             ),
-                            const SizedBox(height: 10,),
+                            const SizedBox(
+                              height: 10,
+                            ),
                             Padding(
-                              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+                              padding: const EdgeInsets.only(
+                                  left: 25.0, right: 25.0),
                               child: TextFormField(
                                 keyboardType: TextInputType.text,
                                 onSaved: (value) => udyamNumber = value,
                                 initialValue: snapshot.data!.udyamNumber ?? "",
                                 decoration: InputDecoration(
-                                  contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      vertical: 10.0, horizontal: 10.0),
                                   hintText: buildTranslate("udyamAadhaar")!,
-                                  hintStyle: const TextStyle(color: Colors.grey),
+                                  hintStyle:
+                                      const TextStyle(color: Colors.grey),
                                   fillColor: Colors.white,
                                   filled: true,
                                   border: const OutlineInputBorder(
-                                    // borderRadius: BorderRadius.all(Radius.circular(10.0),),
-                                  ),
+                                      // borderRadius: BorderRadius.all(Radius.circular(10.0),),
+                                      ),
                                   enabledBorder: const OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.grey, width: 1.0,),
+                                    borderSide: BorderSide(
+                                      color: Colors.grey,
+                                      width: 1.0,
+                                    ),
                                     // borderRadius: BorderRadius.all(Radius.circular(10.0)),
                                   ),
                                   focusedBorder: const OutlineInputBorder(
                                     // borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                                    borderSide: BorderSide(color: Colors.green, width: 0.5),
+                                    borderSide: BorderSide(
+                                        color: Colors.green, width: 0.5),
                                   ),
                                 ),
                               ),
                             ),
 
-                            const SizedBox(height: 35,),
+                            const SizedBox(
+                              height: 35,
+                            ),
 
                             Align(
                               alignment: FractionalOffset.bottomCenter,
                               child: Container(
                                 width: MediaQuery.of(context).size.width,
-                                padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+                                padding: const EdgeInsets.only(
+                                    left: 25.0, right: 25.0),
                                 child: ElevatedButton(
                                   onPressed: () {
                                     _getValue();
@@ -221,24 +272,26 @@ class _OtherDetailPageState extends State<OtherDetailPage> {
                                     textStyle: const TextStyle(fontSize: 18),
                                     backgroundColor: const Color(0xFF3FC041),
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12), // <-- Radius
+                                      borderRadius: BorderRadius.circular(
+                                          12), // <-- Radius
                                     ),
                                   ),
-                                  child: Text(buildTranslate('save')!,
-                                    style: const TextStyle(fontSize: 15, fontFamily: 'poppins-medium'),),
+                                  child: Text(
+                                    buildTranslate('save')!,
+                                    style: const TextStyle(
+                                        fontSize: 15,
+                                        fontFamily: 'poppins-medium'),
+                                  ),
                                 ),
                               ),
                             ),
                           ],
-                        )
-                    );
+                        ));
                   }
-                }
-                else if (snapshot.hasError) {
+                } else if (snapshot.hasError) {
                   // If the future returns an error
                   return Center(child: Text("Error: ${snapshot.error}"));
-                }
-                else {
+                } else {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -246,10 +299,17 @@ class _OtherDetailPageState extends State<OtherDetailPage> {
                       // pan card fpo
                       Padding(
                         padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-                        child: Text(buildTranslate("PANCardForFPO")!, style: const TextStyle(fontSize: 15,
-                            color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
+                        child: Text(
+                          buildTranslate("PANCardForFPO")!,
+                          style: const TextStyle(
+                              fontSize: 15,
+                              color: Color(0xFF666666),
+                              fontFamily: 'poppins-semibold'),
+                        ),
                       ),
-                      const SizedBox(height: 10,),
+                      const SizedBox(
+                        height: 10,
+                      ),
                       Padding(
                         padding: const EdgeInsets.only(left: 25.0, right: 25.0),
                         child: TextFormField(
@@ -258,32 +318,47 @@ class _OtherDetailPageState extends State<OtherDetailPage> {
                               fillColor: Colors.white,
                               filled: true,
                               enabledBorder: const OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.grey, width: 1.0,),
+                                borderSide: BorderSide(
+                                  color: Colors.grey,
+                                  width: 1.0,
+                                ),
                                 // borderRadius: BorderRadius.all(Radius.circular(10.0)),
                               ),
-                              contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 10.0, horizontal: 10.0),
                               hintText: buildTranslate('panCard')!,
                               hintStyle: const TextStyle(color: Colors.grey),
                               focusedBorder: const OutlineInputBorder(
                                 // borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                                borderSide: BorderSide(color: Colors.green, width: 0.5),
-                              )
-                          ),
-                          validator: (value) => value!.isEmpty ? 'Please, fill this field.' : null,
+                                borderSide:
+                                    BorderSide(color: Colors.green, width: 0.5),
+                              )),
+                          validator: (value) => value!.isEmpty
+                              ? 'Please, fill this field.'
+                              : null,
                           controller: editPanCardController,
                           onSaved: (value) => panCard = value,
                         ),
                       ),
 
-                      const SizedBox(height: 20,),
+                      const SizedBox(
+                        height: 20,
+                      ),
 
                       // gst number
                       Padding(
                         padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-                        child: Text(buildTranslate("GSTNumber")!, style: const TextStyle(fontSize: 15,
-                            color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
+                        child: Text(
+                          buildTranslate("GSTNumber")!,
+                          style: const TextStyle(
+                              fontSize: 15,
+                              color: Color(0xFF666666),
+                              fontFamily: 'poppins-semibold'),
+                        ),
                       ),
-                      const SizedBox(height: 10,),
+                      const SizedBox(
+                        height: 10,
+                      ),
                       Padding(
                         padding: const EdgeInsets.only(left: 25.0, right: 25.0),
                         child: TextFormField(
@@ -291,32 +366,45 @@ class _OtherDetailPageState extends State<OtherDetailPage> {
                           controller: editGstController,
                           onSaved: (value) => gstNumber = value,
                           decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 10.0, horizontal: 10.0),
                             hintText: buildTranslate("GSTNumber")!,
                             hintStyle: const TextStyle(color: Colors.grey),
                             fillColor: Colors.white,
                             filled: true,
-                            border: const OutlineInputBorder(
-                            ),
+                            border: const OutlineInputBorder(),
                             enabledBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.grey, width: 1.0,),
+                              borderSide: BorderSide(
+                                color: Colors.grey,
+                                width: 1.0,
+                              ),
                             ),
                             focusedBorder: const OutlineInputBorder(
                               // borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                              borderSide: BorderSide(color: Colors.green, width: 0.5),
+                              borderSide:
+                                  BorderSide(color: Colors.green, width: 0.5),
                             ),
                           ),
                         ),
                       ),
-                      const SizedBox(height: 20,),
+                      const SizedBox(
+                        height: 20,
+                      ),
 
                       // udhyam aadhaar
                       Padding(
                         padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-                        child: Text(buildTranslate("udyamAadhaar")!, style: const TextStyle(fontSize: 15,
-                            color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
+                        child: Text(
+                          buildTranslate("udyamAadhaar")!,
+                          style: const TextStyle(
+                              fontSize: 15,
+                              color: Color(0xFF666666),
+                              fontFamily: 'poppins-semibold'),
+                        ),
                       ),
-                      const SizedBox(height: 10,),
+                      const SizedBox(
+                        height: 10,
+                      ),
                       Padding(
                         padding: const EdgeInsets.only(left: 25.0, right: 25.0),
                         child: TextFormField(
@@ -324,39 +412,52 @@ class _OtherDetailPageState extends State<OtherDetailPage> {
                           onSaved: (value) => udyamNumber = value,
                           controller: editUdyamController,
                           decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 10.0, horizontal: 10.0),
                             hintText: buildTranslate("udyamAadhaar")!,
                             hintStyle: const TextStyle(color: Colors.grey),
                             fillColor: Colors.white,
                             filled: true,
                             border: const OutlineInputBorder(
-                              // borderRadius: BorderRadius.all(Radius.circular(10.0),),
-                            ),
+                                // borderRadius: BorderRadius.all(Radius.circular(10.0),),
+                                ),
                             enabledBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.grey, width: 1.0,),
+                              borderSide: BorderSide(
+                                color: Colors.grey,
+                                width: 1.0,
+                              ),
                               // borderRadius: BorderRadius.all(Radius.circular(10.0)),
                             ),
                             focusedBorder: const OutlineInputBorder(
                               // borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                              borderSide: BorderSide(color: Colors.green, width: 0.5),
+                              borderSide:
+                                  BorderSide(color: Colors.green, width: 0.5),
                             ),
                           ),
                         ),
                       ),
 
-                      const SizedBox(height: 35,),
+                      const SizedBox(
+                        height: 35,
+                      ),
 
                       Align(
                         alignment: FractionalOffset.bottomCenter,
                         child: Container(
                           width: MediaQuery.of(context).size.width,
-                          padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+                          padding:
+                              const EdgeInsets.only(left: 25.0, right: 25.0),
                           child: ElevatedButton(
                             onPressed: () {
-                              if (editPanCardController.text.toString().isNotEmpty &&
-                                  editGstController.text.toString().isNotEmpty &&
-                                  editUdyamController.text.toString().isNotEmpty) {
-
+                              if (editPanCardController.text
+                                      .toString()
+                                      .isNotEmpty &&
+                                  editGstController.text
+                                      .toString()
+                                      .isNotEmpty &&
+                                  editUdyamController.text
+                                      .toString()
+                                      .isNotEmpty) {
                                 _otherDetailsApiCall(
                                     editPanCardController.text.toString(),
                                     editGstController.text.toString(),
@@ -372,11 +473,15 @@ class _OtherDetailPageState extends State<OtherDetailPage> {
                               textStyle: const TextStyle(fontSize: 18),
                               backgroundColor: const Color(0xFF3FC041),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12), // <-- Radius
+                                borderRadius:
+                                    BorderRadius.circular(12), // <-- Radius
                               ),
                             ),
-                            child: Text(buildTranslate('save')!,
-                              style: const TextStyle(fontSize: 15, fontFamily: 'poppins-medium'),),
+                            child: Text(
+                              buildTranslate('save')!,
+                              style: const TextStyle(
+                                  fontSize: 15, fontFamily: 'poppins-medium'),
+                            ),
                           ),
                         ),
                       ),
@@ -385,7 +490,6 @@ class _OtherDetailPageState extends State<OtherDetailPage> {
                 }
               },
             ),
-
           ],
         ),
       ),
@@ -393,29 +497,22 @@ class _OtherDetailPageState extends State<OtherDetailPage> {
   }
 
   void _getValue() {
-
     if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save(); // This triggers onSaved for each TextFormField
+      _formKey.currentState!
+          .save(); // This triggers onSaved for each TextFormField
       print("panCard : $panCard");
 
       if (panCard != null && gstNumber != null && udyamNumber != null) {
-
         _otherDetailsApiCall(
-            panCard.toString(),
-            gstNumber.toString(),
-            udyamNumber.toString());
+            panCard.toString(), gstNumber.toString(), udyamNumber.toString());
       } else {
-        AlertHelper.showToast(
-            "Please enter data.", context);
+        AlertHelper.showToast("Please enter data.", context);
       }
     }
   }
 
-  _otherDetailsApiCall(String panCard, String gstNumber, String udyamNumber) async {
-
-    var headers = {
-      'Content-Type': 'application/json'
-    };
+  _otherDetailsApiCall(
+      String panCard, String gstNumber, String udyamNumber) async {
     var data = json.encode({
       "uid": number,
       "panCardNumber": panCard,
@@ -423,23 +520,17 @@ class _OtherDetailPageState extends State<OtherDetailPage> {
       "udyamNumber": udyamNumber,
       "aadhaarNumber": "1234-5678-9012"
     });
-    var dio = Dio();
-    var response = await dio.request(
-      UPDATE_OTHER_DETAILS,
-      options: Options(
-        method: 'POST',
-        headers: headers,
-      ),
-      data: data,
+
+    var response = await postAPICall(
+      apiUrl: UPDATE_OTHER_DETAILS,
+      parameter: data,
     );
 
     if (response.statusCode == 201) {
-      print("Other details updated : "+json.encode(response.data));
-
+      print("Other details updated : " + response.body);
       showAlertDialog(context);
-    }
-    else {
-      print(response.statusMessage);
+    } else {
+      print(response.reasonPhrase);
     }
   }
 
@@ -468,19 +559,35 @@ class _OtherDetailPageState extends State<OtherDetailPage> {
               ),
             ),
           ),
-
-          Center(child: Image.asset('assets/images/check_green.png', width: 100, height: 100,)),
-
-          const Text("You've Details Updated Successfully!", softWrap: true,
+          Center(
+              child: Image.asset(
+            'assets/images/check_green.png',
+            width: 100,
+            height: 100,
+          )),
+          const Text(
+            "You've Details Updated Successfully!",
+            softWrap: true,
             textAlign: TextAlign.center,
-            style: TextStyle(fontFamily: "poppins-semibold", fontSize: 15.0, color: Colors.grey),),
-
-          const SizedBox(height: 20,),
-
-          const Text("Thank You", softWrap: true,
-            style: TextStyle(fontFamily: "poppins-semibold", fontSize: 20.0, color: Colors.black),),
-
-          const SizedBox(height: 20,),
+            style: TextStyle(
+                fontFamily: "poppins-semibold",
+                fontSize: 15.0,
+                color: Colors.grey),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          const Text(
+            "Thank You",
+            softWrap: true,
+            style: TextStyle(
+                fontFamily: "poppins-semibold",
+                fontSize: 20.0,
+                color: Colors.black),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
         ],
       ),
     );
@@ -494,12 +601,12 @@ class _OtherDetailPageState extends State<OtherDetailPage> {
     );
   }
 
-  Future<void> getOtherDetails() async{
+  Future<void> getOtherDetails() async {
     number = (await AppGlobal.getStringPreference('contactNumber'))!;
-    futureOtherDetails = AccountSettingController.fetchAccountDetails(context, number);
+    futureOtherDetails =
+        AccountSettingController.fetchAccountDetails(context, number);
     setState(() {
       futureOtherDetails = futureOtherDetails;
     });
   }
-
 }

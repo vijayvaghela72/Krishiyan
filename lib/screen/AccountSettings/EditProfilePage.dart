@@ -1,34 +1,23 @@
-import 'dart:convert';
 import 'dart:io';
+import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:http/http.dart' as http;
-import 'package:krishiyan/localization/AppLocalizations.dart';
-import 'package:krishiyan/mvc/model/GetFRMProfileData.dart';
-import 'package:krishiyan/screen/AccountSettings/ProfilePage.dart';
-import 'package:krishiyan/screen/home_screen/dashborad.dart';
-import 'package:otp_text_field/otp_field.dart';
-import 'package:otp_text_field/style.dart';
-import 'package:path_provider/path_provider.dart';
-import '../../helper/AlertHelper.dart';
-import '../../mvc/controller/accountSettingController.dart';
-import '../../mvc/model/GetProfileData.dart';
+import 'package:intl/intl.dart';
 import '../../utils/AppGlobal.dart';
 import '../../utils/Constants.dart';
-import 'package:intl/intl.dart'; // Required for date formatting
-import 'package:krishiyan/mvc/model/GetOtpDetails.dart';
-import '../../mvc/controller/otpController.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:otp_text_field/otp_field.dart';
+import 'package:flutter/material.dart';
+import '../../helper/AlertHelper.dart';
+import 'package:flutter/services.dart';
 import 'package:otp_text_field/style.dart';
+import 'package:otp_text_field/otp_field.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:krishiyan/helper/api_base_helper.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:krishiyan/mvc/model/GetFRMProfileData.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:dio/dio.dart';
-// Ensure you have Flutter imports for AlertHelper and setState usage
-import 'dart:convert'; // For json.encode
-import 'dart:io';
-import 'package:permission_handler/permission_handler.dart';
+import '../../mvc/controller/accountSettingController.dart';
+import 'package:krishiyan/screen/home_screen/dashborad.dart';
+import 'package:krishiyan/localization/AppLocalizations.dart';
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
@@ -48,7 +37,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
   TextFormField? emailIdController;
   TextFormField? nameOfPromoterController;
   TextFormField? yourDesignationController;
-  File? _imageFile;
 
   TextEditingController editNameOfOrganizationController =
       TextEditingController();
@@ -151,11 +139,20 @@ class _EditProfilePageState extends State<EditProfilePage> {
             filename: modifiedFileName), // Use the modified name
       });
 
+      final timestamp = DateTime.now().millisecondsSinceEpoch.toString();
+      final signature = hmacSha256(encryptionKey, timestamp);
+
       // Send the request to the API
-      Response response = await dio.post(
-        '${baseUrl}upload',
-        data: formData,
-      );
+      Response response = await dio.post('${baseUrl}upload',
+          data: formData,
+          options: Options(headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "Connection": "application/json",
+            "Authorization": 'Bearer',
+            'x-timestamp': timestamp,
+            'x-signature': signature,
+          }));
 
       // Debugging: Print the full response to check the returned data
       print("Response status: ${response.statusCode}");
@@ -228,24 +225,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
       _imageUrl = imageUrl; // Store the fetched image URL to display it
     });
   }
-
-// Future<void> _saveImagePath(String imagePath) async {
-//   final prefs = await SharedPreferences.getInstance();
-//   prefs.setString('${editNameOfOrganizationController.text.toString()}_image_path', imagePath);
-//   print("Image path saved: $imagePath");  // Debug: print the saved path
-// }
-
-// Future<void> _loadImagePath() async {
-//   final prefs = await SharedPreferences.getInstance();
-//   final savedImagePath = prefs.getString('${editNameOfOrganizationController.text.toString()}_image_path');
-//   print("Image path loaded: $savedImagePath");  // Debug: print the loaded path
-
-//   if (savedImagePath != null && savedImagePath.isNotEmpty) {
-//     setState(() {
-//       _image = File(savedImagePath);  // Load the saved image file
-//     });
-//   }
-// }
 
   String convertDateFormat(String date) {
     try {
@@ -908,28 +887,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                   borderSide: BorderSide(
                                       color: Colors.green, width: 0.5),
                                 ),
-                                // suffixIcon: Container(
-                                //   margin: const EdgeInsets.all(5),
-                                //   child: ElevatedButton(
-                                //     style: ElevatedButton.styleFrom(
-                                //       minimumSize: const Size(70, 35),
-                                //       foregroundColor: Colors.white,
-                                //       textStyle: const TextStyle(fontSize: 15),
-                                //       backgroundColor: const Color(0xFF3FC041),
-                                //       shape: RoundedRectangleBorder(
-                                //         borderRadius:
-                                //         BorderRadius.circular(12.0),
-                                //       ),
-                                //     ),
-                                //     child: Text(buildTranslate("getOtp")!),
-                                //     onPressed: () {
-                                //       setState(() {
-                                //         otpVisible = true;
-                                //       });
-
-                                //     },
-                                //   ),
-                                // ),
                               ),
                               validator: (value) => value!.isEmpty
                                   ? 'Please, fill this field.'
@@ -1859,8 +1816,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
         cbboName.isNotEmpty &&
         designation.isNotEmpty) {
       print('Testing E');
-      var headers = {'Content-Type': 'application/json'};
-
       var data = json.encode({
         "nameOfFpo": nameOfOrganization,
         "typeOfFpo": typeOfOrganization,
@@ -1876,23 +1831,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
       // var dio = Dio();
       print('link : ${FRM_UPDATE_PROFILE_DETAILS + contactNumber}');
-      var response = await http
-          .put(
-            Uri.parse(FRM_UPDATE_PROFILE_DETAILS + contactNumber),
-            headers: headers,
-            body: data,
-            encoding: Encoding.getByName("utf-8"),
-          )
-          .timeout(const Duration(seconds: 8));
-
-      // var response = await dio.request(
-      //   FRM_UPDATE_PROFILE_DETAILS + contactNumber,
-      //   options: Options(
-      //     method: 'PUT',
-      //     headers: headers,
-      //   ),getAddressDetailsgetAddressDetailsgetAddressDetails
-      //   data: data,
-      // );
+      var response = await putAPICall(
+        apiUrl: FRM_UPDATE_PROFILE_DETAILS + contactNumber,
+        parameter: data,
+      );
       print('response1 : ${response.statusCode}');
       print('response2 : ${response.body}');
 

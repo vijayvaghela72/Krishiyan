@@ -1,18 +1,15 @@
-import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
-import 'package:dio/dio.dart';
+// ignore_for_file: must_be_immutable
+
+import 'dart:convert';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
+import 'package:krishiyan/helper/api_base_helper.dart';
 import '../../localization/AppLocalizations.dart';
 import '../../mvc/controller/cropController.dart';
 import '../../mvc/model/CropLibraryData.dart';
 import '../../mvc/model/SelectCropNamesData.dart';
 import '../../utils/Constants.dart';
-import '../Enquiry/BottomCenterEnquiryPage.dart';
-import '../home_screen/home/home.dart';
-import '../FRM/buttom_two_page/bottom_two_page.dart';
 import '../FRM/CropProtectionPage.dart';
 import 'FaqPage.dart';
 import 'GeneralInformationPage.dart';
@@ -20,7 +17,6 @@ import 'HarvestPage.dart';
 import 'IrrigationManagementPage.dart';
 import 'NutrientManagmentPage.dart';
 import 'MyProSawingPracticesPage.dart';
-import '../AccountSettings/ProfilePage.dart';
 import '../Language/SelectLanguagePage.dart';
 import 'MyVeritiesPage.dart';
 
@@ -33,20 +29,13 @@ class BottomThreePage extends StatefulWidget {
   State<BottomThreePage> createState() => _BottomThreePageState();
 }
 
-class _BottomThreePageState extends State<BottomThreePage> with TickerProviderStateMixin {
-
-  // late AnimationController _fabAnimationController;
-  // late AnimationController _borderRadiusAnimationController;
-  // late Animation<double> fabAnimation;
-  // late Animation<double> borderRadiusAnimation;
-  // late CurvedAnimation fabCurve;
-  // late CurvedAnimation borderRadiusCurve;
-  // late AnimationController _hideBottomBarAnimationController;
-  var _bottomNavIndex = 2; //default index of a first screen
-
+class _BottomThreePageState extends State<BottomThreePage>
+    with TickerProviderStateMixin {
   List<bottomCategory> iconList = [
     bottomCategory(
-        name: buildTranslate("home")!, id: "1", icon: 'assets/images/bottom1.png'),
+        name: buildTranslate("home")!,
+        id: "1",
+        icon: 'assets/images/bottom1.png'),
     bottomCategory(
         name: buildTranslate("frm")!,
         id: "2",
@@ -105,62 +94,18 @@ class _BottomThreePageState extends State<BottomThreePage> with TickerProviderSt
   void initState() {
     super.initState();
 
-    // _fabAnimationController = AnimationController(
-    //   duration: const Duration(milliseconds: 500),
-    //   vsync: this,
-    // );
-    // _borderRadiusAnimationController = AnimationController(
-    //   duration: const Duration(milliseconds: 500),
-    //   vsync: this,
-    // );
-    // fabCurve = CurvedAnimation(
-    //   parent: _fabAnimationController,
-    //   curve: const Interval(0.5, 1.0, curve: Curves.fastOutSlowIn),
-    // );
-    // borderRadiusCurve = CurvedAnimation(
-    //   parent: _borderRadiusAnimationController,
-    //   curve: const Interval(0.5, 1.0, curve: Curves.fastOutSlowIn),
-    // );
-    //
-    // fabAnimation = Tween<double>(begin: 1, end: 1).animate(fabCurve);
-    // borderRadiusAnimation = Tween<double>(begin: 1, end: 1).animate(
-    //   borderRadiusCurve,
-    // );
-    //
-    // _hideBottomBarAnimationController = AnimationController(
-    //   duration: const Duration(milliseconds: 200),
-    //   vsync: this,
-    // );
-    //
-    // Future.delayed(
-    //   const Duration(seconds: 1),
-    //       () => _fabAnimationController.forward(),
-    // );
-    // Future.delayed(
-    //   const Duration(seconds: 1),
-    //       () => _borderRadiusAnimationController.forward(),
-    // );
-
     futureCropData = CropController.fetchCrop();
     _fetchCropData();
   }
 
-  // @override
-  // void dispose() {
-  //   _fabAnimationController.dispose(); // Dispose the controller
-  //   _borderRadiusAnimationController.dispose(); // Dispose the controller
-  //   _hideBottomBarAnimationController.dispose(); // Dispose the controller
-  //   super.dispose();
-  // }
-
   Future<void> _fetchCropData() async {
     try {
       // Replace with your actual API endpoint
-      var response = await Dio().get(CROPS_NAMES);
+      var response = await getAPICall(apiUrl: CROPS_NAMES);
 
       if (response.statusCode == 200) {
         setState(() {
-          _cropData = SelectCropNamesData.fromJson(response.data);
+          _cropData = SelectCropNamesData.fromJson(jsonDecode(response.body));
         });
       } else {
         throw Exception('Failed to load crops');
@@ -182,43 +127,43 @@ class _BottomThreePageState extends State<BottomThreePage> with TickerProviderSt
       extendBodyBehindAppBar: false,
       appBar: widget.aapbarVisibility
           ? AppBar(
-        automaticallyImplyLeading: false,
-        title: InkWell(
-          highlightColor: Colors.transparent,
-          splashColor: Colors.transparent,
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                  builder: (context) => const SelectLanguagePage()),
-            );
-          },
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Image.asset(
-                'assets/images/loginLogo.png',
-                width: 150,
-                height: 60,
-              ),
-              const Spacer(),
-              Padding(
-                padding: const EdgeInsets.only(right: 5.0, top: 12.0),
-                child:
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+              automaticallyImplyLeading: false,
+              title: InkWell(
+                highlightColor: Colors.transparent,
+                splashColor: Colors.transparent,
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                        builder: (context) => const SelectLanguagePage()),
+                  );
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Image.asset(
-                      'assets/images/language.png',
-                      width: 35, height: 35,
+                      'assets/images/loginLogo.png',
+                      width: 150,
+                      height: 60,
+                    ),
+                    const Spacer(),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 5.0, top: 12.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Image.asset(
+                            'assets/images/language.png',
+                            width: 35,
+                            height: 35,
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
               ),
-            ],
-          ),
-        ),
-      )
+            )
           : null,
       body: SingleChildScrollView(
         child: Column(
@@ -260,63 +205,55 @@ class _BottomThreePageState extends State<BottomThreePage> with TickerProviderSt
             ),
 
             Padding(
-              padding: const EdgeInsets.only(
-                  left: 25.0, right: 25.0),
-              child: _cropData == null ||
-                  _cropData!.data == null
+              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+              child: _cropData == null || _cropData!.data == null
                   ? Center(child: Text(buildTranslate("noDataAvailable")!))
-                  :
-              DropdownButtonFormField2<String>(
-                dropdownStyleData: DropdownStyleData(maxHeight: 200),
-                hint: Text(buildTranslate("selectCrops")!),
-                decoration: InputDecoration(
-                  contentPadding:
-                  const EdgeInsets.symmetric(
-                      vertical: 16),
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius:
-                    BorderRadius.circular(8),
-                    borderSide: const BorderSide(
-                      color: Colors.black,
-                      width: 1.0,
+                  : DropdownButtonFormField2<String>(
+                      dropdownStyleData: DropdownStyleData(maxHeight: 200),
+                      hint: Text(buildTranslate("selectCrops")!),
+                      decoration: InputDecoration(
+                        contentPadding:
+                            const EdgeInsets.symmetric(vertical: 16),
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: const BorderSide(
+                            color: Colors.black,
+                            width: 1.0,
+                          ),
+                        ),
+                      ),
+                      buttonStyleData: const ButtonStyleData(
+                        padding: EdgeInsets.only(right: 8),
+                      ),
+                      iconStyleData: const IconStyleData(
+                        icon: Icon(
+                          Icons.arrow_drop_down,
+                          color: Colors.black45,
+                        ),
+                        iconSize: 24,
+                      ),
+                      menuItemStyleData: const MenuItemStyleData(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                      ),
+                      value: _selectedCrop,
+                      items: _cropData!.data!.map((String crop) {
+                        return DropdownMenuItem<String>(
+                          value: crop,
+                          child: Text(crop,
+                              style: const TextStyle(
+                                  fontSize: 15,
+                                  color: Colors.black,
+                                  fontFamily: 'poppins-regular')),
+                        );
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _selectedCrop = newValue;
+                        });
+                      },
                     ),
-                  ),
-                ),
-                buttonStyleData:
-                const ButtonStyleData(
-                  padding:
-                  EdgeInsets.only(right: 8),
-                ),
-                iconStyleData: const IconStyleData(
-                  icon: Icon(
-                    Icons.arrow_drop_down,
-                    color: Colors.black45,
-                  ),
-                  iconSize: 24,
-                ),
-                menuItemStyleData:
-                const MenuItemStyleData(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: 16),
-                ),
-                value: _selectedCrop,
-                items: _cropData!.data!.map((String crop) {
-                  return DropdownMenuItem<String>(
-                    value: crop,
-                    child: Text(crop, style: const TextStyle(
-                        fontSize: 15,
-                        color: Colors.black,
-                        fontFamily: 'poppins-regular')),
-                  );
-                }).toList(),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    _selectedCrop = newValue;
-                  });
-                },
-              ),
             ),
             const SizedBox(
               height: 25,
@@ -344,7 +281,8 @@ class _BottomThreePageState extends State<BottomThreePage> with TickerProviderSt
                   ),
                   child: Text(
                     buildTranslate('SUBMIT')!,
-                    style: const TextStyle(fontSize: 18, fontFamily: 'poppins-medium'),
+                    style: const TextStyle(
+                        fontSize: 18, fontFamily: 'poppins-medium'),
                   ),
                 )),
             const SizedBox(
@@ -358,65 +296,6 @@ class _BottomThreePageState extends State<BottomThreePage> with TickerProviderSt
         ),
       ),
     );
-  }
-
-  void _onItemTapped(int index) {
-
-    if (index == 0) {
-      // Navigator.pop(context);
-      var route = ModalRoute.of(context);
-      if (route != null) {
-        Navigator
-            .of(context)
-            .pushReplacement(
-            MaterialPageRoute(builder: (BuildContext context) =>
-                BottomOnePage(aapbarVisibility: true,)));
-      }
-    }
-    else if(index ==1) {
-      // Navigator.pop(context);
-      var route = ModalRoute.of(context);
-      if (route != null) {
-        Navigator
-            .of(context)
-            .pushReplacement(
-            MaterialPageRoute(builder: (BuildContext context) =>
-                BottomTwoPage(aapbarVisibility: true,)));
-      }
-    }
-    else if(index ==2) {
-      // Navigator.pop(context);
-      var route = ModalRoute.of(context);
-      if (route != null) {
-        Navigator
-            .of(context)
-            .pushReplacement(
-            MaterialPageRoute(builder: (BuildContext context) =>
-                BottomThreePage(aapbarVisibility: true,)));
-      }
-    }
-    else if(index == 3){
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => const ProfilePage()),
-      );
-    }
-    else if(index == 4){
-      var route = ModalRoute.of(context);
-      if (route != null) {
-        Navigator
-            .of(context)
-            .pushReplacement(
-            MaterialPageRoute(builder: (BuildContext context) =>
-                BottomCenterEnquiryPage(aapbarVisibility: true,)));
-      }
-    }
-
-    else {
-      setState(() {
-        _bottomNavIndex = index;
-      });
-      print("Three : bottomNavIndex : $_bottomNavIndex");
-    }
   }
 
   Widget listWidget() {
@@ -433,8 +312,7 @@ class _BottomThreePageState extends State<BottomThreePage> with TickerProviderSt
               height: 100,
               decoration: BoxDecoration(
                   color: Colors.white,
-                  border: Border.all(
-                      color: const Color(0xFFd3d3d3), width: 1),
+                  border: Border.all(color: const Color(0xFFd3d3d3), width: 1),
                   boxShadow: const [
                     BoxShadow(
                       color: Color(0xFFd3d3d3),
@@ -445,50 +323,69 @@ class _BottomThreePageState extends State<BottomThreePage> with TickerProviderSt
                 highlightColor: Colors.transparent,
                 splashColor: Colors.transparent,
                 onTap: () {
-                  if(ORG_Entity[index].id == "1"){
+                  if (ORG_Entity[index].id == "1") {
                     Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) =>
-                          GeneralInformationPage(aapbarVisibility: true, cropData : futureCropData, selectedcrop: _selectedCrop ?? '' )),
+                      MaterialPageRoute(
+                          builder: (context) => GeneralInformationPage(
+                              aapbarVisibility: true,
+                              cropData: futureCropData,
+                              selectedcrop: _selectedCrop ?? '')),
                     );
-                  }
-                  else if(ORG_Entity[index].id == "2"){
+                  } else if (ORG_Entity[index].id == "2") {
                     Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => MyVeritiesPage(aapbarVisibility: true, cropData : futureCropData, selectedcrop: _selectedCrop ?? '' )),
+                      MaterialPageRoute(
+                          builder: (context) => MyVeritiesPage(
+                              aapbarVisibility: true,
+                              cropData: futureCropData,
+                              selectedcrop: _selectedCrop ?? '')),
                     );
-                  }
-                  else if(ORG_Entity[index].id == "3"){
+                  } else if (ORG_Entity[index].id == "3") {
                     Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) =>
-                          MyProSawingPracticesPage(aapbarVisibility: true, cropData : futureCropData, selectedcrop: _selectedCrop ?? '')),
+                      MaterialPageRoute(
+                          builder: (context) => MyProSawingPracticesPage(
+                              aapbarVisibility: true,
+                              cropData: futureCropData,
+                              selectedcrop: _selectedCrop ?? '')),
                     );
-                  }
-                  else if(ORG_Entity[index].id == "4"){
+                  } else if (ORG_Entity[index].id == "4") {
                     Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) =>
-                          NutrientManagmentPage(aapbarVisibility: true, cropData : futureCropData, selectedcrop: _selectedCrop ?? '')),
+                      MaterialPageRoute(
+                          builder: (context) => NutrientManagmentPage(
+                              aapbarVisibility: true,
+                              cropData: futureCropData,
+                              selectedcrop: _selectedCrop ?? '')),
                     );
-                  }
-                  else if(ORG_Entity[index].id == "5"){
+                  } else if (ORG_Entity[index].id == "5") {
                     Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) =>
-                          CropProtectionPage(aapbarVisibility: true, cropData : futureCropData, selectedcrop: _selectedCrop ?? '' )),
+                      MaterialPageRoute(
+                          builder: (context) => CropProtectionPage(
+                              aapbarVisibility: true,
+                              cropData: futureCropData,
+                              selectedcrop: _selectedCrop ?? '')),
                     );
-                  }
-                  else if(ORG_Entity[index].id == "6"){
+                  } else if (ORG_Entity[index].id == "6") {
                     Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) =>
-                          IrrigationManagementPage(aapbarVisibility: true, cropData : futureCropData, selectedcrop: _selectedCrop ?? '')),
+                      MaterialPageRoute(
+                          builder: (context) => IrrigationManagementPage(
+                              aapbarVisibility: true,
+                              cropData: futureCropData,
+                              selectedcrop: _selectedCrop ?? '')),
                     );
-                  }
-                  else if(ORG_Entity[index].id == "7"){
+                  } else if (ORG_Entity[index].id == "7") {
                     Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => HarvestPage(aapbarVisibility: true, cropData : futureCropData, selectedcrop: _selectedCrop ?? '')),
+                      MaterialPageRoute(
+                          builder: (context) => HarvestPage(
+                              aapbarVisibility: true,
+                              cropData: futureCropData,
+                              selectedcrop: _selectedCrop ?? '')),
                     );
-                  }
-                  else if(ORG_Entity[index].id == "8"){
+                  } else if (ORG_Entity[index].id == "8") {
                     Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => MyFaqPage(aapbarVisibility: true,
-                          cropData : futureCropData, selectedcrop: _selectedCrop ?? '')),
+                      MaterialPageRoute(
+                          builder: (context) => MyFaqPage(
+                              aapbarVisibility: true,
+                              cropData: futureCropData,
+                              selectedcrop: _selectedCrop ?? '')),
                     );
                   }
                 },
@@ -525,7 +422,6 @@ class _BottomThreePageState extends State<BottomThreePage> with TickerProviderSt
       ),
     );
   }
-
 }
 
 class Entity {

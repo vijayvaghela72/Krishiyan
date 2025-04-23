@@ -1,19 +1,18 @@
-import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
-
+import 'dart:convert';
+import 'ProfilePage.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:krishiyan/localization/AppLocalizations.dart';
-
-import '../../helper/AlertHelper.dart';
-import '../../mvc/controller/accountSettingController.dart';
-import '../../mvc/model/GetBankDetails.dart';
 import '../../utils/AppGlobal.dart';
 import '../../utils/Constants.dart';
-import 'ProfilePage.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import '../../helper/AlertHelper.dart';
+import '../../mvc/model/GetBankDetails.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:krishiyan/helper/api_base_helper.dart';
+import '../../mvc/controller/accountSettingController.dart';
+import 'package:krishiyan/localization/AppLocalizations.dart';
 
 class EditBankDetailPage extends StatefulWidget {
   const EditBankDetailPage({super.key});
@@ -85,11 +84,21 @@ class _EditBankDetailPageState extends State<EditBankDetailPage> {
       FormData formData = FormData.fromMap({
         'image': await MultipartFile.fromFile(image.path, filename: uniqueKey),
       });
+      final timestamp = DateTime.now().millisecondsSinceEpoch.toString();
+      final signature = hmacSha256(encryptionKey, timestamp);
 
       // Send the request
       Response response = await dio.post(
         '${baseUrl}upload',
         data: formData,
+        options: Options(headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+          "Connection": "application/json",
+          "Authorization": 'Bearer',
+          'x-timestamp': timestamp,
+          'x-signature': signature,
+        }),
       );
 
       if (response.statusCode == 200) {
@@ -912,7 +921,6 @@ class _EditBankDetailPageState extends State<EditBankDetailPage> {
         _imageUrl.isNotEmpty) {
       print("BANK DETAILS UPDATION");
       print(_imageUrl);
-      var headers = {'Content-Type': 'application/json'};
       var data = json.encode({
         "uid": number,
         "bankName": bankName,
@@ -922,21 +930,21 @@ class _EditBankDetailPageState extends State<EditBankDetailPage> {
         "URL": _imageUrl
       });
       print("Request Payload: $data"); // Log the request payload
-      var dio = Dio();
-      var response = await dio.request(
-        UPDATE_BANK_DETAILS,
-        options: Options(
-          method: 'POST',
-          headers: headers,
-        ),
-        data: data,
-      );
 
-      if (response.statusCode == 201) {
-        print("Bank details updated : " + json.encode(response.data));
-        showAlertDialog(context);
-      } else {
-        print(response.statusMessage);
+      try {
+        var response = await postAPICall(
+          apiUrl: UPDATE_BANK_DETAILS,
+          parameter: data,
+        );
+
+        if (response.statusCode == 201) {
+          print("Bank details updated : " + response.body);
+          showAlertDialog(context);
+        } else {
+          print(response.reasonPhrase);
+        }
+      } catch (e) {
+        print(e.toString());
       }
     } else {
       AlertHelper.showToast("Please enter details.", context);

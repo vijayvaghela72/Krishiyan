@@ -1,19 +1,14 @@
 import 'dart:convert';
-
-import 'package:dio/dio.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
+import '../../utils/Constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 import '../../helper/AlertHelper.dart';
-import '../../helper/SharedPref.dart';
-import '../../localization/AppLocalizations.dart';
-import '../../mvc/controller/farmerDashboardController.dart';
-import '../../mvc/model/FarmerRegistrationData.dart';
 import '../../mvc/model/PincodeToStateData.dart';
-import '../../utils/Constants.dart';
-import 'package:http/http.dart' as http;
+import '../../localization/AppLocalizations.dart';
+import 'package:krishiyan/helper/api_base_helper.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 
+// ignore: must_be_immutable
 class FarmerEditProfilePage extends StatefulWidget {
   String? name,
       address,
@@ -1105,8 +1100,6 @@ class _FarmerEditProfilePageState extends State<FarmerEditProfilePage> {
         pincodeController.text.trim().isNotEmpty &&
         villageController.text.trim().isNotEmpty &&
         selectedItemValue.toString().isNotEmpty) {
-      var headers = {'Content-Type': 'application/json'};
-
       var data = json.encode({
         "name": widget.name,
         "totalOwnedFarm": int.parse(ownedAreaController.text.toString()),
@@ -1126,25 +1119,18 @@ class _FarmerEditProfilePageState extends State<FarmerEditProfilePage> {
         "pan": panNumberController.text.toString(),
         "aadhaarNumber": aadharNumberController.text.toString()
       });
-
-      var dio = Dio();
-      var response = await dio.request(
-        '${baseUrl}appFarmer/farmer/whatsapp/${widget.whatsappNumber}',
-        options: Options(
-          method: 'PUT',
-          headers: headers,
-        ),
-        data: data,
+      var url = '${baseUrl}appFarmer/farmer/whatsapp/${widget.whatsappNumber}';
+      var response = await putAPICall(
+        apiUrl: url,
+        parameter: data,
       );
-
       if (response.statusCode == 200) {
-        print("Edit Profile Details updated : " + json.encode(response.data));
-
+        print("Edit Profile Details updated : " + response.body);
         showAlertDialog(context);
       } else {
-        AlertHelper.showToast(response.statusMessage, context);
-        print("Edit Profile Details Error : " +
-            response.statusMessage.toString());
+        AlertHelper.showToast(response.reasonPhrase, context);
+        print(
+            "Edit Profile Details Error : " + response.reasonPhrase.toString());
       }
     } else {
       AlertHelper.showToast("Please enter details.", context);
@@ -1153,28 +1139,29 @@ class _FarmerEditProfilePageState extends State<FarmerEditProfilePage> {
 
   void _onTextChanged(String text) async {
     try {
-      Dio _dio = Dio();
-      _dio.options.baseUrl = baseUrl;
-      final response = await _dio.post(
-        PincodeToState,
-        data: {'pincode': text},
+      var url = '$baseUrl$PincodeToState';
+      final response = await postAPICall(
+        apiUrl: url,
+        parameter: json.encode({'pincode': text}),
       );
 
       if (response.statusCode == 200) {
-        print('_onTextChanged API call successful: ${response.data}');
+        print('_onTextChanged API call successful: ${response.body}');
 
-        if (response.data['PostOffice'].isNotEmpty) {
+        var data = json.decode(response.body);
+
+        if (data['PostOffice'].isNotEmpty) {
           dropdownStateItems = [
             DropdownMenuItem<String>(
-              value: response.data['PostOffice'][0]['State'],
-              child: Text(response.data['PostOffice'][0]['State']),
+              value: data['PostOffice'][0]['State'],
+              child: Text(data['PostOffice'][0]['State']),
             ),
           ];
 
           dropdownDistrictItems = [
             DropdownMenuItem<String>(
-              value: response.data['PostOffice'][0]['District'],
-              child: Text(response.data['PostOffice'][0]['District']),
+              value: data['PostOffice'][0]['District'],
+              child: Text(data['PostOffice'][0]['District']),
             ),
           ];
         }
@@ -1192,15 +1179,12 @@ class _FarmerEditProfilePageState extends State<FarmerEditProfilePage> {
   }
 
   Future<List<PostOffice>> fetchItems() async {
-    Dio _dio = Dio();
-    _dio.options.baseUrl = baseUrl;
-    final response = await _dio.post(
-      PincodeToState,
-      data: {'pincode': '360001'},
+    final response = await postAPICall(
+      apiUrl: baseUrl + PincodeToState,
+      parameter: json.encode({'pincode': '360001'}),
     );
-
     if (response.statusCode == 200) {
-      List data = jsonDecode(response.data);
+      List data = json.decode(response.body);
       List<PostOffice> items =
           data.map((item) => PostOffice.fromJson(item)).toList();
       return items;

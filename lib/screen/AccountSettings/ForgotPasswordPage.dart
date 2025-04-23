@@ -1,24 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
-
-import 'package:dio/dio.dart';
+import '../../utils/AppColor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:krishiyan/localization/AppLocalizations.dart';
-import 'package:krishiyan/mvc/model/GetOtpDetails.dart';
-import 'package:krishiyan/screen/Login/LoginPage.dart';
-import 'package:krishiyan/utils/Constants.dart';
-import 'package:otp_text_field/otp_field.dart';
-import 'package:otp_text_field/style.dart';
-
 import '../../helper/AlertHelper.dart';
+import '../../utils/hashPassword.dart';
+import 'package:otp_text_field/style.dart';
+import 'package:otp_text_field/otp_field.dart';
+import 'package:krishiyan/utils/Constants.dart';
 import '../../mvc/controller/otpController.dart';
-import '../../utils/AppColor.dart';
-import 'package:dio/dio.dart';
-// Ensure you have Flutter imports for AlertHelper and setState usage
-import 'dart:convert';
-
-import '../../utils/hashPassword.dart'; // For json.encode
+import 'package:krishiyan/helper/api_base_helper.dart';
+import 'package:krishiyan/mvc/model/GetOtpDetails.dart';
+import 'package:krishiyan/localization/AppLocalizations.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -486,9 +479,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   }
 
   Future<void> verifyOtp(String number) async {
-    final dio = Dio(); // Create an instance of Dio
-
-    // Define the URL for your API endpoint
+    // Create the URL for your API endpoint
     final url = "${baseUrl}whatsapp/check-otp/";
 
     // Create the payload data
@@ -499,13 +490,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
     try {
       // Make the POST request to the server to verify the OTP
-      final response = await dio.request(
-        url,
-        data: data,
-        options: Options(
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-        ),
+      final response = await postAPICall(
+        apiUrl: url,
+        parameter: jsonEncode(data),
       );
 
       // Check the response from the server
@@ -529,17 +516,14 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   }
 
   Future<bool> checkPhoneNumber(String number) async {
-    final dio = Dio(); // Create an instance of Dio
-
     // Define the URL for your API endpoint, appending the number directly
     final url = "${baseUrl}check-contact/$number";
 
     try {
       // Make the GET request to check the phone number
-      final response = await dio.get(url,
-          options: Options(
-            headers: {'Content-Type': 'application/json'},
-          ));
+      final response = await getAPICall(
+        apiUrl: url,
+      );
 
       // Check the response from the server
       if (response.statusCode == 200) {
@@ -564,38 +548,29 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   }
 
   Future<void> resetPassword(String number, String password) async {
-    final dio = Dio(); // Create an instance of Dio
-
-    // Define the URL for your API endpoint
-    final url = RESET_PASSWORD; // Replace with your API endpoint
-    // Using the PasswordUtils to hash the password
+    final url = RESET_PASSWORD;
     String hashedPassword = PasswordUtils.hashPassword(password);
-
     // Create the payload data
     final data = {"contactNumber": number, "newPassword": hashedPassword};
 
     try {
-      // Make the POST request
-      final response = await dio.request(
-        url,
-        data: data,
-        options: Options(
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-        ),
+      // Make the POST request using postAPICall helper
+      final response = await postAPICall(
+        apiUrl: url,
+        parameter: jsonEncode(data),
       );
 
       // Check the response
       if (response.statusCode == 200) {
         AlertHelper.showToast("Password reset successfully", "");
         print('Password reset successfully');
-        print(response.data); // Print response data if needed
+        print(response.body); // Print response data if needed
         Navigator.pop(context);
       } else {
         AlertHelper.showToast("Failed to send password reset email", "");
         print('Failed to send password reset email');
         print('Response code: ${response.statusCode}');
-        print('Response body: ${response.data}');
+        print('Response body: ${response.body}');
       }
     } catch (e) {
       print('Error: $e'); // Print error if something goes wrong

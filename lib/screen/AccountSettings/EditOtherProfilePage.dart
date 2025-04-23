@@ -1,8 +1,8 @@
 import 'dart:convert';
-import 'package:dio/dio.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:krishiyan/localization/AppLocalizations.dart';
 import 'package:krishiyan/screen/AccountSettings/ProfilePage.dart';
 import 'package:otp_text_field/otp_field.dart';
@@ -13,13 +13,7 @@ import '../../mvc/controller/accountSettingController.dart';
 import '../../mvc/model/GetProfileData.dart';
 import '../../utils/AppGlobal.dart';
 import '../../utils/Constants.dart';
-import 'package:intl/intl.dart'; // Required for date formatting
-import 'package:krishiyan/mvc/model/GetOtpDetails.dart';
-import '../../mvc/controller/otpController.dart';
-
-import 'package:dio/dio.dart';
- // Ensure you have Flutter imports for AlertHelper and setState usage
-import 'dart:convert'; // For json.encode
+import 'package:intl/intl.dart';
 
 class EditOtherProfilePage extends StatefulWidget {
   const EditOtherProfilePage({super.key});
@@ -29,7 +23,6 @@ class EditOtherProfilePage extends StatefulWidget {
 }
 
 class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
-
   TextFormField? nameOfEntityController;
   TextEditingController dateOfIncorporationController = TextEditingController();
   TextFormField? incorporationNumberController;
@@ -41,12 +34,18 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
   late OtpFieldController otpController = OtpFieldController();
 
   TextEditingController editNameOfEntityController = TextEditingController();
-  TextEditingController editDateOfIncorporationController = TextEditingController();
-  TextEditingController editIncorporationNumberController = TextEditingController();
-  TextEditingController editBusinessLocationController = TextEditingController();
-  TextEditingController editPrimaryContactPersonNameController = TextEditingController();
-  TextEditingController editPrimaryContactPersonDesignationController = TextEditingController();
-  TextEditingController editOfficeContactNumberController = TextEditingController();
+  TextEditingController editDateOfIncorporationController =
+      TextEditingController();
+  TextEditingController editIncorporationNumberController =
+      TextEditingController();
+  TextEditingController editBusinessLocationController =
+      TextEditingController();
+  TextEditingController editPrimaryContactPersonNameController =
+      TextEditingController();
+  TextEditingController editPrimaryContactPersonDesignationController =
+      TextEditingController();
+  TextEditingController editOfficeContactNumberController =
+      TextEditingController();
   TextEditingController editEmailIdController = TextEditingController();
 
   String id = "",
@@ -56,7 +55,6 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
 
   bool otpVisibleContactNumber = false;
   bool otpVisibleEmailID = false;
-  
 
   Future<GetProfileDetails?>? futureProfileDetails;
 
@@ -185,7 +183,7 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                           // name of entity
                           Padding(
                             padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: Text(
                               buildTranslate("nameofEntity")!,
                               style: const TextStyle(
@@ -199,7 +197,7 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                           ),
                           Padding(
                             padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: TextFormField(
                               onSaved: (value) => nameOfEntity = value,
                               initialValue: nameOfEntityController == null
@@ -221,14 +219,13 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                                   hintText: buildTranslate(
                                       'enterNameOfTheOrganization')!,
                                   hintStyle:
-                                  const TextStyle(color: Colors.grey),
+                                      const TextStyle(color: Colors.grey),
                                   focusedBorder: const OutlineInputBorder(
                                     // borderRadius: BorderRadius.all(Radius.circular(10.0)),
                                     borderSide: BorderSide(
                                         color: Colors.green, width: 0.5),
                                   )),
-                              validator: (value) =>
-                              value!.isEmpty
+                              validator: (value) => value!.isEmpty
                                   ? 'Please, fill this field.'
                                   : null,
                             ),
@@ -240,28 +237,40 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
 
                           // type
                           Padding(
-                            padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-                            child: Text(buildTranslate("typeOfEntity")!, style: const TextStyle(fontSize: 15,
-                                color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
+                            padding:
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
+                            child: Text(
+                              buildTranslate("typeOfEntity")!,
+                              style: const TextStyle(
+                                  fontSize: 15,
+                                  color: Color(0xFF666666),
+                                  fontFamily: 'poppins-semibold'),
+                            ),
                           ),
-                          const SizedBox(height: 10,),
+                          const SizedBox(
+                            height: 10,
+                          ),
                           Padding(
-                            padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+                            padding:
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: DropdownButtonFormField2<String>(
                               isExpanded: true,
                               decoration: InputDecoration(
-                                contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                                contentPadding:
+                                    const EdgeInsets.symmetric(vertical: 8),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
                                   borderSide: const BorderSide(
                                     color: Colors.grey,
                                     width: 1.0,
-                                  ),),
+                                  ),
+                                ),
                                 // Add more decoration..
                               ),
                               hint: Text(
                                 buildTranslate("selectTypeEntity")!,
-                                style: const TextStyle(color: Color(0xFFe7e7e7)),
+                                style:
+                                    const TextStyle(color: Color(0xFFe7e7e7)),
                               ),
                               items: traderItems.map((item) {
                                 return DropdownMenuItem(
@@ -270,25 +279,32 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                                   enabled: false,
                                   child: StatefulBuilder(
                                     builder: (context, menuSetState) {
-                                      final isSelected = selectedTraderItems.contains(item);
+                                      final isSelected =
+                                          selectedTraderItems.contains(item);
                                       return InkWell(
                                         onTap: () {
-                                          isSelected ? selectedTraderItems.remove(item)
+                                          isSelected
+                                              ? selectedTraderItems.remove(item)
                                               : selectedTraderItems.add(item);
                                           setState(() {});
                                           menuSetState(() {});
                                         },
                                         child: Container(
-                                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 16.0),
                                           height: double.infinity,
                                           child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
                                               if (isSelected)
-                                                const Icon(Icons.check_box_outlined)
+                                                const Icon(
+                                                    Icons.check_box_outlined)
                                               else
-                                                const Icon(Icons.check_box_outline_blank),
+                                                const Icon(Icons
+                                                    .check_box_outline_blank),
                                               const SizedBox(width: 16),
                                               Expanded(
                                                 child: Text(
@@ -308,13 +324,16 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                                   ),
                                 );
                               }).toList(),
-                              value: selectedTraderItems.isEmpty ? null : selectedTraderItems.last,
+                              value: selectedTraderItems.isEmpty
+                                  ? null
+                                  : selectedTraderItems.last,
                               onChanged: (value) {},
                               selectedItemBuilder: (context) {
                                 return traderItems.map(
-                                      (item) {
+                                  (item) {
                                     return Container(
-                                      alignment: AlignmentDirectional.centerStart,
+                                      alignment:
+                                          AlignmentDirectional.centerStart,
                                       child: Text(
                                         selectedTraderItems.join(', '),
                                         style: const TextStyle(
@@ -338,12 +357,14 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 20,),
+                          const SizedBox(
+                            height: 20,
+                          ),
 
                           // incorporationDate
                           Padding(
                             padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: Text(
                               buildTranslate("incorporationDate")!,
                               style: const TextStyle(
@@ -357,7 +378,7 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                           ),
                           Padding(
                             padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: Container(
                               color: Colors.white,
                               child: TextFormField(
@@ -368,7 +389,8 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                                   contentPadding: const EdgeInsets.symmetric(
                                       vertical: 10.0, horizontal: 10.0),
                                   hintText: 'DD/MM/YYYY',
-                                  hintStyle: const TextStyle(color: Colors.grey),
+                                  hintStyle:
+                                      const TextStyle(color: Colors.grey),
                                   fillColor: Colors.white,
                                   filled: true,
                                   suffixIcon: IconButton(
@@ -376,14 +398,15 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                                     onPressed: () {
                                       print(
                                           "OnPressed : $dateOfIncorporationNumberValue");
-                                      _selectDate(context,
+                                      _selectDate(
+                                          context,
                                           dateOfIncorporationNumberValue
                                               .toString());
                                     }, // Open date picker on icon press
                                   ),
                                   border: const OutlineInputBorder(
-                                    // borderRadius: BorderRadius.all(Radius.circular(10.0),),
-                                  ),
+                                      // borderRadius: BorderRadius.all(Radius.circular(10.0),),
+                                      ),
                                   enabledBorder: const OutlineInputBorder(
                                     borderSide: BorderSide(
                                       color: Colors.grey,
@@ -408,7 +431,7 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                           // incorporation number
                           Padding(
                             padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: Text(
                               buildTranslate("incorporationNumber")!,
                               style: const TextStyle(
@@ -422,26 +445,26 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                           ),
                           Padding(
                             padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: TextFormField(
                               keyboardType: TextInputType.text,
                               onSaved: (value) => incorporationNumber = value,
                               initialValue:
-                              incorporationNumberController == null
-                                  ? snapshot.data!.incorporationNumber
-                                  .toString()
-                                  : null,
+                                  incorporationNumberController == null
+                                      ? snapshot.data!.incorporationNumber
+                                          .toString()
+                                      : null,
                               decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.symmetric(
                                     vertical: 10.0, horizontal: 10.0),
-                                hintText: buildTranslate(
-                                    "incorporationNumber")!,
+                                hintText:
+                                    buildTranslate("incorporationNumber")!,
                                 hintStyle: const TextStyle(color: Colors.grey),
                                 fillColor: Colors.white,
                                 filled: true,
                                 border: const OutlineInputBorder(
-                                  // borderRadius: BorderRadius.all(Radius.circular(10.0),),
-                                ),
+                                    // borderRadius: BorderRadius.all(Radius.circular(10.0),),
+                                    ),
                                 enabledBorder: const OutlineInputBorder(
                                   borderSide: BorderSide(
                                     color: Colors.grey,
@@ -464,7 +487,7 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                           // businessLocation
                           Padding(
                             padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: Text(
                               buildTranslate("businessLocation")!,
                               style: const TextStyle(
@@ -478,12 +501,11 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                           ),
                           Padding(
                             padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: TextFormField(
                               keyboardType: TextInputType.text,
                               onSaved: (value) => businessLocationName = value,
-                              initialValue:
-                              businessLocationController == null
+                              initialValue: businessLocationController == null
                                   ? snapshot.data!.businessLocation.toString()
                                   : null,
                               decoration: InputDecoration(
@@ -494,8 +516,8 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                                 fillColor: Colors.white,
                                 filled: true,
                                 border: const OutlineInputBorder(
-                                  // borderRadius: BorderRadius.all(Radius.circular(10.0),),
-                                ),
+                                    // borderRadius: BorderRadius.all(Radius.circular(10.0),),
+                                    ),
                                 enabledBorder: const OutlineInputBorder(
                                   borderSide: BorderSide(
                                     color: Colors.grey,
@@ -518,7 +540,7 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                           // Primary Contact Person Name
                           Padding(
                             padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: Text(
                               buildTranslate("primaryContactPersonName")!,
                               style: const TextStyle(
@@ -532,26 +554,26 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                           ),
                           Padding(
                             padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: TextFormField(
                               keyboardType: TextInputType.text,
                               onSaved: (value) =>
-                              primaryContactPersonName = value,
+                                  primaryContactPersonName = value,
                               initialValue:
-                              primaryContactPersonNameController == null
-                                  ? snapshot.data!.contactNumber.toString()
-                                  : null,
+                                  primaryContactPersonNameController == null
+                                      ? snapshot.data!.contactNumber.toString()
+                                      : null,
                               decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.symmetric(
                                     vertical: 10.0, horizontal: 10.0),
-                                hintText: buildTranslate(
-                                    "primaryContactPersonName")!,
+                                hintText:
+                                    buildTranslate("primaryContactPersonName")!,
                                 hintStyle: const TextStyle(color: Colors.grey),
                                 fillColor: Colors.white,
                                 filled: true,
                                 border: const OutlineInputBorder(
-                                  // borderRadius: BorderRadius.all(Radius.circular(10.0),),
-                                ),
+                                    // borderRadius: BorderRadius.all(Radius.circular(10.0),),
+                                    ),
                                 enabledBorder: const OutlineInputBorder(
                                   borderSide: BorderSide(
                                     color: Colors.grey,
@@ -574,7 +596,7 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                           // Primary Contact Person Designation
                           Padding(
                             padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: Text(
                               buildTranslate(
                                   "primaryContactPersonDesignation")!,
@@ -589,15 +611,16 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                           ),
                           Padding(
                             padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: TextFormField(
                               onSaved: (value) =>
-                              primaryContactPersonDesignation = value,
-                              initialValue: primaryContactPersonDesignationController ==
-                                  null
-                                  ? snapshot.data!.yourDesignation
-                                  .toString()
-                                  : null,
+                                  primaryContactPersonDesignation = value,
+                              initialValue:
+                                  primaryContactPersonDesignationController ==
+                                          null
+                                      ? snapshot.data!.yourDesignation
+                                          .toString()
+                                      : null,
                               decoration: InputDecoration(
                                 enabled: true,
                                 alignLabelWithHint: true,
@@ -619,13 +642,12 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                                 hintStyle: const TextStyle(color: Colors.grey),
                                 focusedBorder: const OutlineInputBorder(
                                   borderRadius:
-                                  BorderRadius.all(Radius.circular(10.0)),
+                                      BorderRadius.all(Radius.circular(10.0)),
                                   borderSide: BorderSide(
                                       color: Colors.green, width: 0.5),
                                 ),
                               ),
-                              validator: (value) =>
-                              value!.isEmpty
+                              validator: (value) => value!.isEmpty
                                   ? 'Please, fill this field.'
                                   : null,
                             ),
@@ -637,7 +659,7 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                           // contact number
                           Padding(
                             padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: Text(
                               buildTranslate("officeContactNumberData")!,
                               style: const TextStyle(
@@ -651,25 +673,25 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                           ),
                           Padding(
                             padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: TextFormField(
                               keyboardType: TextInputType.text,
                               onSaved: (value) => officeContactNumber = value,
-                              initialValue: officeContactNumberController ==
-                                  null
-                                  ? snapshot.data!.contactNumber.toString()
-                                  : null,
+                              initialValue:
+                                  officeContactNumberController == null
+                                      ? snapshot.data!.contactNumber.toString()
+                                      : null,
                               decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.symmetric(
                                     vertical: 10.0, horizontal: 10.0),
                                 hintText:
-                                buildTranslate('officeContactNumberData')!,
+                                    buildTranslate('officeContactNumberData')!,
                                 hintStyle: const TextStyle(color: Colors.grey),
                                 fillColor: Colors.white,
                                 filled: true,
                                 border: const OutlineInputBorder(
-                                  // borderRadius: BorderRadius.all(Radius.circular(10.0),),
-                                ),
+                                    // borderRadius: BorderRadius.all(Radius.circular(10.0),),
+                                    ),
                                 enabledBorder: const OutlineInputBorder(
                                   borderSide: BorderSide(
                                     color: Colors.grey,
@@ -692,7 +714,7 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                                       backgroundColor: const Color(0xFF3FC041),
                                       shape: RoundedRectangleBorder(
                                         borderRadius:
-                                        BorderRadius.circular(12.0),
+                                            BorderRadius.circular(12.0),
                                       ),
                                     ),
                                     child: Text(buildTranslate("getOtp")!),
@@ -709,8 +731,8 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
 
                           otpVisibleContactNumber
                               ? const SizedBox(
-                            height: 15,
-                          )
+                                  height: 15,
+                                )
                               : Container(),
 
                           // verify otp
@@ -730,13 +752,14 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                           ),
                           otpVisibleContactNumber
                               ? const SizedBox(
-                            height: 15,
-                          )
+                                  height: 15,
+                                )
                               : Container(),
                           Visibility(
                             visible: otpVisibleContactNumber,
                             child: Padding(
-                              padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+                              padding: const EdgeInsets.only(
+                                  left: 15.0, right: 15.0),
                               child: OTPTextField(
                                   controller: otpController,
                                   length: 4,
@@ -744,7 +767,8 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                                   // showFieldAsBox: true,
                                   // filled: true,
                                   width: MediaQuery.of(context).size.width,
-                                  textFieldAlignment: MainAxisAlignment.spaceAround,
+                                  textFieldAlignment:
+                                      MainAxisAlignment.spaceAround,
                                   fieldWidth: 55,
                                   fieldStyle: FieldStyle.box,
                                   outlineBorderRadius: 10,
@@ -764,7 +788,7 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                           // email id
                           Padding(
                             padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: Text(
                               buildTranslate("emailId")!,
                               style: const TextStyle(
@@ -778,12 +802,11 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                           ),
                           Padding(
                             padding:
-                            const EdgeInsets.only(left: 25.0, right: 25.0),
+                                const EdgeInsets.only(left: 25.0, right: 25.0),
                             child: TextFormField(
                               onSaved: (value) => emailId = value,
                               initialValue: emailIdController == null
-                                  ? snapshot.data!.email
-                                  .toString()
+                                  ? snapshot.data!.email.toString()
                                   : null,
                               decoration: InputDecoration(
                                 enabled: true,
@@ -806,7 +829,7 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                                 hintStyle: const TextStyle(color: Colors.grey),
                                 focusedBorder: const OutlineInputBorder(
                                   borderRadius:
-                                  BorderRadius.all(Radius.circular(10.0)),
+                                      BorderRadius.all(Radius.circular(10.0)),
                                   borderSide: BorderSide(
                                       color: Colors.green, width: 0.5),
                                 ),
@@ -820,7 +843,7 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                                       backgroundColor: const Color(0xFF3FC041),
                                       shape: RoundedRectangleBorder(
                                         borderRadius:
-                                        BorderRadius.circular(12.0),
+                                            BorderRadius.circular(12.0),
                                       ),
                                     ),
                                     child: Text(buildTranslate("getOtp")!),
@@ -832,8 +855,7 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                                   ),
                                 ),
                               ),
-                              validator: (value) =>
-                              value!.isEmpty
+                              validator: (value) => value!.isEmpty
                                   ? 'Please, fill this field.'
                                   : null,
                             ),
@@ -841,8 +863,8 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
 
                           otpVisibleEmailID
                               ? const SizedBox(
-                            height: 15,
-                          )
+                                  height: 15,
+                                )
                               : Container(),
 
                           // verify otp
@@ -862,13 +884,14 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                           ),
                           otpVisibleEmailID
                               ? const SizedBox(
-                            height: 15,
-                          )
+                                  height: 15,
+                                )
                               : Container(),
                           Visibility(
                             visible: otpVisibleEmailID,
                             child: Padding(
-                              padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+                              padding: const EdgeInsets.only(
+                                  left: 15.0, right: 15.0),
                               child: OTPTextField(
                                   controller: otpController,
                                   length: 4,
@@ -876,7 +899,8 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                                   // showFieldAsBox: true,
                                   // filled: true,
                                   width: MediaQuery.of(context).size.width,
-                                  textFieldAlignment: MainAxisAlignment.spaceAround,
+                                  textFieldAlignment:
+                                      MainAxisAlignment.spaceAround,
                                   fieldWidth: 55,
                                   fieldStyle: FieldStyle.box,
                                   outlineBorderRadius: 10,
@@ -897,10 +921,7 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                           Align(
                             alignment: FractionalOffset.bottomCenter,
                             child: Container(
-                              width: MediaQuery
-                                  .of(context)
-                                  .size
-                                  .width,
+                              width: MediaQuery.of(context).size.width,
                               padding: const EdgeInsets.only(
                                   left: 25.0, right: 25.0),
                               child: ElevatedButton(
@@ -914,7 +935,7 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                                   backgroundColor: const Color(0xFF3FC041),
                                   shape: RoundedRectangleBorder(
                                     borderRadius:
-                                    BorderRadius.circular(12), // <-- Radius
+                                        BorderRadius.circular(12), // <-- Radius
                                   ),
                                 ),
                                 child: Text(
@@ -943,8 +964,7 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                     children: [
                       // name of entity
                       Padding(
-                        padding:
-                        const EdgeInsets.only(left: 25.0, right: 25.0),
+                        padding: const EdgeInsets.only(left: 25.0, right: 25.0),
                         child: Text(
                           buildTranslate("nameofEntity")!,
                           style: const TextStyle(
@@ -957,8 +977,7 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                         height: 10,
                       ),
                       Padding(
-                        padding:
-                        const EdgeInsets.only(left: 25.0, right: 25.0),
+                        padding: const EdgeInsets.only(left: 25.0, right: 25.0),
                         child: TextFormField(
                           onSaved: (value) => nameOfEntity = value,
                           decoration: InputDecoration(
@@ -974,18 +993,16 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                               ),
                               contentPadding: const EdgeInsets.symmetric(
                                   vertical: 10.0, horizontal: 10.0),
-                              hintText: buildTranslate(
-                                  'enterNameOfTheOrganization')!,
-                              hintStyle:
-                              const TextStyle(color: Colors.grey),
+                              hintText:
+                                  buildTranslate('enterNameOfTheOrganization')!,
+                              hintStyle: const TextStyle(color: Colors.grey),
                               focusedBorder: const OutlineInputBorder(
                                 // borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                                borderSide: BorderSide(
-                                    color: Colors.green, width: 0.5),
+                                borderSide:
+                                    BorderSide(color: Colors.green, width: 0.5),
                               )),
-                          controller : editNameOfEntityController,
-                          validator: (value) =>
-                          value!.isEmpty
+                          controller: editNameOfEntityController,
+                          validator: (value) => value!.isEmpty
                               ? 'Please, fill this field.'
                               : null,
                         ),
@@ -998,22 +1015,31 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                       // type
                       Padding(
                         padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-                        child: Text(buildTranslate("typeOfEntity")!, style: const TextStyle(fontSize: 15,
-                            color: Color(0xFF666666), fontFamily: 'poppins-semibold'),),
+                        child: Text(
+                          buildTranslate("typeOfEntity")!,
+                          style: const TextStyle(
+                              fontSize: 15,
+                              color: Color(0xFF666666),
+                              fontFamily: 'poppins-semibold'),
+                        ),
                       ),
-                      const SizedBox(height: 10,),
+                      const SizedBox(
+                        height: 10,
+                      ),
                       Padding(
                         padding: const EdgeInsets.only(left: 25.0, right: 25.0),
                         child: DropdownButtonFormField2<String>(
                           isExpanded: true,
                           decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                            contentPadding:
+                                const EdgeInsets.symmetric(vertical: 8),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
                               borderSide: const BorderSide(
                                 color: Colors.grey,
                                 width: 1.0,
-                              ),),
+                              ),
+                            ),
                             // Add more decoration..
                           ),
                           hint: Text(
@@ -1027,27 +1053,33 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                               enabled: false,
                               child: StatefulBuilder(
                                 builder: (context, menuSetState) {
-                                  final isSelected = selectedTraderItems.contains(item);
+                                  final isSelected =
+                                      selectedTraderItems.contains(item);
                                   return InkWell(
                                     onTap: () {
-                                      isSelected ? selectedTraderItems.remove(item) :
-                                      selectedTraderItems.add(item);
+                                      isSelected
+                                          ? selectedTraderItems.remove(item)
+                                          : selectedTraderItems.add(item);
                                       //This rebuilds the StatefulWidget to update the button's text
                                       setState(() {});
                                       //This rebuilds the dropdownMenu Widget to update the check mark
                                       menuSetState(() {});
                                     },
                                     child: Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16.0),
                                       height: double.infinity,
                                       child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           if (isSelected)
                                             const Icon(Icons.check_box_outlined)
                                           else
-                                            const Icon(Icons.check_box_outline_blank),
+                                            const Icon(
+                                                Icons.check_box_outline_blank),
                                           const SizedBox(width: 16),
                                           Expanded(
                                             child: Text(
@@ -1068,11 +1100,13 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                             );
                           }).toList(),
                           //Use last selected item as the current value so if we've limited menu height, it scroll to last item.
-                          value: selectedTraderItems.isEmpty ? null : selectedTraderItems.last,
+                          value: selectedTraderItems.isEmpty
+                              ? null
+                              : selectedTraderItems.last,
                           onChanged: (value) {},
                           selectedItemBuilder: (context) {
                             return traderItems.map(
-                                  (item) {
+                              (item) {
                                 return Container(
                                   alignment: AlignmentDirectional.centerStart,
                                   child: Text(
@@ -1098,12 +1132,13 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 20,),
+                      const SizedBox(
+                        height: 20,
+                      ),
 
                       // incorporationDate
                       Padding(
-                        padding:
-                        const EdgeInsets.only(left: 25.0, right: 25.0),
+                        padding: const EdgeInsets.only(left: 25.0, right: 25.0),
                         child: Text(
                           buildTranslate("incorporationDate")!,
                           style: const TextStyle(
@@ -1116,10 +1151,9 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                         height: 10,
                       ),
                       Padding(
-                        padding:
-                        const EdgeInsets.only(left: 25.0, right: 25.0),
+                        padding: const EdgeInsets.only(left: 25.0, right: 25.0),
                         child: Container(
-                          color:Colors.white,
+                          color: Colors.white,
                           child: TextFormField(
                             controller: editDateOfIncorporationController,
                             keyboardType: TextInputType.text,
@@ -1136,13 +1170,15 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                                 onPressed: () {
                                   print(
                                       "OnPressed : $dateOfIncorporationNumberValue");
-                                  _selectDate(context,
-                                      dateOfIncorporationNumberValue.toString());
+                                  _selectDate(
+                                      context,
+                                      dateOfIncorporationNumberValue
+                                          .toString());
                                 }, // Open date picker on icon press
                               ),
                               border: const OutlineInputBorder(
-                                // borderRadius: BorderRadius.all(Radius.circular(10.0),),
-                              ),
+                                  // borderRadius: BorderRadius.all(Radius.circular(10.0),),
+                                  ),
                               enabledBorder: const OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: Colors.grey,
@@ -1152,8 +1188,8 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                               ),
                               focusedBorder: const OutlineInputBorder(
                                 // borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                                borderSide: BorderSide(
-                                    color: Colors.green, width: 0.5),
+                                borderSide:
+                                    BorderSide(color: Colors.green, width: 0.5),
                               ),
                             ),
                             readOnly: true,
@@ -1166,8 +1202,7 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
 
                       // incorporation number
                       Padding(
-                        padding:
-                        const EdgeInsets.only(left: 25.0, right: 25.0),
+                        padding: const EdgeInsets.only(left: 25.0, right: 25.0),
                         child: Text(
                           buildTranslate("incorporationNumber")!,
                           style: const TextStyle(
@@ -1180,8 +1215,7 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                         height: 10,
                       ),
                       Padding(
-                        padding:
-                        const EdgeInsets.only(left: 25.0, right: 25.0),
+                        padding: const EdgeInsets.only(left: 25.0, right: 25.0),
                         child: TextFormField(
                           keyboardType: TextInputType.text,
                           controller: editIncorporationNumberController,
@@ -1194,8 +1228,8 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                             fillColor: Colors.white,
                             filled: true,
                             border: const OutlineInputBorder(
-                              // borderRadius: BorderRadius.all(Radius.circular(10.0),),
-                            ),
+                                // borderRadius: BorderRadius.all(Radius.circular(10.0),),
+                                ),
                             enabledBorder: const OutlineInputBorder(
                               borderSide: BorderSide(
                                 color: Colors.grey,
@@ -1205,8 +1239,8 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                             ),
                             focusedBorder: const OutlineInputBorder(
                               // borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                              borderSide: BorderSide(
-                                  color: Colors.green, width: 0.5),
+                              borderSide:
+                                  BorderSide(color: Colors.green, width: 0.5),
                             ),
                           ),
                         ),
@@ -1217,8 +1251,7 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
 
                       // businessLocation
                       Padding(
-                        padding:
-                        const EdgeInsets.only(left: 25.0, right: 25.0),
+                        padding: const EdgeInsets.only(left: 25.0, right: 25.0),
                         child: Text(
                           buildTranslate("businessLocation")!,
                           style: const TextStyle(
@@ -1231,8 +1264,7 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                         height: 10,
                       ),
                       Padding(
-                        padding:
-                        const EdgeInsets.only(left: 25.0, right: 25.0),
+                        padding: const EdgeInsets.only(left: 25.0, right: 25.0),
                         child: TextFormField(
                           keyboardType: TextInputType.text,
                           onSaved: (value) => businessLocationName = value,
@@ -1249,8 +1281,8 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                             fillColor: Colors.white,
                             filled: true,
                             border: const OutlineInputBorder(
-                              // borderRadius: BorderRadius.all(Radius.circular(10.0),),
-                            ),
+                                // borderRadius: BorderRadius.all(Radius.circular(10.0),),
+                                ),
                             enabledBorder: const OutlineInputBorder(
                               borderSide: BorderSide(
                                 color: Colors.grey,
@@ -1260,8 +1292,8 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                             ),
                             focusedBorder: const OutlineInputBorder(
                               // borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                              borderSide: BorderSide(
-                                  color: Colors.green, width: 0.5),
+                              borderSide:
+                                  BorderSide(color: Colors.green, width: 0.5),
                             ),
                           ),
                         ),
@@ -1272,8 +1304,7 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
 
                       // Primary Contact Person Name
                       Padding(
-                        padding:
-                        const EdgeInsets.only(left: 25.0, right: 25.0),
+                        padding: const EdgeInsets.only(left: 25.0, right: 25.0),
                         child: Text(
                           buildTranslate("primaryContactPersonName")!,
                           style: const TextStyle(
@@ -1286,8 +1317,7 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                         height: 10,
                       ),
                       Padding(
-                        padding:
-                        const EdgeInsets.only(left: 25.0, right: 25.0),
+                        padding: const EdgeInsets.only(left: 25.0, right: 25.0),
                         child: TextFormField(
                           keyboardType: TextInputType.text,
                           controller: editPrimaryContactPersonNameController,
@@ -1296,13 +1326,13 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                             contentPadding: const EdgeInsets.symmetric(
                                 vertical: 10.0, horizontal: 10.0),
                             hintText:
-                            buildTranslate('officeContactNumberData')!,
+                                buildTranslate('officeContactNumberData')!,
                             hintStyle: const TextStyle(color: Colors.grey),
                             fillColor: Colors.white,
                             filled: true,
                             border: const OutlineInputBorder(
-                              // borderRadius: BorderRadius.all(Radius.circular(10.0),),
-                            ),
+                                // borderRadius: BorderRadius.all(Radius.circular(10.0),),
+                                ),
                             enabledBorder: const OutlineInputBorder(
                               borderSide: BorderSide(
                                 color: Colors.grey,
@@ -1312,8 +1342,8 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                             ),
                             focusedBorder: const OutlineInputBorder(
                               // borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                              borderSide: BorderSide(
-                                  color: Colors.green, width: 0.5),
+                              borderSide:
+                                  BorderSide(color: Colors.green, width: 0.5),
                             ),
                           ),
                         ),
@@ -1324,8 +1354,7 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
 
                       // Primary Contact Person Designation
                       Padding(
-                        padding:
-                        const EdgeInsets.only(left: 25.0, right: 25.0),
+                        padding: const EdgeInsets.only(left: 25.0, right: 25.0),
                         child: Text(
                           buildTranslate("primaryContactPersonDesignation")!,
                           style: const TextStyle(
@@ -1338,12 +1367,12 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                         height: 10,
                       ),
                       Padding(
-                        padding:
-                        const EdgeInsets.only(left: 25.0, right: 25.0),
+                        padding: const EdgeInsets.only(left: 25.0, right: 25.0),
                         child: TextFormField(
                           onSaved: (value) =>
-                          primaryContactPersonDesignation = value,
-                          controller: editPrimaryContactPersonDesignationController,
+                              primaryContactPersonDesignation = value,
+                          controller:
+                              editPrimaryContactPersonDesignationController,
                           decoration: InputDecoration(
                             enabled: true,
                             alignLabelWithHint: true,
@@ -1365,13 +1394,12 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                             hintStyle: const TextStyle(color: Colors.grey),
                             focusedBorder: const OutlineInputBorder(
                               borderRadius:
-                              BorderRadius.all(Radius.circular(10.0)),
-                              borderSide: BorderSide(
-                                  color: Colors.green, width: 0.5),
+                                  BorderRadius.all(Radius.circular(10.0)),
+                              borderSide:
+                                  BorderSide(color: Colors.green, width: 0.5),
                             ),
                           ),
-                          validator: (value) =>
-                          value!.isEmpty
+                          validator: (value) => value!.isEmpty
                               ? 'Please, fill this field.'
                               : null,
                         ),
@@ -1382,8 +1410,7 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
 
                       // contact number
                       Padding(
-                        padding:
-                        const EdgeInsets.only(left: 25.0, right: 25.0),
+                        padding: const EdgeInsets.only(left: 25.0, right: 25.0),
                         child: Text(
                           buildTranslate("officeContactNumberData")!,
                           style: const TextStyle(
@@ -1396,8 +1423,7 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                         height: 10,
                       ),
                       Padding(
-                        padding:
-                        const EdgeInsets.only(left: 25.0, right: 25.0),
+                        padding: const EdgeInsets.only(left: 25.0, right: 25.0),
                         child: TextFormField(
                           keyboardType: TextInputType.text,
                           onSaved: (value) => officeContactNumber = value,
@@ -1406,13 +1432,13 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                             contentPadding: const EdgeInsets.symmetric(
                                 vertical: 10.0, horizontal: 10.0),
                             hintText:
-                            buildTranslate('officeContactNumberData')!,
+                                buildTranslate('officeContactNumberData')!,
                             hintStyle: const TextStyle(color: Colors.grey),
                             fillColor: Colors.white,
                             filled: true,
                             border: const OutlineInputBorder(
-                              // borderRadius: BorderRadius.all(Radius.circular(10.0),),
-                            ),
+                                // borderRadius: BorderRadius.all(Radius.circular(10.0),),
+                                ),
                             enabledBorder: const OutlineInputBorder(
                               borderSide: BorderSide(
                                 color: Colors.grey,
@@ -1422,8 +1448,8 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                             ),
                             focusedBorder: const OutlineInputBorder(
                               // borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                              borderSide: BorderSide(
-                                  color: Colors.green, width: 0.5),
+                              borderSide:
+                                  BorderSide(color: Colors.green, width: 0.5),
                             ),
                             suffixIcon: Container(
                               margin: const EdgeInsets.all(5),
@@ -1434,8 +1460,7 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                                   textStyle: const TextStyle(fontSize: 15),
                                   backgroundColor: const Color(0xFF3FC041),
                                   shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                    BorderRadius.circular(12.0),
+                                    borderRadius: BorderRadius.circular(12.0),
                                   ),
                                 ),
                                 child: Text(buildTranslate("getOtp")!),
@@ -1452,16 +1477,16 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
 
                       otpVisibleContactNumber
                           ? const SizedBox(
-                        height: 15,
-                      )
+                              height: 15,
+                            )
                           : Container(),
 
                       // verify otp
                       Visibility(
                         visible: otpVisibleContactNumber,
                         child: Padding(
-                          padding: const EdgeInsets.only(
-                              left: 25.0, right: 25.0),
+                          padding:
+                              const EdgeInsets.only(left: 25.0, right: 25.0),
                           child: Text(
                             buildTranslate("verifyOtp")!,
                             style: const TextStyle(
@@ -1473,12 +1498,12 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                       ),
                       otpVisibleContactNumber
                           ? const SizedBox(
-                        height: 15,
-                      )
+                              height: 15,
+                            )
                           : Container(),
                       Visibility(
                         visible: otpVisibleContactNumber,
-                        child:OTPTextField(
+                        child: OTPTextField(
                             controller: otpController,
                             length: 4,
                             // borderColor: const Color(0xFF3dc33b),
@@ -1503,8 +1528,7 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
 
                       // email id
                       Padding(
-                        padding:
-                        const EdgeInsets.only(left: 25.0, right: 25.0),
+                        padding: const EdgeInsets.only(left: 25.0, right: 25.0),
                         child: Text(
                           buildTranslate("emailId")!,
                           style: const TextStyle(
@@ -1517,11 +1541,10 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                         height: 10,
                       ),
                       Padding(
-                        padding:
-                        const EdgeInsets.only(left: 25.0, right: 25.0),
+                        padding: const EdgeInsets.only(left: 25.0, right: 25.0),
                         child: TextFormField(
                           onSaved: (value) => emailId = value,
-                          controller : editEmailIdController,
+                          controller: editEmailIdController,
                           decoration: InputDecoration(
                             enabled: true,
                             alignLabelWithHint: true,
@@ -1543,9 +1566,9 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                             hintStyle: const TextStyle(color: Colors.grey),
                             focusedBorder: const OutlineInputBorder(
                               borderRadius:
-                              BorderRadius.all(Radius.circular(10.0)),
-                              borderSide: BorderSide(
-                                  color: Colors.green, width: 0.5),
+                                  BorderRadius.all(Radius.circular(10.0)),
+                              borderSide:
+                                  BorderSide(color: Colors.green, width: 0.5),
                             ),
                             suffixIcon: Container(
                               margin: const EdgeInsets.all(5),
@@ -1556,8 +1579,7 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                                   textStyle: const TextStyle(fontSize: 15),
                                   backgroundColor: const Color(0xFF3FC041),
                                   shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                    BorderRadius.circular(12.0),
+                                    borderRadius: BorderRadius.circular(12.0),
                                   ),
                                 ),
                                 child: Text(buildTranslate("getOtp")!),
@@ -1569,8 +1591,7 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                               ),
                             ),
                           ),
-                          validator: (value) =>
-                          value!.isEmpty
+                          validator: (value) => value!.isEmpty
                               ? 'Please, fill this field.'
                               : null,
                         ),
@@ -1578,16 +1599,16 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
 
                       otpVisibleEmailID
                           ? const SizedBox(
-                        height: 15,
-                      )
+                              height: 15,
+                            )
                           : Container(),
 
                       // verify otp
                       Visibility(
                         visible: otpVisibleEmailID,
                         child: Padding(
-                          padding: const EdgeInsets.only(
-                              left: 25.0, right: 25.0),
+                          padding:
+                              const EdgeInsets.only(left: 25.0, right: 25.0),
                           child: Text(
                             buildTranslate("verifyOtp")!,
                             style: const TextStyle(
@@ -1599,13 +1620,14 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                       ),
                       otpVisibleEmailID
                           ? const SizedBox(
-                        height: 15,
-                      )
+                              height: 15,
+                            )
                           : Container(),
                       Visibility(
                         visible: otpVisibleEmailID,
                         child: Padding(
-                          padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+                          padding:
+                              const EdgeInsets.only(left: 15.0, right: 15.0),
                           child: OTPTextField(
                               controller: otpController,
                               length: 4,
@@ -1634,25 +1656,26 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                       Align(
                         alignment: FractionalOffset.bottomCenter,
                         child: Container(
-                          width: MediaQuery
-                              .of(context)
-                              .size
-                              .width,
-                          padding: const EdgeInsets.only(
-                              left: 25.0, right: 25.0),
+                          width: MediaQuery.of(context).size.width,
+                          padding:
+                              const EdgeInsets.only(left: 25.0, right: 25.0),
                           child: ElevatedButton(
                             onPressed: () {
                               _updateProfileDetailsApiCall(
-                              editNameOfEntityController.text.toString(),
+                                  editNameOfEntityController.text.toString(),
                                   selectedTraderItems.toString(),
-                              editDateOfIncorporationController.toString(),
-                              editIncorporationNumberController.toString(),
-                              editBusinessLocationController.text.toString(),
-                              editPrimaryContactPersonNameController.text.toString(),
-                              editPrimaryContactPersonDesignationController.text.toString(),
-                              editOfficeContactNumberController.text.toString(),
-                              editEmailIdController.text.toString()
-                              );
+                                  editDateOfIncorporationController.toString(),
+                                  editIncorporationNumberController.toString(),
+                                  editBusinessLocationController.text
+                                      .toString(),
+                                  editPrimaryContactPersonNameController.text
+                                      .toString(),
+                                  editPrimaryContactPersonDesignationController
+                                      .text
+                                      .toString(),
+                                  editOfficeContactNumberController.text
+                                      .toString(),
+                                  editEmailIdController.text.toString());
                             },
                             style: ElevatedButton.styleFrom(
                               foregroundColor: Colors.white,
@@ -1661,14 +1684,13 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
                               backgroundColor: const Color(0xFF3FC041),
                               shape: RoundedRectangleBorder(
                                 borderRadius:
-                                BorderRadius.circular(12), // <-- Radius
+                                    BorderRadius.circular(12), // <-- Radius
                               ),
                             ),
                             child: Text(
                               buildTranslate('save')!,
                               style: const TextStyle(
-                                  fontSize: 15,
-                                  fontFamily: 'poppins-medium'),
+                                  fontSize: 15, fontFamily: 'poppins-medium'),
                             ),
                           ),
                         ),
@@ -1716,7 +1738,8 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
 
   void _getValue() {
     if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save(); // This triggers onSaved for each TextFormField
+      _formKey.currentState!
+          .save(); // This triggers onSaved for each TextFormField
 
       if (nameOfEntity != null &&
           selectedTraderItems.isNotEmpty &&
@@ -1725,7 +1748,8 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
           businessLocationName != null &&
           primaryContactPersonName != null &&
           primaryContactPersonDesignation != null &&
-          officeContactNumber != null && emailId != null) {
+          officeContactNumber != null &&
+          emailId != null) {
         _updateProfileDetailsApiCall(
             nameOfEntity.toString(),
             selectedTraderItems.toString(),
@@ -1736,15 +1760,15 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
             primaryContactPersonDesignation.toString(),
             officeContactNumber.toString(),
             emailId.toString());
-      }
-      else {
+      } else {
         print("nameOfEntity : $nameOfEntity");
         print("selectedTraderItems : $selectedTraderItems");
         print("selectedDate : $selectedDate");
         print("incorporationNumber : $incorporationNumber");
         print("businessLocationName : $businessLocationName");
         print("primaryContactPersonName : $primaryContactPersonName");
-        print("primaryContactPersonDesignation : $primaryContactPersonDesignation");
+        print(
+            "primaryContactPersonDesignation : $primaryContactPersonDesignation");
         print("officeContactNumber : $officeContactNumber");
         print("emailId : $emailId");
 
@@ -1760,20 +1784,12 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
       String incorporationNumber,
       String businessLocationName,
       String primaryContactPersonName,
-      String primaryContactPersonDesignation, String officeContactNumber,
+      String primaryContactPersonDesignation,
+      String officeContactNumber,
       String emailId) async {
-
-    if (nameOfEntity != null &&
-        selectedTraderItems.isNotEmpty &&
-        dateOfIncorporationController.text.isNotEmpty &&
-        incorporationNumber != null &&
-        businessLocationName != null &&
-        primaryContactPersonName != null &&
-        primaryContactPersonDesignation != null &&
-        officeContactNumber != null && emailId != null) {
-      var headers = {'Content-Type': 'application/json'};
-
-      var data = json.encode({
+    if (selectedTraderItems.isNotEmpty &&
+        dateOfIncorporationController.text.isNotEmpty) {
+      var body = json.encode({
         "nameOfEntity": nameOfEntity,
         "typeOfEntity": typeOfTraders,
         "Email": emailId,
@@ -1786,25 +1802,18 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
         "URL": ""
       });
 
-      var dio = Dio();
-      var response = await dio.request(
-        UPDATE_PROFILE_DETAILS + contactNumber,
-        options: Options(
-          method: 'PUT',
-          headers: headers,
-        ),
-        data: data,
+      var response = await putAPICall(
+        apiUrl: UPDATE_PROFILE_DETAILS + contactNumber,
+        parameter: body,
       );
 
       if (response.statusCode == 200) {
-        print("Profile details updated : " + json.encode(response.data));
-
+        print("Profile details updated : " + response.body);
         showAlertDialog(context);
       } else {
-        print(response.statusMessage);
+        print(response.reasonPhrase);
       }
-    }
-    else {
+    } else {
       AlertHelper.showToast("Please enter details.", context);
     }
   }
@@ -1836,10 +1845,10 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
           ),
           Center(
               child: Image.asset(
-                'assets/images/check_green.png',
-                width: 100,
-                height: 100,
-              )),
+            'assets/images/check_green.png',
+            width: 100,
+            height: 100,
+          )),
           const Text(
             "You've Details Updated Successfully!",
             softWrap: true,
@@ -1881,20 +1890,23 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
     // contactNumber = (await AppGlobal.getStringPreference('contactNumber')) ?? "";
     SharedPreferences prefs = await SharedPreferences.getInstance();
     contactNumber = await prefs.getString(contactNo) ?? '1';
-    futureProfileDetails = AccountSettingController.fetchEditProfileDetails(context, contactNumber);
+    futureProfileDetails = AccountSettingController.fetchEditProfileDetails(
+        context, contactNumber);
     setState(() {
       futureProfileDetails = futureProfileDetails;
     });
-    Future.delayed(Duration(seconds:1), () async {
-      dateOfIncorporationNumberValue = (await AppGlobal.getStringPreference('dateOfIncorporation')) ?? "";
+    Future.delayed(Duration(seconds: 1), () async {
+      dateOfIncorporationNumberValue =
+          (await AppGlobal.getStringPreference('dateOfIncorporation')) ?? "";
       typeOfOrg = (await AppGlobal.getStringPreference('typeOfEntity')) ?? "";
       // Convert string to List<String> by splitting with a comma
       // List<String> listOfEntity = typeOfOrg.split(',');
       setState(() {
-      dateOfIncorporationNumberValue = dateOfIncorporationNumberValue;
-      // selectedTraderItemsValue = listOfEntity;
+        dateOfIncorporationNumberValue = dateOfIncorporationNumberValue;
+        // selectedTraderItemsValue = listOfEntity;
       });
-      dateOfIncorporationController.text = AppGlobal.convertToCustomDateFormat(dateOfIncorporationNumberValue);
+      dateOfIncorporationController.text =
+          AppGlobal.convertToCustomDateFormat(dateOfIncorporationNumberValue);
     });
   }
 }

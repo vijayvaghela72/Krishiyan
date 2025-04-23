@@ -1,27 +1,18 @@
-import 'dart:io';
-
-import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:krishiyan/screen/AccountSettings/delete_account/delete_account.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../../helper/SharedPref.dart';
-import '../../localization/AppLocalizations.dart';
-import '../../utils/AppGlobal.dart';
-import '../../utils/Constants.dart';
-import '../Enquiry/BottomCenterEnquiryPage.dart';
-import '../home_screen/home/home.dart';
-import '../CropLibrary/BottomThreePage.dart';
-import '../FRM/buttom_two_page/bottom_two_page.dart';
 import 'EditAddressPage.dart';
-import 'EditBankDetailPage.dart';
-import 'EditOtherProfilePage.dart';
 import 'OtherDetailPage.dart';
 import 'EditProfilePage.dart';
 import 'ForgotPasswordPage.dart';
-import '../home_screen/dashborad.dart';
 import '../Login/LoginPage.dart';
+import 'EditBankDetailPage.dart';
+import 'EditOtherProfilePage.dart';
+import '../../utils/AppGlobal.dart';
+import '../../utils/Constants.dart';
+import '../../helper/SharedPref.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import '../../localization/AppLocalizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:krishiyan/screen/AccountSettings/delete_account/delete_account.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({
@@ -34,8 +25,6 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage>
     with TickerProviderStateMixin {
-  File? _profileImage; // To store the profile image file
-
   var _bottomNavIndex = 3; //default index of a first screen
 
   String name = "", email = "", contactNumber = "";
@@ -139,7 +128,7 @@ class _ProfilePageState extends State<ProfilePage>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        name ?? "",
+                        name,
                         softWrap: true,
                         style: const TextStyle(
                             color: Colors.black,
@@ -147,7 +136,7 @@ class _ProfilePageState extends State<ProfilePage>
                             fontFamily: 'poppins-semibold'),
                       ),
                       Text(
-                        email ?? "",
+                        email,
                         softWrap: true,
                         style: const TextStyle(
                             color: Color(0xFF888888),
@@ -155,7 +144,7 @@ class _ProfilePageState extends State<ProfilePage>
                             fontFamily: 'poppins-regular'),
                       ),
                       Text(
-                        contactNumber ?? "",
+                        contactNumber,
                         softWrap: true,
                         style: const TextStyle(
                             color: Color(0xFF888888),
@@ -407,14 +396,10 @@ class _ProfilePageState extends State<ProfilePage>
               onTap: () async {
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 await prefs.clear(); // Clear user data
-
                 Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(builder: (context) => const LoginPage()),
                   (Route<dynamic> route) => false,
                 );
-
-                // Navigator.pushReplacement(
-                //   context, MaterialPageRoute(builder: (context) => const MyLoginPage()),);
               },
               child: Padding(
                 padding: const EdgeInsets.only(
@@ -445,60 +430,6 @@ class _ProfilePageState extends State<ProfilePage>
         ),
       ),
     );
-  }
-
-  void _onItemTapped(int index) {
-    print("Profile index : $index");
-
-    if (index == 0) {
-      Navigator.pop(context);
-      var route = ModalRoute.of(context);
-      if (route != null) {
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (BuildContext context) => BottomOnePage(
-                  aapbarVisibility: true,
-                )));
-      }
-    } else if (index == 1) {
-      // Navigator.pop(context);
-      var route = ModalRoute.of(context);
-      if (route != null) {
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (BuildContext context) => BottomTwoPage(
-                  aapbarVisibility: true,
-                )));
-      }
-    } else if (index == 2) {
-      // Navigator.pop(context);
-      var route = ModalRoute.of(context);
-      if (route != null) {
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (BuildContext context) => BottomThreePage(
-                  aapbarVisibility: true,
-                )));
-      }
-    } else if (index == 3) {
-      // if (typeOfOrganization == "Farmer groups") {
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => ProfilePage()),
-      );
-      // }
-    } else if (index == 4) {
-      // if (typeOfOrganization == "Farmer groups") {
-      var route = ModalRoute.of(context);
-      if (route != null) {
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (BuildContext context) => BottomCenterEnquiryPage(
-                  aapbarVisibility: true,
-                )));
-      }
-      // }
-    } else {
-      setState(() {
-        _bottomNavIndex = index;
-      });
-      print("Profile : bottomNavIndex : $_bottomNavIndex");
-    }
   }
 
   Future<void> getDetails() async {
