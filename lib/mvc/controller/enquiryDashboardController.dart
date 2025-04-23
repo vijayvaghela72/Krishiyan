@@ -1,21 +1,16 @@
 import 'dart:convert';
-
-import 'package:dio/dio.dart';
+import '../model/APIResponse.dart';
+import '../../utils/Constants.dart';
+import '../../helper/AlertHelper.dart';
 import 'package:flutter/cupertino.dart';
+import '../model/GetAllEnquiryData.dart';
+import '../model/GetEnquiryByFilterData.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../helper/AlertHelper.dart';
-import '../../utils/Constants.dart';
-import '../model/APIResponse.dart';
-import '../model/GetAllEnquiryData.dart';
-import 'package:http/http.dart' as http;
-
-import '../model/GetEnquiryByFilterData.dart';
-
 class EnquiryDashboardController {
   static Future<List<EnquiryData>> getEnquiryDetails() async {
-    final response = await http.get(Uri.parse(ENQUIRY_LIST));
+    final response = await getAPICall(apiUrl: ENQUIRY_LIST);
 
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
@@ -28,7 +23,7 @@ class EnquiryDashboardController {
   }
 
   static Future<List<EnquiryData>> getEnquiryDetailsByID() async {
-    final response = await http.get(Uri.parse(ENQUIRY_LIST_BY_ID));
+    final response = await getAPICall(apiUrl: ENQUIRY_LIST_BY_ID);
 
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
@@ -43,7 +38,7 @@ class EnquiryDashboardController {
   static Future<List<EnquiryData>> getEnquiryDetailsByCommodity(
       String commodity) async {
     final response =
-        await http.get(Uri.parse("${baseUrl}commodities/$commodity"));
+        await getAPICall(apiUrl: "${baseUrl}commodities/$commodity");
 
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
@@ -60,8 +55,9 @@ class EnquiryDashboardController {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String dealerNumberData = await prefs.getString(contactNo) ?? '1';
 
-    final response = await http.get(Uri.parse("${baseUrl}commodities/"
-        "$dealerNumberData/$commodity?operation=$operation"));
+    final response = await getAPICall(
+        apiUrl: "${baseUrl}commodities/"
+            "$dealerNumberData/$commodity?operation=$operation");
 
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);

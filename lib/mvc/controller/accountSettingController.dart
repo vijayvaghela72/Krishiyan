@@ -28,8 +28,8 @@ class AccountSettingController {
           print("New Api Date : $date");
           print("New Api Organization : $typeOfOrgData");
 
-          SharedPref.savePreferenceValue(dateOfOrganization, date ?? "");
-          SharedPref.savePreferenceValue(typeOfOrg, typeOfOrgData ?? "");
+          SharedPref.savePreferenceValue(dateOfOrganization, date);
+          SharedPref.savePreferenceValue(typeOfOrg, typeOfOrgData);
         }
         return apiResponse.frmProfileData;
       }
@@ -61,8 +61,8 @@ class AccountSettingController {
           print("New Api typeOfEntityData : $typeOfEntityData");
 
           SharedPref.savePreferenceValue(
-              dateOfIncorporation, incorporationDate ?? "");
-          SharedPref.savePreferenceValue(typeOfEntity, typeOfEntityData ?? "");
+              dateOfIncorporation, incorporationDate);
+          SharedPref.savePreferenceValue(typeOfEntity, typeOfEntityData);
         }
         return apiResponse.profileData;
       }

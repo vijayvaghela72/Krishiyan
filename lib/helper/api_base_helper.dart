@@ -1,6 +1,19 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:crypto/crypto.dart';
 import 'package:http/http.dart';
+
+const encryptionKey =
+    "c10a2499a46c1921688c6bf5f19b746f2eb4398b1d3c4d1c1f2e4a6c8b6a4f8c";
+
+String hmacSha256(String key, String message) {
+  final keyBytes = utf8.encode(key);
+  final messageBytes = utf8.encode(message);
+
+  final hmac = Hmac(sha256, keyBytes);
+  final digest = hmac.convert(messageBytes);
+  return digest.toString();
+}
 
 Map<String, String> commonHeader = {
   "Accept": "application/json",
@@ -12,6 +25,21 @@ Map<String, String> commonHeader = {
 };
 bool isSuccessStatus(int statusCode) => statusCode >= 200 && statusCode <= 204;
 
+Future<void> update() async {
+  final timestamp = DateTime.now().millisecondsSinceEpoch.toString();
+  final signature = hmacSha256(encryptionKey, timestamp);
+  commonHeader = {
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+    "Connection": "application/json",
+    "Authorization": 'Bearer',
+    'x-timestamp': timestamp,
+    'x-signature': signature,
+  };
+  print('commonHeader : $commonHeader');
+  return;
+}
+
 Future<Response> getAPICall({
   required String apiUrl,
   String headerValue = '',
@@ -20,6 +48,7 @@ Future<Response> getAPICall({
 }) async {
   print('====================================================================');
   print('URL : (GET:) $apiUrl');
+  await update();
 
   Map<String, String>? temp;
   if (headerValue != '') {
@@ -27,7 +56,6 @@ Future<Response> getAPICall({
       "authToken": headerValue,
     };
   }
-
   Response? response;
 
   // Retry logic
@@ -65,6 +93,7 @@ Future<Response> deleteAPICall({
   print('====================================================================');
   print('URL : (DELETE) : $apiUrl');
 
+  await update();
   Response? response;
 
   for (int attempt = 0; attempt < retryCount + 1; attempt++) {
@@ -103,6 +132,7 @@ Future<Response> postAPICall({
   bool isSendMail = true,
   int retryCount = 1,
 }) async {
+  await update();
   print('====================================================================');
   print('URL : (POST) : $apiUrl');
   print('Parameter : $parameter');
@@ -150,6 +180,7 @@ Future<Response> patchAPICall({
   bool isSendMail = true,
   int retryCount = 1,
 }) async {
+  await update();
   print('====================================================================');
   print('URL : (PATCH) : $apiUrl');
   print('Parameter : $parameter');
@@ -191,6 +222,7 @@ Future<Response> putAPICall({
   bool isSendMail = true,
   int retryCount = 1,
 }) async {
+  await update();
   print('====================================================================');
   print('URL : (PUT) : $apiUrl');
   print('Parameter : $parameter');

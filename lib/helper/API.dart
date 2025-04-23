@@ -1,11 +1,10 @@
+import 'package:krishiyan/helper/api_base_helper.dart';
 import '../utils/AppGlobal.dart';
-import 'package:http/http.dart' as http;
 
 class API {
   static Future<String> callPostImage(String url, file, String fileKey,
       {bool? isKeyByPass}) async {
-    Map<String, String> headers = {'Content-Type': 'application/json'};
-    var request = http.get(Uri.parse(url), headers: headers);
+    var request = getAPICall(apiUrl: url);
 
     AppGlobal.printLog("Url = " + url.toString());
 

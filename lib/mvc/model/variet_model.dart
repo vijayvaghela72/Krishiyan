@@ -1,10 +1,10 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:krishiyan/mvc/model/VarietyData.dart';
 import 'package:krishiyan/utils/Constants.dart';
+import 'package:krishiyan/mvc/model/VarietyData.dart';
+import 'package:krishiyan/helper/api_base_helper.dart';
 
 Future<List<VarietyData>> fetchVarieties(String selectedCrop) async {
-  final response = await http.get(Uri.parse('${baseUrl}varity/$selectedCrop'));
+  final response = await getAPICall(apiUrl: '${baseUrl}varity/$selectedCrop');
 
   if (response.statusCode == 200) {
     final data = json.decode(response.body);

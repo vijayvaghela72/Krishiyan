@@ -1,13 +1,12 @@
 import 'dart:convert';
-import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
-import 'package:krishiyan/helper/api_base_helper.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../../helper/AlertHelper.dart';
-import '../../utils/Constants.dart';
 import '../model/APIResponse.dart';
+import '../../utils/Constants.dart';
+import '../../helper/AlertHelper.dart';
+import 'package:flutter/material.dart';
 import '../model/FarmerDashboardData.dart';
 import '../model/FarmerRegistrationData.dart';
+import 'package:krishiyan/helper/api_base_helper.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FarmerDashboardController {
   static Future<List<FarmerDetails>> fetchFarmerDashboard(

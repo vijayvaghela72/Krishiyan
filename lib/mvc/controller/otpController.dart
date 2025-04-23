@@ -1,36 +1,24 @@
 import 'dart:convert';
-import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:http/http.dart' as http;
-import '../../helper/AlertHelper.dart';
-import '../../utils/Constants.dart';
 import '../model/APIResponse.dart';
+import '../../utils/Constants.dart';
 import '../model/GetOtpDetails.dart';
-import '../model/LoginData.dart';
+import '../../helper/AlertHelper.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:krishiyan/helper/api_base_helper.dart';
 
 class OtpController {
-
-  static Future<GetOtpData?> getOtp(dynamic data, {required BuildContext context}) async {
-    var headers = {
-      'Content-Type': 'application/json'
-    };
-
-    var dio = Dio();
-
-    var response = await dio.request(
-      GET_OTP,
-      options: Options(
-        method: 'POST',
-        headers: headers,
-        validateStatus: (_) => true,
-      ),
-      data: data,
+  static Future<GetOtpData?> getOtp(dynamic data,
+      {required BuildContext context}) async {
+    var response = await postAPICall(
+      apiUrl: GET_OTP,
+      parameter: jsonEncode(data),
     );
 
     if (response.statusCode == 200) {
-      print("Otp Response : " + json.encode(response.data));
+      print("Otp Response : " + response.body);
 
-      APIResponse? apiResponse = APIResponse.fromJson(response.data);
+      APIResponse? apiResponse =
+          APIResponse.fromJson(jsonDecode(response.body));
       if (apiResponse.success!) {
         return apiResponse.getOtpData;
       }
@@ -39,7 +27,7 @@ class OtpController {
       }
       return null;
     } else {
-      print("Get Otp Error : " + response.statusMessage.toString());
+      print("Get Otp Error : " + response.reasonPhrase.toString());
     }
   }
 }

@@ -7,12 +7,6 @@ setSnackbar(String msg) {
   if (kIsWeb) {
     try {
       EasyLoading.showSuccess(msg);
-      // Fluttertoast.showToast(
-      //   msg: msg,
-      //   webBgColor: "linear-gradient(to right, #231D1E, #231D1E)",
-      //   fontSize: 14,
-      //   textColor: Colors.orange,
-      // );
     } catch (e) {
       print('Error in snackbar: $e ');
     }

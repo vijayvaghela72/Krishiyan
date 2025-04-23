@@ -1,14 +1,10 @@
 import 'dart:convert';
-
-import 'package:dio/dio.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
+import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:krishiyan/localization/AppLocalizations.dart';
 import 'package:krishiyan/utils/Constants.dart';
-import 'package:http/http.dart' as http;
 import '../../helper/AlertHelper.dart';
 import '../../mvc/controller/accountSettingController.dart';
 import '../../mvc/model/GetAddressDetails.dart';
@@ -30,8 +26,6 @@ class _EditAddressPageState extends State<EditAddressPage> {
   TextFormField? villageController;
 
   TextEditingController editPincodeController = TextEditingController();
-  // TextEditingController editDistrictController = TextEditingController();
-  // TextEditingController editStateController = TextEditingController();
   TextEditingController editAddressController = TextEditingController();
   TextEditingController editVillageController = TextEditingController();
 
@@ -191,18 +185,14 @@ class _EditAddressPageState extends State<EditAddressPage> {
                                 hintStyle: const TextStyle(color: Colors.grey),
                                 fillColor: Colors.white,
                                 filled: true,
-                                border: const OutlineInputBorder(
-                                    // borderRadius: BorderRadius.all(Radius.circular(10.0),),
-                                    ),
+                                border: const OutlineInputBorder(),
                                 enabledBorder: const OutlineInputBorder(
                                   borderSide: BorderSide(
                                     color: Colors.grey,
                                     width: 1.0,
                                   ),
-                                  // borderRadius: BorderRadius.all(Radius.circular(10.0)),
                                 ),
                                 focusedBorder: const OutlineInputBorder(
-                                  // borderRadius: BorderRadius.all(Radius.circular(10.0)),
                                   borderSide: BorderSide(
                                       color: Colors.green, width: 0.5),
                                 ),
@@ -212,7 +202,6 @@ class _EditAddressPageState extends State<EditAddressPage> {
                           const SizedBox(
                             height: 20,
                           ),
-
                           // state
                           Padding(
                             padding:
@@ -242,18 +231,14 @@ class _EditAddressPageState extends State<EditAddressPage> {
                                 hintStyle: const TextStyle(color: Colors.grey),
                                 fillColor: Colors.white,
                                 filled: true,
-                                border: const OutlineInputBorder(
-                                    // borderRadius: BorderRadius.all(Radius.circular(10.0),),
-                                    ),
+                                border: const OutlineInputBorder(),
                                 enabledBorder: const OutlineInputBorder(
                                   borderSide: BorderSide(
                                     color: Colors.grey,
                                     width: 1.0,
                                   ),
-                                  // borderRadius: BorderRadius.all(Radius.circular(10.0)),
                                 ),
                                 focusedBorder: const OutlineInputBorder(
-                                  // borderRadius: BorderRadius.all(Radius.circular(10.0)),
                                   borderSide: BorderSide(
                                       color: Colors.green, width: 0.5),
                                 ),
@@ -774,7 +759,6 @@ class _EditAddressPageState extends State<EditAddressPage> {
   otherEditAddressApiCall(String pincode, String district, String state,
       String address, String village) async {
     if (pincode.isNotEmpty && village.isNotEmpty) {
-      var headers = {'Content-Type': 'application/json'};
       var data = json.encode({
         "uid": number,
         "pincode": pincode,
@@ -783,29 +767,14 @@ class _EditAddressPageState extends State<EditAddressPage> {
         "address": address,
         "village": village
       });
-      // var dio = Dio();
       print('data : $data');
       print('link : ${UPDATE_ADDRESS_DETAILS}');
 
-      var response = await http
-          .post(
-            Uri.parse(UPDATE_ADDRESS_DETAILS),
-            headers: headers,
-            body: data,
-            encoding: Encoding.getByName("utf-8"),
-          )
-          .timeout(const Duration(seconds: 8));
-      // var response = await dio.request(
-      //   UPDATE_ADDRESS_DETAILS,
-      //   options: Options(
-      //     method: 'POST',
-      //     headers: headers,
-      //   ),
-      //   data: data,
-      // );
-
+      var response = await postAPICall(
+        apiUrl: UPDATE_ADDRESS_DETAILS,
+        parameter: data,
+      );
       if (response.statusCode == 201) {
-        // print("Address details updated : " + json.encode(response.data));
         showAlertDialog(context);
       } else {
         var data = jsonDecode(response.body);
@@ -895,48 +864,32 @@ class _EditAddressPageState extends State<EditAddressPage> {
 
   void _onTextChanged(String text) async {
     try {
-      Dio _dio = Dio();
-      _dio.options.baseUrl = baseUrl;
-      final response = await _dio.post(
-        PincodeToState,
-        data: {'pincode': text},
+      final response = await postAPICall(
+        apiUrl: baseUrl + PincodeToState,
+        parameter: json.encode({'pincode': text}),
       );
 
       if (response.statusCode == 200) {
         // Handle successful response
-        print('_onTextChanged API call successful: ${response.data}');
+        print('_onTextChanged API call successful: ${response.body}');
 
-        if (response.data['PostOffice'].isNotEmpty) {
+        final data = json.decode(response.body);
+
+        if (data['PostOffice'].isNotEmpty) {
           dropdownStateItems = [
             DropdownMenuItem<String>(
-              value: response.data['PostOffice'][0]['State'],
-              child: Text(response.data['PostOffice'][0]['State']),
+              value: data['PostOffice'][0]['State'],
+              child: Text(data['PostOffice'][0]['State']),
             ),
           ];
 
           dropdownDistrictItems = [
             DropdownMenuItem<String>(
-              value: response.data['PostOffice'][0]['District'],
-              child: Text(response.data['PostOffice'][0]['District']),
+              value: data['PostOffice'][0]['District'],
+              child: Text(data['PostOffice'][0]['District']),
             ),
           ];
         }
-
-        // dropdownStateItems =
-        //     response.data['PostOffice'].map<DropdownMenuItem<String>>((item) {
-        //   return DropdownMenuItem<String>(
-        //     value: item['State'],
-        //     child: Text(item['State']),
-        //   );
-        // }).toList();
-        //
-        // dropdownDistrictItems =
-        //     response.data['PostOffice'].map<DropdownMenuItem<String>>((item) {
-        //   return DropdownMenuItem<String>(
-        //     value: item['District'],
-        //     child: Text(item['District']),
-        //   );
-        // }).toList();
 
         setState(() {
           dropdownStateItems = dropdownStateItems;

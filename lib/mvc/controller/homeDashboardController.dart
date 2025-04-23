@@ -1,12 +1,12 @@
 import 'dart:convert';
 import '../../utils/Constants.dart';
-import 'package:http/http.dart' as http;
 import 'package:krishiyan/mvc/model/PriceData.dart';
+import 'package:krishiyan/helper/api_base_helper.dart';
 
 class HomeDashboardController {
   // Function to fetch price history from the API
   static Future<List<PriceData>> fetchPriceHistory(String primaryKey) async {
-    final response = await http.get(Uri.parse('${baseUrl}market/$primaryKey'));
+    final response = await getAPICall(apiUrl: '${baseUrl}market/$primaryKey');
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = jsonDecode(response.body);
