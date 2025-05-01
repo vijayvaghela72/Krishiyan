@@ -101,11 +101,17 @@ class _MandiPriceScreenState extends State<MandiPriceScreen> {
 
   void getValue() async {
     print('Data : 1');
-    if (homeProvider!.selectedMandiStateList != null &&
-        homeProvider!.selectedDistrictMasterList != null &&
-        homeProvider!.selectedPriceMandiCoodityData != null &&
-        homeProvider!.dateOfFromValue.isNotEmpty &&
-        homeProvider!.dateOfToValue.isNotEmpty) {
+    if (homeProvider!.selectedMandiStateList == null) {
+      setSnackbar("Please select state");
+    } else if (homeProvider!.selectedDistrictMasterList == null) {
+      setSnackbar("Please select district");
+    } else if (homeProvider!.selectedPriceMandiCoodityData == null) {
+      setSnackbar("Please select commodity");
+    } else if (homeProvider!.dateOfFromValue.isEmpty) {
+      setSnackbar("Please select from date");
+    } else if (homeProvider!.dateOfToValue.isEmpty) {
+      setSnackbar("Please select to date");
+    } else {
       await homeProvider!.getMandiPriceDetails(
           homeProvider!.selectedMandiStateList.toString(),
           homeProvider!.selectedDistrictMasterList.toString(),
@@ -114,8 +120,6 @@ class _MandiPriceScreenState extends State<MandiPriceScreen> {
           homeProvider!.dateOfToValue);
 
       setState(() {});
-    } else {
-      setSnackbar("Please enter details.");
     }
   }
 

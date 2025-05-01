@@ -6,7 +6,10 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 setSnackbar(String msg) {
   if (kIsWeb) {
     try {
-      EasyLoading.showSuccess(msg);
+      EasyLoading.showSuccess(
+        msg,
+        duration: const Duration(seconds: 5),
+      );
     } catch (e) {
       print('Error in snackbar: $e ');
     }

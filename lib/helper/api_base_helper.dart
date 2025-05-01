@@ -1,18 +1,40 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
 import 'package:http/http.dart';
 
 const encryptionKey =
     "c10a2499a46c1921688c6bf5f19b746f2eb4398b1d3c4d1c1f2e4a6c8b6a4f8c";
 
-String hmacSha256(String key, String message) {
-  final keyBytes = utf8.encode(key);
-  final messageBytes = utf8.encode(message);
+String shaAlgo(String message) {
+  return sha256.convert(utf8.encode(message)).toString();
+}
 
-  final hmac = Hmac(sha256, keyBytes);
-  final digest = hmac.convert(messageBytes);
-  return digest.toString();
+String hmacSha256(String key, String message) {
+  const blockSize = 64;
+  var keyBytes = Uint8List.fromList(utf8.encode(key));
+
+  // If key is longer than block size, hash it first
+  if (keyBytes.length > blockSize) {
+    keyBytes = Uint8List.fromList(sha256.convert(keyBytes).bytes);
+  }
+
+  // Pad key to block size
+  final paddedKey = Uint8List(blockSize);
+  paddedKey.setRange(0, keyBytes.length, keyBytes);
+
+  // Create inner and outer padded keys
+  final oKeyPad = Uint8List.fromList(paddedKey.map((b) => b ^ 0x5c).toList());
+  final iKeyPad = Uint8List.fromList(paddedKey.map((b) => b ^ 0x36).toList());
+
+  // Calculate inner hash
+  final innerMessage = utf8.decode(iKeyPad) + message;
+  final innerHash = shaAlgo(innerMessage);
+
+  // Calculate final hash
+  final outerMessage = utf8.decode(oKeyPad) + innerHash;
+  return shaAlgo(outerMessage);
 }
 
 Map<String, String> commonHeader = {
@@ -64,7 +86,7 @@ Future<Response> getAPICall({
       response = await get(
         Uri.parse(apiUrl),
         headers: headerValue.isNotEmpty ? temp : commonHeader,
-      ).timeout(const Duration(seconds: 8));
+      ).timeout(const Duration(seconds: 15));
 
       print('Status Code : ${response.statusCode}');
       print('Response : ${response.body.toString()}');
@@ -101,7 +123,7 @@ Future<Response> deleteAPICall({
         Uri.parse(apiUrl),
         body: parameter,
         headers: commonHeader,
-      ).timeout(const Duration(seconds: 8));
+      ).timeout(const Duration(seconds: 15));
 
       print('Status Code : ${response.statusCode}');
       print('Response : ${response.body.toString()}');
@@ -150,7 +172,7 @@ Future<Response> postAPICall({
         headers: headerValue.isNotEmpty ? temp : commonHeader,
         body: parameter,
         encoding: Encoding.getByName("utf-8"),
-      ).timeout(const Duration(seconds: 8));
+      ).timeout(const Duration(seconds: 15));
 
       print('Status Code : ${response.statusCode}');
       print('Response : ${response.body.toString()}');
@@ -191,7 +213,7 @@ Future<Response> patchAPICall({
         headers: commonHeader,
         body: parameter,
         encoding: Encoding.getByName("utf-8"),
-      ).timeout(const Duration(seconds: 8));
+      ).timeout(const Duration(seconds: 15));
 
       print('Status Code : ${response.statusCode}');
       print('Response : ${response.body.toString()}');
@@ -235,7 +257,7 @@ Future<Response> putAPICall({
         headers: commonHeader,
         body: parameter,
         encoding: Encoding.getByName("utf-8"),
-      ).timeout(const Duration(seconds: 8));
+      ).timeout(const Duration(seconds: 15));
 
       print('Status Code : ${response.statusCode}');
       print('Response : ${response.body.toString()}');

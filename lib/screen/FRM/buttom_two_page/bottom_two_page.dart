@@ -2605,8 +2605,11 @@ class _BottomTwoPageState extends State<BottomTwoPage>
       if (response.statusCode == 200) {
         print('API Response: ${response.body}');
         return FrmInsight.fromJson(jsonDecode(response.body));
+      } else if (response.statusCode == 404) {
+        var data = json.decode(response.body);
+        setSnackbar(' ${data['message']}');
       } else {
-        print('Failed to load data: ${response.statusCode}');
+        setSnackbar('Failed to load data: ${response.statusCode}');
         return null;
       }
     } catch (e) {

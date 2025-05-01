@@ -9,8 +9,7 @@ import 'dart:convert';
 class LoginController {
   static Future<Data?> login(dynamic data,
       {required BuildContext context}) async {
-    var response =
-        await postAPICall(apiUrl: LOGIN, parameter: json.encode(data));
+    var response = await postAPICall(apiUrl: LOGIN, parameter: data);
 
     if (response.statusCode == 200) {
       print("Login Response : " + response.body);
