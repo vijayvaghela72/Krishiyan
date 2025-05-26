@@ -1,38 +1,37 @@
 import 'dart:convert';
-import 'BuyCommodityPage.dart';
-import 'SellCommodityPage.dart';
-import '../../utils/AppColor.dart';
-import 'EditBuyCommodityPage.dart';
-import 'EnquiryDashboardPage.dart';
-import 'EditSellCommodityPage.dart';
-import '../../utils/Constants.dart';
-import '../../helper/SharedPref.dart';
+import '../../Enquiry/BuyCommodityPage.dart';
+import '../../Enquiry/SellCommodityPage.dart';
+import '../../../utils/AppColor.dart';
+import '../../Enquiry/EditBuyCommodityPage.dart';
+import '../../Enquiry/EnquiryDashboardPage.dart';
+import '../../Enquiry/EditSellCommodityPage.dart';
+import '../../../utils/Constants.dart';
+import '../../../helper/SharedPref.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:chip_list/chip_list.dart';
-import '../Language/SelectLanguagePage.dart';
-import '../../mvc/model/SelectCropNamesData.dart';
-import '../../localization/AppLocalizations.dart';
-import '../../mvc/model/GetEnquiryByFilterData.dart';
+import '../../Language/SelectLanguagePage.dart';
+import '../../../mvc/model/SelectCropNamesData.dart';
+import '../../../localization/AppLocalizations.dart';
+import '../../../mvc/model/GetEnquiryByFilterData.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:krishiyan/screen/dashboard/dashborad.dart';
-import '../../mvc/controller/enquiryDashboardController.dart';
+import '../../../mvc/controller/enquiryDashboardController.dart';
 
 // ignore: must_be_immutable
-class BottomCenterEnquiryPage extends StatefulWidget {
+class EnquiryScreen extends StatefulWidget {
   bool aapbarVisibility;
   final String? typeOfOrganization;
 
-  BottomCenterEnquiryPage(
+  EnquiryScreen(
       {super.key, required this.aapbarVisibility, this.typeOfOrganization});
 
   @override
-  State<BottomCenterEnquiryPage> createState() =>
-      _BottomCenterEnquiryPageState();
+  State<EnquiryScreen> createState() => _EnquiryScreenState();
 }
 
-class _BottomCenterEnquiryPageState extends State<BottomCenterEnquiryPage>
+class _EnquiryScreenState extends State<EnquiryScreen>
     with TickerProviderStateMixin {
   String? selectedItemValue;
 
@@ -1173,7 +1172,7 @@ class _BottomCenterEnquiryPageState extends State<BottomCenterEnquiryPage>
           setState(() {
             typeOfOrganizationData == "Farmer groups"
                 ? Navigator.of(context).push(MaterialPageRoute(
-                    builder: (BuildContext context) => BottomCenterEnquiryPage(
+                    builder: (BuildContext context) => EnquiryScreen(
                           aapbarVisibility: true,
                         )))
                 : Container();

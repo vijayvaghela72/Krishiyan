@@ -6,10 +6,10 @@ import 'package:flutter/material.dart';
 import 'crop/crop.dart';
 import 'profile/profile.dart';
 import '../Language/SelectLanguagePage.dart';
-import '../Enquiry/BottomCenterEnquiryPage.dart';
+import 'enquiry/enquiry.dart';
 import '../../localization/AppLocalizations.dart';
 import 'package:krishiyan/screen/dashboard/home/home.dart';
-import 'package:krishiyan/screen/FRM/buttom_two_page/bottom_two_page.dart';
+import 'package:krishiyan/screen/dashboard/frm/frm.dart';
 
 // ignore: must_be_immutable
 class HomePage extends StatefulWidget {
@@ -66,14 +66,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   final List<Widget> _screens1 = [
     HomeScreen(aapbarVisibility: false),
-    BottomTwoPage(
+    FRM(
       aapbarVisibility: false,
     ),
     CropLibraryScreen(
       aapbarVisibility: false,
     ),
     const Profile(),
-    BottomCenterEnquiryPage(
+    EnquiryScreen(
       aapbarVisibility: false,
     ),
   ];
@@ -81,7 +81,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   final List<Widget> _screens2 = [
     HomeScreen(aapbarVisibility: false),
     const Profile(),
-    BottomCenterEnquiryPage(
+    EnquiryScreen(
       aapbarVisibility: false,
     ),
   ];
@@ -235,7 +235,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               print("Center dock");
               setState(() {
                 Navigator.of(context).push(MaterialPageRoute(
-                    builder: (BuildContext context) => BottomCenterEnquiryPage(
+                    builder: (BuildContext context) => EnquiryScreen(
                           aapbarVisibility: true,
                           typeOfOrganization: typeOfOrganizationData,
                         )));

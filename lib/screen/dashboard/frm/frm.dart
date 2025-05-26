@@ -2,18 +2,18 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:krishiyan/helper/loading.dart';
 import 'package:krishiyan/helper/snackbar.dart';
-import '../FarmerProfile.dart';
+import '../../FRM/FarmerProfile.dart';
 import 'package:intl/intl.dart';
-import '../CropCultivationPage.dart';
+import '../../FRM/CropCultivationPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../utils/AppGlobal.dart';
 import '../../../utils/Constants.dart';
-import '../EditCropCultivationPage.dart';
 import '../../../helper/AlertHelper.dart';
 import 'package:otp_text_field/style.dart';
 import 'package:otp_text_field/otp_field.dart';
 import '../../Language/SelectLanguagePage.dart';
+import '../../FRM/EditCropCultivationPage.dart';
 import '../../../mvc/controller/otpController.dart';
 import '../../../localization/AppLocalizations.dart';
 import 'package:krishiyan/mvc/model/FrmInsight.dart';
@@ -29,22 +29,21 @@ import '../../../mvc/controller/farmerDashboardController.dart';
 import 'package:krishiyan/screen/AccountSettings/FarmerEditProfilePage.dart';
 
 // ignore: must_be_immutable
-class BottomTwoPage extends StatefulWidget {
+class FRM extends StatefulWidget {
   bool aapbarVisibility;
   String? villageName, typeName;
 
-  BottomTwoPage(
+  FRM(
       {super.key,
       required this.aapbarVisibility,
       this.villageName,
       this.typeName});
 
   @override
-  State<BottomTwoPage> createState() => _BottomTwoPageState();
+  State<FRM> createState() => _FRMState();
 }
 
-class _BottomTwoPageState extends State<BottomTwoPage>
-    with TickerProviderStateMixin {
+class _FRMState extends State<FRM> with TickerProviderStateMixin {
   final List<String> topData = [
     buildTranslate("farmerDashboard")!,
     buildTranslate("farmerRegistration")!,
@@ -3447,7 +3446,7 @@ class _MyDrawerState extends State<MyDrawer> {
                                     Navigator.of(context).pushReplacement(
                                         MaterialPageRoute(
                                             builder: (BuildContext context) =>
-                                                BottomTwoPage(
+                                                FRM(
                                                     aapbarVisibility: true,
                                                     villageName: villageName,
                                                     typeName: typeName)));
