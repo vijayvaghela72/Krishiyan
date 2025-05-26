@@ -12,7 +12,7 @@ import '../../../../helper/AlertHelper.dart';
 import '../../../../mvc/controller/accountSettingController.dart';
 import '../../../../mvc/model/GetProfileData.dart';
 import '../../../../utils/AppGlobal.dart';
-import '../../../../utils/Constants.dart';
+import '../../../../widgets/constant.dart';
 import 'package:intl/intl.dart';
 
 class EditOtherProfilePage extends StatefulWidget {

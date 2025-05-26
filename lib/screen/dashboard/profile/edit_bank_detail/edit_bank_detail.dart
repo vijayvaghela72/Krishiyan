@@ -3,7 +3,7 @@ import 'dart:math';
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import '../../../../utils/AppGlobal.dart';
-import '../../../../utils/Constants.dart';
+import '../../../../widgets/constant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../helper/AlertHelper.dart';

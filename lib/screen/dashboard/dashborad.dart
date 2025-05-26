@@ -1,6 +1,6 @@
 import 'dart:async';
-import '../../utils/AppColor.dart';
-import '../../utils/Constants.dart';
+import '../../widgets/color.dart';
+import '../../widgets/constant.dart';
 import '../../helper/SharedPref.dart';
 import 'package:flutter/material.dart';
 import 'crop/crop.dart';

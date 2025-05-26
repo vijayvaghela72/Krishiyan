@@ -1,5 +1,5 @@
 import 'dart:convert';
-import '../../utils/Constants.dart';
+import '../../widgets/constant.dart';
 import 'package:krishiyan/mvc/model/PriceData.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 

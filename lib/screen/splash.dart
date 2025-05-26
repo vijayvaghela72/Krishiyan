@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dashboard/dashborad.dart';
 import '../helper/SharedPref.dart';
-import '../utils/Constants.dart';
+import '../widgets/constant.dart';
 import 'Login/LoginPage.dart';
 
 class SplashScreen extends StatefulWidget {

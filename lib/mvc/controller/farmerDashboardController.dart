@@ -1,6 +1,6 @@
 import 'dart:convert';
 import '../model/APIResponse.dart';
-import '../../utils/Constants.dart';
+import '../../widgets/constant.dart';
 import '../../helper/AlertHelper.dart';
 import 'package:flutter/material.dart';
 import '../model/FarmerDashboardData.dart';

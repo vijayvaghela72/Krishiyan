@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'localization/AppLocalizations.dart';
 import 'localization/NavigationService.dart';
 import 'package:krishiyan/helper/provider.dart';
-import 'package:krishiyan/utils/Constants.dart';
+import 'package:krishiyan/widgets/constant.dart';
 import 'package:krishiyan/screen/Welcome/WelcomePage.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:krishiyan/screen/dashboard/dashborad.dart';

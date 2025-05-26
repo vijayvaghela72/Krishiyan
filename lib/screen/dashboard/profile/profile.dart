@@ -2,7 +2,7 @@ import 'other_detail/other_detail.dart';
 import 'forgot_password/forgot_password.dart';
 import '../../Login/LoginPage.dart';
 import '../../../utils/AppGlobal.dart';
-import '../../../utils/Constants.dart';
+import '../../../widgets/constant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'edit_profile/edit_profile.dart';

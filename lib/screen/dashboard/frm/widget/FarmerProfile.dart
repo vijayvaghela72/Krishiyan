@@ -10,7 +10,7 @@ import '../../../../mvc/controller/farmerDashboardController.dart';
 import '../../../../mvc/model/FarmerRegistrationData.dart';
 import '../../../../mvc/model/PincodeToStateData.dart';
 import '../../../../utils/AppGlobal.dart';
-import '../../../../utils/Constants.dart';
+import '../../../../widgets/constant.dart';
 
 // ignore: must_be_immutable
 class FarmerProfilePage extends StatefulWidget {

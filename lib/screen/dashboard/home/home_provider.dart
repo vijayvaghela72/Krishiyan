@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:krishiyan/helper/provider.dart';
 import 'package:krishiyan/helper/snackbar.dart';
-import 'package:krishiyan/utils/Constants.dart';
+import 'package:krishiyan/widgets/constant.dart';
 import '../../../mvc/model/GetMandiPriceData.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:krishiyan/mvc/model/MarketInsight.dart';

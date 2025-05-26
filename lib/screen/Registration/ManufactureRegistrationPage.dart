@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:krishiyan/screen/Registration/MyRegistrationPage.dart';
-import 'package:krishiyan/utils/Constants.dart';
+import 'package:krishiyan/widgets/constant.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/style.dart';
 import '../../helper/AlertHelper.dart';
@@ -13,7 +13,6 @@ import '../../localization/AppLocalizations.dart';
 import '../../mvc/controller/farmerDashboardController.dart';
 import '../../mvc/controller/otpController.dart';
 import '../../mvc/model/GetOtpDetails.dart';
-import '../../utils/hashPassword.dart';
 import '../Login/LoginPage.dart';
 
 class ManufactureRegistrationPage extends StatefulWidget {
@@ -835,9 +834,6 @@ class _ManufactureRegistrationPageState
     String number,
     String password,
   ) async {
-    // Using the PasswordUtils to hash the password
-    String hashedPassword = PasswordUtils.hashPassword(password);
-
     var data = json.encode({
       "typeOfOrganization": "Manufacture",
       "nameOfFpo": name,
@@ -846,7 +842,7 @@ class _ManufactureRegistrationPageState
       "organizationalEmail": "",
       "contactNumber": number,
       "promoterName": "",
-      "password": hashedPassword
+      "password": password,
     });
 
     var farmerRegistration = FarmerDashboardController.farmerGroupRegistration(

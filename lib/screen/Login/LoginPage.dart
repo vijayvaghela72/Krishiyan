@@ -8,8 +8,8 @@ import '../../helper/AlertHelper.dart';
 import '../../helper/SharedPref.dart';
 import '../../mvc/controller/loginController.dart';
 import '../../mvc/model/LoginData.dart';
-import '../../utils/AppColor.dart';
-import '../../utils/Constants.dart';
+import '../../widgets/color.dart';
+import '../../widgets/constant.dart';
 import '../dashboard/profile/forgot_password/forgot_password.dart';
 import '../dashboard/dashborad.dart';
 

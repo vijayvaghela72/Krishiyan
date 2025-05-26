@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:krishiyan/localization/AppLocalizations.dart';
-import 'package:krishiyan/utils/Constants.dart';
+import 'package:krishiyan/widgets/constant.dart';
 import '../../../../helper/AlertHelper.dart';
 import '../../../../mvc/controller/accountSettingController.dart';
 import '../../../../mvc/model/GetAddressDetails.dart';

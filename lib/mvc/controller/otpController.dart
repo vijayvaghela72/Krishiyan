@@ -1,6 +1,6 @@
 import 'dart:convert';
 import '../model/APIResponse.dart';
-import '../../utils/Constants.dart';
+import '../../widgets/constant.dart';
 import '../model/GetOtpDetails.dart';
 import '../../helper/AlertHelper.dart';
 import 'package:flutter/cupertino.dart';

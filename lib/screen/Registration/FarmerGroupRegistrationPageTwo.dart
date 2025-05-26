@@ -5,7 +5,6 @@ import 'package:krishiyan/screen/Registration/MyRegistrationPage.dart';
 import '../../helper/AlertHelper.dart';
 import '../../mvc/controller/farmerDashboardController.dart';
 import '../../utils/AppGlobal.dart';
-import '../../utils/hashPassword.dart';
 import '../Login/LoginPage.dart';
 
 // ignore: must_be_immutable
@@ -421,9 +420,6 @@ class _FarmerGroupRegistrationPageTwoState
 
   _registrationApiCall(String name, String type, String number, String password,
       String date, String email, String nameOfPromoter) async {
-    // Using the PasswordUtils to hash the password
-    String hashedPassword = PasswordUtils.hashPassword(password);
-
     var data = json.encode({
       "typeOfOrganization": "Farmer groups",
       "nameOfFpo": name,
@@ -432,7 +428,7 @@ class _FarmerGroupRegistrationPageTwoState
       "organizationalEmail": email,
       "contactNumber": number,
       "promoterName": nameOfPromoter,
-      "password": hashedPassword
+      "password": password
     });
 
     var farmerRegistration = FarmerDashboardController.farmerGroupRegistration(

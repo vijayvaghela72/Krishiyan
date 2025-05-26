@@ -1,5 +1,6 @@
 import 'dart:convert';
-import '../profile.dart';
+import 'package:krishiyan/screen/dashboard/profile/profile.dart';
+
 import '../../../../utils/AppGlobal.dart';
 import '../../../../widgets/constant.dart';
 import 'package:flutter/material.dart';

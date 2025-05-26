@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'widget/BuyCommodityPage.dart';
 import 'widget/SellCommodityPage.dart';
-import '../../../utils/AppColor.dart';
+import '../../../widgets/color.dart';
 import 'widget/EditBuyCommodityPage.dart';
 import 'widget/EnquiryDashboardPage.dart';
 import 'widget/EditSellCommodityPage.dart';
-import '../../../utils/Constants.dart';
+import '../../../widgets/constant.dart';
 import '../../../helper/SharedPref.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

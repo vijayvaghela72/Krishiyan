@@ -8,7 +8,7 @@ import 'widget/CropCultivationPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../utils/AppGlobal.dart';
-import '../../../utils/Constants.dart';
+import '../../../widgets/constant.dart';
 import '../../../helper/AlertHelper.dart';
 import 'package:otp_text_field/style.dart';
 import 'package:otp_text_field/otp_field.dart';

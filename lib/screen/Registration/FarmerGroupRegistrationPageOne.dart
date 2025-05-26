@@ -7,7 +7,7 @@ import 'package:krishiyan/localization/AppLocalizations.dart';
 import 'package:krishiyan/screen/Login/LoginPage.dart';
 import 'package:krishiyan/screen/Registration/MyRegistrationPage.dart';
 import 'package:intl/intl.dart';
-import 'package:krishiyan/utils/Constants.dart';
+import 'package:krishiyan/widgets/constant.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/style.dart';
 import '../../helper/AlertHelper.dart';
