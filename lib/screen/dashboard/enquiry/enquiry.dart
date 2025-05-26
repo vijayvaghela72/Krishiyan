@@ -1,10 +1,10 @@
 import 'dart:convert';
-import '../../Enquiry/BuyCommodityPage.dart';
-import '../../Enquiry/SellCommodityPage.dart';
+import 'widget/BuyCommodityPage.dart';
+import 'widget/SellCommodityPage.dart';
 import '../../../utils/AppColor.dart';
-import '../../Enquiry/EditBuyCommodityPage.dart';
-import '../../Enquiry/EnquiryDashboardPage.dart';
-import '../../Enquiry/EditSellCommodityPage.dart';
+import 'widget/EditBuyCommodityPage.dart';
+import 'widget/EnquiryDashboardPage.dart';
+import 'widget/EditSellCommodityPage.dart';
 import '../../../utils/Constants.dart';
 import '../../../helper/SharedPref.dart';
 import 'package:flutter/material.dart';

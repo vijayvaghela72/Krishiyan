@@ -6,10 +6,10 @@ import 'package:krishiyan/helper/AlertHelper.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:krishiyan/localization/AppLocalizations.dart';
 import 'package:permission_handler/permission_handler.dart';
-import '../../mvc/controller/enquiryDashboardController.dart';
-import '../../mvc/model/GetAllEnquiryData.dart';
-import '../../mvc/model/SelectCropNamesData.dart';
-import '../../utils/Constants.dart';
+import '../../../../mvc/controller/enquiryDashboardController.dart';
+import '../../../../mvc/model/GetAllEnquiryData.dart';
+import '../../../../mvc/model/SelectCropNamesData.dart';
+import '../../../../utils/Constants.dart';
 import 'EnquiryDetailPage.dart';
 import 'package:url_launcher/url_launcher.dart';
 
