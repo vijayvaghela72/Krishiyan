@@ -2,9 +2,9 @@ import '../../PriceHistoryPage.dart';
 import 'package:flutter/material.dart';
 import 'package:krishiyan/helper/provider.dart';
 import 'package:krishiyan/localization/AppLocalizations.dart';
-import 'package:krishiyan/screen/home_screen/home/widget/helper/mandi_district.dart';
-import 'package:krishiyan/screen/home_screen/home/widget/helper/commodity_sheet.dart';
-import 'package:krishiyan/screen/home_screen/home/widget/helper/state_bottom_sheet.dart';
+import 'package:krishiyan/screen/dashboard/home/widget/helper/mandi_district.dart';
+import 'package:krishiyan/screen/dashboard/home/widget/helper/commodity_sheet.dart';
+import 'package:krishiyan/screen/dashboard/home/widget/helper/state_bottom_sheet.dart';
 
 // ignore: must_be_immutable
 class MarketInsightScreen extends StatefulWidget {

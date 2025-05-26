@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:krishiyan/screen/home_screen/home/home_provider.dart';
+import 'package:krishiyan/screen/dashboard/home/home_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 

@@ -9,7 +9,7 @@ import 'package:krishiyan/helper/provider.dart';
 import 'package:krishiyan/utils/Constants.dart';
 import 'package:krishiyan/screen/Welcome/WelcomePage.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:krishiyan/screen/home_screen/dashborad.dart';
+import 'package:krishiyan/screen/dashboard/dashborad.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 

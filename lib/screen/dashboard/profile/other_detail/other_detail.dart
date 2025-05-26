@@ -1,13 +1,13 @@
 import 'dart:convert';
-import 'ProfilePage.dart';
-import '../../utils/AppGlobal.dart';
-import '../../utils/Constants.dart';
+import '../profile.dart';
+import '../../../../utils/AppGlobal.dart';
+import '../../../../utils/Constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../helper/AlertHelper.dart';
-import '../../mvc/model/GetOtherDetails.dart';
+import '../../../../helper/AlertHelper.dart';
+import '../../../../mvc/model/GetOtherDetails.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
-import '../../mvc/controller/accountSettingController.dart';
+import '../../../../mvc/controller/accountSettingController.dart';
 import 'package:krishiyan/localization/AppLocalizations.dart';
 
 class OtherDetailPage extends StatefulWidget {
@@ -547,7 +547,7 @@ class _OtherDetailPageState extends State<OtherDetailPage> {
               Navigator.pop(context);
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => const ProfilePage()),
+                MaterialPageRoute(builder: (context) => const Profile()),
               );
             },
             child: const Align(

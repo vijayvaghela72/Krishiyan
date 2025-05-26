@@ -9,7 +9,7 @@ import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:krishiyan/mvc/model/MarketInsight.dart';
 import 'package:krishiyan/mvc/model/DailyNewsDetails.dart';
 import 'package:krishiyan/localization/AppLocalizations.dart';
-import 'package:krishiyan/screen/home_screen/home/home_model.dart';
+import 'package:krishiyan/screen/dashboard/home/home_model.dart';
 
 class HomeProvider extends ChangeNotifier {
   // common data

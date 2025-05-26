@@ -4,15 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:krishiyan/localization/AppLocalizations.dart';
-import 'package:krishiyan/screen/AccountSettings/ProfilePage.dart';
+import 'package:krishiyan/screen/dashboard/profile/profile.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/style.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../helper/AlertHelper.dart';
-import '../../mvc/controller/accountSettingController.dart';
-import '../../mvc/model/GetProfileData.dart';
-import '../../utils/AppGlobal.dart';
-import '../../utils/Constants.dart';
+import '../../../../helper/AlertHelper.dart';
+import '../../../../mvc/controller/accountSettingController.dart';
+import '../../../../mvc/model/GetProfileData.dart';
+import '../../../../utils/AppGlobal.dart';
+import '../../../../utils/Constants.dart';
 import 'package:intl/intl.dart';
 
 class EditOtherProfilePage extends StatefulWidget {
@@ -1831,7 +1831,7 @@ class _EditOtherProfilePageState extends State<EditOtherProfilePage> {
               Navigator.pop(context);
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => const ProfilePage()),
+                MaterialPageRoute(builder: (context) => const Profile()),
               );
             },
             child: const Align(

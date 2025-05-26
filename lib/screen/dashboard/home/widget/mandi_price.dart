@@ -5,9 +5,9 @@ import 'package:krishiyan/helper/snackbar.dart';
 import 'package:krishiyan/helper/AlertHelper.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:krishiyan/localization/AppLocalizations.dart';
-import 'package:krishiyan/screen/home_screen/home/widget/helper/mandi_district.dart';
-import 'package:krishiyan/screen/home_screen/home/widget/helper/commodity_sheet.dart';
-import 'package:krishiyan/screen/home_screen/home/widget/helper/state_bottom_sheet.dart';
+import 'package:krishiyan/screen/dashboard/home/widget/helper/mandi_district.dart';
+import 'package:krishiyan/screen/dashboard/home/widget/helper/commodity_sheet.dart';
+import 'package:krishiyan/screen/dashboard/home/widget/helper/state_bottom_sheet.dart';
 
 // ignore: must_be_immutable
 class MandiPriceScreen extends StatefulWidget {

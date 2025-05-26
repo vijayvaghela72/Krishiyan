@@ -16,7 +16,7 @@ import '../../localization/AppLocalizations.dart';
 import '../../mvc/model/GetEnquiryByFilterData.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:krishiyan/screen/home_screen/dashborad.dart';
+import 'package:krishiyan/screen/dashboard/dashborad.dart';
 import '../../mvc/controller/enquiryDashboardController.dart';
 
 // ignore: must_be_immutable

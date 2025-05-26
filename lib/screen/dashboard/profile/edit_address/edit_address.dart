@@ -5,20 +5,20 @@ import 'package:flutter/services.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:krishiyan/localization/AppLocalizations.dart';
 import 'package:krishiyan/utils/Constants.dart';
-import '../../helper/AlertHelper.dart';
-import '../../mvc/controller/accountSettingController.dart';
-import '../../mvc/model/GetAddressDetails.dart';
-import '../../utils/AppGlobal.dart';
-import 'ProfilePage.dart';
+import '../../../../helper/AlertHelper.dart';
+import '../../../../mvc/controller/accountSettingController.dart';
+import '../../../../mvc/model/GetAddressDetails.dart';
+import '../../../../utils/AppGlobal.dart';
+import '../profile.dart';
 
-class EditAddressPage extends StatefulWidget {
-  const EditAddressPage({super.key});
+class EditAddressScreen extends StatefulWidget {
+  const EditAddressScreen({super.key});
 
   @override
-  State<EditAddressPage> createState() => _EditAddressPageState();
+  State<EditAddressScreen> createState() => _EditAddressScreenState();
 }
 
-class _EditAddressPageState extends State<EditAddressPage> {
+class _EditAddressScreenState extends State<EditAddressScreen> {
   TextFormField? pincodeController;
   TextFormField? districtController;
   TextFormField? stateController;
@@ -799,7 +799,7 @@ class _EditAddressPageState extends State<EditAddressPage> {
               Navigator.pop(context);
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => const ProfilePage()),
+                MaterialPageRoute(builder: (context) => const Profile()),
               );
             },
             child: const Align(

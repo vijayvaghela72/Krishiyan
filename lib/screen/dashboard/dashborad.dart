@@ -4,11 +4,11 @@ import '../../utils/Constants.dart';
 import '../../helper/SharedPref.dart';
 import 'package:flutter/material.dart';
 import 'crop/crop.dart';
-import '../AccountSettings/ProfilePage.dart';
+import 'profile/profile.dart';
 import '../Language/SelectLanguagePage.dart';
 import '../Enquiry/BottomCenterEnquiryPage.dart';
 import '../../localization/AppLocalizations.dart';
-import 'package:krishiyan/screen/home_screen/home/home.dart';
+import 'package:krishiyan/screen/dashboard/home/home.dart';
 import 'package:krishiyan/screen/FRM/buttom_two_page/bottom_two_page.dart';
 
 // ignore: must_be_immutable
@@ -72,7 +72,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     CropLibraryScreen(
       aapbarVisibility: false,
     ),
-    const ProfilePage(),
+    const Profile(),
     BottomCenterEnquiryPage(
       aapbarVisibility: false,
     ),
@@ -80,18 +80,17 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   final List<Widget> _screens2 = [
     HomeScreen(aapbarVisibility: false),
-    const ProfilePage(),
+    const Profile(),
     BottomCenterEnquiryPage(
       aapbarVisibility: false,
     ),
   ];
 
-  Locale _locale = const Locale("en");
   String typeOfOrganizationData = "";
 
   changeLanguage(Locale locale) {
     setState(() {
-      _locale = locale;
+      locale;
     });
   }
 

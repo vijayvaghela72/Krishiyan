@@ -2,10 +2,10 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
-import '../../utils/AppGlobal.dart';
-import '../../utils/Constants.dart';
+import '../../../../utils/AppGlobal.dart';
+import '../../../../utils/Constants.dart';
 import 'package:flutter/material.dart';
-import '../../helper/AlertHelper.dart';
+import '../../../../helper/AlertHelper.dart';
 import 'package:flutter/services.dart';
 import 'package:otp_text_field/style.dart';
 import 'package:otp_text_field/otp_field.dart';
@@ -15,18 +15,18 @@ import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:krishiyan/mvc/model/GetFRMProfileData.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../mvc/controller/accountSettingController.dart';
-import 'package:krishiyan/screen/home_screen/dashborad.dart';
+import '../../../../mvc/controller/accountSettingController.dart';
+import 'package:krishiyan/screen/dashboard/dashborad.dart';
 import 'package:krishiyan/localization/AppLocalizations.dart';
 
-class EditProfilePage extends StatefulWidget {
-  const EditProfilePage({super.key});
+class EditProfileScreen extends StatefulWidget {
+  const EditProfileScreen({super.key});
 
   @override
-  State<EditProfilePage> createState() => _EditProfilePageState();
+  State<EditProfileScreen> createState() => _EditProfileScreenState();
 }
 
-class _EditProfilePageState extends State<EditProfilePage> {
+class _EditProfileScreenState extends State<EditProfileScreen> {
   File? _image; // To store the selected image file
   final ImagePicker _picker = ImagePicker();
   TextFormField? nameOfOrganizationController;

@@ -1,30 +1,29 @@
-import 'EditAddressPage.dart';
-import 'OtherDetailPage.dart';
-import 'EditProfilePage.dart';
-import 'ForgotPasswordPage.dart';
-import '../Login/LoginPage.dart';
-import 'EditBankDetailPage.dart';
-import 'EditOtherProfilePage.dart';
-import '../../utils/AppGlobal.dart';
-import '../../utils/Constants.dart';
-import '../../helper/SharedPref.dart';
+import 'other_detail/other_detail.dart';
+import 'forgot_password/forgot_password.dart';
+import '../../Login/LoginPage.dart';
+import '../../../utils/AppGlobal.dart';
+import '../../../utils/Constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../localization/AppLocalizations.dart';
+import 'edit_profile/edit_profile.dart';
+import 'edit_address/edit_address.dart';
+import '../../../helper/SharedPref.dart';
+import 'edit_bank_detail/edit_bank_detail.dart';
+import 'other_profile_edit/other_profile_edit.dart';
+import '../../../localization/AppLocalizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:krishiyan/screen/AccountSettings/delete_account/delete_account.dart';
+import 'package:krishiyan/screen/dashboard/profile/delete_account/delete_account.dart';
 
-class ProfilePage extends StatefulWidget {
-  const ProfilePage({
+class Profile extends StatefulWidget {
+  const Profile({
     super.key,
   });
 
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
+  State<Profile> createState() => _ProfileState();
 }
 
-class _ProfilePageState extends State<ProfilePage>
-    with TickerProviderStateMixin {
+class _ProfileState extends State<Profile> with TickerProviderStateMixin {
   var _bottomNavIndex = 3; //default index of a first screen
 
   String name = "", email = "", contactNumber = "";
@@ -87,12 +86,12 @@ class _ProfilePageState extends State<ProfilePage>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
+          children: [
             Padding(
               padding: const EdgeInsets.only(
                   top: 40.0, bottom: 18.0, right: 18.0, left: 18.0),
               child: Row(
-                children: <Widget>[
+                children: [
                   Container(
                     height: 60.0,
                     width: 60.0,
@@ -113,7 +112,8 @@ class _ProfilePageState extends State<ProfilePage>
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1), // Shadow color
+                          color: Colors.black
+                              .withValues(alpha: 0.1), // Shadow color
                           blurRadius: 4.0, // Blur radius
                           offset: Offset(0, 2), // Shadow position
                         ),
@@ -180,7 +180,7 @@ class _ProfilePageState extends State<ProfilePage>
                 typeOfOrganizationData == "Farmer groups"
                     ? Navigator.of(context).push(
                         MaterialPageRoute(
-                            builder: (context) => const EditProfilePage()),
+                            builder: (context) => const EditProfileScreen()),
                       )
                     : Navigator.of(context).push(
                         MaterialPageRoute(
@@ -191,7 +191,7 @@ class _ProfilePageState extends State<ProfilePage>
                 padding: const EdgeInsets.only(
                     top: 30.0, bottom: 20.0, right: 18.0, left: 18.0),
                 child: Row(
-                  children: <Widget>[
+                  children: [
                     Image.asset(
                       'assets/images/edit_profile.png',
                       height: 20,
@@ -220,14 +220,14 @@ class _ProfilePageState extends State<ProfilePage>
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                      builder: (context) => const EditAddressPage()),
+                      builder: (context) => const EditAddressScreen()),
                 );
               },
               child: Padding(
                 padding: const EdgeInsets.only(
                     top: 10.0, bottom: 20.0, right: 18.0, left: 18.0),
                 child: Row(
-                  children: <Widget>[
+                  children: [
                     Image.asset(
                       'assets/images/edit_profile.png',
                       height: 20,
@@ -263,7 +263,7 @@ class _ProfilePageState extends State<ProfilePage>
                 padding: const EdgeInsets.only(
                     top: 10.0, bottom: 20.0, right: 18.0, left: 18.0),
                 child: Row(
-                  children: <Widget>[
+                  children: [
                     Image.asset(
                       'assets/images/edit_bankDetails.png',
                       height: 20,
@@ -299,7 +299,7 @@ class _ProfilePageState extends State<ProfilePage>
                 padding: const EdgeInsets.only(
                     top: 10.0, bottom: 20.0, right: 18.0, left: 18.0),
                 child: Row(
-                  children: <Widget>[
+                  children: [
                     Image.asset(
                       'assets/images/edit_profile.png',
                       height: 20,
@@ -335,7 +335,7 @@ class _ProfilePageState extends State<ProfilePage>
                 padding: const EdgeInsets.only(
                     top: 10.0, bottom: 20.0, right: 18.0, left: 18.0),
                 child: Row(
-                  children: <Widget>[
+                  children: [
                     Image.asset(
                       'assets/images/reset_password.png',
                       height: 20,
@@ -405,7 +405,7 @@ class _ProfilePageState extends State<ProfilePage>
                 padding: const EdgeInsets.only(
                     top: 10.0, bottom: 20.0, right: 18.0, left: 18.0),
                 child: Row(
-                  children: <Widget>[
+                  children: [
                     Image.asset(
                       'assets/images/logout.png',
                       height: 20,

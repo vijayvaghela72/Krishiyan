@@ -6,10 +6,10 @@ import '../../Language/SelectLanguagePage.dart';
 import 'package:krishiyan/utils/Constants.dart';
 import '../../../localization/AppLocalizations.dart';
 import 'package:flutter/material.dart' hide CarouselController;
-import 'package:krishiyan/screen/home_screen/home/widget/news.dart';
-import 'package:krishiyan/screen/home_screen/home/home_provider.dart';
-import 'package:krishiyan/screen/home_screen/home/widget/mandi_price.dart';
-import 'package:krishiyan/screen/home_screen/home/widget/market_insight.dart';
+import 'package:krishiyan/screen/dashboard/home/widget/news.dart';
+import 'package:krishiyan/screen/dashboard/home/home_provider.dart';
+import 'package:krishiyan/screen/dashboard/home/widget/mandi_price.dart';
+import 'package:krishiyan/screen/dashboard/home/widget/market_insight.dart';
 
 // ignore: must_be_immutable
 class HomeScreen extends StatefulWidget {
