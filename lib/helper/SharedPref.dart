@@ -2,7 +2,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 class SharedPref {
-
   remove(String key) async {
     final prefs = await SharedPreferences.getInstance();
     prefs.remove(key);
@@ -40,10 +39,8 @@ class SharedPref {
         return (prefs.getStringList(key) ?? <String>[]);
       case PrefEnum.MODEL:
         return prefs.getString(key) != null ? prefs.getString(key)! : "";
-      default:
-        break;
     }
   }
 }
 
-enum PrefEnum { STRING, INT, DOUBLE, BOOL, LIST, MODEL}
+enum PrefEnum { STRING, INT, DOUBLE, BOOL, LIST, MODEL }

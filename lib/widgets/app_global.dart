@@ -1,16 +1,7 @@
-import 'constant.dart';
-import 'dart:developer';
 import 'package:intl/intl.dart';
-import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppGlobal {
-  static printLog(dynamic val) {
-    if (DEVELOPER_MODE) {
-      if (kDebugMode) log(val.toString());
-    }
-  }
-
   // Function to extract the file ID from a Google Drive URL
   static String? extractCodeFromDriveLink(String url) {
     final RegExp pattern = RegExp(r'/d/([a-zA-Z0-9_-]+)/');
@@ -42,17 +33,17 @@ class AppGlobal {
 
     // Format the DateTime object to the ISO format
     String isoFormattedDate =
-    DateFormat("yyyy-MM-ddTHH:mm:ss.SSSZ").format(dateTime);
+        DateFormat("yyyy-MM-ddTHH:mm:ss.SSSZ").format(dateTime);
     // 2024-09-03T00:00:00.000Z
     // Adjust the format to match the specific format with '000Z' at the end
     // Replace the '+0000' with ':000Z'
-    isoFormattedDate = isoFormattedDate.replaceFirst(RegExp(r'\+0000'), '.000Z');
+    isoFormattedDate =
+        isoFormattedDate.replaceFirst(RegExp(r'\+0000'), '.000Z');
 
     return isoFormattedDate;
   }
 
   static String convertToCustomDateFormat(String isoDate) {
-
     // print("convertToCustomDateFormat : $isoDate");
 
     // Remove the trailing ':000Z' part to make it a standard ISO 8601 format

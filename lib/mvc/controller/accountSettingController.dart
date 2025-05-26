@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../../helper/API.dart';
 import '../../helper/SharedPref.dart';
-import '../../widgets/app_global.dart';
 import '../../widgets/constant.dart';
 import '../model/APIResponse.dart';
 import '../model/GetAddressDetails.dart';
@@ -18,7 +17,7 @@ class AccountSettingController {
         .callPostImage(FRM_PROFILE_DETAILS + contactNumber, null, "",
             isKeyByPass: true)
         .then((response) {
-      AppGlobal.printLog("Edit FRM Profile Details RESPONSE : " + response);
+      print("Edit FRM Profile Details RESPONSE : " + response);
       APIResponse? apiResponse = APIResponse.fromJson(jsonDecode(response));
       if (apiResponse.success!) {
         if (apiResponse.frmProfileData!.dateOfFpo != null) {
@@ -38,7 +37,7 @@ class AccountSettingController {
       }
       return null;
     }).catchError((onError) {
-      AppGlobal.printLog("ERROR " + onError.toString());
+      print("ERROR " + onError.toString());
       return null;
     });
   }
@@ -48,7 +47,7 @@ class AccountSettingController {
     return API
         .callPostImage(PROFILE_DETAILS + id, null, "", isKeyByPass: true)
         .then((response) {
-      AppGlobal.printLog("Trader Edit Profile Details RESPONSE : " + response);
+      print("Trader Edit Profile Details RESPONSE : " + response);
       APIResponse? apiResponse = APIResponse.fromJson(jsonDecode(response));
       if (apiResponse.success!) {
         if (apiResponse.profileData!.incorporationDate != null) {
@@ -71,7 +70,7 @@ class AccountSettingController {
       }
       return null;
     }).catchError((onError) {
-      AppGlobal.printLog("ERROR " + onError.toString());
+      print("ERROR " + onError.toString());
       return null;
     });
   }
@@ -81,7 +80,7 @@ class AccountSettingController {
     return API
         .callPostImage(OTHER_DETAILS + number, null, "", isKeyByPass: true)
         .then((response) {
-      AppGlobal.printLog("Other Details RESPONSE : " + response);
+      print("Other Details RESPONSE : " + response);
       APIResponse? apiResponse = APIResponse.fromJson(jsonDecode(response));
       if (apiResponse.success!) {
         return apiResponse.otherData;
@@ -91,7 +90,7 @@ class AccountSettingController {
       }
       return null;
     }).catchError((onError) {
-      AppGlobal.printLog("ERROR " + onError.toString());
+      print("ERROR " + onError.toString());
       return null;
     });
   }
@@ -102,7 +101,7 @@ class AccountSettingController {
         .callPostImage(BANK_DETAILS + number, null, "", isKeyByPass: true)
         .then((response) {
       print('BANK_DETAILS + number : ${BANK_DETAILS + number}');
-      AppGlobal.printLog("Bank Details RESPONSE : " + response);
+      print("Bank Details RESPONSE : " + response);
       APIResponse? apiResponse = APIResponse.fromJson(jsonDecode(response));
 
       if (apiResponse.success!) {
@@ -113,7 +112,7 @@ class AccountSettingController {
       }
       return null;
     }).catchError((onError) {
-      AppGlobal.printLog("ERROR " + onError.toString());
+      print("ERROR " + onError.toString());
       return null;
     });
   }
@@ -125,11 +124,10 @@ class AccountSettingController {
         .callPostImage("${baseUrl}address/" + number, null, "",
             isKeyByPass: true)
         .then((response) {
-      AppGlobal.printLog("Address RESPONSE : " + response.toString());
+      print("Address RESPONSE : " + response.toString());
       APIResponse? apiResponse = APIResponse.fromJson(jsonDecode(response));
       if (apiResponse.success!) {
-        AppGlobal.printLog(
-            "Address Success : " + apiResponse.success.toString());
+        print("Address Success : " + apiResponse.success.toString());
         return apiResponse.addressData;
       }
       if (apiResponse.message != "") {
@@ -137,7 +135,7 @@ class AccountSettingController {
       }
       return null;
     }).catchError((onError) {
-      AppGlobal.printLog("ERROR Address Get : " + onError.toString());
+      print("ERROR Address Get : " + onError.toString());
       return null;
     });
   }

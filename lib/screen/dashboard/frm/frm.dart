@@ -26,7 +26,7 @@ import '../../../mvc/model/SelectVillagesNameData.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:krishiyan/mvc/model/FarmerDashboardData.dart';
 import '../../../mvc/controller/farmerDashboardController.dart';
-import 'package:krishiyan/screen/AccountSettings/FarmerEditProfilePage.dart';
+import 'package:krishiyan/screen/dashboard/frm/widget/FarmerEditProfilePage.dart';
 
 // ignore: must_be_immutable
 class FRM extends StatefulWidget {
