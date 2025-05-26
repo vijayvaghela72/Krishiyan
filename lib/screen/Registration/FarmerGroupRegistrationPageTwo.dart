@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:krishiyan/screen/login/login.dart';
 import 'package:krishiyan/screen/registration/MyRegistrationPage.dart';
 import '../../helper/AlertHelper.dart';
 import '../../mvc/controller/farmerDashboardController.dart';
 import '../../widgets/app_global.dart';
-import '../Login/LoginPage.dart';
 
 // ignore: must_be_immutable
 class FarmerGroupRegistrationPageTwo extends StatefulWidget {
@@ -461,7 +461,7 @@ class _FarmerGroupRegistrationPageTwoState
               Navigator.of(context).pop();
               // Navigator.of(context).popUntil((route) => route.isFirst);
               Navigator.of(context).pushReplacement(MaterialPageRoute(
-                  builder: (BuildContext context) => const LoginPage()));
+                  builder: (BuildContext context) => const Login()));
             },
             child: const Align(
               alignment: Alignment.topRight,

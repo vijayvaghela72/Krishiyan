@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
+import 'package:krishiyan/screen/login/login.dart';
 import 'package:krishiyan/screen/registration/MyRegistrationPage.dart';
 import 'package:krishiyan/widgets/constant.dart';
 import 'package:otp_text_field/otp_field.dart';
@@ -10,7 +11,6 @@ import 'package:otp_text_field/style.dart';
 import '../../helper/AlertHelper.dart';
 import '../../localization/AppLocalizations.dart';
 import '../../mvc/controller/farmerDashboardController.dart';
-import '../Login/LoginPage.dart';
 import 'package:krishiyan/mvc/model/GetOtpDetails.dart';
 import '../../mvc/controller/otpController.dart';
 
@@ -721,7 +721,7 @@ class _OtherRegistrationPageState extends State<OtherRegistrationPage> {
               Navigator.of(context).pop();
               Navigator.of(context).pop();
               Navigator.of(context).pushReplacement(MaterialPageRoute(
-                  builder: (BuildContext context) => const LoginPage()));
+                  builder: (BuildContext context) => const Login()));
             },
             child: const Align(
               alignment: Alignment.topRight,
@@ -848,7 +848,7 @@ class _OtherRegistrationPageState extends State<OtherRegistrationPage> {
       // Navigate to the login page
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const LoginPage()),
+        MaterialPageRoute(builder: (context) => const Login()),
       );
     }
   }

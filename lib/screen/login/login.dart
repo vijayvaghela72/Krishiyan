@@ -13,14 +13,14 @@ import '../../widgets/constant.dart';
 import '../dashboard/profile/forgot_password/forgot_password.dart';
 import '../dashboard/dashborad.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class Login extends StatefulWidget {
+  const Login({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<Login> createState() => _LoginState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginState extends State<Login> {
   TextEditingController mobileNumberController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 

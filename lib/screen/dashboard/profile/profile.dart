@@ -1,6 +1,7 @@
+import 'package:krishiyan/screen/login/login.dart';
+
 import 'other_detail/other_detail.dart';
 import 'forgot_password/forgot_password.dart';
-import '../../Login/LoginPage.dart';
 import '../../../widgets/app_global.dart';
 import '../../../widgets/constant.dart';
 import 'package:flutter/material.dart';
@@ -397,7 +398,7 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 await prefs.clear(); // Clear user data
                 Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                  MaterialPageRoute(builder: (context) => const Login()),
                   (Route<dynamic> route) => false,
                 );
               },

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:krishiyan/screen/login/login.dart';
 import 'dashboard/dashborad.dart';
 import '../helper/SharedPref.dart';
 import '../widgets/constant.dart';
-import 'Login/LoginPage.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -24,7 +24,7 @@ class _SplashScreenState extends State<SplashScreen> {
     if (!checkLogin) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const LoginPage()),
+        MaterialPageRoute(builder: (context) => const Login()),
       );
     } else {
       Navigator.push(

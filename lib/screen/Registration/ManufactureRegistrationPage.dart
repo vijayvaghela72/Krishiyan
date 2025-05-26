@@ -4,6 +4,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
+import 'package:krishiyan/screen/login/login.dart';
 import 'package:krishiyan/screen/registration/MyRegistrationPage.dart';
 import 'package:krishiyan/widgets/constant.dart';
 import 'package:otp_text_field/otp_field.dart';
@@ -13,7 +14,6 @@ import '../../localization/AppLocalizations.dart';
 import '../../mvc/controller/farmerDashboardController.dart';
 import '../../mvc/controller/otpController.dart';
 import '../../mvc/model/GetOtpDetails.dart';
-import '../Login/LoginPage.dart';
 
 class ManufactureRegistrationPage extends StatefulWidget {
   const ManufactureRegistrationPage({super.key});
@@ -823,7 +823,7 @@ class _ManufactureRegistrationPageState
       // Navigate to the login page
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const LoginPage()),
+        MaterialPageRoute(builder: (context) => const Login()),
       );
     }
   }
@@ -875,7 +875,7 @@ class _ManufactureRegistrationPageState
               Navigator.of(context).pop();
               // Navigator.of(context).popUntil((route) => route.isFirst);
               Navigator.of(context).pushReplacement(MaterialPageRoute(
-                  builder: (BuildContext context) => const LoginPage()));
+                  builder: (BuildContext context) => const Login()));
             },
             child: const Align(
               alignment: Alignment.topRight,

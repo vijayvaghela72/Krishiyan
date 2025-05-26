@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:krishiyan/screen/Login/LoginPage.dart';
+import 'package:krishiyan/screen/login/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DeleteAccountPage extends StatelessWidget {
@@ -85,7 +85,7 @@ class DeleteAccountPage extends StatelessWidget {
 
                           Navigator.of(context).pushAndRemoveUntil(
                             MaterialPageRoute(
-                                builder: (context) => const LoginPage()),
+                                builder: (context) => const Login()),
                             (Route<dynamic> route) => false,
                           );
                         },

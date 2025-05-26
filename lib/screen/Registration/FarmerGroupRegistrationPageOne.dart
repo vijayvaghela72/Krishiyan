@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:krishiyan/localization/AppLocalizations.dart';
-import 'package:krishiyan/screen/Login/LoginPage.dart';
+import 'package:krishiyan/screen/login/login.dart';
 import 'package:krishiyan/screen/registration/MyRegistrationPage.dart';
 import 'package:intl/intl.dart';
 import 'package:krishiyan/widgets/constant.dart';
@@ -735,7 +735,7 @@ class _FarmerGroupRegistrationPageOneState
       // Navigate to the login page
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const LoginPage()),
+        MaterialPageRoute(builder: (context) => const Login()),
       );
     }
   }
