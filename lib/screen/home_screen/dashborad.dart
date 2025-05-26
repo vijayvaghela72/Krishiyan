@@ -3,7 +3,7 @@ import '../../utils/AppColor.dart';
 import '../../utils/Constants.dart';
 import '../../helper/SharedPref.dart';
 import 'package:flutter/material.dart';
-import '../CropLibrary/BottomThreePage.dart';
+import 'crop/crop.dart';
 import '../AccountSettings/ProfilePage.dart';
 import '../Language/SelectLanguagePage.dart';
 import '../Enquiry/BottomCenterEnquiryPage.dart';
@@ -65,7 +65,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   ];
 
   final List<Widget> _screens1 = [
-    BottomOnePage(aapbarVisibility: false),
+    HomeScreen(aapbarVisibility: false),
     BottomTwoPage(
       aapbarVisibility: false,
     ),
@@ -79,7 +79,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   ];
 
   final List<Widget> _screens2 = [
-    BottomOnePage(aapbarVisibility: false),
+    HomeScreen(aapbarVisibility: false),
     const ProfilePage(),
     BottomCenterEnquiryPage(
       aapbarVisibility: false,

@@ -12,17 +12,16 @@ import 'package:krishiyan/screen/home_screen/home/widget/mandi_price.dart';
 import 'package:krishiyan/screen/home_screen/home/widget/market_insight.dart';
 
 // ignore: must_be_immutable
-class BottomOnePage extends StatefulWidget {
+class HomeScreen extends StatefulWidget {
   bool aapbarVisibility;
 
-  BottomOnePage({super.key, required this.aapbarVisibility});
+  HomeScreen({super.key, required this.aapbarVisibility});
 
   @override
-  State<BottomOnePage> createState() => _BottomOnePageState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _BottomOnePageState extends State<BottomOnePage>
-    with TickerProviderStateMixin {
+class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   update() {
     if (mounted) {
       setState(() {});
@@ -70,7 +69,7 @@ class _BottomOnePageState extends State<BottomOnePage>
                     setState(() {
                       // refresh state
                       MyLocalizations.load(Locale(localLang, ''));
-                      print("BottomOnePage Lang : $localLang");
+                      print("HomeScreen Lang : $localLang");
                     });
                   });
                 },

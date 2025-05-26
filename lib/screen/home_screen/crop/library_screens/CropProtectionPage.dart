@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../mvc/model/CropLibraryData.dart';
-import '../CropLibrary/DeficiencyManagementPage.dart';
-import '../CropLibrary/DiseaseManagementPage.dart';
-import '../CropLibrary/MyPestManagementPage.dart';
-import '../Language/SelectLanguagePage.dart';
-import '../CropLibrary/MyWeatherInjuriesPage.dart';
-import '../CropLibrary/MyWeedManagementPage.dart';
+import '../../../../mvc/model/CropLibraryData.dart';
+import '../../../CropLibrary/DeficiencyManagementPage.dart';
+import '../../../CropLibrary/DiseaseManagementPage.dart';
+import '../../../CropLibrary/MyPestManagementPage.dart';
+import '../../../Language/SelectLanguagePage.dart';
+import '../../../CropLibrary/MyWeatherInjuriesPage.dart';
+import '../../../CropLibrary/MyWeedManagementPage.dart';
 
 // ignore: must_be_immutable
 class CropProtectionPage extends StatefulWidget {

@@ -3,8 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:krishiyan/mvc/model/CropLibraryData.dart';
 import 'package:krishiyan/mvc/model/VarietyData.dart';
 import 'package:krishiyan/mvc/model/variet_model.dart';
-import '../../localization/AppLocalizations.dart';
-import '../Language/SelectLanguagePage.dart';
+import '../../../../localization/AppLocalizations.dart';
+import '../../../Language/SelectLanguagePage.dart';
 
 // ignore: must_be_immutable
 class MyVeritiesPage extends StatefulWidget {

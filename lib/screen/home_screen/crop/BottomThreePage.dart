@@ -5,25 +5,28 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
-import '../../localization/AppLocalizations.dart';
-import '../../mvc/controller/cropController.dart';
-import '../../mvc/model/CropLibraryData.dart';
-import '../../mvc/model/SelectCropNamesData.dart';
-import '../../utils/Constants.dart';
-import '../FRM/CropProtectionPage.dart';
-import 'FaqPage.dart';
-import 'GeneralInformationPage.dart';
-import 'HarvestPage.dart';
-import 'IrrigationManagementPage.dart';
-import 'NutrientManagmentPage.dart';
-import 'MyProSawingPracticesPage.dart';
-import '../Language/SelectLanguagePage.dart';
-import 'MyVeritiesPage.dart';
+import '../../../localization/AppLocalizations.dart';
+import '../../../mvc/controller/cropController.dart';
+import '../../../mvc/model/CropLibraryData.dart';
+import '../../../mvc/model/SelectCropNamesData.dart';
+import '../../../utils/Constants.dart';
+import 'library_screens/CropProtectionPage.dart';
+import 'library_screens/FaqPage.dart';
+import 'library_screens/general_Info.dart';
+import 'library_screens/HarvestPage.dart';
+import 'library_screens/IrrigationManagementPage.dart';
+import 'library_screens/NutrientManagmentPage.dart';
+import 'library_screens/MyProSawingPracticesPage.dart';
+import '../../Language/SelectLanguagePage.dart';
+import 'library_screens/MyVeritiesPage.dart';
 
 class CropLibraryScreen extends StatefulWidget {
   bool aapbarVisibility;
 
-  CropLibraryScreen({super.key, required this.aapbarVisibility});
+  CropLibraryScreen({
+    super.key,
+    required this.aapbarVisibility,
+  });
 
   @override
   State<CropLibraryScreen> createState() => _CropLibraryScreenState();
@@ -31,25 +34,6 @@ class CropLibraryScreen extends StatefulWidget {
 
 class _CropLibraryScreenState extends State<CropLibraryScreen>
     with TickerProviderStateMixin {
-  List<bottomCategory> iconList = [
-    bottomCategory(
-        name: buildTranslate("home")!,
-        id: "1",
-        icon: 'assets/images/bottom1.png'),
-    bottomCategory(
-        name: buildTranslate("frm")!,
-        id: "2",
-        icon: 'assets/images/bottom2.png'),
-    bottomCategory(
-        name: buildTranslate("crop")!,
-        id: "3",
-        icon: 'assets/images/bottom3.png'),
-    bottomCategory(
-        name: buildTranslate("profile")!,
-        id: "4",
-        icon: 'assets/images/bottom4.png'),
-  ];
-
   List<Entity> ORG_Entity = [
     Entity(
       name: buildTranslate("generalInformation")!,
