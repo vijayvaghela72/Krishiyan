@@ -10,7 +10,7 @@ import '../../../language/select_language.dart';
 class MyVeritiesPage extends StatefulWidget {
   bool aapbarVisibility;
   String? selectedcrop;
-  Future<List<CropLibraryData>?> cropData;
+  Future<CropLibraryData> cropData;
 
   MyVeritiesPage(
       {super.key,

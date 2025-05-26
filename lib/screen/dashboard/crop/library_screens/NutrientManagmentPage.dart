@@ -6,7 +6,7 @@ import '../../../language/select_language.dart';
 // ignore: must_be_immutable
 class NutrientManagmentPage extends StatefulWidget {
   bool aapbarVisibility;
-  Future<List<CropLibraryData>?> cropData;
+  Future<CropLibraryData> cropData;
   String? selectedcrop;
 
   NutrientManagmentPage(
@@ -132,247 +132,219 @@ class _NutrientManagmentPageState extends State<NutrientManagmentPage>
             const SizedBox(
               height: 20,
             ),
-            FutureBuilder<List<CropLibraryData>?>(
+            FutureBuilder<CropLibraryData>(
               future: widget.cropData,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                } else if (!snapshot.hasData) {
                   return const Center(child: Text('No data available'));
                 }
 
-                // Filter data based on the selected crop (localName)
-                List<CropLibraryData>? filteredData =
-                    snapshot.data?.where((data) {
-                  return data.localName ==
-                      widget
-                          .selectedcrop; // Assuming selectedCrop is passed via widget
-                }).toList();
+                CropLibraryData cropData = snapshot.data!;
 
-                // If no data matches the selected crop, show a message
-                if (filteredData == null || filteredData.isEmpty) {
+                // Check if this is the selected crop
+                if (cropData.localName != widget.selectedcrop) {
                   return const Center(
                       child: Text('No data available for the selected crop'));
                 }
 
-                filteredData.forEach((cropData) {
-                  cropData.nutrient?.removeWhere((nutrient) =>
-                      nutrient.dosage == null &&
-                      nutrient.methodApplication == null &&
-                      nutrient.age == null);
-                });
+                // Remove nutrients with null values
+                cropData.nutrient?.removeWhere((nutrient) =>
+                    nutrient.dosage == null &&
+                    nutrient.methodApplication == null &&
+                    nutrient.age == null);
+
+                var nutrients = cropData.nutrient;
+
+                // Check if nutrients is not empty
+                if (nutrients == null || nutrients.isEmpty) {
+                  return const Center(child: Text("No nutrients available."));
+                }
 
                 return ListView.builder(
-                  itemCount: filteredData.length,
+                  itemCount: nutrients.length,
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  itemBuilder: (context, index) {
-                    var nutrients = filteredData[index].nutrient;
+                  itemBuilder: (context, nutrientIndex) {
+                    var nutrient = nutrients[nutrientIndex];
 
-                    // Check if nutrients is not empty
-                    if (nutrients!.isEmpty) {
-                      return const Center(
-                          child: Text("No nutrients available."));
-                    }
-
-                    return ListView.builder(
-                      itemCount: nutrients.length,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, nutrientIndex) {
-                        var nutrient = nutrients[nutrientIndex];
-
-                        return Padding(
-                          padding: const EdgeInsets.only(
-                              left: 15.0, right: 15.0, bottom: 15.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border.all(
-                                  color: const Color(0xFFd3d3d3), width: 1),
-                              boxShadow: const [
-                                BoxShadow(color: Color(0xFFd3d3d3))
-                              ],
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            child: InkWell(
-                              highlightColor: Colors.transparent,
-                              splashColor: Colors.transparent,
-                              onTap: () {
-                                // Define the action on tap
-                              },
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  Container(
-                                    width: MediaQuery.of(context).size.width,
-                                    padding: const EdgeInsets.only(
-                                      left: 15.0,
-                                      right: 15.0,
-                                      top: 20.0,
-                                    ),
-                                    child: ElevatedButton(
-                                      onPressed: () {},
-                                      style: ElevatedButton.styleFrom(
-                                        foregroundColor: Colors.white,
-                                        padding: const EdgeInsets.all(12),
-                                        textStyle:
-                                            const TextStyle(fontSize: 18),
-                                        backgroundColor:
-                                            const Color(0xFF1E8E27),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          Image.asset(
-                                              "assets/images/growing_seed.png",
-                                              width: 20,
-                                              height: 20),
-                                          const SizedBox(width: 10),
-                                          Text(
-                                            nutrient.name ?? "No Name",
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              fontFamily: 'poppins-regular',
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                    return Padding(
+                      padding: const EdgeInsets.only(
+                          left: 15.0, right: 15.0, bottom: 15.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(
+                              color: const Color(0xFFd3d3d3), width: 1),
+                          boxShadow: const [
+                            BoxShadow(color: Color(0xFFd3d3d3))
+                          ],
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: InkWell(
+                          highlightColor: Colors.transparent,
+                          splashColor: Colors.transparent,
+                          onTap: () {
+                            // Define the action on tap
+                          },
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Container(
+                                width: MediaQuery.of(context).size.width,
+                                padding: const EdgeInsets.only(
+                                  left: 15.0,
+                                  right: 15.0,
+                                  top: 20.0,
+                                ),
+                                child: ElevatedButton(
+                                  onPressed: () {},
+                                  style: ElevatedButton.styleFrom(
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.all(12),
+                                    textStyle: const TextStyle(fontSize: 18),
+                                    backgroundColor: const Color(0xFF1E8E27),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
                                     ),
                                   ),
-                                  Flexible(
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(top: 20.0),
-                                      child: Center(
-                                        child: Text(
-                                          nutrient.dosage ?? "No Dosage Info",
-                                          textAlign: TextAlign.center,
-                                          softWrap: true,
-                                          style: const TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 14,
-                                            fontFamily: 'poppins-semibold',
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    width: MediaQuery.of(context).size.width,
-                                    padding: const EdgeInsets.only(
-                                        left: 15.0, right: 15.0, top: 20.0),
-                                    child: ElevatedButton(
-                                      onPressed: () {},
-                                      style: ElevatedButton.styleFrom(
-                                        foregroundColor: Colors.white,
-                                        padding: const EdgeInsets.all(12),
-                                        textStyle:
-                                            const TextStyle(fontSize: 18),
-                                        backgroundColor:
-                                            const Color(0xFF1E8E27),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
-                                      ),
-                                      child: Column(
-                                        children: [
-                                          Align(
-                                            alignment: Alignment.topLeft,
-                                            child: Row(
-                                              children: [
-                                                Image.asset(
-                                                    "assets/images/age.png",
-                                                    width: 20,
-                                                    height: 20),
-                                                const SizedBox(width: 5),
-                                                const Text(
-                                                  'Age of Crops',
-                                                  textAlign: TextAlign.start,
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                    fontFamily:
-                                                        'poppins-regular',
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          const SizedBox(height: 10),
-                                          Align(
-                                            alignment: Alignment.topLeft,
-                                            child: Text(
-                                              nutrient.age ?? "No Age Info",
-                                              textAlign: TextAlign.start,
-                                              style: const TextStyle(
-                                                fontSize: 10,
-                                                fontFamily: 'poppins-regular',
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(height: 5),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 20.0),
-                                  const Flexible(
-                                    child: Padding(
-                                      padding: EdgeInsets.only(
-                                          top: 10.0, right: 15.0, left: 15.0),
-                                      child: Text(
-                                        "Method of Application",
-                                        softWrap: true,
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 14,
-                                          fontFamily: 'poppins-semibold',
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Flexible(
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 10.0, right: 15.0, left: 15.0),
-                                      child: Text(
-                                        nutrient.methodApplication ??
-                                            "No Application Method Info",
-                                        textAlign: TextAlign.justify,
-                                        softWrap: true,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Image.asset(
+                                          "assets/images/growing_seed.png",
+                                          width: 20,
+                                          height: 20),
+                                      const SizedBox(width: 10),
+                                      Text(
+                                        nutrient.name ?? "No Name",
                                         style: const TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 13,
+                                          fontSize: 14,
                                           fontFamily: 'poppins-regular',
                                         ),
                                       ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Flexible(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 20.0),
+                                  child: Center(
+                                    child: Text(
+                                      nutrient.dosage ?? "No Dosage Info",
+                                      textAlign: TextAlign.center,
+                                      softWrap: true,
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 14,
+                                        fontFamily: 'poppins-semibold',
+                                      ),
                                     ),
                                   ),
-                                  const SizedBox(height: 20),
-                                ],
+                                ),
                               ),
-                            ),
+                              Container(
+                                width: MediaQuery.of(context).size.width,
+                                padding: const EdgeInsets.only(
+                                    left: 15.0, right: 15.0, top: 20.0),
+                                child: ElevatedButton(
+                                  onPressed: () {},
+                                  style: ElevatedButton.styleFrom(
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.all(12),
+                                    textStyle: const TextStyle(fontSize: 18),
+                                    backgroundColor: const Color(0xFF1E8E27),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Align(
+                                        alignment: Alignment.topLeft,
+                                        child: Row(
+                                          children: [
+                                            Image.asset("assets/images/age.png",
+                                                width: 20, height: 20),
+                                            const SizedBox(width: 5),
+                                            const Text(
+                                              'Age of Crops',
+                                              textAlign: TextAlign.start,
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontFamily: 'poppins-regular',
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Align(
+                                        alignment: Alignment.topLeft,
+                                        child: Text(
+                                          nutrient.age ?? "No Age Info",
+                                          textAlign: TextAlign.start,
+                                          style: const TextStyle(
+                                            fontSize: 10,
+                                            fontFamily: 'poppins-regular',
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 5),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 20.0),
+                              const Flexible(
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                      top: 10.0, right: 15.0, left: 15.0),
+                                  child: Text(
+                                    "Method of Application",
+                                    softWrap: true,
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 14,
+                                      fontFamily: 'poppins-semibold',
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Flexible(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 10.0, right: 15.0, left: 15.0),
+                                  child: Text(
+                                    nutrient.methodApplication ??
+                                        "No Application Method Info",
+                                    textAlign: TextAlign.justify,
+                                    softWrap: true,
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 13,
+                                      fontFamily: 'poppins-regular',
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+                            ],
                           ),
-                        );
-                      },
+                        ),
+                      ),
                     );
                   },
                 );
               },
-            ),
-            const SizedBox(
-              height: 25,
             ),
           ],
         ),

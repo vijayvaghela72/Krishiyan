@@ -52,7 +52,7 @@ class _EditSellCommodityPageState extends State<EditSellCommodityPage> {
   final List<String> purchaseItems = ['Kg', 'Qtl', 'Ton'];
   String? selectedPurchaseItemValue;
 
-  late Future<List<CropLibraryData>?> futureCropData;
+  // late Future<List<CropLibraryData>?> futureCropData;
   String? _selectedCrop;
   SelectCropNamesData? _cropData;
 
@@ -88,7 +88,7 @@ class _EditSellCommodityPageState extends State<EditSellCommodityPage> {
       var response = await getAPICall(apiUrl: CROPS_NAMES);
 
       if (response.statusCode == 200) {
-        futureCropData = CropController.fetchCrop(_cropData!.data!.first);
+        // futureCropData = CropController.fetchCrop(_cropData!.data!.first);
         _cropData = SelectCropNamesData.fromJson(jsonDecode(response.body));
         setState(() {});
       } else {

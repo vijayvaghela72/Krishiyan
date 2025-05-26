@@ -1,13 +1,13 @@
-import '../../helper/drive_image.dart';
+import '../../../../../helper/drive_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../language/select_language.dart';
-import '../../mvc/model/CropLibraryData.dart';
+import '../../../../language/select_language.dart';
+import '../../../../../mvc/model/CropLibraryData.dart';
 
 // ignore: must_be_immutable
 class DiseaseManagementPage extends StatefulWidget {
   bool aapbarVisibility;
-  Future<List<CropLibraryData>?> cropData;
+  Future<CropLibraryData> cropData;
   String? selectedcrop;
 
   DiseaseManagementPage(
@@ -142,24 +142,24 @@ class _DiseaseManagementPageState extends State<DiseaseManagementPage>
   }
 
   Widget listWidget() {
-    return FutureBuilder<List<CropLibraryData>?>(
+    return FutureBuilder<CropLibraryData>(
       future: widget.cropData,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          List<CropLibraryData>? filteredData = snapshot.data?.where((data) {
-            return data.localName ==
-                widget.selectedcrop; // Filter by selected crop
+          List<CropLibraryData> filteredData = [snapshot.data!].where((data) {
+            return data.localName == widget.selectedcrop;
           }).toList();
 
-          // Check if filteredData has any results
-          if (filteredData == null || filteredData.isEmpty) {
+          if (filteredData.isEmpty) {
             return const Text('No data available for the selected crop.');
           }
+
           filteredData.forEach((cropData) {
             cropData.diseaseManagement?.removeWhere((diseaseManagement) =>
                 diseaseManagement.causal == null &&
                 diseaseManagement.solutions == null);
           });
+
           return ListView.builder(
               itemCount: filteredData.length,
               shrinkWrap: true,

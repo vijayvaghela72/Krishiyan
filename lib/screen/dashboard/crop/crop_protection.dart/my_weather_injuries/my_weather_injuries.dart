@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../mvc/model/CropLibraryData.dart';
-import '../../helper/drive_image.dart';
-import '../language/select_language.dart';
+import '../../../../../mvc/model/CropLibraryData.dart';
+import '../../../../../helper/drive_image.dart';
+import '../../../../language/select_language.dart';
 
 // ignore: must_be_immutable
 class MyWeatherInjuriesPage extends StatefulWidget {
   bool aapbarVisibility;
-  Future<List<CropLibraryData>?> cropData;
+  Future<CropLibraryData?> cropData;
   String? selectedcrop;
 
   MyWeatherInjuriesPage(
@@ -149,22 +149,22 @@ class _MyWeatherInjuriesPageState extends State<MyWeatherInjuriesPage>
   }
 
   Widget listWidget() {
-    return FutureBuilder<List<CropLibraryData>?>(
+    return FutureBuilder<CropLibraryData?>(
       future: widget.cropData,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          List<CropLibraryData>? filteredData = snapshot.data?.where((data) {
-            return data.localName ==
-                widget.selectedcrop; // Filter by selected crop
-          }).toList();
+          CropLibraryData? filteredData;
+          if (snapshot.data?.localName == widget.selectedcrop) {
+            filteredData = snapshot.data;
+          }
 
           // Check if filteredData has any results
-          if (filteredData == null || filteredData.isEmpty) {
+          if (filteredData == null) {
             return const Text('No data available for the selected crop.');
           }
 
           return ListView.builder(
-            itemCount: filteredData.length,
+            itemCount: 1,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemBuilder: (context, parentIndex) {
@@ -174,7 +174,7 @@ class _MyWeatherInjuriesPageState extends State<MyWeatherInjuriesPage>
                   shrinkWrap: true,
                   scrollDirection: Axis.vertical,
                   physics: const NeverScrollableScrollPhysics(),
-                  itemCount: filteredData[parentIndex].weatherInjuries!.length,
+                  // itemCount: filteredData.weatherInjuries!.length,
                   itemBuilder: (context, injuryIndex) {
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -202,12 +202,12 @@ class _MyWeatherInjuriesPageState extends State<MyWeatherInjuriesPage>
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(15),
                                 ),
-                                child: filteredData[parentIndex]
+                                child: filteredData!
                                         .weatherInjuries![injuryIndex]
                                         .image!
                                         .isNotEmpty
                                     ? DriveImage(
-                                        imageUrlData: filteredData[parentIndex]
+                                        imageUrlData: filteredData
                                             .weatherInjuries![injuryIndex]
                                             .image!)
                                     : Container(),
@@ -226,7 +226,7 @@ class _MyWeatherInjuriesPageState extends State<MyWeatherInjuriesPage>
                                         onPressed: () {
                                           showCausesAlertDialog(
                                               context,
-                                              filteredData[parentIndex]
+                                              filteredData!
                                                   .weatherInjuries![injuryIndex]
                                                   .causes!);
                                         },
@@ -259,7 +259,7 @@ class _MyWeatherInjuriesPageState extends State<MyWeatherInjuriesPage>
                                         onPressed: () {
                                           showSymptomAlertDialog(
                                               context,
-                                              filteredData[parentIndex]
+                                              filteredData!
                                                   .weatherInjuries![injuryIndex]
                                                   .symptoms!);
                                         },

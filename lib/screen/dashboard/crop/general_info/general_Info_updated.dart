@@ -1,6 +1,6 @@
-import '../../../../helper/drive_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../../../helper/drive_image.dart';
 import '../../../language/select_language.dart';
 import '../../../../localization/AppLocalizations.dart';
 import 'package:krishiyan/mvc/model/CropLibraryData.dart';
@@ -8,7 +8,7 @@ import 'package:krishiyan/mvc/model/CropLibraryData.dart';
 // ignore: must_be_immutable
 class GeneralInformationPage extends StatefulWidget {
   bool aapbarVisibility;
-  Future<List<CropLibraryData>?> cropData;
+  Future<CropLibraryData> cropData;
   String? selectedcrop;
 
   GeneralInformationPage(
@@ -135,24 +135,14 @@ class _GeneralInformationPageState extends State<GeneralInformationPage>
             const SizedBox(
               height: 10,
             ),
-            FutureBuilder<List<CropLibraryData>?>(
+            FutureBuilder<CropLibraryData>(
               future: widget.cropData,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  // Filter the data based on selected crop (localName)
-                  List<CropLibraryData>? filteredData =
-                      snapshot.data?.where((data) {
-                    return data.localName ==
-                        widget.selectedcrop; // Filter by selected crop
-                  }).toList();
+                  // Get the crop data directly
+                  CropLibraryData cropData = snapshot.data!;
 
-                  // Check if filteredData has any results
-                  if (filteredData == null || filteredData.isEmpty) {
-                    return const Text(
-                        'No data available for the selected crop.');
-                  }
-
-                  // Continue with building the table with filtered data
+                  // Continue with building the table with crop data
                   return Padding(
                     padding: const EdgeInsets.only(left: 10.0, right: 10.0),
                     child: Container(
@@ -189,7 +179,7 @@ class _GeneralInformationPageState extends State<GeneralInformationPage>
                             ],
                           ),
 
-                          // Table Rows for filtered crop data
+                          // Table Rows for crop data
                           TableRow(children: [
                             const Padding(
                               padding: EdgeInsets.all(8.0),
@@ -204,8 +194,7 @@ class _GeneralInformationPageState extends State<GeneralInformationPage>
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                  filteredData[0].generalInformation!.kharif ??
-                                      "",
+                                  cropData.generalInformation?.kharif ?? "",
                                   softWrap: true,
                                   textAlign: TextAlign.center,
                                   style: const TextStyle(
@@ -230,8 +219,7 @@ class _GeneralInformationPageState extends State<GeneralInformationPage>
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                  filteredData[0].generalInformation!.rabi ??
-                                      "",
+                                  cropData.generalInformation?.rabi ?? "",
                                   softWrap: true,
                                   textAlign: TextAlign.center,
                                   style: const TextStyle(
@@ -256,8 +244,7 @@ class _GeneralInformationPageState extends State<GeneralInformationPage>
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                  filteredData[0].generalInformation!.zaid ??
-                                      "",
+                                  cropData.generalInformation?.zaid ?? "",
                                   softWrap: true,
                                   textAlign: TextAlign.center,
                                   style: const TextStyle(
@@ -282,10 +269,7 @@ class _GeneralInformationPageState extends State<GeneralInformationPage>
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                  filteredData[0]
-                                          .generalInformation!
-                                          .optimumTemperature ??
-                                      "",
+                                  cropData.generalInformation?.optimumTemperature ?? "",
                                   softWrap: true,
                                   textAlign: TextAlign.center,
                                   style: const TextStyle(
@@ -310,10 +294,7 @@ class _GeneralInformationPageState extends State<GeneralInformationPage>
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                  filteredData[0]
-                                          .generalInformation!
-                                          .rainfallRequirement ??
-                                      "",
+                                  cropData.generalInformation?.rainfallRequirement ?? "",
                                   softWrap: true,
                                   textAlign: TextAlign.center,
                                   style: const TextStyle(
@@ -338,10 +319,7 @@ class _GeneralInformationPageState extends State<GeneralInformationPage>
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                  filteredData[0]
-                                          .generalInformation!
-                                          .recommendedSoil ??
-                                      "",
+                                  cropData.generalInformation?.recommendedSoil ?? "",
                                   softWrap: true,
                                   textAlign: TextAlign.center,
                                   style: const TextStyle(
@@ -366,8 +344,7 @@ class _GeneralInformationPageState extends State<GeneralInformationPage>
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                  filteredData[0].generalInformation!.pHSoil ??
-                                      "",
+                                  cropData.generalInformation?.pHSoil ?? "",
                                   softWrap: true,
                                   textAlign: TextAlign.center,
                                   style: const TextStyle(
@@ -392,8 +369,7 @@ class _GeneralInformationPageState extends State<GeneralInformationPage>
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                  filteredData[0].generalInformation!.spacing ??
-                                      "",
+                                  cropData.generalInformation?.spacing ?? "",
                                   softWrap: true,
                                   textAlign: TextAlign.center,
                                   style: const TextStyle(
@@ -418,10 +394,7 @@ class _GeneralInformationPageState extends State<GeneralInformationPage>
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                  filteredData[0]
-                                          .generalInformation!
-                                          .seedRate ??
-                                      "",
+                                  cropData.generalInformation?.seedRate ?? "",
                                   softWrap: true,
                                   textAlign: TextAlign.center,
                                   style: const TextStyle(
@@ -446,10 +419,7 @@ class _GeneralInformationPageState extends State<GeneralInformationPage>
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                  filteredData[0]
-                                          .generalInformation!
-                                          .averageYield ??
-                                      "",
+                                  cropData.generalInformation?.averageYield ?? "",
                                   softWrap: true,
                                   textAlign: TextAlign.center,
                                   style: const TextStyle(
@@ -474,10 +444,7 @@ class _GeneralInformationPageState extends State<GeneralInformationPage>
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                  filteredData[0]
-                                          .generalInformation!
-                                          .intercrop ??
-                                      "",
+                                  cropData.generalInformation?.intercrop ?? "",
                                   softWrap: true,
                                   textAlign: TextAlign.center,
                                   style: const TextStyle(
@@ -486,8 +453,6 @@ class _GeneralInformationPageState extends State<GeneralInformationPage>
                                       fontFamily: "poppins-regular")),
                             ),
                           ]),
-
-                          // Continue adding rows similarly for other fields...
                         ],
                       ),
                     ),
@@ -497,7 +462,7 @@ class _GeneralInformationPageState extends State<GeneralInformationPage>
                 }
 
                 // By default, show a loading spinner.
-                return const CircularProgressIndicator();
+                return const Center(child: CircularProgressIndicator());
               },
             ),
             const SizedBox(
@@ -510,99 +475,87 @@ class _GeneralInformationPageState extends State<GeneralInformationPage>
   }
 
   Widget listWidget() {
-    return FutureBuilder<List<CropLibraryData>?>(
+    return FutureBuilder<CropLibraryData>(
       future: widget.cropData,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          // Filter data based on selectedcrop (localName)
-          List<CropLibraryData>? filteredData = snapshot.data?.where((data) {
-            return data.localName == widget.selectedcrop;
-          }).toList();
-
+          CropLibraryData cropData = snapshot.data!;
+          
           return Padding(
             padding: const EdgeInsets.only(left: 12.0, right: 12.0),
-            child: ListView.builder(
-              itemCount: filteredData?.length ?? 0,
+            child: GridView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemBuilder: (context, parentIndex) {
-                return GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: filteredData![parentIndex].stages!.length,
-                  itemBuilder: (_, index) {
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(
-                              color: const Color(0xFFd3d3d3), width: 1),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Color(0xFFd3d3d3),
-                            )
-                          ],
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: InkWell(
-                          highlightColor: Colors.transparent,
-                          splashColor: Colors.transparent,
-                          onTap: () {},
-                          child: Column(
-                            children: <Widget>[
-                              Center(
-                                child: Container(
-                                  padding: const EdgeInsets.all(8.0),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(15),
-                                  ),
-                                  child: DriveImage(
-                                    imageUrlData: filteredData[parentIndex]
-                                        .stages![index]
-                                        .images![0],
-                                  ),
-                                ),
+              itemCount: cropData.stages?.length ?? 0,
+              itemBuilder: (_, index) {
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(
+                          color: const Color(0xFFd3d3d3), width: 1),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Color(0xFFd3d3d3),
+                        )
+                      ],
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: InkWell(
+                      highlightColor: Colors.transparent,
+                      splashColor: Colors.transparent,
+                      onTap: () {},
+                      child: Column(
+                        children: <Widget>[
+                          Center(
+                            child: Container(
+                              padding: const EdgeInsets.all(8.0),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
                               ),
-                              Flexible(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(5.0),
-                                  child: Text(
-                                    textAlign: TextAlign.center,
-                                    filteredData[parentIndex]
-                                            .stages![index]
-                                            .name ??
-                                        "",
-                                    maxLines: 3,
-                                    softWrap: true,
-                                    style: const TextStyle(
-                                      color: Color(0xFF666666),
-                                      fontSize: 13,
-                                      fontFamily: 'poppins-semibold',
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
+                              child: cropData.stages?[index].images != null && 
+                                    cropData.stages![index].images!.isNotEmpty ? 
+                                DriveImage(
+                                  imageUrlData: cropData.stages![index].images![0],
+                                ) : 
+                                const SizedBox(height: 50, width: 50),
+                            ),
                           ),
-                        ),
+                          Flexible(
+                            child: Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: Text(
+                                textAlign: TextAlign.center,
+                                cropData.stages?[index].name ?? "",
+                                maxLines: 3,
+                                softWrap: true,
+                                style: const TextStyle(
+                                  color: Color(0xFF666666),
+                                  fontSize: 13,
+                                  fontFamily: 'poppins-semibold',
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    );
-                  },
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: MediaQuery.of(context).size.width /
-                        (MediaQuery.of(context).size.height / 2),
+                    ),
                   ),
                 );
               },
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: MediaQuery.of(context).size.width /
+                    (MediaQuery.of(context).size.height / 2),
+              ),
             ),
           );
         } else if (snapshot.hasError) {
           return Text('${snapshot.error}');
         }
         // By default, show a loading spinner.
-        return const CircularProgressIndicator();
+        return const Center(child: CircularProgressIndicator());
       },
     );
   }
@@ -611,12 +564,10 @@ class _GeneralInformationPageState extends State<GeneralInformationPage>
 class Entity {
   String? name;
   String? id;
-  String? image;
 
   Entity({
     required this.name,
     required this.id,
-    required this.image,
   });
 }
 

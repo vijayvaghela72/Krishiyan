@@ -1,13 +1,13 @@
 // ignore_for_file: must_be_immutable
-import '../../helper/drive_image.dart';
+import '../../../../../helper/drive_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../language/select_language.dart';
-import '../../mvc/model/CropLibraryData.dart';
+import '../../../../language/select_language.dart';
+import '../../../../../mvc/model/CropLibraryData.dart';
 
 class DeficiencyManagementPage extends StatefulWidget {
   bool aapbarVisibility;
-  Future<List<CropLibraryData>?> cropData;
+  Future<CropLibraryData> cropData;
   String? selectedcrop;
 
   DeficiencyManagementPage(
@@ -235,161 +235,147 @@ class _DeficiencyManagementPageState extends State<DeficiencyManagementPage>
   }
 
   Widget listWidget() {
-    return FutureBuilder<List<CropLibraryData>?>(
+    return FutureBuilder<CropLibraryData>(
       future: widget.cropData,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          List<CropLibraryData>? filteredData = snapshot.data?.where((data) {
-            return data.localName ==
-                widget.selectedcrop; // Filter by selected crop
-          }).toList();
+          CropLibraryData cropData = snapshot.data!;
 
-          // Check if filteredData has any results
-          if (filteredData == null || filteredData.isEmpty) {
+          // Check if crop matches selected crop
+          if (cropData.localName != widget.selectedcrop) {
             return const Text('No data available for the selected crop.');
           }
 
           // Filter nutrients with images in deficiency
-          filteredData.forEach((cropData) {
-            cropData.nutrient?.removeWhere((nutrient) {
-              var deficiency = nutrient.deficiency;
-              return deficiency?.images == null || deficiency!.images!.isEmpty;
-            });
+          cropData.nutrient?.removeWhere((nutrient) {
+            var deficiency = nutrient.deficiency;
+            return deficiency?.images == null || deficiency!.images!.isEmpty;
           });
 
-          return ListView.builder(
-              itemCount: filteredData.length,
+          if (cropData.nutrient == null || cropData.nutrient!.isEmpty) {
+            return const Text('No deficiency data available for this crop.');
+          }
+
+          return Padding(
+            padding: const EdgeInsets.only(left: 12.0, right: 12.0),
+            child: ListView.builder(
               shrinkWrap: true,
+              scrollDirection: Axis.vertical,
               physics: const NeverScrollableScrollPhysics(),
-              itemBuilder: (context, parentIndex) {
+              itemCount: cropData.nutrient!.length,
+              itemBuilder: (context, deficiencyIndex) {
+                var nutrient = cropData.nutrient![deficiencyIndex];
+                var deficiency = nutrient.deficiency;
                 return Padding(
-                  padding: const EdgeInsets.only(left: 12.0, right: 12.0),
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    scrollDirection: Axis.vertical,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: filteredData[parentIndex].nutrient!.length,
-                    itemBuilder: (context, deficiencyIndex) {
-                      var nutrient =
-                          filteredData[parentIndex].nutrient![deficiencyIndex];
-                      var deficiency = nutrient.deficiency;
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border.all(
-                                  color: const Color(0xFFd3d3d3), width: 1),
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Color(0xFFd3d3d3),
-                                )
-                              ],
-                              borderRadius: BorderRadius.circular(15)),
-                          child: InkWell(
-                            highlightColor: Colors.transparent,
-                            splashColor: Colors.transparent,
-                            onTap: () {},
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                Center(
-                                  child: Container(
-                                    padding: const EdgeInsets.all(8.0),
-                                    decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(15)),
-                                    child:
-                                        deficiency?.images?.isNotEmpty == true
-                                            ? DriveImage(
-                                                imageUrlData:
-                                                    deficiency!.images!.first)
-                                            : Container(),
-                                  ),
-                                ),
-                                Flexible(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 15.0, right: 15.0, top: 5.0),
-                                    child: Center(
-                                      child: Text(
-                                        textAlign: TextAlign.center,
-                                        nutrient.name ?? "No Name",
-                                        softWrap: true,
-                                        style: const TextStyle(
-                                            color: Color(0xFF111111),
-                                            fontSize: 14,
-                                            fontFamily: 'poppins-semibold'),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Flexible(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 15.0, right: 15.0, top: 10.0),
-                                    child: Text(
-                                      textAlign: TextAlign.left,
-                                      "Notable Symptoms: ${deficiency!.notableSymptoms ?? "N/A"}",
-                                      softWrap: true,
-                                      style: const TextStyle(
-                                          color: Color(0xFF808080),
-                                          fontSize: 10,
-                                          fontFamily: 'poppins-semibold'),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 15,
-                                ),
-                                Container(
-                                    width: MediaQuery.of(context).size.width,
-                                    padding: const EdgeInsets.only(
-                                      left: 10.0,
-                                      right: 10.0,
-                                    ),
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        showSolutionAlertDialog(
-                                            context,
-                                            deficiency.solution ??
-                                                "No Solution Available");
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        foregroundColor: Colors.white,
-                                        minimumSize: Size.zero,
-                                        textStyle:
-                                            const TextStyle(fontSize: 14),
-                                        padding: const EdgeInsets.all(5),
-                                        backgroundColor:
-                                            const Color(0xFF278115),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(17),
-                                        ),
-                                      ),
-                                      child: const Text(
-                                        'SOLUTION',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontFamily: 'poppins-regular'),
-                                      ),
-                                    )),
-                                const SizedBox(
-                                  height: 15,
-                                )
-                              ],
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(
+                            color: const Color(0xFFd3d3d3), width: 1),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color(0xFFd3d3d3),
+                          )
+                        ],
+                        borderRadius: BorderRadius.circular(15)),
+                    child: InkWell(
+                      highlightColor: Colors.transparent,
+                      splashColor: Colors.transparent,
+                      onTap: () {},
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Center(
+                            child: Container(
+                              padding: const EdgeInsets.all(8.0),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15)),
+                              child: deficiency?.images?.isNotEmpty == true
+                                  ? DriveImage(
+                                      imageUrlData: deficiency!.images!.first)
+                                  : Container(),
                             ),
                           ),
-                        ),
-                      );
-                    },
+                          Flexible(
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 15.0, right: 15.0, top: 5.0),
+                              child: Center(
+                                child: Text(
+                                  textAlign: TextAlign.center,
+                                  nutrient.name ?? "No Name",
+                                  softWrap: true,
+                                  style: const TextStyle(
+                                      color: Color(0xFF111111),
+                                      fontSize: 14,
+                                      fontFamily: 'poppins-semibold'),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Flexible(
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 15.0, right: 15.0, top: 10.0),
+                              child: Text(
+                                textAlign: TextAlign.left,
+                                "Notable Symptoms: ${deficiency!.notableSymptoms ?? "N/A"}",
+                                softWrap: true,
+                                style: const TextStyle(
+                                    color: Color(0xFF808080),
+                                    fontSize: 10,
+                                    fontFamily: 'poppins-semibold'),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          Container(
+                              width: MediaQuery.of(context).size.width,
+                              padding: const EdgeInsets.only(
+                                left: 10.0,
+                                right: 10.0,
+                              ),
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  showSolutionAlertDialog(
+                                      context,
+                                      deficiency.solution ??
+                                          "No Solution Available");
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                  minimumSize: Size.zero,
+                                  textStyle: const TextStyle(fontSize: 14),
+                                  padding: const EdgeInsets.all(5),
+                                  backgroundColor: const Color(0xFF278115),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(17),
+                                  ),
+                                ),
+                                child: const Text(
+                                  'SOLUTION',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontFamily: 'poppins-regular'),
+                                ),
+                              )),
+                          const SizedBox(
+                            height: 15,
+                          )
+                        ],
+                      ),
+                    ),
                   ),
                 );
-              });
+              },
+            ),
+          );
         } else if (snapshot.hasError) {
           return Text('${snapshot.error}');
         }

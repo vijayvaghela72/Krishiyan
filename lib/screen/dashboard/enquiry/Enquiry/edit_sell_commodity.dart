@@ -7,12 +7,10 @@ import '../../../../helper/app_global.dart';
 import 'package:flutter/material.dart';
 import '../../../../helper/AlertHelper.dart';
 import 'package:flutter/services.dart';
-import '../../../../mvc/model/CropLibraryData.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../mvc/model/SelectCropNamesData.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../../../localization/AppLocalizations.dart';
-import '../../../../mvc/controller/cropController.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -52,7 +50,7 @@ class _EditSellCommodityPageState extends State<EditSellCommodityPage> {
   final List<String> purchaseItems = ['Kg', 'Qtl', 'Ton'];
   String? selectedPurchaseItemValue;
 
-  late Future<List<CropLibraryData>?> futureCropData;
+  // late Future<CropLibraryData> futureCropData;
   String? _selectedCrop;
   SelectCropNamesData? _cropData;
 
@@ -88,7 +86,7 @@ class _EditSellCommodityPageState extends State<EditSellCommodityPage> {
       var response = await getAPICall(apiUrl: CROPS_NAMES);
 
       if (response.statusCode == 200) {
-        futureCropData = CropController.fetchCrop(_cropData!.data!.first);
+        // futureCropData = CropController.fetchCrop(_cropData!.data!.first);
         _cropData = SelectCropNamesData.fromJson(jsonDecode(response.body));
         setState(() {});
       } else {

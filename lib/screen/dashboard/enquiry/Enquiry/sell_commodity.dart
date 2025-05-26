@@ -51,7 +51,7 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
   final List<String> purchaseItems = ['Kg', 'Qtl', 'Ton'];
   String? selectedPurchaseItemValue;
 
-  late Future<List<CropLibraryData>?> futureCropData;
+  // late Future<List<CropLibraryData>?> futureCropData;
   String? _selectedCrop;
   SelectCropNamesData? _cropData;
   String? contactNumber;
@@ -73,7 +73,7 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
 
       if (response.statusCode == 200) {
         _cropData = SelectCropNamesData.fromJson(jsonDecode(response.body));
-        futureCropData = CropController.fetchCrop(_cropData!.data!.first);
+        // futureCropData = CropController.fetchCrop(_cropData!.data!.first);
         setState(() {});
       } else {
         throw Exception('Failed to load crops');

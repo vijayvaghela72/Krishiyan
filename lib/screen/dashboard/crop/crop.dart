@@ -4,8 +4,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../helper/constant.dart';
-import 'library_screens/FaqPage.dart';
-import 'library_screens/CropProtectionPage.dart';
+import 'library_screens/faq_page.dart';
+import 'crop_protection.dart/crop_protection.dart';
 import 'library_screens/HarvestPage.dart';
 import 'library_screens/MyVeritiesPage.dart';
 import '../../language/select_language.dart';
@@ -14,11 +14,11 @@ import '../../../localization/AppLocalizations.dart';
 import '../../../mvc/controller/cropController.dart';
 import '../../../mvc/model/SelectCropNamesData.dart';
 import 'library_screens/NutrientManagmentPage.dart';
-import 'library_screens/general_Info.dart';
+import 'general_info/general_Info.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'library_screens/IrrigationManagementPage.dart';
-import 'library_screens/MyProSawingPracticesPage.dart';
+import 'library_screens/irrigation_management.dart';
+import 'library_screens/my_pro_sawing_practices.dart';
 
 class CropLibraryScreen extends StatefulWidget {
   bool aapbarVisibility;
@@ -70,7 +70,7 @@ class _CropLibraryScreenState extends State<CropLibraryScreen>
   ];
 
   bool showSelectedItemValue = false;
-  late Future<List<CropLibraryData>?> futureCropData;
+  late Future<CropLibraryData> futureCropData;
   String? _selectedCrop;
   SelectCropNamesData? _cropData;
 
@@ -87,7 +87,6 @@ class _CropLibraryScreenState extends State<CropLibraryScreen>
 
       if (response.statusCode == 200) {
         _cropData = SelectCropNamesData.fromJson(jsonDecode(response.body));
-        futureCropData = CropController.fetchCrop(_cropData!.data!.first);
         setState(() {});
       } else {
         throw Exception('Failed to load crops');
@@ -243,7 +242,9 @@ class _CropLibraryScreenState extends State<CropLibraryScreen>
                 width: MediaQuery.of(context).size.width,
                 padding: const EdgeInsets.only(left: 25.0, right: 25.0),
                 child: ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
+                    futureCropData =
+                        CropController.fetchCrop(_cropData!.data!.first);
                     // if(selectedItemValue.isNotEmpty){
                     setState(() {
                       showSelectedItemValue = true;

@@ -6,7 +6,7 @@ import '../../../../mvc/model/CropLibraryData.dart';
 // ignore: must_be_immutable
 class HarvestPage extends StatefulWidget {
   bool aapbarVisibility;
-  Future<List<CropLibraryData>?> cropData;
+  Future<CropLibraryData> cropData;
   String? selectedcrop;
 
   HarvestPage(
@@ -130,34 +130,27 @@ class _HarvestPageState extends State<HarvestPage>
             const SizedBox(
               height: 15,
             ),
-            FutureBuilder<List<CropLibraryData>?>(
+            FutureBuilder<CropLibraryData>(
               future: widget.cropData,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                } else if (!snapshot.hasData) {
                   return const Center(child: Text('No data available'));
                 }
 
                 // Filter data based on the selected crop (localName)
-                List<CropLibraryData>? filteredData =
-                    snapshot.data?.where((data) {
-                  return data.localName ==
-                      widget
-                          .selectedcrop; // Assuming selectedCrop is passed via widget
-                }).toList();
-
-                // If no data matches the selected crop, show a message
-                if (filteredData == null || filteredData.isEmpty) {
+                CropLibraryData filteredData = snapshot.data!;
+                if (filteredData.localName != widget.selectedcrop) {
                   return const Center(
                       child: Text('No data available for the selected crop'));
                 }
                 if (snapshot.hasData) {
                   return ListView.builder(
-                      itemCount: filteredData.length,
-                      shrinkWrap: true,
+                      // itemCount: filteredData.length,
+                      itemCount: 1,
                       physics: const NeverScrollableScrollPhysics(),
                       itemBuilder: (context, parentIndex) {
                         return ListView.builder(
@@ -211,11 +204,8 @@ class _HarvestPageState extends State<HarvestPage>
                                               ),
                                             ),
                                             child: Text(
-                                              filteredData[parentIndex]
-                                                      .newHarvest!
-                                                      .index ??
-                                                  "",
-                                              textAlign: TextAlign.center,
+                                              // filteredData[parentIndex]
+                                              filteredData.newHarvest!.index ?? "",
                                               softWrap: true,
                                               style: const TextStyle(
                                                   fontSize: 14,
@@ -247,11 +237,8 @@ class _HarvestPageState extends State<HarvestPage>
                                             child: Align(
                                               alignment: Alignment.topLeft,
                                               child: Text(
-                                                filteredData[parentIndex]
-                                                        .newHarvest!
-                                                        .conditionsDuring ??
-                                                    "",
-                                                textAlign: TextAlign.start,
+                                                // filteredData[parentIndex]
+                                                filteredData.newHarvest!.conditionsDuring ?? "",
                                                 style: const TextStyle(
                                                     fontSize: 11,
                                                     fontFamily:
@@ -269,11 +256,8 @@ class _HarvestPageState extends State<HarvestPage>
                                               right: 15.0,
                                               left: 15.0),
                                           child: Text(
-                                            filteredData[parentIndex]
-                                                    .newHarvest!
-                                                    .prevent ??
-                                                "",
-                                            softWrap: true,
+                                            // filteredData[parentIndex]
+                                            filteredData.newHarvest!.prevent ?? "",
                                             style: const TextStyle(
                                                 // color: Color(0xFF666666),
                                                 color: Colors.black,
@@ -301,7 +285,11 @@ class _HarvestPageState extends State<HarvestPage>
                 return const CircularProgressIndicator();
               },
             ),
-            const SizedBox(
+          
+          
+          
+          
+           const SizedBox(
               height: 20,
             ),
           ],

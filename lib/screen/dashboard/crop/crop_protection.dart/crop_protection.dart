@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../mvc/model/CropLibraryData.dart';
-import '../../../CropLibrary/DeficiencyManagementPage.dart';
-import '../../../CropLibrary/DiseaseManagementPage.dart';
-import '../../../CropLibrary/MyPestManagementPage.dart';
+import 'deficiency_management/deficiency_management.dart';
+import 'disease_management/disease_management.dart';
+import 'my_pest_management/my_pest_management.dart';
 import '../../../language/select_language.dart';
-import '../../../CropLibrary/MyWeatherInjuriesPage.dart';
-import '../../../CropLibrary/MyWeedManagementPage.dart';
+import 'my_weather_injuries/my_weather_injuries.dart';
+import 'my_weed_management/my_weed_management.dart';
 
 // ignore: must_be_immutable
 class CropProtectionPage extends StatefulWidget {
   bool aapbarVisibility;
-  Future<List<CropLibraryData>?> cropData;
+  Future<CropLibraryData> cropData;
   String? selectedcrop;
 
   CropProtectionPage(
