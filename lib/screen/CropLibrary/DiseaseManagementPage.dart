@@ -1,7 +1,7 @@
 import '../../widgets/drive_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../Language/SelectLanguagePage.dart';
+import '../language/SelectLanguagePage.dart';
 import '../../mvc/model/CropLibraryData.dart';
 
 // ignore: must_be_immutable

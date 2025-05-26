@@ -10,7 +10,7 @@ import '../../../helper/SharedPref.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:chip_list/chip_list.dart';
-import '../../Language/SelectLanguagePage.dart';
+import '../../language/SelectLanguagePage.dart';
 import '../../../mvc/model/SelectCropNamesData.dart';
 import '../../../localization/AppLocalizations.dart';
 import '../../../mvc/model/GetEnquiryByFilterData.dart';

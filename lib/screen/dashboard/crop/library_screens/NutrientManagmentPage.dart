@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../mvc/model/CropLibraryData.dart';
-import '../../../Language/SelectLanguagePage.dart';
+import '../../../language/SelectLanguagePage.dart';
 
 // ignore: must_be_immutable
 class NutrientManagmentPage extends StatefulWidget {

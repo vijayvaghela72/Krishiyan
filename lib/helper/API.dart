@@ -1,5 +1,5 @@
 import 'package:krishiyan/helper/api_base_helper.dart';
-import '../utils/AppGlobal.dart';
+import '../widgets/app_global.dart';
 
 class API {
   static Future<String> callPostImage(String url, file, String fileKey,

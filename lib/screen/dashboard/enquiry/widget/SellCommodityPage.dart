@@ -16,7 +16,7 @@ import '../../../../mvc/controller/cropController.dart';
 import '../../../../mvc/controller/enquiryDashboardController.dart';
 import '../../../../mvc/model/CropLibraryData.dart';
 import '../../../../mvc/model/SelectCropNamesData.dart';
-import '../../../../utils/AppGlobal.dart';
+import '../../../../widgets/app_global.dart';
 import '../../../../widgets/constant.dart';
 
 class SellCommodityPage extends StatefulWidget {

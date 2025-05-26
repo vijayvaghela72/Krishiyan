@@ -3,7 +3,7 @@ import 'package:krishiyan/helper/loading.dart';
 import '../../localization/AppLocalizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:krishiyan/screen/Registration/MyRegistrationPage.dart';
+import 'package:krishiyan/screen/registration/MyRegistrationPage.dart';
 import '../../helper/AlertHelper.dart';
 import '../../helper/SharedPref.dart';
 import '../../mvc/controller/loginController.dart';

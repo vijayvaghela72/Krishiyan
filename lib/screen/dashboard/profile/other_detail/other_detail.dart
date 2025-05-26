@@ -1,6 +1,6 @@
 import 'dart:convert';
 import '../profile.dart';
-import '../../../../utils/AppGlobal.dart';
+import '../../../../widgets/app_global.dart';
 import '../../../../widgets/constant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

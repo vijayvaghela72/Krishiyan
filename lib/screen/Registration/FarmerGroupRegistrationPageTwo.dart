@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:krishiyan/screen/Registration/MyRegistrationPage.dart';
+import 'package:krishiyan/screen/registration/MyRegistrationPage.dart';
 import '../../helper/AlertHelper.dart';
 import '../../mvc/controller/farmerDashboardController.dart';
-import '../../utils/AppGlobal.dart';
+import '../../widgets/app_global.dart';
 import '../Login/LoginPage.dart';
 
 // ignore: must_be_immutable

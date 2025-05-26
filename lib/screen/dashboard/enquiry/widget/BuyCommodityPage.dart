@@ -14,7 +14,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../helper/AlertHelper.dart';
 import '../../../../mvc/controller/enquiryDashboardController.dart';
 import '../../../../mvc/model/SelectCropNamesData.dart';
-import '../../../../utils/AppGlobal.dart';
+import '../../../../widgets/app_global.dart';
 import '../../../../widgets/constant.dart';
 
 class BuyCommodityPage extends StatefulWidget {

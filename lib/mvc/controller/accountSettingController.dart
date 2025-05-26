@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../../helper/API.dart';
 import '../../helper/SharedPref.dart';
-import '../../utils/AppGlobal.dart';
+import '../../widgets/app_global.dart';
 import '../../widgets/constant.dart';
 import '../model/APIResponse.dart';
 import '../model/GetAddressDetails.dart';

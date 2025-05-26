@@ -2,7 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:krishiyan/helper/loading.dart';
 import 'package:krishiyan/helper/provider.dart';
-import 'package:krishiyan/utils/AppGlobal.dart';
+import 'package:krishiyan/widgets/app_global.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:krishiyan/localization/AppLocalizations.dart';
 import 'package:krishiyan/screen/DailyMarket/DetailNewsPage.dart';

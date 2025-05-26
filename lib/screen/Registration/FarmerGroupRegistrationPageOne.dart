@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:krishiyan/localization/AppLocalizations.dart';
 import 'package:krishiyan/screen/Login/LoginPage.dart';
-import 'package:krishiyan/screen/Registration/MyRegistrationPage.dart';
+import 'package:krishiyan/screen/registration/MyRegistrationPage.dart';
 import 'package:intl/intl.dart';
 import 'package:krishiyan/widgets/constant.dart';
 import 'package:otp_text_field/otp_field.dart';

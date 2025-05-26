@@ -9,7 +9,7 @@ import '../../../../localization/AppLocalizations.dart';
 import '../../../../mvc/controller/farmerDashboardController.dart';
 import '../../../../mvc/model/FarmerRegistrationData.dart';
 import '../../../../mvc/model/PincodeToStateData.dart';
-import '../../../../utils/AppGlobal.dart';
+import '../../../../widgets/app_global.dart';
 import '../../../../widgets/constant.dart';
 
 // ignore: must_be_immutable

@@ -2,7 +2,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:krishiyan/helper/loading.dart';
 import 'package:krishiyan/helper/provider.dart';
-import '../../Language/SelectLanguagePage.dart';
+import '../../language/SelectLanguagePage.dart';
 import 'package:krishiyan/widgets/constant.dart';
 import '../../../localization/AppLocalizations.dart';
 import 'package:flutter/material.dart' hide CarouselController;

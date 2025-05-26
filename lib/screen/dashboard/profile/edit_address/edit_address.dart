@@ -8,7 +8,7 @@ import 'package:krishiyan/widgets/constant.dart';
 import '../../../../helper/AlertHelper.dart';
 import '../../../../mvc/controller/accountSettingController.dart';
 import '../../../../mvc/model/GetAddressDetails.dart';
-import '../../../../utils/AppGlobal.dart';
+import '../../../../widgets/app_global.dart';
 import '../profile.dart';
 
 class EditAddressScreen extends StatefulWidget {

@@ -11,7 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../helper/AlertHelper.dart';
 import '../../../../mvc/controller/accountSettingController.dart';
 import '../../../../mvc/model/GetProfileData.dart';
-import '../../../../utils/AppGlobal.dart';
+import '../../../../widgets/app_global.dart';
 import '../../../../widgets/constant.dart';
 import 'package:intl/intl.dart';
 

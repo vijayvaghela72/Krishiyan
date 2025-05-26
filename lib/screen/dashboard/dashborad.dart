@@ -5,7 +5,7 @@ import '../../helper/SharedPref.dart';
 import 'package:flutter/material.dart';
 import 'crop/crop.dart';
 import 'profile/profile.dart';
-import '../Language/SelectLanguagePage.dart';
+import '../language/SelectLanguagePage.dart';
 import 'enquiry/enquiry.dart';
 import '../../localization/AppLocalizations.dart';
 import 'package:krishiyan/screen/dashboard/home/home.dart';
