@@ -1,9 +1,9 @@
 import 'package:flutter/services.dart';
+import 'package:krishiyan/helper/constant.dart';
 import 'package:provider/provider.dart';
+import '../../language/select_language.dart';
 import 'package:krishiyan/helper/loading.dart';
 import 'package:krishiyan/helper/provider.dart';
-import '../../language/SelectLanguagePage.dart';
-import 'package:krishiyan/widgets/constant.dart';
 import '../../../localization/AppLocalizations.dart';
 import 'package:flutter/material.dart' hide CarouselController;
 import 'package:krishiyan/screen/dashboard/home/widget/news.dart';

@@ -3,12 +3,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../../widgets/constant.dart';
+import '../../../helper/constant.dart';
 import 'library_screens/FaqPage.dart';
 import 'library_screens/CropProtectionPage.dart';
 import 'library_screens/HarvestPage.dart';
 import 'library_screens/MyVeritiesPage.dart';
-import '../../language/SelectLanguagePage.dart';
+import '../../language/select_language.dart';
 import '../../../mvc/model/CropLibraryData.dart';
 import '../../../localization/AppLocalizations.dart';
 import '../../../mvc/controller/cropController.dart';

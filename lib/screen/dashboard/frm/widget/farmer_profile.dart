@@ -3,14 +3,14 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
+import 'package:krishiyan/helper/constant.dart';
 import '../../../../helper/AlertHelper.dart';
 import '../../../../helper/SharedPref.dart';
 import '../../../../localization/AppLocalizations.dart';
 import '../../../../mvc/controller/farmerDashboardController.dart';
 import '../../../../mvc/model/FarmerRegistrationData.dart';
 import '../../../../mvc/model/PincodeToStateData.dart';
-import '../../../../widgets/app_global.dart';
-import '../../../../widgets/constant.dart';
+import '../../../../helper/app_global.dart';
 
 // ignore: must_be_immutable
 class FarmerProfilePage extends StatefulWidget {

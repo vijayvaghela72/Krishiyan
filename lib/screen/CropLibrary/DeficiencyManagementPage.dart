@@ -1,8 +1,8 @@
 // ignore_for_file: must_be_immutable
-import '../../widgets/drive_image.dart';
+import '../../helper/drive_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../language/SelectLanguagePage.dart';
+import '../language/select_language.dart';
 import '../../mvc/model/CropLibraryData.dart';
 
 class DeficiencyManagementPage extends StatefulWidget {

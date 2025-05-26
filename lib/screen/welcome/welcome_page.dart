@@ -1,7 +1,6 @@
+import 'package:krishiyan/helper/color.dart';
+import 'package:krishiyan/helper/constant.dart';
 import 'package:krishiyan/screen/login/login.dart';
-
-import '../../widgets/color.dart';
-import '../../widgets/constant.dart';
 import '../../helper/SharedPref.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

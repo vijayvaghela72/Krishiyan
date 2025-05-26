@@ -1,25 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:krishiyan/localization/AppLocalizations.dart';
-import 'FarmerGroupRegistrationPageOne.dart';
-import 'ManufactureRegistrationPage.dart';
-import 'OtherRegistrationPage.dart';
-import 'MyTraderRegistrationPage.dart';
+import 'farmer_group_registration_page_one.dart';
+import 'manufacture_registration.dart';
+import 'other_registration.dart';
+import 'my_trader_registration.dart';
 
-class MyRegistrationPage extends StatefulWidget {
-  const MyRegistrationPage({super.key});
+class MyRegistration extends StatefulWidget {
+  const MyRegistration({super.key});
 
   @override
-  State<MyRegistrationPage> createState() => _MyRegistrationPageState();
+  State<MyRegistration> createState() => _MyRegistrationState();
 }
 
-class _MyRegistrationPageState extends State<MyRegistrationPage> {
+class _MyRegistrationState extends State<MyRegistration> {
   List<Category> ORG_CATEGORIES = [
-    Category(name: buildTranslate("farmerGroups"), id: "1", icon: 'assets/images/team.png'),
-    Category(name: buildTranslate("trader"), id: "2", icon: 'assets/images/deal.png'),
-    Category(name: buildTranslate("manufacture"), id: "3", icon: 'assets/images/factory.png'),
-    Category(name: buildTranslate("agent/Broker"), id: "4", icon: 'assets/images/broker.png'),
-    Category(name: buildTranslate("others"), id: "5", icon: 'assets/images/option.png')
+    Category(
+        name: buildTranslate("farmerGroups"),
+        id: "1",
+        icon: 'assets/images/team.png'),
+    Category(
+        name: buildTranslate("trader"),
+        id: "2",
+        icon: 'assets/images/deal.png'),
+    Category(
+        name: buildTranslate("manufacture"),
+        id: "3",
+        icon: 'assets/images/factory.png'),
+    Category(
+        name: buildTranslate("agent/Broker"),
+        id: "4",
+        icon: 'assets/images/broker.png'),
+    Category(
+        name: buildTranslate("others"),
+        id: "5",
+        icon: 'assets/images/option.png')
   ];
 
   @override
@@ -43,12 +58,12 @@ class _MyRegistrationPageState extends State<MyRegistrationPage> {
             ),
             Center(
                 child: Text(
-                  buildTranslate("selectYourOrganization")!,
-                  style: const TextStyle(
-                      color: Color(0xFF666666),
-                      fontSize: 17,
-                      fontFamily: 'poppins-semibold'),
-                )),
+              buildTranslate("selectYourOrganization")!,
+              style: const TextStyle(
+                  color: Color(0xFF666666),
+                  fontSize: 17,
+                  fontFamily: 'poppins-semibold'),
+            )),
             listWidget(),
             const SizedBox(
               height: 20,
@@ -78,7 +93,7 @@ class _MyRegistrationPageState extends State<MyRegistrationPage> {
                     )
                   ],
                   border:
-                  Border.all(color: const Color(0xFFd3d3d3), width: 1.5),
+                      Border.all(color: const Color(0xFFd3d3d3), width: 1.5),
                   borderRadius: BorderRadius.circular(22)),
               child: InkWell(
                 highlightColor: Colors.transparent,
@@ -89,35 +104,32 @@ class _MyRegistrationPageState extends State<MyRegistrationPage> {
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                          const FarmerGroupRegistrationPageOne()),
+                              const FarmerGroupRegistrationPageOne()),
                     );
                   } else if (ORG_CATEGORIES[index].id == "2") {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) =>
-                          const MyTraderRegistrationPage()),
+                          builder: (context) => const MyTraderRegistration()),
                     );
                   } else if (ORG_CATEGORIES[index].id == "3") {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                          const ManufactureRegistrationPage()),
+                              const ManufactureRegistration()),
                     );
                   } else if (ORG_CATEGORIES[index].id == "4") {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) =>
-                          const MyTraderRegistrationPage()),
+                          builder: (context) => const MyTraderRegistration()),
                     );
                   } else if (ORG_CATEGORIES[index].id == "5") {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) =>
-                          const OtherRegistrationPage()),
+                          builder: (context) => const OtherRegistration()),
                     );
                   }
                 },
@@ -145,7 +157,7 @@ class _MyRegistrationPageState extends State<MyRegistrationPage> {
           );
         },
         gridDelegate:
-        const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+            const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
       ),
     );
   }

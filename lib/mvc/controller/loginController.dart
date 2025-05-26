@@ -1,7 +1,7 @@
 import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:flutter/cupertino.dart';
 import '../../helper/AlertHelper.dart';
-import '../../widgets/constant.dart';
+import '../../helper/constant.dart';
 import '../model/APIResponse.dart';
 import '../model/LoginData.dart';
 import 'dart:convert';

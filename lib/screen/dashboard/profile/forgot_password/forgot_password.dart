@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
-import '../../../../widgets/color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:krishiyan/helper/color.dart';
+import 'package:krishiyan/helper/constant.dart';
 import '../../../../helper/AlertHelper.dart';
 import 'package:otp_text_field/style.dart';
 import 'package:otp_text_field/otp_field.dart';
-import 'package:krishiyan/widgets/constant.dart';
 import '../../../../mvc/controller/otpController.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:krishiyan/mvc/model/GetOtpDetails.dart';

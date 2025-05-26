@@ -1,33 +1,40 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:krishiyan/screen/login/login.dart';
-import 'package:krishiyan/screen/registration/MyRegistrationPage.dart';
-import 'package:krishiyan/widgets/constant.dart';
+import 'package:krishiyan/screen/registration/my_registration.dart';
+import 'package:krishiyan/helper/constant.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/style.dart';
 import '../../helper/AlertHelper.dart';
 import '../../localization/AppLocalizations.dart';
 import '../../mvc/controller/farmerDashboardController.dart';
-import 'package:krishiyan/mvc/model/GetOtpDetails.dart';
 import '../../mvc/controller/otpController.dart';
+import '../../mvc/model/GetOtpDetails.dart';
 
-class OtherRegistrationPage extends StatefulWidget {
-  const OtherRegistrationPage({super.key});
+class ManufactureRegistration extends StatefulWidget {
+  const ManufactureRegistration({super.key});
 
   @override
-  State<OtherRegistrationPage> createState() => _OtherRegistrationPageState();
+  State<ManufactureRegistration> createState() =>
+      _ManufactureRegistrationState();
 }
 
-class _OtherRegistrationPageState extends State<OtherRegistrationPage> {
+class _ManufactureRegistrationState extends State<ManufactureRegistration> {
   int _radioSelected = 1;
-
   bool otpVisible = false;
 
+  final List<String> items = [
+    'Unit Grading, Sorting',
+    'Dal Mills',
+    'Processors',
+  ];
+  List<String> selectedItems = [];
+
   TextEditingController nameOfEntityController = TextEditingController();
-  TextEditingController typeOfEntityController = TextEditingController();
   TextEditingController mobileNumberController = TextEditingController();
   TextEditingController userPasswordController = TextEditingController();
   TextEditingController userConfirmPasswordController = TextEditingController();
@@ -115,7 +122,7 @@ class _OtherRegistrationPageState extends State<OtherRegistrationPage> {
               height: 30,
             ),
 
-            // nameOfEntity
+            // name
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: Text(
@@ -163,7 +170,7 @@ class _OtherRegistrationPageState extends State<OtherRegistrationPage> {
               height: 20,
             ),
 
-            // typeOfEntity
+            //typeOfEntity
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: Text(
@@ -179,39 +186,108 @@ class _OtherRegistrationPageState extends State<OtherRegistrationPage> {
             ),
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-              child: TextFormField(
+              child: DropdownButtonFormField2<String>(
+                isExpanded: true,
                 decoration: InputDecoration(
-                    alignLabelWithHint: true,
-                    fillColor: Colors.white,
-                    filled: true,
-                    border: const OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10.0),
-                      ),
+                  contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(
+                      color: Colors.grey,
+                      width: 1.0,
                     ),
-                    enabledBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.grey,
-                        width: 1.0,
-                      ),
-                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                  ),
+                  // Add more decoration..
+                ),
+                hint: Text(
+                  buildTranslate("selectTypeEntity")!,
+                  style: const TextStyle(color: Color(0xFFe7e7e7)),
+                ),
+                items: items.map((item) {
+                  return DropdownMenuItem(
+                    value: item,
+                    //disable default onTap to avoid closing menu when selecting an item
+                    enabled: false,
+                    child: StatefulBuilder(
+                      builder: (context, menuSetState) {
+                        final isSelected = selectedItems.contains(item);
+                        return InkWell(
+                          onTap: () {
+                            isSelected
+                                ? selectedItems.remove(item)
+                                : selectedItems.add(item);
+                            //This rebuilds the StatefulWidget to update the button's text
+                            setState(() {});
+                            //This rebuilds the dropdownMenu Widget to update the check mark
+                            menuSetState(() {});
+                          },
+                          child: Container(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 16.0),
+                            height: double.infinity,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (isSelected)
+                                  const Icon(Icons.check_box_outlined)
+                                else
+                                  const Icon(Icons.check_box_outline_blank),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: Text(
+                                    softWrap: true,
+                                    textAlign: TextAlign.start,
+                                    item,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
                     ),
-                    hintText: buildTranslate("selectTypeEntity")!,
-                    hintStyle: const TextStyle(color: Color(0xFFe7e7e7)),
-                    focusedBorder: const OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                      borderSide: BorderSide(color: Colors.green, width: 0.5),
-                    )),
-                validator: (value) =>
-                    value!.isEmpty ? 'Please, fill this field.' : null,
-                controller: typeOfEntityController,
+                  );
+                }).toList(),
+                //Use last selected item as the current value so if we've limited menu height, it scroll to last item.
+                value: selectedItems.isEmpty ? null : selectedItems.last,
+                onChanged: (value) {},
+                selectedItemBuilder: (context) {
+                  return items.map(
+                    (item) {
+                      return Container(
+                        alignment: AlignmentDirectional.centerStart,
+                        child: Text(
+                          selectedItems.join(', '),
+                          style: const TextStyle(
+                            fontSize: 14,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          maxLines: 1,
+                        ),
+                      );
+                    },
+                  ).toList();
+                },
+                buttonStyleData: const ButtonStyleData(
+                  padding: EdgeInsets.only(left: 16, right: 8),
+                  height: 40,
+                  width: 140,
+                ),
+                menuItemStyleData: const MenuItemStyleData(
+                  height: 40,
+                  padding: EdgeInsets.zero,
+                ),
               ),
             ),
             const SizedBox(
               height: 20,
             ),
 
-            // mobile number
+            //mobileNumber
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: Text(
@@ -267,7 +343,9 @@ class _OtherRegistrationPageState extends State<OtherRegistrationPage> {
                         minimumSize: const Size(80, 40),
                         foregroundColor: Colors.white,
                         textStyle: const TextStyle(fontSize: 18),
-                        backgroundColor: const Color(0xFF3FC041),
+                        backgroundColor: isOtpButtonEnabled
+                            ? const Color(0xFF3FC041) // Green when enabled
+                            : Colors.grey, // Grey when disabled (cooldown)
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12.0),
                         ),
@@ -339,6 +417,7 @@ class _OtherRegistrationPageState extends State<OtherRegistrationPage> {
                     height: 15,
                   )
                 : Container(),
+
             Visibility(
               visible: otpVisible,
               child: Padding(
@@ -346,9 +425,6 @@ class _OtherRegistrationPageState extends State<OtherRegistrationPage> {
                 child: OTPTextField(
                     controller: otpController,
                     length: 4,
-                    // borderColor: const Color(0xFF3dc33b),
-                    // showFieldAsBox: true,
-                    // filled: true,
                     width: MediaQuery.of(context).size.width,
                     textFieldAlignment: MainAxisAlignment.spaceAround,
                     fieldWidth: 55,
@@ -561,9 +637,8 @@ class _OtherRegistrationPageState extends State<OtherRegistrationPage> {
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: ElevatedButton(
                 onPressed: () async {
-                  // showAlertDialog(context);
                   if (nameOfEntityController.text.isNotEmpty &&
-                      typeOfEntityController.text.isNotEmpty &&
+                      selectedItems.isNotEmpty &&
                       mobileNumberController.text.isNotEmpty &&
                       userPasswordController.text.isNotEmpty) {
                     bool isOtpVerified = await verifyOtp(
@@ -572,8 +647,8 @@ class _OtherRegistrationPageState extends State<OtherRegistrationPage> {
                     if (isOtpVerified) {
                       _registrationApiCall(
                         nameOfEntityController.text,
-                        typeOfEntityController.text,
-                        mobileNumberController.text,
+                        selectedItems.toString(),
+                        mobileNumberController.text.toString(),
                         userPasswordController.text.toString(),
                       );
                     } else {
@@ -597,8 +672,7 @@ class _OtherRegistrationPageState extends State<OtherRegistrationPage> {
                 ),
                 child: Text(
                   buildTranslate("signup")!,
-                  style: const TextStyle(
-                      fontSize: 17, fontFamily: 'poppins-medium'),
+                  style: TextStyle(fontSize: 17, fontFamily: 'poppins-medium'),
                 ),
               ),
             ),
@@ -636,7 +710,7 @@ class _OtherRegistrationPageState extends State<OtherRegistrationPage> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    const MyRegistrationPage()),
+                                    const MyRegistration()),
                           );
                         },
                         child: Align(
@@ -675,6 +749,84 @@ class _OtherRegistrationPageState extends State<OtherRegistrationPage> {
     );
   }
 
+  Future<bool> verifyOtp(
+      String number, String enteredOtp, BuildContext context) async {
+    // Define the URL for your API endpoint
+    final url = "${baseUrl}whatsapp/check-otp/";
+
+    // Create the payload data
+    final data = json.encode({
+      "phoneNumber": number,
+      "otp": enteredOtp, // Use the entered OTP from the input
+    });
+
+    try {
+      // Make the POST request to verify the OTP
+      final response = await postAPICall(
+        apiUrl: url,
+        parameter: data,
+      );
+
+      // Check the response from the server
+      if (response.statusCode == 200) {
+        // Successfully verified OTP
+        print("OTP verified successfully!");
+        AlertHelper.showToast("OTP verified successfully", context);
+        return true; // Return true for successful verification
+      } else {
+        // Handle OTP verification failure
+        print("OTP verification failed!");
+        AlertHelper.showToast("Invalid OTP. Please try again.", context);
+        return false; // Return false for failure
+      }
+    } catch (e) {
+      // Handle errors
+      print("Error during OTP verification: $e");
+      AlertHelper.showToast("OTP verification failed!", context);
+      return false; // Return false for errors
+    }
+  }
+
+  Future<void> getOtpApiCall() async {
+    String phoneNumber = mobileNumberController.text.toString();
+    // Check if the phone number exists
+    bool exists = await checkPhoneNumber(phoneNumber);
+
+    if (!exists) {
+      final body =
+          json.encode({"phoneNumber": mobileNumberController.text.toString()});
+
+      try {
+        // Get OTP data from the API
+        GetOtpData? userOtp =
+            await OtpController.getOtp(body, context: context);
+
+        if (userOtp != null) {
+          print("otpData : ${userOtp.otp}");
+          otpData = userOtp.otp ?? "";
+          // Start the timer for 2 minutes (120 seconds)
+          startOtpCooldown();
+          AlertHelper.showToast("OTP sent on your mobile number", context);
+        } else {
+          print("Failed to get OTP data.");
+          AlertHelper.showToast(
+              "Failed to retrieve OTP. Please try again.", context);
+        }
+      } catch (e) {
+        print("Error during OTP request: $e");
+        // AlertHelper.showToast("Error occurred. Please try again.", context);
+      }
+    } else {
+      AlertHelper.showToast(
+          "Phone number exists. Please check and try again.", context);
+      // Navigate to the login page
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const Login()),
+      );
+    }
+  }
+
   _registrationApiCall(
     String name,
     String type,
@@ -682,14 +834,14 @@ class _OtherRegistrationPageState extends State<OtherRegistrationPage> {
     String password,
   ) async {
     var data = json.encode({
-      "typeOfOrganization": "Others",
+      "typeOfOrganization": "Manufacture",
       "nameOfFpo": name,
       "typeOfFpo": type,
       "dateOfFpo": "",
       "organizationalEmail": "",
       "contactNumber": number,
       "promoterName": "",
-      "password": password
+      "password": password,
     });
 
     var farmerRegistration = FarmerDashboardController.farmerGroupRegistration(
@@ -698,7 +850,7 @@ class _OtherRegistrationPageState extends State<OtherRegistrationPage> {
 
     if (farmerRegistration.toString().isNotEmpty) {
       Future.delayed(const Duration(seconds: 1), () {
-        print('farmer other registered successfully');
+        print('farmer trader registered successfully');
 
         showAlertDialog(context);
       });
@@ -720,6 +872,7 @@ class _OtherRegistrationPageState extends State<OtherRegistrationPage> {
               Navigator.of(context).pop();
               Navigator.of(context).pop();
               Navigator.of(context).pop();
+              // Navigator.of(context).popUntil((route) => route.isFirst);
               Navigator.of(context).pushReplacement(MaterialPageRoute(
                   builder: (BuildContext context) => const Login()));
             },
@@ -774,85 +927,6 @@ class _OtherRegistrationPageState extends State<OtherRegistrationPage> {
     );
   }
 
-  Future<bool> verifyOtp(
-      String number, String enteredOtp, BuildContext context) async {
-    // Define the URL for your API endpoint
-    final url = "${baseUrl}whatsapp/check-otp/";
-
-    // Create the payload data
-    final data = json.encode({
-      "phoneNumber": number,
-      "otp": enteredOtp, // Use the entered OTP from the input
-    });
-
-    try {
-      // Make the POST request to verify the OTP
-      final response = await postAPICall(
-        apiUrl: url,
-        parameter: data,
-      );
-
-      // Check the response from the server
-      if (response.statusCode == 200) {
-        // Successfully verified OTP
-        print("OTP verified successfully!");
-        AlertHelper.showToast("OTP verified successfully", context);
-        return true; // Return true for successful verification
-      } else {
-        // Handle OTP verification failure
-        print("OTP verification failed!");
-        AlertHelper.showToast("Invalid OTP. Please try again.", context);
-        return false; // Return false for failure
-      }
-    } catch (e) {
-      // Handle errors
-      print("Error during OTP verification: $e");
-      AlertHelper.showToast("OTP verification failed!", context);
-      return false; // Return false for errors
-    } finally {}
-  }
-
-  Future<void> getOtpApiCall() async {
-    String phoneNumber = mobileNumberController.text.toString();
-
-    // Check if the phone number exists
-    bool exists = await checkPhoneNumber(phoneNumber);
-
-    if (!exists) {
-      final body =
-          json.encode({"phoneNumber": mobileNumberController.text.toString()});
-
-      try {
-        // Get OTP data from the API
-        GetOtpData? userOtp =
-            await OtpController.getOtp(body, context: context);
-
-        if (userOtp != null) {
-          print("otpData : ${userOtp.otp}");
-          otpData = userOtp.otp ?? "";
-          // Start the timer for 2 minutes (120 seconds)
-          startOtpCooldown();
-          AlertHelper.showToast("OTP sent on your mobile number", context);
-        } else {
-          print("Failed to get OTP data.");
-          AlertHelper.showToast(
-              "Failed to retrieve OTP. Please try again.", context);
-        }
-      } catch (e) {
-        print("Error during OTP request: $e");
-        // AlertHelper.showToast("Error occurred. Please try again.", context);
-      }
-    } else {
-      AlertHelper.showToast(
-          "Phone number exists. Please check and try again.", context);
-      // Navigate to the login page
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const Login()),
-      );
-    }
-  }
-
   Future<bool> checkPhoneNumber(String number) async {
     // Define the URL for your API endpoint, appending the number directly
     final url = "${baseUrl}check-contact/$number";
@@ -880,7 +954,7 @@ class _OtherRegistrationPageState extends State<OtherRegistrationPage> {
     } catch (e) {
       // Handle errors
       print("Error during phone number check: $e");
-      AlertHelper.showToast("Error occurred. Please try again.", context);
+      // AlertHelper.showToast("Error occurred. Please try again.", context);
       return false; // Return false in case of an error
     }
   }

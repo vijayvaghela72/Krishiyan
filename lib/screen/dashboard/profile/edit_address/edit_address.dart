@@ -3,12 +3,12 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
+import 'package:krishiyan/helper/constant.dart';
 import 'package:krishiyan/localization/AppLocalizations.dart';
-import 'package:krishiyan/widgets/constant.dart';
 import '../../../../helper/AlertHelper.dart';
 import '../../../../mvc/controller/accountSettingController.dart';
 import '../../../../mvc/model/GetAddressDetails.dart';
-import '../../../../widgets/app_global.dart';
+import '../../../../helper/app_global.dart';
 import '../profile.dart';
 
 class EditAddressScreen extends StatefulWidget {

@@ -1,16 +1,17 @@
 import 'dart:convert';
-import 'widget/BuyCommodityPage.dart';
-import 'widget/SellCommodityPage.dart';
-import '../../../widgets/color.dart';
-import 'widget/EditBuyCommodityPage.dart';
-import 'widget/EnquiryDashboardPage.dart';
-import 'widget/EditSellCommodityPage.dart';
-import '../../../widgets/constant.dart';
+import 'package:krishiyan/helper/color.dart';
+import 'package:krishiyan/helper/constant.dart';
+
+import 'widget/buy_commodity.dart';
+import 'widget/sell_commodity.dart';
+import 'widget/edit_buy_commodity.dart';
+import 'widget/enquiry_dashboard.dart';
+import 'widget/edit_sell_commodity.dart';
 import '../../../helper/SharedPref.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:chip_list/chip_list.dart';
-import '../../language/SelectLanguagePage.dart';
+import '../../language/select_language.dart';
 import '../../../mvc/model/SelectCropNamesData.dart';
 import '../../../localization/AppLocalizations.dart';
 import '../../../mvc/model/GetEnquiryByFilterData.dart';
@@ -1200,17 +1201,14 @@ class _EnquiryScreenState extends State<EnquiryScreen>
                   ]),
               child: ClipRRect(
                 borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(
-                      30.0), // Matches the Container's border radius
-                  topRight: Radius.circular(
-                      30.0), // Matches the Container's border radius
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(30),
                 ),
                 child: BottomNavigationBar(
                   currentIndex: _bottomNavIndex,
                   onTap: (index) {
                     setState(() {
-                      _bottomNavIndex =
-                          index; // Set the current index when tapped
+                      _bottomNavIndex = index;
                     });
                     _onItemTapped(_bottomNavIndex);
                     print("_bottomNavIndex 1: $_bottomNavIndex");

@@ -4,7 +4,7 @@ import '../../../../mvc/model/CropLibraryData.dart';
 import '../../../CropLibrary/DeficiencyManagementPage.dart';
 import '../../../CropLibrary/DiseaseManagementPage.dart';
 import '../../../CropLibrary/MyPestManagementPage.dart';
-import '../../../language/SelectLanguagePage.dart';
+import '../../../language/select_language.dart';
 import '../../../CropLibrary/MyWeatherInjuriesPage.dart';
 import '../../../CropLibrary/MyWeedManagementPage.dart';
 

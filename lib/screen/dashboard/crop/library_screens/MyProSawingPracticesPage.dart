@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../mvc/model/CropLibraryData.dart';
-import '../../../language/SelectLanguagePage.dart';
+import '../../../language/select_language.dart';
 
 // ignore: must_be_immutable
 class MyProSawingPracticesPage extends StatefulWidget {

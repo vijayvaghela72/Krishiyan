@@ -1,7 +1,7 @@
-import '../../../../widgets/drive_image.dart';
+import '../../../../helper/drive_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../../language/SelectLanguagePage.dart';
+import '../../../language/select_language.dart';
 import '../../../../localization/AppLocalizations.dart';
 import 'package:krishiyan/mvc/model/CropLibraryData.dart';
 

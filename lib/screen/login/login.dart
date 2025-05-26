@@ -1,15 +1,15 @@
 import 'dart:convert';
+import 'package:krishiyan/helper/color.dart';
 import 'package:krishiyan/helper/loading.dart';
 import '../../localization/AppLocalizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:krishiyan/screen/registration/MyRegistrationPage.dart';
+import 'package:krishiyan/screen/registration/my_registration.dart';
 import '../../helper/AlertHelper.dart';
 import '../../helper/SharedPref.dart';
 import '../../mvc/controller/loginController.dart';
 import '../../mvc/model/LoginData.dart';
-import '../../widgets/color.dart';
-import '../../widgets/constant.dart';
+import '../../helper/constant.dart';
 import '../dashboard/profile/forgot_password/forgot_password.dart';
 import '../dashboard/dashborad.dart';
 
@@ -299,7 +299,7 @@ class _LoginState extends State<Login> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const MyRegistrationPage()),
+                      builder: (context) => const MyRegistration()),
                 );
               },
               child: Align(

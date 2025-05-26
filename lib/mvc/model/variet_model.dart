@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:krishiyan/widgets/constant.dart';
+import 'package:krishiyan/helper/constant.dart';
 import 'package:krishiyan/mvc/model/VarietyData.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 

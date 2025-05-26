@@ -1,6 +1,6 @@
 // Example widget to display the image
 import 'package:flutter/material.dart';
-import 'package:krishiyan/widgets/app_global.dart';
+import 'package:krishiyan/helper/app_global.dart';
 
 class DriveImage extends StatelessWidget {
   final String imageUrlData;

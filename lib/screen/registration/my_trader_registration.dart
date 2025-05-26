@@ -6,8 +6,8 @@ import 'package:flutter/services.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:krishiyan/localization/AppLocalizations.dart';
 import 'package:krishiyan/screen/login/login.dart';
-import 'package:krishiyan/screen/registration/MyRegistrationPage.dart';
-import 'package:krishiyan/widgets/constant.dart';
+import 'package:krishiyan/screen/registration/my_registration.dart';
+import 'package:krishiyan/helper/constant.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/style.dart';
 import 'package:krishiyan/mvc/model/GetOtpDetails.dart';
@@ -15,15 +15,14 @@ import '../../helper/AlertHelper.dart';
 import '../../mvc/controller/farmerDashboardController.dart';
 import '../../mvc/controller/otpController.dart';
 
-class MyTraderRegistrationPage extends StatefulWidget {
-  const MyTraderRegistrationPage({super.key});
+class MyTraderRegistration extends StatefulWidget {
+  const MyTraderRegistration({super.key});
 
   @override
-  State<MyTraderRegistrationPage> createState() =>
-      _MyTraderRegistrationPageState();
+  State<MyTraderRegistration> createState() => _MyTraderRegistrationState();
 }
 
-class _MyTraderRegistrationPageState extends State<MyTraderRegistrationPage> {
+class _MyTraderRegistrationState extends State<MyTraderRegistration> {
   int _radioSelected = 1;
 
   final List<String> traderItems = [
@@ -717,8 +716,7 @@ class _MyTraderRegistrationPageState extends State<MyTraderRegistrationPage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    const MyRegistrationPage()),
+                                builder: (context) => const MyRegistration()),
                           );
                         },
                         child: Align(

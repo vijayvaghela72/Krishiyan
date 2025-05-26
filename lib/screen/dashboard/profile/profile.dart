@@ -1,9 +1,9 @@
+import 'package:krishiyan/helper/constant.dart';
 import 'package:krishiyan/screen/login/login.dart';
 
 import 'other_detail/other_detail.dart';
 import 'forgot_password/forgot_password.dart';
-import '../../../widgets/app_global.dart';
-import '../../../widgets/constant.dart';
+import '../../../helper/app_global.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'edit_profile/edit_profile.dart';

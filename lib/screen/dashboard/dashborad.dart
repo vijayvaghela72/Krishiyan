@@ -1,11 +1,11 @@
 import 'dart:async';
-import '../../widgets/color.dart';
-import '../../widgets/constant.dart';
+import 'package:krishiyan/helper/color.dart';
+import '../../helper/constant.dart';
 import '../../helper/SharedPref.dart';
 import 'package:flutter/material.dart';
 import 'crop/crop.dart';
 import 'profile/profile.dart';
-import '../language/SelectLanguagePage.dart';
+import '../language/select_language.dart';
 import 'enquiry/enquiry.dart';
 import '../../localization/AppLocalizations.dart';
 import 'package:krishiyan/screen/dashboard/home/home.dart';

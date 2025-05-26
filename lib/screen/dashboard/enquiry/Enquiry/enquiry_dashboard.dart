@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:krishiyan/helper/AlertHelper.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
+import 'package:krishiyan/helper/constant.dart';
 import 'package:krishiyan/localization/AppLocalizations.dart';
+import 'package:krishiyan/screen/dashboard/enquiry/widget/enquiry_detail.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../../../mvc/controller/enquiryDashboardController.dart';
 import '../../../../mvc/model/GetAllEnquiryData.dart';
 import '../../../../mvc/model/SelectCropNamesData.dart';
-import '../../../../widgets/constant.dart';
-import 'EnquiryDetailPage.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 // ignore: must_be_immutable

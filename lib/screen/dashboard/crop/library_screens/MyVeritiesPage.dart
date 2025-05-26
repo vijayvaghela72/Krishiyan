@@ -4,7 +4,7 @@ import 'package:krishiyan/mvc/model/CropLibraryData.dart';
 import 'package:krishiyan/mvc/model/VarietyData.dart';
 import 'package:krishiyan/mvc/model/variet_model.dart';
 import '../../../../localization/AppLocalizations.dart';
-import '../../../language/SelectLanguagePage.dart';
+import '../../../language/select_language.dart';
 
 // ignore: must_be_immutable
 class MyVeritiesPage extends StatefulWidget {

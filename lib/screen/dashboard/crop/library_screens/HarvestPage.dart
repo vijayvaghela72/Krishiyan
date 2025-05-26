@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../../language/SelectLanguagePage.dart';
+import '../../../language/select_language.dart';
 import '../../../../mvc/model/CropLibraryData.dart';
 
 // ignore: must_be_immutable
