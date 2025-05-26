@@ -4,7 +4,6 @@ import '../../../../widgets/color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../helper/AlertHelper.dart';
-import '../../../../utils/hashPassword.dart';
 import 'package:otp_text_field/style.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:krishiyan/widgets/constant.dart';
@@ -549,9 +548,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
   Future<void> resetPassword(String number, String password) async {
     final url = RESET_PASSWORD;
-    String hashedPassword = PasswordUtils.hashPassword(password);
     // Create the payload data
-    final data = {"contactNumber": number, "newPassword": hashedPassword};
+    final data = {"contactNumber": number, "newPassword": password};
 
     try {
       // Make the POST request using postAPICall helper
