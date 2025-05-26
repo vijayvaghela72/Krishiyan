@@ -69,7 +69,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     BottomTwoPage(
       aapbarVisibility: false,
     ),
-    BottomThreePage(
+    CropLibraryScreen(
       aapbarVisibility: false,
     ),
     const ProfilePage(),

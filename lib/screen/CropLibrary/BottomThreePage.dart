@@ -20,16 +20,16 @@ import 'MyProSawingPracticesPage.dart';
 import '../Language/SelectLanguagePage.dart';
 import 'MyVeritiesPage.dart';
 
-class BottomThreePage extends StatefulWidget {
+class CropLibraryScreen extends StatefulWidget {
   bool aapbarVisibility;
 
-  BottomThreePage({super.key, required this.aapbarVisibility});
+  CropLibraryScreen({super.key, required this.aapbarVisibility});
 
   @override
-  State<BottomThreePage> createState() => _BottomThreePageState();
+  State<CropLibraryScreen> createState() => _CropLibraryScreenState();
 }
 
-class _BottomThreePageState extends State<BottomThreePage>
+class _CropLibraryScreenState extends State<CropLibraryScreen>
     with TickerProviderStateMixin {
   List<bottomCategory> iconList = [
     bottomCategory(
@@ -93,8 +93,6 @@ class _BottomThreePageState extends State<BottomThreePage>
   @override
   void initState() {
     super.initState();
-
-    futureCropData = CropController.fetchCrop();
     _fetchCropData();
   }
 
@@ -104,14 +102,14 @@ class _BottomThreePageState extends State<BottomThreePage>
       var response = await getAPICall(apiUrl: CROPS_NAMES);
 
       if (response.statusCode == 200) {
-        setState(() {
-          _cropData = SelectCropNamesData.fromJson(jsonDecode(response.body));
-        });
+        _cropData = SelectCropNamesData.fromJson(jsonDecode(response.body));
+        futureCropData = CropController.fetchCrop(_cropData!.data!.first);
+        setState(() {});
       } else {
         throw Exception('Failed to load crops');
       }
     } catch (e) {
-      print('My BottomThreePage : Error fetching crop data: $e');
+      print('My CropLibraryScreen : Error fetching crop data: $e');
     }
   }
 
@@ -173,7 +171,6 @@ class _BottomThreePageState extends State<BottomThreePage>
             const SizedBox(
               height: 20,
             ),
-
             Center(
               child: Text(
                 buildTranslate("cropLibrary")!,
@@ -187,7 +184,6 @@ class _BottomThreePageState extends State<BottomThreePage>
             const SizedBox(
               height: 30,
             ),
-
             // type of entity
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),

@@ -60,7 +60,6 @@ class _EditSellCommodityPageState extends State<EditSellCommodityPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    futureCropData = CropController.fetchCrop();
     _fetchCropData();
     getSellCommoditiyValue();
   }
@@ -89,9 +88,9 @@ class _EditSellCommodityPageState extends State<EditSellCommodityPage> {
       var response = await getAPICall(apiUrl: CROPS_NAMES);
 
       if (response.statusCode == 200) {
-        setState(() {
-          _cropData = SelectCropNamesData.fromJson(jsonDecode(response.body));
-        });
+        futureCropData = CropController.fetchCrop(_cropData!.data!.first);
+        _cropData = SelectCropNamesData.fromJson(jsonDecode(response.body));
+        setState(() {});
       } else {
         throw Exception('Failed to load crops');
       }

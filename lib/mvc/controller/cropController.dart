@@ -4,8 +4,8 @@ import '../model/CropLibraryData.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 
 class CropController {
-  static Future<List<CropLibraryData>> fetchCrop() async {
-    final response = await getAPICall(apiUrl: CROP_LIST);
+  static Future<List<CropLibraryData>> fetchCrop(String cropName) async {
+    final response = await getAPICall(apiUrl: '${baseUrl}crops/$cropName');
 
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
