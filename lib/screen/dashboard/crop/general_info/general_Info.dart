@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../helper/drive_image.dart';
 import '../../../language/select_language.dart';
-import '../../../../localization/AppLocalizations.dart';
-import 'package:krishiyan/mvc/model/CropLibraryData.dart';
+import '../../../../localization/app_localizations.dart';
+import 'package:krishiyan/screen/dashboard/crop/crop_model.dart';
 
 // ignore: must_be_immutable
 class GeneralInformationPage extends StatefulWidget {

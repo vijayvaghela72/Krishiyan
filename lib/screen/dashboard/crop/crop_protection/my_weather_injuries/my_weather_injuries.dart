@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../../../../mvc/model/CropLibraryData.dart';
 import '../../../../../helper/drive_image.dart';
 import '../../../../language/select_language.dart';
+import 'package:krishiyan/screen/dashboard/crop/crop_model.dart';
 
 // ignore: must_be_immutable
 class MyWeatherInjuriesPage extends StatefulWidget {

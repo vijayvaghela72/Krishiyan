@@ -7,8 +7,7 @@ import 'package:krishiyan/helper/snackbar.dart';
 import '../../../mvc/model/GetMandiPriceData.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:krishiyan/mvc/model/MarketInsight.dart';
-import 'package:krishiyan/mvc/model/DailyNewsDetails.dart';
-import 'package:krishiyan/localization/AppLocalizations.dart';
+import 'package:krishiyan/localization/app_localizations.dart';
 import 'package:krishiyan/screen/dashboard/home/home_model.dart';
 
 class HomeProvider extends ChangeNotifier {
@@ -179,30 +178,29 @@ class HomeProvider extends ChangeNotifier {
 // get mandi price detail
   List<MandiPriceData> mandiPriceData = [];
   Future<void> getMandiPriceDetails(String state, String district,
-    String commodity, String initialDate, String finalDate) async {
+      String commodity, String initialDate, String finalDate) async {
     print('initialDate :|${initialDate}|');
     // print('?state=$state&district=$district&commodity=$commodity');
     // print(' "&initialDate=&finalDate="');
     print('finalDate :|${finalDate}|');
-    
+
     // Parse date in dd-MM-yyyy format
     List<String> initialParts = initialDate.split('-');
     DateTime initialDateTime = DateTime(
-      int.parse(initialParts[2]), // year
-      int.parse(initialParts[1]), // month 
-      int.parse(initialParts[0])  // day
-    );
-    String initialFormattedDate = 
+        int.parse(initialParts[2]), // year
+        int.parse(initialParts[1]), // month
+        int.parse(initialParts[0]) // day
+        );
+    String initialFormattedDate =
         DateFormat('dd/MM/yyyy').format(initialDateTime);
 
     List<String> finalParts = finalDate.split('-');
     DateTime finalDateTime = DateTime(
-      int.parse(finalParts[2]), // year
-      int.parse(finalParts[1]), // month
-      int.parse(finalParts[0])  // day
-    );
-    String finalFormattedDate = 
-        DateFormat('dd/MM/yyyy').format(finalDateTime);
+        int.parse(finalParts[2]), // year
+        int.parse(finalParts[1]), // month
+        int.parse(finalParts[0]) // day
+        );
+    String finalFormattedDate = DateFormat('dd/MM/yyyy').format(finalDateTime);
 
     final response = await getAPICall(
         apiUrl: "${baseUrl}mandi/mandiPrices"

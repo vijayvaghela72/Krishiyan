@@ -4,11 +4,11 @@ import '../profile.dart';
 import '../../../../helper/app_global.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../../../helper/AlertHelper.dart';
+import '../../../../helper/alert_helper.dart';
 import '../../../../mvc/model/GetOtherDetails.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 import '../../../../mvc/controller/accountSettingController.dart';
-import 'package:krishiyan/localization/AppLocalizations.dart';
+import 'package:krishiyan/localization/app_localizations.dart';
 
 class OtherDetailPage extends StatefulWidget {
   const OtherDetailPage({super.key});

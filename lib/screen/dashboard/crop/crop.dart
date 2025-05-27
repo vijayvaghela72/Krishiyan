@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable
 import 'dart:convert';
-import 'package:krishiyan/helper/loading.dart';
+import 'package:krishiyan/screen/dashboard/crop/crop_controller.dart';
+import 'package:krishiyan/screen/dashboard/crop/crop_model.dart';
 
 import 'faq/faq.dart';
 import 'harvest/harvest.dart';
@@ -11,10 +12,8 @@ import '../../../helper/constant.dart';
 import 'general_info/general_Info.dart';
 import '../../language/select_language.dart';
 import 'crop_protection/crop_protection.dart';
-import '../../../mvc/model/CropLibraryData.dart';
-import '../../../localization/AppLocalizations.dart';
-import '../../../mvc/controller/cropController.dart';
 import '../../../mvc/model/SelectCropNamesData.dart';
+import '../../../localization/app_localizations.dart';
 import 'nutrient_managemment/nutrient_managment.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';

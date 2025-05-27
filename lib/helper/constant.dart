@@ -15,7 +15,6 @@ const String dateOfIncorporation = 'dateOfIncorporation';
 const String typeOfEntity = 'typeOfEntity';
 const String typeOfOrg = 'typeOfOrg';
 const String token = 'token';
-
 const String prefKeyToken = 'prefToken';
 const String baseUrl = "https://krishiyan.com/api/";
 const String baseUrlEnd = "https://krishiyan.com/";

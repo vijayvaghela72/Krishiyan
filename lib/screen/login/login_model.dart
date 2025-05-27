@@ -62,18 +62,18 @@ class FpoOrganization {
 
   FpoOrganization(
       {this.sId,
-        this.typeOfOrganization,
-        this.nameOfFpo,
-        this.typeOfFpo,
-        this.dateOfFpo,
-        this.organizationalEmail,
-        this.contactNumber,
-        this.promoterName,
-        this.password,
-        this.iV,
-        this.cBBOName,
-        this.registrationNumber,
-        this.yourDesignation});
+      this.typeOfOrganization,
+      this.nameOfFpo,
+      this.typeOfFpo,
+      this.dateOfFpo,
+      this.organizationalEmail,
+      this.contactNumber,
+      this.promoterName,
+      this.password,
+      this.iV,
+      this.cBBOName,
+      this.registrationNumber,
+      this.yourDesignation});
 
   FpoOrganization.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];

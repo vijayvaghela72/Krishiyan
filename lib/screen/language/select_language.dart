@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../localization/AppLocalizations.dart';
+import '../../localization/app_localizations.dart';
 import '../../helper/constant.dart';
 
 class SelectLanguagePage extends StatefulWidget {

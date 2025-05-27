@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:krishiyan/helper/constant.dart';
 import '../../../../helper/app_global.dart';
 import 'package:flutter/material.dart';
-import '../../../../helper/AlertHelper.dart';
+import '../../../../helper/alert_helper.dart';
 import 'package:flutter/services.dart';
 import 'package:otp_text_field/style.dart';
 import 'package:otp_text_field/otp_field.dart';
@@ -17,7 +17,7 @@ import 'package:krishiyan/mvc/model/GetFRMProfileData.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../mvc/controller/accountSettingController.dart';
 import 'package:krishiyan/screen/dashboard/dashborad.dart';
-import 'package:krishiyan/localization/AppLocalizations.dart';
+import 'package:krishiyan/localization/app_localizations.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});

@@ -1,12 +1,12 @@
 import 'dart:io';
 import 'package:krishiyan/helper/constant.dart';
 
-import 'helper/SharedPref.dart';
+import 'helper/shared_pref.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'localization/AppLocalizations.dart';
-import 'localization/NavigationService.dart';
+import 'localization/app_localizations.dart';
+import 'localization/navigation_service.dart';
 import 'package:krishiyan/helper/provider.dart';
 import 'package:krishiyan/screen/welcome/welcome.dart';
 import 'package:permission_handler/permission_handler.dart';

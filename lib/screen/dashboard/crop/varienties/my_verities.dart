@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:krishiyan/mvc/model/CropLibraryData.dart';
+import '../../../language/select_language.dart';
 import 'package:krishiyan/mvc/model/VarietyData.dart';
 import 'package:krishiyan/mvc/model/variet_model.dart';
-import '../../../../localization/AppLocalizations.dart';
-import '../../../language/select_language.dart';
+import '../../../../localization/app_localizations.dart';
+import 'package:krishiyan/screen/dashboard/crop/crop_model.dart';
 
 // ignore: must_be_immutable
 class MyVeritiesPage extends StatefulWidget {

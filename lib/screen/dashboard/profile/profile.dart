@@ -8,10 +8,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'edit_profile/edit_profile.dart';
 import 'edit_address/edit_address.dart';
-import '../../../helper/SharedPref.dart';
+import '../../../helper/shared_pref.dart';
 import 'edit_bank_detail/edit_bank_detail.dart';
 import 'other_profile_edit/other_profile_edit.dart';
-import '../../../localization/AppLocalizations.dart';
+import '../../../localization/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:krishiyan/screen/dashboard/profile/delete_account/delete_account.dart';
 

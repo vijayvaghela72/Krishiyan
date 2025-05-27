@@ -9,7 +9,7 @@ import 'GetBankDetails.dart';
 import 'GetProfileData.dart';
 import 'GetOtpDetails.dart';
 import 'InsightData.dart';
-import 'LoginData.dart';
+import '../../screen/login/login_model.dart';
 
 class APIResponse {
   String? message;

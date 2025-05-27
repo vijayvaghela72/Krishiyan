@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
+import 'navigation_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'NavigationService.dart';
 
 class MyLocalizations {
   MyLocalizations(this.locale);

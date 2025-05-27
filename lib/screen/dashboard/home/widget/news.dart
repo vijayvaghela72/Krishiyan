@@ -4,8 +4,8 @@ import 'package:krishiyan/helper/loading.dart';
 import 'package:krishiyan/helper/provider.dart';
 import 'package:krishiyan/helper/app_global.dart';
 import 'package:dots_indicator/dots_indicator.dart';
-import 'package:krishiyan/localization/AppLocalizations.dart';
-import 'package:krishiyan/screen/DailyMarket/DetailNewsPage.dart';
+import 'package:krishiyan/localization/app_localizations.dart';
+import 'package:krishiyan/screen/dashboard/home/widget/detail_news.dart';
 
 class NewsScreen extends StatefulWidget {
   const NewsScreen({super.key});

@@ -1,9 +1,9 @@
 import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:flutter/cupertino.dart';
-import '../../helper/AlertHelper.dart';
+import '../../helper/alert_helper.dart';
 import '../../helper/constant.dart';
-import '../model/APIResponse.dart';
-import '../model/LoginData.dart';
+import '../../mvc/model/APIResponse.dart';
+import 'login_model.dart';
 import 'dart:convert';
 
 class LoginController {

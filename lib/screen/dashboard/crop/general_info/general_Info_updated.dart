@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../helper/drive_image.dart';
 import '../../../language/select_language.dart';
-import '../../../../localization/AppLocalizations.dart';
-import 'package:krishiyan/mvc/model/CropLibraryData.dart';
+import '../../../../localization/app_localizations.dart';
+import 'package:krishiyan/screen/dashboard/crop/crop_model.dart';
 
 // ignore: must_be_immutable
 class GeneralInformationPage extends StatefulWidget {
@@ -269,7 +269,9 @@ class _GeneralInformationPageState extends State<GeneralInformationPage>
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                  cropData.generalInformation?.optimumTemperature ?? "",
+                                  cropData.generalInformation
+                                          ?.optimumTemperature ??
+                                      "",
                                   softWrap: true,
                                   textAlign: TextAlign.center,
                                   style: const TextStyle(
@@ -294,7 +296,9 @@ class _GeneralInformationPageState extends State<GeneralInformationPage>
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                  cropData.generalInformation?.rainfallRequirement ?? "",
+                                  cropData.generalInformation
+                                          ?.rainfallRequirement ??
+                                      "",
                                   softWrap: true,
                                   textAlign: TextAlign.center,
                                   style: const TextStyle(
@@ -319,7 +323,9 @@ class _GeneralInformationPageState extends State<GeneralInformationPage>
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                  cropData.generalInformation?.recommendedSoil ?? "",
+                                  cropData.generalInformation
+                                          ?.recommendedSoil ??
+                                      "",
                                   softWrap: true,
                                   textAlign: TextAlign.center,
                                   style: const TextStyle(
@@ -419,7 +425,8 @@ class _GeneralInformationPageState extends State<GeneralInformationPage>
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                  cropData.generalInformation?.averageYield ?? "",
+                                  cropData.generalInformation?.averageYield ??
+                                      "",
                                   softWrap: true,
                                   textAlign: TextAlign.center,
                                   style: const TextStyle(
@@ -480,7 +487,7 @@ class _GeneralInformationPageState extends State<GeneralInformationPage>
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           CropLibraryData cropData = snapshot.data!;
-          
+
           return Padding(
             padding: const EdgeInsets.only(left: 12.0, right: 12.0),
             child: GridView.builder(
@@ -493,8 +500,8 @@ class _GeneralInformationPageState extends State<GeneralInformationPage>
                   child: Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      border: Border.all(
-                          color: const Color(0xFFd3d3d3), width: 1),
+                      border:
+                          Border.all(color: const Color(0xFFd3d3d3), width: 1),
                       boxShadow: const [
                         BoxShadow(
                           color: Color(0xFFd3d3d3),
@@ -514,12 +521,13 @@ class _GeneralInformationPageState extends State<GeneralInformationPage>
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(15),
                               ),
-                              child: cropData.stages?[index].images != null && 
-                                    cropData.stages![index].images!.isNotEmpty ? 
-                                DriveImage(
-                                  imageUrlData: cropData.stages![index].images![0],
-                                ) : 
-                                const SizedBox(height: 50, width: 50),
+                              child: cropData.stages?[index].images != null &&
+                                      cropData.stages![index].images!.isNotEmpty
+                                  ? DriveImage(
+                                      imageUrlData:
+                                          cropData.stages![index].images![0],
+                                    )
+                                  : const SizedBox(height: 50, width: 50),
                             ),
                           ),
                           Flexible(

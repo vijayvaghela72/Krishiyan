@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:krishiyan/helper/constant.dart';
 import 'package:krishiyan/screen/login/login.dart';
 import '../dashboard/dashborad.dart';
-import '../../helper/SharedPref.dart';
+import '../../helper/shared_pref.dart';
 
 class SplashScreen extends StatefulWidget {
   @override

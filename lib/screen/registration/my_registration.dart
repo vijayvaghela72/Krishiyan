@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:krishiyan/localization/AppLocalizations.dart';
+import 'package:krishiyan/localization/app_localizations.dart';
 import 'farmer_group_registration_page_one.dart';
 import 'manufacture_registration.dart';
 import 'other_registration.dart';

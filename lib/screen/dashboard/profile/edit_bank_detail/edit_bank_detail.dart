@@ -6,13 +6,13 @@ import 'package:krishiyan/helper/constant.dart';
 import '../../../../helper/app_global.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../../../helper/AlertHelper.dart';
+import '../../../../helper/alert_helper.dart';
 import '../../../../mvc/model/GetBankDetails.dart';
 import 'package:image_picker/image_picker.dart';
 import '../profile.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 import '../../../../mvc/controller/accountSettingController.dart';
-import 'package:krishiyan/localization/AppLocalizations.dart';
+import 'package:krishiyan/localization/app_localizations.dart';
 
 class EditBankDetailPage extends StatefulWidget {
   const EditBankDetailPage({super.key});

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'widget/crop_cultivation.dart';
 import '../../../helper/app_global.dart';
-import '../../../helper/AlertHelper.dart';
+import '../../../helper/alert_helper.dart';
 import 'package:otp_text_field/style.dart';
 import '../../language/select_language.dart';
 import 'widget/edit_crop_cultivation.dart';
@@ -15,7 +15,7 @@ import 'package:krishiyan/helper/loading.dart';
 import 'package:krishiyan/helper/constant.dart';
 import 'package:krishiyan/helper/snackbar.dart';
 import '../../../mvc/controller/otpController.dart';
-import '../../../localization/AppLocalizations.dart';
+import '../../../localization/app_localizations.dart';
 import 'package:krishiyan/mvc/model/FrmInsight.dart';
 import 'package:krishiyan/mvc/model/InsightData.dart';
 import 'package:page_transition/page_transition.dart';
@@ -26,7 +26,7 @@ import '../../../mvc/model/SelectVillagesNameData.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:krishiyan/mvc/model/FarmerDashboardData.dart';
 import '../../../mvc/controller/farmerDashboardController.dart';
-import 'package:krishiyan/screen/dashboard/frm/widget/FarmerEditProfilePage.dart';
+import 'package:krishiyan/screen/dashboard/frm/widget/farmer_edit_profile.dart';
 
 // ignore: must_be_immutable
 class FRM extends StatefulWidget {

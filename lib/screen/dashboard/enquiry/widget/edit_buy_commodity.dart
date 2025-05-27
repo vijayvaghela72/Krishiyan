@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:krishiyan/helper/constant.dart';
 import '../../../../helper/app_global.dart';
-import '../../../../helper/AlertHelper.dart';
+import '../../../../helper/alert_helper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
@@ -14,7 +14,7 @@ import '../../../../mvc/model/SelectCropNamesData.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:krishiyan/localization/AppLocalizations.dart';
+import 'package:krishiyan/localization/app_localizations.dart';
 import 'package:krishiyan/mvc/model/GetEnquiryByFilterData.dart';
 
 // ignore: must_be_immutable

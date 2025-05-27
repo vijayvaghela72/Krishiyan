@@ -1,9 +1,9 @@
 // ignore_for_file: must_be_immutable
-import '../../../../../helper/drive_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../../../../helper/drive_image.dart';
 import '../../../../language/select_language.dart';
-import '../../../../../mvc/model/CropLibraryData.dart';
+import 'package:krishiyan/screen/dashboard/crop/crop_model.dart';
 
 class DeficiencyManagementPage extends StatefulWidget {
   bool aapbarVisibility;

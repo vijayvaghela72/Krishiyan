@@ -1,7 +1,7 @@
 import 'helper/price_history_page.dart';
 import 'package:flutter/material.dart';
 import 'package:krishiyan/helper/provider.dart';
-import 'package:krishiyan/localization/AppLocalizations.dart';
+import 'package:krishiyan/localization/app_localizations.dart';
 import 'package:krishiyan/screen/dashboard/home/widget/helper/mandi_district.dart';
 import 'package:krishiyan/screen/dashboard/home/widget/helper/commodity_sheet.dart';
 import 'package:krishiyan/screen/dashboard/home/widget/helper/state_bottom_sheet.dart';
