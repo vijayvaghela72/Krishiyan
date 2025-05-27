@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:krishiyan/helper/drive_image.dart';
 import '../../../language/select_language.dart';
 import '../../../../mvc/model/CropLibraryData.dart';
 
@@ -81,7 +82,7 @@ class _HarvestPageState extends State<HarvestPage>
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
+          children: [
             const SizedBox(
               height: 15,
             ),
@@ -140,143 +141,150 @@ class _HarvestPageState extends State<HarvestPage>
                 } else if (!snapshot.hasData) {
                   return const Center(child: Text('No data available'));
                 }
-
-                // Filter data based on the selected crop (localName)
                 CropLibraryData filteredData = snapshot.data!;
                 if (filteredData.localName != widget.selectedcrop) {
                   return const Center(
                       child: Text('No data available for the selected crop'));
                 }
+                if (filteredData.newHarvest == null) {
+                  return const Center(child: Text('No harvest data available'));
+                }
                 if (snapshot.hasData) {
                   return ListView.builder(
-                      // itemCount: filteredData.length,
-                      itemCount: 1,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, parentIndex) {
-                        return ListView.builder(
-                          itemCount: 1,
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border: Border.all(
-                                        color: const Color(0xFFd3d3d3),
-                                        width: 1),
-                                    boxShadow: const [
-                                      BoxShadow(
-                                        color: Color(0xFFd3d3d3),
-                                      )
-                                    ],
-                                    borderRadius: BorderRadius.circular(15)),
-                                child: InkWell(
-                                  highlightColor: Colors.transparent,
-                                  splashColor: Colors.transparent,
-                                  onTap: () {},
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: <Widget>[
-                                      Container(
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          padding: const EdgeInsets.only(
-                                              left: 15.0,
-                                              right: 15.0,
-                                              top: 20.0),
-                                          child: ElevatedButton(
-                                            onPressed: () {},
-                                            style: ElevatedButton.styleFrom(
-                                              foregroundColor: Colors.white,
-                                              padding: const EdgeInsets.all(12),
-                                              textStyle:
-                                                  const TextStyle(fontSize: 18),
-                                              backgroundColor:
-                                                  const Color(0xFF1E8E27),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                              ),
-                                            ),
-                                            child: Text(
-                                              // filteredData[parentIndex]
-                                              filteredData.newHarvest!.index ?? "",
-                                              softWrap: true,
-                                              style: const TextStyle(
-                                                  fontSize: 14,
-                                                  fontFamily:
-                                                      'poppins-regular'),
-                                            ),
-                                          )),
-                                      Container(
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          padding: const EdgeInsets.only(
-                                              left: 15.0,
-                                              right: 15.0,
-                                              top: 10.0),
-                                          child: ElevatedButton(
-                                            onPressed: () {},
-                                            style: ElevatedButton.styleFrom(
-                                              foregroundColor: Colors.white,
-                                              padding: const EdgeInsets.all(12),
-                                              textStyle:
-                                                  const TextStyle(fontSize: 18),
-                                              backgroundColor:
-                                                  const Color(0xFF1E8E27),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                              ),
-                                            ),
-                                            child: Align(
-                                              alignment: Alignment.topLeft,
-                                              child: Text(
-                                                // filteredData[parentIndex]
-                                                filteredData.newHarvest!.conditionsDuring ?? "",
-                                                style: const TextStyle(
-                                                    fontSize: 11,
-                                                    fontFamily:
-                                                        'poppins-regular'),
-                                              ),
-                                            ),
-                                          )),
-                                      const SizedBox(
-                                        height: 20.0,
-                                      ),
-                                      Flexible(
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(
-                                              top: 10.0,
-                                              right: 15.0,
-                                              left: 15.0),
-                                          child: Text(
-                                            // filteredData[parentIndex]
-                                            filteredData.newHarvest!.prevent ?? "",
-                                            style: const TextStyle(
-                                                // color: Color(0xFF666666),
-                                                color: Colors.black,
-                                                fontSize: 13,
-                                                fontFamily: 'poppins-semibold'),
-                                          ),
+                    itemCount: 1,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(
+                                  color: const Color(0xFFd3d3d3), width: 1),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Color(0xFFd3d3d3),
+                                )
+                              ],
+                              borderRadius: BorderRadius.circular(15)),
+                          child: InkWell(
+                            highlightColor: Colors.transparent,
+                            splashColor: Colors.transparent,
+                            onTap: () {},
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    padding: const EdgeInsets.only(
+                                        left: 15.0, right: 15.0, top: 20.0),
+                                    child: ElevatedButton(
+                                      onPressed: () {},
+                                      style: ElevatedButton.styleFrom(
+                                        foregroundColor: Colors.white,
+                                        padding: const EdgeInsets.all(12),
+                                        textStyle:
+                                            const TextStyle(fontSize: 18),
+                                        backgroundColor:
+                                            const Color(0xFF1E8E27),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
                                         ),
                                       ),
-                                      const SizedBox(
-                                        height: 10.0,
+                                      child: Text(
+                                        filteredData.newHarvest!.index ?? "",
+                                        softWrap: true,
+                                        style: const TextStyle(
+                                            fontSize: 14,
+                                            fontFamily: 'poppins-regular'),
                                       ),
-                                    ],
+                                    )),
+                                Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    padding: const EdgeInsets.only(
+                                        left: 15, right: 15, top: 10),
+                                    child: ElevatedButton(
+                                      onPressed: () {},
+                                      style: ElevatedButton.styleFrom(
+                                        foregroundColor: Colors.white,
+                                        padding: const EdgeInsets.all(12),
+                                        textStyle:
+                                            const TextStyle(fontSize: 18),
+                                        backgroundColor:
+                                            const Color(0xFF1E8E27),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                      ),
+                                      child: Align(
+                                        alignment: Alignment.topLeft,
+                                        child: Text(
+                                          filteredData.newHarvest!
+                                                  .conditionsDuring ??
+                                              "",
+                                          style: const TextStyle(
+                                              fontSize: 11,
+                                              fontFamily: 'poppins-regular'),
+                                        ),
+                                      ),
+                                    )),
+                                const SizedBox(
+                                  height: 20.0,
+                                ),
+                                Flexible(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        top: 10.0, right: 15.0, left: 15.0),
+                                    child: Text(
+                                      filteredData.newHarvest!.prevent ?? "",
+                                      style: const TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 13,
+                                          fontFamily: 'poppins-semibold'),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            );
-                          },
-                        );
-                      });
+                                const SizedBox(
+                                  height: 10.0,
+                                ),
+                                if (filteredData.newHarvest!.postHarvest !=
+                                        null &&
+                                    filteredData
+                                        .newHarvest!.postHarvest!.isNotEmpty)
+                                  Container(
+                                    height: 200,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 15),
+                                    child: ListView.builder(
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount: filteredData
+                                          .newHarvest!.postHarvest!.length,
+                                      itemBuilder: (context, imageIndex) {
+                                        return Padding(
+                                          padding: const EdgeInsets.only(
+                                              right: 10, bottom: 10),
+                                          child: DriveImage(
+                                            imageUrlData: filteredData
+                                                .newHarvest!
+                                                .postHarvest![imageIndex]
+                                                .images![0],
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  );
                 } else if (snapshot.hasError) {
                   return Text('${snapshot.error}');
                 }
@@ -285,11 +293,7 @@ class _HarvestPageState extends State<HarvestPage>
                 return const CircularProgressIndicator();
               },
             ),
-          
-          
-          
-          
-           const SizedBox(
+            const SizedBox(
               height: 20,
             ),
           ],

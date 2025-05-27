@@ -156,7 +156,7 @@ class _CropCultivationPageState extends State<CropCultivationPage>
 
             // crops
             Padding(
-              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+              padding: const EdgeInsets.only(left: 25, right: 25),
               child: Text(
                 buildTranslate("selectCrops")!,
                 style: const TextStyle(
@@ -717,49 +717,66 @@ class _CropCultivationPageState extends State<CropCultivationPage>
   }
 
   _cropCultivationRegisterApiCall() async {
-    if (varietyController.text.trim().isNotEmpty &&
-        dateOfSowingController.text.trim().isNotEmpty &&
-        geoLocationController.text.trim().isNotEmpty &&
-        selectedItemValue.toString().isNotEmpty &&
-        areaInArcsController.text.trim().isNotEmpty &&
-        geoLinkAreaOnMapController.text.trim().isNotEmpty) {
-      String? number = await AppGlobal.getStringPreference('contactNumber');
+    if (varietyController.text.trim().isEmpty) {
+      AlertHelper.showToast("Please enter variety", context);
+      return;
+    }
+    if (dateOfSowingController.text.trim().isEmpty) {
+      AlertHelper.showToast("Please select date of sowing", context);
+      return;
+    }
+    if (geoLocationController.text.trim().isEmpty) {
+      AlertHelper.showToast("Please enter geo location", context);
+      return;
+    }
+    if (selectedItemValue == null || selectedItemValue!.isEmpty) {
+      AlertHelper.showToast(
+          "Please select type of cultivation practice", context);
+      return;
+    }
+    if (areaInArcsController.text.trim().isEmpty) {
+      AlertHelper.showToast("Please enter area in acres", context);
+      return;
+    }
+    if (geoLinkAreaOnMapController.text.trim().isEmpty) {
+      AlertHelper.showToast("Please enter geo link area on map", context);
+      return;
+    }
 
-      // Parse the input date string
-      DateTime parsedDate = DateFormat('dd-MM-yyyy')
-          .parse(dateOfSowingController.text.toString());
-      // Format it to YYYY-MM-DD
-      String formattedDate = DateFormat('yyyy-MM-dd').format(parsedDate);
+    String? number = await AppGlobal.getStringPreference('contactNumber');
 
-      var body = json.encode({
-        "dealerNumber": number ?? "1",
-        "fid": widget.WhatsappNumber,
-        "farmerName": _selectedFarmersName.toString(),
-        "crops": _selectedCrop.toString(),
-        "variety": varietyController.text.toString(),
-        "dateOfSowing": formattedDate,
-        "geolocation": geoLocationController.text.toString(),
-        "typeOfCultivationPractice": selectedItemValue.toString(),
-        "areaInAcres": areaInArcsController.text.toString(),
-        "geoLinkAreaOnMap": geoLinkAreaOnMapController.text.toString()
+    // Parse the input date string
+    DateTime parsedDate =
+        DateFormat('dd-MM-yyyy').parse(dateOfSowingController.text.toString());
+    // Format it to YYYY-MM-DD
+    String formattedDate = DateFormat('yyyy-MM-dd').format(parsedDate);
+
+    var body = json.encode({
+      "dealerNumber": number ?? "1",
+      "fid": widget.WhatsappNumber,
+      "farmerName": _selectedFarmersName.toString(),
+      "crops": _selectedCrop.toString(),
+      "variety": varietyController.text.toString(),
+      "dateOfSowing": formattedDate,
+      "geolocation": geoLocationController.text.toString(),
+      "typeOfCultivationPractice": selectedItemValue.toString(),
+      "areaInAcres": areaInArcsController.text.toString(),
+      "geoLinkAreaOnMap": geoLinkAreaOnMapController.text.toString()
+    });
+
+    var farmerRegistration = FarmerDashboardController.cropCultivationRegister(
+        body,
+        context: context);
+
+    if (farmerRegistration.toString().isNotEmpty) {
+      Future.delayed(const Duration(seconds: 1), () {
+        print('crop cultivation registered successfully');
+
+        showAlertDialog(context);
       });
-
-      var farmerRegistration =
-          FarmerDashboardController.cropCultivationRegister(body,
-              context: context);
-
-      if (farmerRegistration.toString().isNotEmpty) {
-        Future.delayed(const Duration(seconds: 1), () {
-          print('crop cultivation registered successfully');
-
-          showAlertDialog(context);
-        });
-      } else {
-        AlertHelper.showToast("Api error", context);
-        print("Api error");
-      }
     } else {
-      AlertHelper.showToast("Please enter details.", context);
+      AlertHelper.showToast("Api error", context);
+      print("Api error");
     }
   }
 }

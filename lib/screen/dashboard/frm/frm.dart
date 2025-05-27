@@ -1204,7 +1204,7 @@ class _FRMState extends State<FRM> with TickerProviderStateMixin {
                                         }
                                       } else {
                                         AlertHelper.showToast(
-                                            "Please enter details", context);
+                                            "Please enter details.", context);
                                       }
                                     },
                                   ),
@@ -3109,59 +3109,83 @@ class _FRMState extends State<FRM> with TickerProviderStateMixin {
   }
 
   _cropCultivationRegisterApiCall() async {
-    if (varietyController.text.trim().isNotEmpty &&
-        dateController.text.trim().isNotEmpty &&
-        geoLocationController.text.trim().isNotEmpty &&
-        selectedItemValue.toString().isNotEmpty &&
-        areaInArcesController.text.trim().isNotEmpty &&
-        geoLinkAreaOnMapController.text.trim().isNotEmpty) {
-      String? number = await AppGlobal.getStringPreference('contactNumber');
+    if (_selectedFarmersName == null) {
+      AlertHelper.showToast("Please select farmer name", context);
+      return;
+    }
+    if (_selectedCrop == null) {
+      AlertHelper.showToast("Please select crop", context);
+      return;
+    }
+    if (varietyController.text.trim().isEmpty) {
+      AlertHelper.showToast("Please enter variety", context);
+      return;
+    }
+    if (dateController.text.trim().isEmpty) {
+      AlertHelper.showToast("Please select date of sowing", context);
+      return;
+    }
+    if (geoLocationController.text.trim().isEmpty) {
+      AlertHelper.showToast("Please enter geolocation", context);
+      return;
+    }
+    if (selectedItemValue.toString().isEmpty) {
+      AlertHelper.showToast("Please select cultivation practice type", context);
+      return;
+    }
+    if (areaInArcesController.text.trim().isEmpty) {
+      AlertHelper.showToast("Please enter area in acres", context);
+      return;
+    }
+    if (geoLinkAreaOnMapController.text.trim().isEmpty) {
+      AlertHelper.showToast("Please enter geo link area", context);
+      return;
+    }
 
-      // Parse the input date string
-      DateTime parsedDate =
-          DateFormat('dd-MM-yyyy').parse(dateController.text.toString());
-      // Format it to YYYY-MM-DD
-      String formattedDate = DateFormat('yyyy-MM-dd').format(parsedDate);
+    String? number = await AppGlobal.getStringPreference('contactNumber');
 
-      var body = json.encode({
-        "dealerNumber": number ?? "1",
-        // "fid": WhatsappNumberData,
-        "fid": number,
-        "farmerName": _selectedFarmersName.toString(),
-        "crops": _selectedCrop.toString(),
-        "variety": varietyController.text.toString(),
-        "dateOfSowing": formattedDate,
-        "geolocation": geoLocationController.text.toString(),
-        "typeOfCultivationPractice": selectedItemValue.toString(),
-        "areaInAcres": areaInArcesController.text.toString(),
-        "geoLinkAreaOnMap": geoLinkAreaOnMapController.text.toString()
+    // Parse the input date string
+    DateTime parsedDate =
+        DateFormat('dd-MM-yyyy').parse(dateController.text.toString());
+    // Format it to YYYY-MM-DD
+    String formattedDate = DateFormat('yyyy-MM-dd').format(parsedDate);
+
+    var body = json.encode({
+      "dealerNumber": number ?? "1",
+      // "fid": WhatsappNumberData,
+      "fid": number,
+      "farmerName": _selectedFarmersName.toString(),
+      "crops": _selectedCrop.toString(),
+      "variety": varietyController.text.toString(),
+      "dateOfSowing": formattedDate,
+      "geolocation": geoLocationController.text.toString(),
+      "typeOfCultivationPractice": selectedItemValue.toString(),
+      "areaInAcres": areaInArcesController.text.toString(),
+      "geoLinkAreaOnMap": geoLinkAreaOnMapController.text.toString()
+    });
+    showLoading();
+    var response = await postAPICall(
+      apiUrl: CROP_CULTIVATION_REGISTR,
+      parameter: body,
+    );
+    stopLoading();
+    if (response.statusCode == 201 || response.statusCode == 200) {
+      _selectedFarmersName = null;
+      _selectedCrop = null;
+      varietyController.text = '';
+      formattedDate = '';
+      geoLocationController.text = '';
+      selectedItemValue = null;
+      areaInArcesController.text = '';
+      geoLinkAreaOnMapController.text = '';
+      setState(() {});
+
+      Future.delayed(const Duration(seconds: 1), () {
+        print('crop cultivation registered successfully');
+        showAlertDialog(context, 'crop cultivation registered successfully');
       });
-      showLoading();
-      var response = await postAPICall(
-        apiUrl: CROP_CULTIVATION_REGISTR,
-        parameter: body,
-      );
-      stopLoading();
-      if (response.statusCode == 201 || response.statusCode == 200) {
-        _selectedFarmersName = null;
-        _selectedCrop = null;
-        varietyController.text = '';
-        formattedDate = '';
-        geoLocationController.text = '';
-        selectedItemValue = null;
-        areaInArcesController.text = '';
-        geoLinkAreaOnMapController.text = '';
-        setState(() {});
-
-        Future.delayed(const Duration(seconds: 1), () {
-          print('crop cultivation registered successfully');
-          showAlertDialog(context, 'crop cultivation registered successfully');
-        });
-      } else {
-        setSnackbar('Something wrong! ${response.body.toString()}');
-      }
     } else {
-      AlertHelper.showToast("Please enter details.", context);
+      setSnackbar('Something wrong! ${response.body.toString()}');
     }
   }
 }
