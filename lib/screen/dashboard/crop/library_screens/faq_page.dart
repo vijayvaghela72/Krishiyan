@@ -236,9 +236,10 @@ class _MyFaqPageState extends State<MyFaqPage> with TickerProviderStateMixin {
                                           children: <Widget>[
                                             Padding(
                                               padding: const EdgeInsets.only(
-                                                  top: 20.0,
-                                                  right: 10.0,
-                                                  left: 10.0),
+                                                top: 20,
+                                                right: 10,
+                                                left: 10,
+                                              ),
                                               child: Align(
                                                 alignment: Alignment.centerLeft,
                                                 child: Text(
@@ -267,7 +268,7 @@ class _MyFaqPageState extends State<MyFaqPage> with TickerProviderStateMixin {
                           ));
                     },
                   );
-                  return Text('${snapshot.error}');
+                  // return Text('${snapshot.error}');
                 }
                 return const CircularProgressIndicator();
               },

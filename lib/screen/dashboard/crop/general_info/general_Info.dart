@@ -493,7 +493,7 @@ class _GeneralInformationPageState extends State<GeneralInformationPage>
                   itemCount: snapshot.data!.stages!.length,
                   itemBuilder: (_, index) {
                     return Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(8),
                       child: Container(
                         decoration: BoxDecoration(
                           color: Colors.white,
@@ -511,10 +511,11 @@ class _GeneralInformationPageState extends State<GeneralInformationPage>
                           splashColor: Colors.transparent,
                           onTap: () {},
                           child: Column(
-                            children: <Widget>[
+                            children: [
                               Center(
                                 child: Container(
-                                  padding: const EdgeInsets.all(8.0),
+                                  height: 180,
+                                  padding: const EdgeInsets.all(8),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(15),
                                   ),
@@ -530,11 +531,13 @@ class _GeneralInformationPageState extends State<GeneralInformationPage>
                                   child: Text(
                                     textAlign: TextAlign.center,
                                     snapshot.data!.stages![index].name ?? "",
-                                    maxLines: 3,
+                                    maxLines: 4,
+                                    overflow: TextOverflow.ellipsis,
                                     softWrap: true,
                                     style: const TextStyle(
                                       color: Color(0xFF666666),
-                                      fontSize: 13,
+                                      fontSize: 12,
+                                      height: 1.2,
                                       fontFamily: 'poppins-semibold',
                                     ),
                                   ),

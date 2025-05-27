@@ -89,12 +89,12 @@ class _MyWeatherInjuriesPageState extends State<MyWeatherInjuriesPage>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
+          children: [
             const SizedBox(
               height: 20,
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 20.0),
+              padding: const EdgeInsets.only(left: 20),
               child: Row(
                 children: [
                   InkWell(
@@ -148,7 +148,7 @@ class _MyWeatherInjuriesPageState extends State<MyWeatherInjuriesPage>
     );
   }
 
-  Widget listWidget() {
+  listWidget() {
     return FutureBuilder<CropLibraryData?>(
       future: widget.cropData,
       builder: (context, snapshot) {
@@ -163,142 +163,121 @@ class _MyWeatherInjuriesPageState extends State<MyWeatherInjuriesPage>
             return const Text('No data available for the selected crop.');
           }
 
-          return ListView.builder(
-            itemCount: 1,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemBuilder: (context, parentIndex) {
-              return Padding(
-                padding: const EdgeInsets.only(left: 12.0, right: 12.0),
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  scrollDirection: Axis.vertical,
-                  physics: const NeverScrollableScrollPhysics(),
-                  // itemCount: filteredData.weatherInjuries!.length,
-                  itemBuilder: (context, injuryIndex) {
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(
-                              color: const Color(0xFFd3d3d3), width: 1),
-                          boxShadow: const [
-                            BoxShadow(color: Color(0xFFd3d3d3))
-                          ],
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: InkWell(
-                          highlightColor: Colors.transparent,
-                          splashColor: Colors.transparent,
-                          onTap: () {},
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Container(
-                                padding: const EdgeInsets.all(8.0),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                child: filteredData!
-                                        .weatherInjuries![injuryIndex]
-                                        .image!
-                                        .isNotEmpty
-                                    ? DriveImage(
-                                        imageUrlData: filteredData
-                                            .weatherInjuries![injuryIndex]
-                                            .image!)
-                                    : Container(),
-                              ),
-                              Container(
-                                width: MediaQuery.of(context).size.width,
-                                padding: const EdgeInsets.only(
-                                    left: 10.0,
-                                    right: 10.0,
-                                    top: 5.0,
-                                    bottom: 5.0),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          showCausesAlertDialog(
-                                              context,
-                                              filteredData!
-                                                  .weatherInjuries![injuryIndex]
-                                                  .causes!);
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          foregroundColor: Colors.white,
-                                          minimumSize: Size.zero,
-                                          textStyle:
-                                              const TextStyle(fontSize: 14),
-                                          padding: const EdgeInsets.all(5),
-                                          backgroundColor:
-                                              const Color(0xFF278115),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(17),
-                                          ),
-                                        ),
-                                        child: const Text(
-                                          'CAUSES',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontFamily: 'poppins-regular',
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    Expanded(
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          showSymptomAlertDialog(
-                                              context,
-                                              filteredData!
-                                                  .weatherInjuries![injuryIndex]
-                                                  .symptoms!);
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          foregroundColor: Colors.white,
-                                          minimumSize: Size.zero,
-                                          textStyle:
-                                              const TextStyle(fontSize: 14),
-                                          padding: const EdgeInsets.all(5),
-                                          backgroundColor:
-                                              const Color(0xFF3FC041),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(17),
-                                          ),
-                                        ),
-                                        child: const Text(
-                                          'SYMPTOM',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontFamily: 'poppins-regular',
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                            ],
+          return Padding(
+            padding: const EdgeInsets.only(left: 12.0, right: 12.0),
+            child: ListView.builder(
+              shrinkWrap: true,
+              scrollDirection: Axis.vertical,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: filteredData.weatherInjuries!.length,
+              itemBuilder: (context, injuryIndex) {
+                return Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border:
+                          Border.all(color: const Color(0xFFd3d3d3), width: 1),
+                      boxShadow: const [BoxShadow(color: Color(0xFFd3d3d3))],
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: InkWell(
+                      highlightColor: Colors.transparent,
+                      splashColor: Colors.transparent,
+                      onTap: () {},
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Container(
+                            padding: const EdgeInsets.all(8.0),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: filteredData!.weatherInjuries![injuryIndex]
+                                    .image!.isNotEmpty
+                                ? DriveImage(
+                                    imageUrlData: filteredData
+                                        .weatherInjuries![injuryIndex].image!)
+                                : Container(),
                           ),
-                        ),
+                          Container(
+                            width: MediaQuery.of(context).size.width,
+                            padding: const EdgeInsets.only(
+                                left: 10.0, right: 10.0, top: 5.0, bottom: 5.0),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      showCausesAlertDialog(
+                                          context,
+                                          filteredData!
+                                              .weatherInjuries![injuryIndex]
+                                              .causes!);
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      foregroundColor: Colors.white,
+                                      minimumSize: Size.zero,
+                                      textStyle: const TextStyle(fontSize: 14),
+                                      padding: const EdgeInsets.all(5),
+                                      backgroundColor: const Color(0xFF278115),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(17),
+                                      ),
+                                    ),
+                                    child: const Text(
+                                      'CAUSES',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontFamily: 'poppins-regular',
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      showSymptomAlertDialog(
+                                          context,
+                                          filteredData!
+                                              .weatherInjuries![injuryIndex]
+                                              .symptoms!);
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      foregroundColor: Colors.white,
+                                      minimumSize: Size.zero,
+                                      textStyle: const TextStyle(fontSize: 14),
+                                      padding: const EdgeInsets.all(5),
+                                      backgroundColor: const Color(0xFF3FC041),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(17),
+                                      ),
+                                    ),
+                                    child: const Text(
+                                      'SYMPTOM',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontFamily: 'poppins-regular',
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                        ],
                       ),
-                    );
-                  },
-                ),
-              );
-            },
+                    ),
+                  ),
+                );
+              },
+            ),
           );
         } else if (snapshot.hasError) {
           return Text('${snapshot.error}');
