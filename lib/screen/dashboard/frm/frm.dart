@@ -3125,10 +3125,10 @@ class _FRMState extends State<FRM> with TickerProviderStateMixin {
       AlertHelper.showToast("Please select date of sowing", context);
       return;
     }
-    if (geoLocationController.text.trim().isEmpty) {
-      AlertHelper.showToast("Please enter geolocation", context);
-      return;
-    }
+    // if (geoLocationController.text.trim().isEmpty) {
+    //   AlertHelper.showToast("Please enter geolocation", context);
+    //   return;
+    // }
     if (selectedItemValue.toString().isEmpty) {
       AlertHelper.showToast("Please select cultivation practice type", context);
       return;
@@ -3137,10 +3137,10 @@ class _FRMState extends State<FRM> with TickerProviderStateMixin {
       AlertHelper.showToast("Please enter area in acres", context);
       return;
     }
-    if (geoLinkAreaOnMapController.text.trim().isEmpty) {
-      AlertHelper.showToast("Please enter geo link area", context);
-      return;
-    }
+    // if (geoLinkAreaOnMapController.text.trim().isEmpty) {
+    //   AlertHelper.showToast("Please enter geo link area", context);
+    //   return;
+    // }
 
     String? number = await AppGlobal.getStringPreference('contactNumber');
 

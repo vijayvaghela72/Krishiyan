@@ -1,21 +1,21 @@
-import 'dart:convert';
 import 'dart:io';
+import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../../../helper/app_global.dart';
+import '../../../../helper/AlertHelper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
-import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:krishiyan/helper/constant.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:krishiyan/helper/api_base_helper.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
+import '../../../../localization/AppLocalizations.dart';
+import '../../../../mvc/model/SelectCropNamesData.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../../helper/AlertHelper.dart';
-import '../../../../localization/AppLocalizations.dart';
 import '../../../../mvc/controller/enquiryDashboardController.dart';
-import '../../../../mvc/model/SelectCropNamesData.dart';
-import '../../../../helper/app_global.dart';
 
 class SellCommodityPage extends StatefulWidget {
   const SellCommodityPage({super.key});

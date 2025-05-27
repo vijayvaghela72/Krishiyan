@@ -1,4 +1,4 @@
-import '../../PriceHistoryPage.dart';
+import 'helper/price_history_page.dart';
 import 'package:flutter/material.dart';
 import 'package:krishiyan/helper/provider.dart';
 import 'package:krishiyan/localization/AppLocalizations.dart';

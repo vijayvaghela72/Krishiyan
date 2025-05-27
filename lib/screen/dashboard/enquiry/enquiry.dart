@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:krishiyan/helper/color.dart';
 import 'package:krishiyan/helper/constant.dart';
+import 'package:krishiyan/screen/dashboard/enquiry/widget/sell_commodity.dart';
 
 import 'widget/buy_commodity.dart';
 import 'widget/sell_commodity.dart';
