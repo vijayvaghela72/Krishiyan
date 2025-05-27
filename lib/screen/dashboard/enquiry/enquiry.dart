@@ -1,10 +1,5 @@
 import 'dart:convert';
-import 'package:krishiyan/helper/color.dart';
-import 'package:krishiyan/helper/constant.dart';
-import 'package:krishiyan/screen/dashboard/enquiry/widget/sell_commodity.dart';
-
 import 'widget/buy_commodity.dart';
-import 'widget/sell_commodity.dart';
 import 'widget/edit_buy_commodity.dart';
 import 'widget/enquiry_dashboard.dart';
 import 'widget/edit_sell_commodity.dart';
@@ -13,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:chip_list/chip_list.dart';
 import '../../language/select_language.dart';
+import 'package:krishiyan/helper/color.dart';
+import 'package:krishiyan/helper/constant.dart';
 import '../../../mvc/model/SelectCropNamesData.dart';
 import '../../../localization/AppLocalizations.dart';
 import '../../../mvc/model/GetEnquiryByFilterData.dart';
@@ -20,6 +17,7 @@ import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:krishiyan/screen/dashboard/dashborad.dart';
 import '../../../mvc/controller/enquiryDashboardController.dart';
+import 'package:krishiyan/screen/dashboard/enquiry/widget/sell_commodity.dart';
 
 // ignore: must_be_immutable
 class EnquiryScreen extends StatefulWidget {
