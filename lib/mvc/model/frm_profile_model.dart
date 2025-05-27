@@ -8,7 +8,9 @@ class GetFRMProfileData {
   GetFRMProfileData.fromJson(Map<String, dynamic> json) {
     success = json['success'];
     message = json['message'];
-    data = json['data'] != null ? GetFRMProfileDetails.fromJson(json['data']) : null;
+    data = json['data'] != null
+        ? GetFRMProfileDetails.fromJson(json['data'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -38,17 +40,17 @@ class GetFRMProfileDetails {
 
   GetFRMProfileDetails(
       {this.sId,
-        this.typeOfOrganization,
-        this.nameOfFpo,
-        this.typeOfFpo,
-        this.dateOfFpo,
-        this.organizationalEmail,
-        this.contactNumber,
-        this.promoterName,
-        this.iV,
-        this.cBBOName,
-        this.registrationNumber,
-        this.yourDesignation});
+      this.typeOfOrganization,
+      this.nameOfFpo,
+      this.typeOfFpo,
+      this.dateOfFpo,
+      this.organizationalEmail,
+      this.contactNumber,
+      this.promoterName,
+      this.iV,
+      this.cBBOName,
+      this.registrationNumber,
+      this.yourDesignation});
 
   GetFRMProfileDetails.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];

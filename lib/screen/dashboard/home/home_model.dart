@@ -10,8 +10,6 @@ class bottomCategory {
   });
 }
 
-
-
 class DailyNewsDetails {
   bool? success;
   String? message;

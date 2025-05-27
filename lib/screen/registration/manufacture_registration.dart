@@ -709,8 +709,7 @@ class _ManufactureRegistrationState extends State<ManufactureRegistration> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    const MyRegistration()),
+                                builder: (context) => const MyRegistration()),
                           );
                         },
                         child: Align(

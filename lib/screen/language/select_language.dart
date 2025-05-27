@@ -11,7 +11,6 @@ class SelectLanguagePage extends StatefulWidget {
 }
 
 class _SelectLanguagePageState extends State<SelectLanguagePage> {
-
   List<Category> orgCategory = [
     Category(name: "Hindi", id: "1", pronous: "आ", text: "हिंदी"),
     Category(name: "English", id: "2", pronous: "A", text: "अंग्रेज़ी"),
@@ -35,7 +34,6 @@ class _SelectLanguagePageState extends State<SelectLanguagePage> {
 
   @override
   Widget build(BuildContext context) {
-
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
     ));
@@ -53,10 +51,15 @@ class _SelectLanguagePageState extends State<SelectLanguagePage> {
                   Navigator.of(context).pop();
                 },
                 child: Image.asset('assets/images/back.png')),
-            const SizedBox(width: 10,),
+            const SizedBox(
+              width: 10,
+            ),
             Text(
               buildTranslate("selectLanguage")!,
-              style: const TextStyle(color: Colors.white, fontFamily: 'poppins-semibold', fontSize: 15),
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'poppins-semibold',
+                  fontSize: 15),
             ),
           ],
         ),
@@ -66,12 +69,13 @@ class _SelectLanguagePageState extends State<SelectLanguagePage> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            const SizedBox(height: 30,),
-
+            const SizedBox(
+              height: 30,
+            ),
             listWidget(),
-
-            const SizedBox(height: 35,),
-
+            const SizedBox(
+              height: 35,
+            ),
             Container(
               width: MediaQuery.of(context).size.width,
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
@@ -79,12 +83,11 @@ class _SelectLanguagePageState extends State<SelectLanguagePage> {
                 onPressed: () {
                   // Navigator.pop(context);
                   setState(() {
-                    if(selectedIndex == 0) {
+                    if (selectedIndex == 0) {
                       MyLocalizations.load(const Locale('hi', ''));
                       localLang = "hi";
                       print("localLang change 1 :  $localLang");
-                    }
-                    else if(selectedIndex == 1){
+                    } else if (selectedIndex == 1) {
                       MyLocalizations.load(const Locale('en', ''));
                       localLang = "en";
                       print("localLang change 2 :  $localLang");
@@ -106,21 +109,24 @@ class _SelectLanguagePageState extends State<SelectLanguagePage> {
                     borderRadius: BorderRadius.circular(12), // <-- Radius
                   ),
                 ),
-                child: const Text('Continue', style: TextStyle(fontSize: 18, fontFamily: 'poppins-medium'),),
+                child: const Text(
+                  'Continue',
+                  style: TextStyle(fontSize: 18, fontFamily: 'poppins-medium'),
+                ),
               ),
             ),
-            const SizedBox(height: 35,),
-
+            const SizedBox(
+              height: 35,
+            ),
           ],
         ),
       ),
     );
-
   }
 
   Widget listWidget() {
     return Padding(
-      padding: const EdgeInsets.only(left:12.0, right: 12.0),
+      padding: const EdgeInsets.only(left: 12.0, right: 12.0),
       child: GridView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
@@ -136,7 +142,9 @@ class _SelectLanguagePageState extends State<SelectLanguagePage> {
                       color: Color(0xFFf9f9f9),
                     )
                   ],
-                  border: Border.all(color: selectedIndex == index ? Colors.green : Colors.white,
+                  border: Border.all(
+                      color:
+                          selectedIndex == index ? Colors.green : Colors.white,
                       width: 2),
                   borderRadius: BorderRadius.circular(12)),
               child: InkWell(
@@ -144,7 +152,7 @@ class _SelectLanguagePageState extends State<SelectLanguagePage> {
                 splashColor: Colors.transparent,
                 onTap: () {
                   setState(() {
-                    selectedIndex = index ;
+                    selectedIndex = index;
                   });
                 },
                 child: Padding(
@@ -157,9 +165,13 @@ class _SelectLanguagePageState extends State<SelectLanguagePage> {
                         // mainAxisAlignment: MainAxisAlignment.start,
                         // crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(orgCategory[index].text ?? "", style:
-                          const TextStyle(color: Colors.black, fontSize: 18,
-                              fontFamily: 'poppins-semibold'),),
+                          Text(
+                            orgCategory[index].text ?? "",
+                            style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontFamily: 'poppins-semibold'),
+                          ),
                           const Spacer(),
                           Padding(
                             padding: const EdgeInsets.only(right: 20.0),
@@ -167,32 +179,50 @@ class _SelectLanguagePageState extends State<SelectLanguagePage> {
                               height: 25,
                               width: 25,
                               decoration: BoxDecoration(
-                                color: selectedIndex == index ? Colors.green : Colors.white,
+                                color: selectedIndex == index
+                                    ? Colors.green
+                                    : Colors.white,
                                 borderRadius: BorderRadius.circular(30),
                               ),
                               child: InkResponse(
                                 onTap: () {
                                   setState(() {
-                                    selectedIndex = index ;
+                                    selectedIndex = index;
                                   });
                                 },
-                                child: selectedIndex == index ? Icon(
-                                  Icons.check,
-                                  color: selectedIndex == index ? Colors.white : null,
-                                ) : Container(),
+                                child: selectedIndex == index
+                                    ? Icon(
+                                        Icons.check,
+                                        color: selectedIndex == index
+                                            ? Colors.white
+                                            : null,
+                                      )
+                                    : Container(),
                               ),
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 5,),
-                      Text(orgCategory[index].name ?? "", style:
-                      const TextStyle(color: Color(0xFF808080), fontSize: 15,
-                          fontFamily: 'poppins-regular'),),
-                      const SizedBox(height: 5,),
-                      Text(orgCategory[index].pronous ?? "", style:
-                      const TextStyle(color: Color(0xFF1D8D4C), fontSize: 15,
-                          fontFamily: 'poppins-semibold'),),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        orgCategory[index].name ?? "",
+                        style: const TextStyle(
+                            color: Color(0xFF808080),
+                            fontSize: 15,
+                            fontFamily: 'poppins-regular'),
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        orgCategory[index].pronous ?? "",
+                        style: const TextStyle(
+                            color: Color(0xFF1D8D4C),
+                            fontSize: 15,
+                            fontFamily: 'poppins-semibold'),
+                      ),
                     ],
                   ),
                 ),
@@ -209,7 +239,6 @@ class _SelectLanguagePageState extends State<SelectLanguagePage> {
       ),
     );
   }
-
 }
 
 class Category {
@@ -218,5 +247,9 @@ class Category {
   String? text;
   String? id;
 
-  Category({required this.name,required this.text,required this.id, required this.pronous});
+  Category(
+      {required this.name,
+      required this.text,
+      required this.id,
+      required this.pronous});
 }

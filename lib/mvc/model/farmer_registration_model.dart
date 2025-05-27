@@ -8,7 +8,9 @@ class FarmerRegistrationData {
   FarmerRegistrationData.fromJson(Map<String, dynamic> json) {
     success = json['success'];
     message = json['message'];
-    data = json['data'] != null ? FRMRegistrationData.fromJson(json['data']) : null;
+    data = json['data'] != null
+        ? FRMRegistrationData.fromJson(json['data'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -28,8 +30,7 @@ class FRMRegistrationData {
   FRMRegistrationData({this.farmer});
 
   FRMRegistrationData.fromJson(Map<String, dynamic> json) {
-    farmer =
-    json['farmer'] != null ? Farmer.fromJson(json['farmer']) : null;
+    farmer = json['farmer'] != null ? Farmer.fromJson(json['farmer']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -68,28 +69,28 @@ class Farmer {
 
   Farmer(
       {this.dealerNumber,
-        this.name,
-        this.whatsappNumber,
-        this.totalOwnedFarm,
-        this.geoLocationOwnedFarm,
-        this.totalLeaseFarm,
-        this.geoLocationLeaseFarm,
-        this.pincode,
-        this.village,
-        this.district,
-        this.state,
-        this.address,
-        this.typeOfCultivationPractice,
-        this.bankName,
-        this.accountName,
-        this.accountNumber,
-        this.ifscCode,
-        this.pan,
-        this.aadhaarNumber,
-        this.sId,
-        this.createdAt,
-        this.updatedAt,
-        this.iV});
+      this.name,
+      this.whatsappNumber,
+      this.totalOwnedFarm,
+      this.geoLocationOwnedFarm,
+      this.totalLeaseFarm,
+      this.geoLocationLeaseFarm,
+      this.pincode,
+      this.village,
+      this.district,
+      this.state,
+      this.address,
+      this.typeOfCultivationPractice,
+      this.bankName,
+      this.accountName,
+      this.accountNumber,
+      this.ifscCode,
+      this.pan,
+      this.aadhaarNumber,
+      this.sId,
+      this.createdAt,
+      this.updatedAt,
+      this.iV});
 
   Farmer.fromJson(Map<String, dynamic> json) {
     dealerNumber = json['dealerNumber'];

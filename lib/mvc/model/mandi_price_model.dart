@@ -43,17 +43,17 @@ class MandiPriceData {
 
   MandiPriceData(
       {this.sId,
-        this.state,
-        this.district,
-        this.market,
-        this.commodity,
-        this.variety,
-        this.grade,
-        this.arrivalDate,
-        this.minPrice,
-        this.maxPrice,
-        this.modalPrice,
-        this.iV});
+      this.state,
+      this.district,
+      this.market,
+      this.commodity,
+      this.variety,
+      this.grade,
+      this.arrivalDate,
+      this.minPrice,
+      this.maxPrice,
+      this.modalPrice,
+      this.iV});
 
   MandiPriceData.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];

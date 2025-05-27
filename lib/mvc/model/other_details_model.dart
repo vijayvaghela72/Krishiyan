@@ -33,12 +33,12 @@ class OtherData {
 
   OtherData(
       {this.sId,
-        this.uid,
-        this.iV,
-        this.aadhaarNumber,
-        this.gstNumber,
-        this.panCardNumber,
-        this.udyamNumber});
+      this.uid,
+      this.iV,
+      this.aadhaarNumber,
+      this.gstNumber,
+      this.panCardNumber,
+      this.udyamNumber});
 
   OtherData.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];

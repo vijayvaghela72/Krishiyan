@@ -49,23 +49,23 @@ class EnquiryByFilterData {
 
   EnquiryByFilterData(
       {this.sId,
-        this.uid,
-        this.operation,
-        this.commodity,
-        this.variety,
-        this.quantity,
-        this.moisture,
-        this.localGradeSpecification,
-        this.size,
-        this.count,
-        this.price,
-        this.date,
-        this.origin,
-        this.location,
-        this.photoVideoLink,
-        this.comments,
-        this.verified,
-        this.iV});
+      this.uid,
+      this.operation,
+      this.commodity,
+      this.variety,
+      this.quantity,
+      this.moisture,
+      this.localGradeSpecification,
+      this.size,
+      this.count,
+      this.price,
+      this.date,
+      this.origin,
+      this.location,
+      this.photoVideoLink,
+      this.comments,
+      this.verified,
+      this.iV});
 
   EnquiryByFilterData.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
@@ -73,7 +73,7 @@ class EnquiryByFilterData {
     operation = json['operation'];
     commodity = json['commodity'];
     variety = json['variety'];
-     // Convert 'quantity' to int if it's a string
+    // Convert 'quantity' to int if it's a string
     quantity = json['quantity'] is String
         ? int.tryParse(json['quantity']) // Convert string to int
         : json['quantity']; // If it's already an int, use it directly

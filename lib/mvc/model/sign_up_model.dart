@@ -59,15 +59,15 @@ class FpoOrganization {
 
   FpoOrganization(
       {this.typeOfOrganization,
-        this.nameOfFpo,
-        this.typeOfFpo,
-        this.dateOfFpo,
-        this.organizationalEmail,
-        this.contactNumber,
-        this.promoterName,
-        this.password,
-        this.sId,
-        this.iV});
+      this.nameOfFpo,
+      this.typeOfFpo,
+      this.dateOfFpo,
+      this.organizationalEmail,
+      this.contactNumber,
+      this.promoterName,
+      this.password,
+      this.sId,
+      this.iV});
 
   FpoOrganization.fromJson(Map<String, dynamic> json) {
     typeOfOrganization = json['typeOfOrganization'];

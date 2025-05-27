@@ -8,7 +8,8 @@ class CreateBuyCommodityData {
   CreateBuyCommodityData.fromJson(Map<String, dynamic> json) {
     success = json['success'];
     message = json['message'];
-    data = json['data'] != null ? BuyCommodityData.fromJson(json['data']) : null;
+    data =
+        json['data'] != null ? BuyCommodityData.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -44,23 +45,23 @@ class BuyCommodityData {
 
   BuyCommodityData(
       {this.uid,
-        this.operation,
-        this.commodity,
-        this.variety,
-        this.quantity,
-        this.moisture,
-        this.localGradeSpecification,
-        this.size,
-        this.count,
-        this.price,
-        this.date,
-        this.origin,
-        this.location,
-        this.photoVideoLink,
-        this.comments,
-        this.verified,
-        this.sId,
-        this.iV});
+      this.operation,
+      this.commodity,
+      this.variety,
+      this.quantity,
+      this.moisture,
+      this.localGradeSpecification,
+      this.size,
+      this.count,
+      this.price,
+      this.date,
+      this.origin,
+      this.location,
+      this.photoVideoLink,
+      this.comments,
+      this.verified,
+      this.sId,
+      this.iV});
 
   BuyCommodityData.fromJson(Map<String, dynamic> json) {
     uid = json['uid'];
