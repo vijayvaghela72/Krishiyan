@@ -4,21 +4,21 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../helper/constant.dart';
-import 'library_screens/faq_page.dart';
-import 'crop_protection.dart/crop_protection.dart';
-import 'library_screens/harvest.dart';
-import 'library_screens/my_verities.dart';
+import 'faq/faq.dart';
+import 'crop_protection/crop_protection.dart';
+import 'harvest/harvest.dart';
+import 'varienties/my_verities.dart';
 import '../../language/select_language.dart';
 import '../../../mvc/model/CropLibraryData.dart';
 import '../../../localization/AppLocalizations.dart';
 import '../../../mvc/controller/cropController.dart';
 import '../../../mvc/model/SelectCropNamesData.dart';
-import 'library_screens/nutrient_managment.dart';
+import 'nutrient_managemment/nutrient_managment.dart';
 import 'general_info/general_Info.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'library_screens/irrigation_management.dart';
-import 'library_screens/my_pro_sawing_practices.dart';
+import 'irrigation_management/irrigation_management.dart';
+import 'pre_showing_practices/my_pre_showing_practices.dart';
 
 class CropLibraryScreen extends StatefulWidget {
   bool aapbarVisibility;
