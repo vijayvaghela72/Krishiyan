@@ -12,7 +12,7 @@ import 'package:otp_text_field/style.dart';
 import '../../helper/alert_helper.dart';
 import '../../localization/app_localizations.dart';
 import '../../mvc/controller/farmerDashboardController.dart';
-import '../../mvc/controller/otpController.dart';
+import '../../mvc/controller/otp_controller.dart';
 import '../../mvc/model/GetOtpDetails.dart';
 
 class ManufactureRegistration extends StatefulWidget {

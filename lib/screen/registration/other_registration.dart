@@ -12,7 +12,7 @@ import '../../helper/alert_helper.dart';
 import '../../localization/app_localizations.dart';
 import '../../mvc/controller/farmerDashboardController.dart';
 import 'package:krishiyan/mvc/model/GetOtpDetails.dart';
-import '../../mvc/controller/otpController.dart';
+import '../../mvc/controller/otp_controller.dart';
 
 class OtherRegistration extends StatefulWidget {
   const OtherRegistration({super.key});

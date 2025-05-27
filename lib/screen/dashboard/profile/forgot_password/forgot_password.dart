@@ -7,7 +7,7 @@ import 'package:krishiyan/helper/constant.dart';
 import '../../../../helper/alert_helper.dart';
 import 'package:otp_text_field/style.dart';
 import 'package:otp_text_field/otp_field.dart';
-import '../../../../mvc/controller/otpController.dart';
+import '../../../../mvc/controller/otp_controller.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:krishiyan/mvc/model/GetOtpDetails.dart';
 import 'package:krishiyan/localization/app_localizations.dart';

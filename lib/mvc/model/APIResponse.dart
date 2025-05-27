@@ -1,3 +1,5 @@
+import 'package:krishiyan/screen/dashboard/frm/frm_model.dart';
+import '../../screen/login/login_model.dart';
 import 'CreateBuyCommodityData.dart';
 import 'FarmerRegistrationData.dart';
 import 'PincodeToStateData.dart';
@@ -8,8 +10,6 @@ import 'FarmersNameData.dart';
 import 'GetBankDetails.dart';
 import 'GetProfileData.dart';
 import 'GetOtpDetails.dart';
-import 'InsightData.dart';
-import '../../screen/login/login_model.dart';
 
 class APIResponse {
   String? message;

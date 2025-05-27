@@ -13,7 +13,7 @@ import 'package:otp_text_field/style.dart';
 import 'package:krishiyan/mvc/model/GetOtpDetails.dart';
 import '../../helper/alert_helper.dart';
 import '../../mvc/controller/farmerDashboardController.dart';
-import '../../mvc/controller/otpController.dart';
+import '../../mvc/controller/otp_controller.dart';
 
 class MyTraderRegistration extends StatefulWidget {
   const MyTraderRegistration({super.key});

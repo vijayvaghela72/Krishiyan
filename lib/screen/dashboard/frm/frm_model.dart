@@ -11,7 +11,7 @@ class InsightData {
     if (json['data'] != null) {
       data = <InsightDetails>[];
       json['data'].forEach((v) {
-        data!.add( InsightDetails.fromJson(v));
+        data!.add(InsightDetails.fromJson(v));
       });
     }
   }
@@ -54,28 +54,28 @@ class InsightDetails {
 
   InsightDetails(
       {this.sId,
-        this.dealerNumber,
-        this.name,
-        this.whatsappNumber,
-        this.totalOwnedFarm,
-        this.geoLocationOwnedFarm,
-        this.totalLeaseFarm,
-        this.geoLocationLeaseFarm,
-        this.pincode,
-        this.village,
-        this.district,
-        this.state,
-        this.address,
-        this.typeOfCultivationPractice,
-        this.bankName,
-        this.accountName,
-        this.accountNumber,
-        this.ifscCode,
-        this.pan,
-        this.aadhaarNumber,
-        this.createdAt,
-        this.updatedAt,
-        this.iV});
+      this.dealerNumber,
+      this.name,
+      this.whatsappNumber,
+      this.totalOwnedFarm,
+      this.geoLocationOwnedFarm,
+      this.totalLeaseFarm,
+      this.geoLocationLeaseFarm,
+      this.pincode,
+      this.village,
+      this.district,
+      this.state,
+      this.address,
+      this.typeOfCultivationPractice,
+      this.bankName,
+      this.accountName,
+      this.accountNumber,
+      this.ifscCode,
+      this.pan,
+      this.aadhaarNumber,
+      this.createdAt,
+      this.updatedAt,
+      this.iV});
 
   InsightDetails.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
