@@ -5,9 +5,9 @@ import '../../../../helper/app_global.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../helper/alert_helper.dart';
-import '../../../../mvc/model/GetOtherDetails.dart';
+import '../../../../mvc/model/other_details_model.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
-import '../../../../mvc/controller/accountSettingController.dart';
+import '../../../../mvc/controller/account_setting_controller.dart';
 import 'package:krishiyan/localization/app_localizations.dart';
 
 class OtherDetailPage extends StatefulWidget {

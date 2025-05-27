@@ -38,15 +38,15 @@ class GetProfileDetails {
 
   GetProfileDetails(
       {this.nameOfEntity,
-        this.typeOfEntity,
-        this.incorporationDate,
-        this.incorporationNumber,
-        this.businessLocation,
-        this.contactPersonName,
-        this.yourDesignation,
-        this.uRL,
-        this.email,
-        this.contactNumber});
+      this.typeOfEntity,
+      this.incorporationDate,
+      this.incorporationNumber,
+      this.businessLocation,
+      this.contactPersonName,
+      this.yourDesignation,
+      this.uRL,
+      this.email,
+      this.contactNumber});
 
   GetProfileDetails.fromJson(Map<String, dynamic> json) {
     nameOfEntity = json['nameOfEntity'];

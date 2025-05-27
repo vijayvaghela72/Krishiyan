@@ -7,11 +7,11 @@ import '../../../../helper/app_global.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../helper/alert_helper.dart';
-import '../../../../mvc/model/GetBankDetails.dart';
+import '../../../../mvc/model/bank_model.dart';
 import 'package:image_picker/image_picker.dart';
 import '../profile.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
-import '../../../../mvc/controller/accountSettingController.dart';
+import '../../../../mvc/controller/account_setting_controller.dart';
 import 'package:krishiyan/localization/app_localizations.dart';
 
 class EditBankDetailPage extends StatefulWidget {

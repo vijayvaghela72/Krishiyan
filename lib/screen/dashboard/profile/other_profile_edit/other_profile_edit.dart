@@ -10,8 +10,8 @@ import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/style.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../helper/alert_helper.dart';
-import '../../../../mvc/controller/accountSettingController.dart';
-import '../../../../mvc/model/GetProfileData.dart';
+import '../../../../mvc/controller/account_setting_controller.dart';
+import '../../../../mvc/model/profile_model.dart';
 import '../../../../helper/app_global.dart';
 import 'package:intl/intl.dart';
 

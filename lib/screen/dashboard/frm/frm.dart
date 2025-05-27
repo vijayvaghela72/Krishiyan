@@ -15,17 +15,17 @@ import 'package:krishiyan/helper/loading.dart';
 import 'package:krishiyan/helper/constant.dart';
 import 'package:krishiyan/helper/snackbar.dart';
 import '../../../mvc/controller/otp_controller.dart';
-import 'package:krishiyan/mvc/model/FrmInsight.dart';
+import 'package:krishiyan/mvc/model/frm_insight_model.dart';
 import '../../../localization/app_localizations.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:krishiyan/mvc/model/GetOtpDetails.dart';
-import '../../../mvc/model/SelectVillagesNameData.dart';
+import 'package:krishiyan/mvc/model/otp_details_model.dart';
+import '../../../mvc/model/villages_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:krishiyan/mvc/model/FarmerDashboardData.dart';
+import 'package:krishiyan/mvc/model/farmer_dashboard_model.dart';
 import 'package:krishiyan/screen/dashboard/frm/frm_model.dart';
-import '../../../mvc/controller/farmerDashboardController.dart';
+import '../../../mvc/controller/farmer_dashboard_controller.dart';
 import 'package:krishiyan/screen/dashboard/frm/widget/farmer_edit_profile.dart';
 
 // ignore: must_be_immutable

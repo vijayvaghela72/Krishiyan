@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../language/select_language.dart';
-import 'package:krishiyan/mvc/model/VarietyData.dart';
+import 'package:krishiyan/mvc/model/variety_model.dart';
 import 'package:krishiyan/mvc/model/variet_model.dart';
 import '../../../../localization/app_localizations.dart';
 import 'package:krishiyan/screen/dashboard/crop/crop_model.dart';

@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:krishiyan/helper/constant.dart';
-import 'package:krishiyan/mvc/model/VarietyData.dart';
+import 'package:krishiyan/mvc/model/variety_model.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 
 Future<List<VarietyData>> fetchVarieties(String selectedCrop) async {

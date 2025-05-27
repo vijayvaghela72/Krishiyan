@@ -3,7 +3,7 @@ import '../../../../helper/constant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../helper/alert_helper.dart';
-import '../../../../mvc/model/PincodeToStateData.dart';
+import '../../../../mvc/model/pincode_to_state_model.dart';
 import '../../../../localization/app_localizations.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';

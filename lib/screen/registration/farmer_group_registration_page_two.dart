@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import '../../helper/alert_helper.dart';
 import '../../helper/app_global.dart';
 import 'package:krishiyan/screen/login/login.dart';
-import '../../mvc/controller/farmerDashboardController.dart';
+import '../../mvc/controller/farmer_dashboard_controller.dart';
 import 'package:krishiyan/screen/registration/my_registration.dart';
 
 // ignore: must_be_immutable

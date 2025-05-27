@@ -1,7 +1,7 @@
 import 'dart:convert';
-import '../model/APIResponse.dart';
+import '../model/api_reaponse_model.dart';
 import '../../helper/constant.dart';
-import '../model/GetOtpDetails.dart';
+import '../model/otp_details_model.dart';
 import '../../helper/alert_helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';

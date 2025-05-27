@@ -10,13 +10,13 @@ import 'package:chip_list/chip_list.dart';
 import '../../language/select_language.dart';
 import 'package:krishiyan/helper/color.dart';
 import 'package:krishiyan/helper/constant.dart';
-import '../../../mvc/model/SelectCropNamesData.dart';
+import '../../../mvc/model/crop_name_model.dart';
 import '../../../localization/app_localizations.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
-import '../../../mvc/model/GetEnquiryByFilterData.dart';
+import '../../../mvc/model/enquiry_by_filter_model.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:krishiyan/screen/dashboard/dashborad.dart';
-import '../../../mvc/controller/enquiryDashboardController.dart';
+import '../../../mvc/controller/enquiry_dashboard_controller.dart';
 import 'package:krishiyan/screen/dashboard/enquiry/widget/sell_commodity.dart';
 
 // ignore: must_be_immutable

@@ -12,7 +12,7 @@ import '../../../helper/constant.dart';
 import 'general_info/general_Info.dart';
 import '../../language/select_language.dart';
 import 'crop_protection/crop_protection.dart';
-import '../../../mvc/model/SelectCropNamesData.dart';
+import '../../../mvc/model/crop_name_model.dart';
 import '../../../localization/app_localizations.dart';
 import 'nutrient_managemment/nutrient_managment.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';

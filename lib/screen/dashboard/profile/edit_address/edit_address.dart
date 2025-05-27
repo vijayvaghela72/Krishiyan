@@ -6,8 +6,8 @@ import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:krishiyan/helper/constant.dart';
 import 'package:krishiyan/localization/app_localizations.dart';
 import '../../../../helper/alert_helper.dart';
-import '../../../../mvc/controller/accountSettingController.dart';
-import '../../../../mvc/model/GetAddressDetails.dart';
+import '../../../../mvc/controller/account_setting_controller.dart';
+import '../../../../mvc/model/get_address_details_model.dart';
 import '../../../../helper/app_global.dart';
 import '../profile.dart';
 

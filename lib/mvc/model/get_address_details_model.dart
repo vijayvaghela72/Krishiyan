@@ -1,5 +1,4 @@
 class GetAddressDetails {
-
   bool? success;
   String? message;
   Address? data;
@@ -37,15 +36,15 @@ class Address {
 
   Address(
       {this.sId,
-        this.uid,
-        this.iV,
-        this.address,
-        this.createdAt,
-        this.district,
-        this.pincode,
-        this.state,
-        this.updatedAt,
-        this.village});
+      this.uid,
+      this.iV,
+      this.address,
+      this.createdAt,
+      this.district,
+      this.pincode,
+      this.state,
+      this.updatedAt,
+      this.village});
 
   Address.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];

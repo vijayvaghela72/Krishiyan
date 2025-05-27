@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:krishiyan/helper/constant.dart';
-import 'package:krishiyan/mvc/model/PriceData.dart';
+import 'package:krishiyan/mvc/model/price_data_model.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 
 class HomeDashboardController {

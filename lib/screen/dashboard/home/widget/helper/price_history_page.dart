@@ -1,6 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:krishiyan/mvc/model/PriceData.dart';
+import 'package:krishiyan/mvc/model/price_data_model.dart';
 
 class PriceHistoryPage extends StatefulWidget {
   final String? commodityId;

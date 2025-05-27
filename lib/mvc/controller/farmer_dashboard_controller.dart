@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'package:krishiyan/helper/constant.dart';
 
-import '../model/APIResponse.dart';
+import '../model/api_reaponse_model.dart';
 import '../../helper/alert_helper.dart';
 import 'package:flutter/material.dart';
-import '../model/FarmerDashboardData.dart';
-import '../model/FarmerRegistrationData.dart';
+import '../model/farmer_dashboard_model.dart';
+import '../model/farmer_registration_model.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

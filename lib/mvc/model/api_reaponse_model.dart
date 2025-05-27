@@ -1,15 +1,15 @@
 import 'package:krishiyan/screen/dashboard/frm/frm_model.dart';
 import '../../screen/login/login_model.dart';
-import 'CreateBuyCommodityData.dart';
-import 'FarmerRegistrationData.dart';
-import 'PincodeToStateData.dart';
-import 'GetFRMProfileData.dart';
-import 'GetAddressDetails.dart';
-import 'GetOtherDetails.dart';
-import 'FarmersNameData.dart';
-import 'GetBankDetails.dart';
-import 'GetProfileData.dart';
-import 'GetOtpDetails.dart';
+import 'create_buy_commodity_model.dart';
+import 'farmer_registration_model.dart';
+import 'pincode_to_state_model.dart';
+import 'frm_profile_model.dart';
+import 'get_address_details_model.dart';
+import 'other_details_model.dart';
+import 'farmers_name_model.dart';
+import 'bank_model.dart';
+import 'profile_model.dart';
+import 'otp_details_model.dart';
 
 class APIResponse {
   String? message;

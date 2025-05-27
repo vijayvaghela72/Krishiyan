@@ -12,7 +12,7 @@ import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/style.dart';
 import '../../helper/alert_helper.dart';
 import 'farmer_group_registration_page_two.dart';
-import 'package:krishiyan/mvc/model/GetOtpDetails.dart';
+import 'package:krishiyan/mvc/model/otp_details_model.dart';
 import '../../mvc/controller/otp_controller.dart';
 import 'dart:convert';
 

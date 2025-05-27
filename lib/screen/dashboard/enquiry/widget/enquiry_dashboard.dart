@@ -7,9 +7,9 @@ import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:krishiyan/helper/constant.dart';
 import 'package:krishiyan/localization/app_localizations.dart';
 import 'package:permission_handler/permission_handler.dart';
-import '../../../../mvc/controller/enquiryDashboardController.dart';
-import '../../../../mvc/model/GetAllEnquiryData.dart';
-import '../../../../mvc/model/SelectCropNamesData.dart';
+import '../../../../mvc/controller/enquiry_dashboard_controller.dart';
+import '../../../../mvc/model/all_enquiry_model.dart';
+import '../../../../mvc/model/crop_name_model.dart';
 import 'enquiry_detail.dart';
 import 'package:url_launcher/url_launcher.dart';
 

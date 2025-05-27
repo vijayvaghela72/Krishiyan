@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import '../../helper/api.dart';
 import '../../helper/shared_pref.dart';
 import '../../helper/constant.dart';
-import '../model/APIResponse.dart';
-import '../model/GetAddressDetails.dart';
-import '../model/GetBankDetails.dart';
-import '../model/GetFRMProfileData.dart';
-import '../model/GetOtherDetails.dart';
-import '../model/GetProfileData.dart';
+import '../model/api_reaponse_model.dart';
+import '../model/get_address_details_model.dart';
+import '../model/bank_model.dart';
+import '../model/frm_profile_model.dart';
+import '../model/other_details_model.dart';
+import '../model/profile_model.dart';
 
 class AccountSettingController {
   static Future<GetFRMProfileDetails?> fetchFRMEditProfileDetails(

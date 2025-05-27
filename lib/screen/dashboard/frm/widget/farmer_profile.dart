@@ -7,9 +7,9 @@ import 'package:krishiyan/helper/constant.dart';
 import '../../../../helper/alert_helper.dart';
 import '../../../../helper/shared_pref.dart';
 import '../../../../localization/app_localizations.dart';
-import '../../../../mvc/controller/farmerDashboardController.dart';
-import '../../../../mvc/model/FarmerRegistrationData.dart';
-import '../../../../mvc/model/PincodeToStateData.dart';
+import '../../../../mvc/controller/farmer_dashboard_controller.dart';
+import '../../../../mvc/model/farmer_registration_model.dart';
+import '../../../../mvc/model/pincode_to_state_model.dart';
 import '../../../../helper/app_global.dart';
 
 // ignore: must_be_immutable

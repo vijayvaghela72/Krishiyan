@@ -10,9 +10,9 @@ import 'package:krishiyan/screen/registration/my_registration.dart';
 import 'package:krishiyan/helper/constant.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/style.dart';
-import 'package:krishiyan/mvc/model/GetOtpDetails.dart';
+import 'package:krishiyan/mvc/model/otp_details_model.dart';
 import '../../helper/alert_helper.dart';
-import '../../mvc/controller/farmerDashboardController.dart';
+import '../../mvc/controller/farmer_dashboard_controller.dart';
 import '../../mvc/controller/otp_controller.dart';
 
 class MyTraderRegistration extends StatefulWidget {

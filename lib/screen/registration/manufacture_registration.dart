@@ -11,9 +11,9 @@ import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/style.dart';
 import '../../helper/alert_helper.dart';
 import '../../localization/app_localizations.dart';
-import '../../mvc/controller/farmerDashboardController.dart';
+import '../../mvc/controller/farmer_dashboard_controller.dart';
 import '../../mvc/controller/otp_controller.dart';
-import '../../mvc/model/GetOtpDetails.dart';
+import '../../mvc/model/otp_details_model.dart';
 
 class ManufactureRegistration extends StatefulWidget {
   const ManufactureRegistration({super.key});

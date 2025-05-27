@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:krishiyan/helper/constant.dart';
 import 'package:krishiyan/helper/provider.dart';
 import 'package:krishiyan/helper/snackbar.dart';
-import '../../../mvc/model/GetMandiPriceData.dart';
+import '../../../mvc/model/mandi_price_model.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
-import 'package:krishiyan/mvc/model/MarketInsight.dart';
+import 'package:krishiyan/mvc/model/market_insight_model.dart';
 import 'package:krishiyan/localization/app_localizations.dart';
 import 'package:krishiyan/screen/dashboard/home/home_model.dart';
 

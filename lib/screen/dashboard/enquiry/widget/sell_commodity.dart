@@ -12,10 +12,10 @@ import 'package:path_provider/path_provider.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import '../../../../localization/app_localizations.dart';
-import '../../../../mvc/model/SelectCropNamesData.dart';
+import '../../../../mvc/model/crop_name_model.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../../mvc/controller/enquiryDashboardController.dart';
+import '../../../../mvc/controller/enquiry_dashboard_controller.dart';
 
 class SellCommodityPage extends StatefulWidget {
   const SellCommodityPage({super.key});

@@ -13,8 +13,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../helper/alert_helper.dart';
-import '../../../../mvc/controller/enquiryDashboardController.dart';
-import '../../../../mvc/model/SelectCropNamesData.dart';
+import '../../../../mvc/controller/enquiry_dashboard_controller.dart';
+import '../../../../mvc/model/crop_name_model.dart';
 import '../../../../helper/app_global.dart';
 
 class BuyCommodityPage extends StatefulWidget {

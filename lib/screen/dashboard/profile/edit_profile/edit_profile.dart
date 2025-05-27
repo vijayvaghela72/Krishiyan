@@ -13,9 +13,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:krishiyan/mvc/model/GetFRMProfileData.dart';
+import 'package:krishiyan/mvc/model/frm_profile_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../../mvc/controller/accountSettingController.dart';
+import '../../../../mvc/controller/account_setting_controller.dart';
 import 'package:krishiyan/screen/dashboard/dashborad.dart';
 import 'package:krishiyan/localization/app_localizations.dart';
 

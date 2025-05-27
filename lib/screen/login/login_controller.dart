@@ -2,7 +2,7 @@ import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:flutter/cupertino.dart';
 import '../../helper/alert_helper.dart';
 import '../../helper/constant.dart';
-import '../../mvc/model/APIResponse.dart';
+import '../../mvc/model/api_reaponse_model.dart';
 import 'login_model.dart';
 import 'dart:convert';
 

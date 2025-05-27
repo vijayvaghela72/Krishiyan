@@ -6,7 +6,7 @@ import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:krishiyan/helper/constant.dart';
 import '../../../../helper/alert_helper.dart';
 import '../../../../localization/app_localizations.dart';
-import '../../../../mvc/model/SelectCropNamesData.dart';
+import '../../../../mvc/model/crop_name_model.dart';
 import '../../../../helper/app_global.dart';
 import '../../dashborad.dart';
 import 'package:intl/intl.dart';
