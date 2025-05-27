@@ -187,7 +187,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       // Handle any errors that occur during the image upload process
       print("Error uploading image: $e");
 
-      if (e is DioError) {
+      if (e is DioException) {
         // If the error is a DioError, print more specific details
         print("Dio error type: ${e.type}");
         print("Dio error message: ${e.message}");

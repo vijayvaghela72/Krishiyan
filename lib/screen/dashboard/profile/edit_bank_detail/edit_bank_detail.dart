@@ -444,9 +444,9 @@ class _EditBankDetailPageState extends State<EditBankDetailPage> {
                                 child: TextButton(
                                   style: ButtonStyle(
                                       backgroundColor:
-                                          MaterialStateProperty.all(
+                                          WidgetStateProperty.all(
                                               const Color(0xFFd3d3d3)),
-                                      shape: MaterialStateProperty.all<
+                                      shape: WidgetStateProperty.all<
                                               RoundedRectangleBorder>(
                                           const RoundedRectangleBorder(
                                               side: BorderSide(
@@ -758,9 +758,9 @@ class _EditBankDetailPageState extends State<EditBankDetailPage> {
                                 const EdgeInsets.only(left: 20.0, right: 10.0),
                             child: TextButton(
                               style: ButtonStyle(
-                                  backgroundColor: MaterialStateProperty.all(
+                                  backgroundColor: WidgetStateProperty.all(
                                       const Color(0xFFd3d3d3)),
-                                  shape: MaterialStateProperty.all<
+                                  shape: WidgetStateProperty.all<
                                           RoundedRectangleBorder>(
                                       const RoundedRectangleBorder(
                                           side: BorderSide(
