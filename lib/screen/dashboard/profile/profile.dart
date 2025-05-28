@@ -1,15 +1,14 @@
-import 'package:krishiyan/helper/constant.dart';
-import 'package:krishiyan/screen/login/login.dart';
-
-import 'other_detail/other_detail.dart';
-import 'forgot_password/forgot_password.dart';
-import '../../../helper/app_global.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'other_detail/other_detail.dart';
 import 'edit_profile/edit_profile.dart';
 import 'edit_address/edit_address.dart';
+import '../../../helper/app_global.dart';
 import '../../../helper/shared_pref.dart';
+import 'forgot_password/forgot_password.dart';
 import 'edit_bank_detail/edit_bank_detail.dart';
+import 'package:krishiyan/helper/constant.dart';
+import 'package:krishiyan/screen/login/login.dart';
 import 'other_profile_edit/other_profile_edit.dart';
 import '../../../localization/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -285,7 +284,6 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                 ),
               ),
             ),
-
             // other details
             InkWell(
               highlightColor: Colors.transparent,
@@ -321,7 +319,6 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                 ),
               ),
             ),
-
             // reset password
             InkWell(
               highlightColor: Colors.transparent,
@@ -334,7 +331,7 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
               },
               child: Padding(
                 padding: const EdgeInsets.only(
-                    top: 10.0, bottom: 20.0, right: 18.0, left: 18.0),
+                    top: 10, bottom: 20, right: 18, left: 18),
                 child: Row(
                   children: [
                     Image.asset(
@@ -368,7 +365,7 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
               },
               child: Padding(
                 padding: const EdgeInsets.only(
-                    top: 10.0, bottom: 20.0, right: 18.0, left: 18.0),
+                    top: 10, bottom: 20, right: 18, left: 18),
                 child: Row(
                   children: [
                     Icon(

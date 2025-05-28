@@ -2,17 +2,17 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:krishiyan/helper/api_base_helper.dart';
-import 'package:krishiyan/screen/login/login.dart';
-import 'package:krishiyan/screen/registration/my_registration.dart';
-import 'package:krishiyan/helper/constant.dart';
-import 'package:otp_text_field/otp_field.dart';
-import 'package:otp_text_field/style.dart';
 import '../../helper/alert_helper.dart';
-import '../../localization/app_localizations.dart';
-import '../../mvc/controller/farmer_dashboard_controller.dart';
-import 'package:krishiyan/mvc/model/otp_details_model.dart';
+import 'package:otp_text_field/style.dart';
+import 'package:otp_text_field/otp_field.dart';
+import 'package:krishiyan/helper/constant.dart';
 import '../../mvc/controller/otp_controller.dart';
+import 'package:krishiyan/screen/login/login.dart';
+import '../../localization/app_localizations.dart';
+import 'package:krishiyan/helper/api_base_helper.dart';
+import 'package:krishiyan/mvc/model/otp_details_model.dart';
+import '../../mvc/controller/farmer_dashboard_controller.dart';
+import 'package:krishiyan/screen/registration/my_registration.dart';
 
 class OtherRegistration extends StatefulWidget {
   const OtherRegistration({super.key});

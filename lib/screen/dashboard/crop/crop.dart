@@ -18,6 +18,7 @@ import 'irrigation_management/irrigation_management.dart';
 import 'pre_showing_practices/my_pre_showing_practices.dart';
 import 'package:krishiyan/screen/dashboard/crop/crop_model.dart';
 import 'package:krishiyan/screen/dashboard/crop/crop_controller.dart';
+import 'package:krishiyan/screen/dashboard/enquiry/enquiry_model.dart';
 
 class CropLibraryScreen extends StatefulWidget {
   bool aapbarVisibility;
@@ -37,34 +38,50 @@ class _CropLibraryScreenState extends State<CropLibraryScreen>
     Entity(
       name: buildTranslate("generalInformation")!,
       id: "1",
+      description: '',
+      image: '',
     ),
     Entity(
       name: buildTranslate("varieties")!,
       id: "2",
+      description: '',
+      image: '',
     ),
     Entity(
       name: buildTranslate("preSowingPractices")!,
       id: "3",
+      description: '',
+      image: '',
     ),
     Entity(
       name: buildTranslate("nutrientManagement")!,
       id: "4",
+      description: '',
+      image: '',
     ),
     Entity(
       name: buildTranslate("cropProtection")!,
       id: "5",
+      description: '',
+      image: '',
     ),
     Entity(
       name: buildTranslate("irrigationManagement")!,
       id: "6",
+      description: '',
+      image: '',
     ),
     Entity(
       name: buildTranslate("harvest")!,
       id: "7",
+      description: '',
+      image: '',
     ),
     Entity(
       name: buildTranslate("FAQs")!,
       id: "8",
+      description: '',
+      image: '',
     ),
   ];
 
@@ -402,14 +419,4 @@ class _CropLibraryScreenState extends State<CropLibraryScreen>
       ),
     );
   }
-}
-
-class Entity {
-  String? name;
-  String? id;
-
-  Entity({
-    required this.name,
-    required this.id,
-  });
 }
