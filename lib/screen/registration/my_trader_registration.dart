@@ -139,7 +139,7 @@ class _MyTraderRegistrationState extends State<MyTraderRegistration> {
               height: 10,
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+              padding: const EdgeInsets.only(left: 25, right: 25),
               child: TextFormField(
                 decoration: InputDecoration(
                     alignLabelWithHint: true,
@@ -147,7 +147,7 @@ class _MyTraderRegistrationState extends State<MyTraderRegistration> {
                     filled: true,
                     border: const OutlineInputBorder(
                       borderRadius: BorderRadius.all(
-                        Radius.circular(10.0),
+                        Radius.circular(10),
                       ),
                     ),
                     enabledBorder: const OutlineInputBorder(
