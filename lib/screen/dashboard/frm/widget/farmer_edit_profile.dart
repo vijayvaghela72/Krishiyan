@@ -434,7 +434,7 @@ class _FarmerEditProfilePageState extends State<FarmerEditProfilePage> {
                   color: Colors.white,
                   child: DropdownButtonFormField2<String>(
                     dropdownStyleData: const DropdownStyleData(maxHeight: 200),
-                    hint: const Text('Select a state'),
+                    hint: Text(_selectedStateName ?? 'Select a state'),
                     decoration: InputDecoration(
                       contentPadding: const EdgeInsets.symmetric(vertical: 16),
                       filled: true,
@@ -446,7 +446,6 @@ class _FarmerEditProfilePageState extends State<FarmerEditProfilePage> {
                           width: 1.0,
                         ),
                       ),
-                      // Add more decoration..
                     ),
                     buttonStyleData: const ButtonStyleData(
                       padding: EdgeInsets.only(right: 8),
@@ -461,20 +460,17 @@ class _FarmerEditProfilePageState extends State<FarmerEditProfilePage> {
                     menuItemStyleData: const MenuItemStyleData(
                       padding: EdgeInsets.symmetric(horizontal: 16),
                     ),
-                    value: _selectedStateName,
+                    value: dropdownStateItems?.any(
+                                (item) => item.value == _selectedStateName) ==
+                            true
+                        ? _selectedStateName
+                        : null,
                     items: dropdownStateItems,
                     onChanged: (newValue) {
-                      if (newValue != null &&
-                          dropdownStateItems!
-                              .any((item) => item.value == newValue)) {
-                        print("if newValue : $newValue");
+                      if (newValue != null) {
                         setState(() {
                           _selectedStateName = newValue;
                         });
-                        print("if _selectedStateName : $_selectedStateName");
-                      } else {
-                        print("else");
-                        // Handle case where newValue is not in items
                       }
                     },
                   )),
@@ -503,7 +499,7 @@ class _FarmerEditProfilePageState extends State<FarmerEditProfilePage> {
                   color: Colors.white,
                   child: DropdownButtonFormField2<String>(
                     dropdownStyleData: const DropdownStyleData(maxHeight: 200),
-                    hint: const Text('Select a district'),
+                    hint: Text(_selectedDistrictName ?? 'Select a district'),
                     decoration: InputDecoration(
                       contentPadding: const EdgeInsets.symmetric(vertical: 16),
                       filled: true,
@@ -515,7 +511,6 @@ class _FarmerEditProfilePageState extends State<FarmerEditProfilePage> {
                           width: 1.0,
                         ),
                       ),
-                      // Add more decoration..
                     ),
                     buttonStyleData: const ButtonStyleData(
                       padding: EdgeInsets.only(right: 8),
@@ -530,25 +525,18 @@ class _FarmerEditProfilePageState extends State<FarmerEditProfilePage> {
                     menuItemStyleData: const MenuItemStyleData(
                       padding: EdgeInsets.symmetric(horizontal: 16),
                     ),
-                    value: _selectedDistrictName,
+                    value: dropdownDistrictItems?.any((item) =>
+                                item.value == _selectedDistrictName) ==
+                            true
+                        ? _selectedDistrictName
+                        : null,
                     items: dropdownDistrictItems,
                     onChanged: (newValue) {
-                      if (newValue != null &&
-                          dropdownDistrictItems!
-                              .any((item) => item.value == newValue)) {
-                        print("if newValue : $newValue");
+                      if (newValue != null) {
                         setState(() {
                           _selectedDistrictName = newValue;
                         });
-                        print(
-                            "if _selectedDistrictName : $_selectedDistrictName");
-                      } else {
-                        print("else _selectedDistrictName");
-                        // Handle case where newValue is not in items
                       }
-                      // setState(() {
-                      //   _selectedStateName = newValue;
-                      // });
                     },
                   )),
             ),
@@ -1139,7 +1127,7 @@ class _FarmerEditProfilePageState extends State<FarmerEditProfilePage> {
 
   void _onTextChanged(String text) async {
     try {
-      var url = '$baseUrl$PincodeToState';
+      var url = PincodeToState;
       final response = await postAPICall(
         apiUrl: url,
         parameter: json.encode({'pincode': text}),
@@ -1180,7 +1168,7 @@ class _FarmerEditProfilePageState extends State<FarmerEditProfilePage> {
 
   Future<List<PostOffice>> fetchItems() async {
     final response = await postAPICall(
-      apiUrl: baseUrl + PincodeToState,
+      apiUrl: PincodeToState,
       parameter: json.encode({'pincode': '360001'}),
     );
     if (response.statusCode == 200) {

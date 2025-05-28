@@ -29,7 +29,7 @@ class FarmerDashboardData {
 
 class FarmerDetails {
   FarmerDashboard farmerDetails;
-  dynamic cropCultivationDetails; // Can be a List or String
+  dynamic cropCultivationDetails; // Can be List<CropDetails>, String, or null
 
   FarmerDetails({
     required this.farmerDetails,
@@ -38,11 +38,11 @@ class FarmerDetails {
 
   factory FarmerDetails.fromJson(Map<String, dynamic> json) {
     return FarmerDetails(
-      farmerDetails: FarmerDashboard.fromJson(json['farmerDetails']),
+      farmerDetails: FarmerDashboard.fromJson(json['farmerDetails'] ?? {}),
       cropCultivationDetails: json['cropCultivationDetails'] is List
           ? List<CropDetails>.from(json['cropCultivationDetails']
               .map((x) => CropDetails.fromJson(x)))
-          : json['cropCultivationDetails'],
+          : json['cropCultivationDetails'] ?? "No crop data available",
     );
   }
 
@@ -50,8 +50,7 @@ class FarmerDetails {
     return {
       'farmerDetails': farmerDetails.toJson(),
       'cropCultivationDetails': cropCultivationDetails is List
-          ? List<CropDetails>.from(
-              cropCultivationDetails.map((x) => x.toJson()))
+          ? List<dynamic>.from(cropCultivationDetails.map((x) => x.toJson()))
           : cropCultivationDetails,
     };
   }
@@ -108,28 +107,31 @@ class FarmerDashboard {
 
   factory FarmerDashboard.fromJson(Map<String, dynamic> json) {
     return FarmerDashboard(
-      id: json['_id'],
-      dealerNumber: json['dealerNumber'],
-      name: json['name'],
-      whatsappNumber: json['whatsappNumber'],
-      totalOwnedFarm: json['totalOwnedFarm'],
-      geoLocationOwnedFarm: json['geoLocationOwnedFarm'],
-      totalLeaseFarm: json['totalLeaseFarm'],
-      geoLocationLeaseFarm: json['geoLocationLeaseFarm'],
-      pincode: json['pincode'],
-      village: json['village'],
-      district: json['district'],
-      state: json['state'],
-      address: json['address'],
-      typeOfCultivationPractice: json['typeOfCultivationPractice'],
-      bankName: json['bankName'],
-      accountName: json['accountName'],
-      accountNumber: json['accountNumber'],
-      ifscCode: json['ifscCode'],
-      pan: json['pan'],
-      aadhaarNumber: json['aadhaarNumber'],
-      createdAt: json['createdAt'],
-      updatedAt: json['updatedAt'],
+      id: json['_id']?.toString() ?? '',
+      dealerNumber: json['dealerNumber']?.toString() ?? '',
+      name: json['name']?.toString() ?? '',
+      whatsappNumber: json['whatsappNumber']?.toString() ?? '',
+      totalOwnedFarm:
+          (json['totalOwnedFarm'] is num) ? json['totalOwnedFarm'].toInt() : 0,
+      geoLocationOwnedFarm: json['geoLocationOwnedFarm']?.toString() ?? '',
+      totalLeaseFarm:
+          (json['totalLeaseFarm'] is num) ? json['totalLeaseFarm'].toInt() : 0,
+      geoLocationLeaseFarm: json['geoLocationLeaseFarm']?.toString() ?? '',
+      pincode: json['pincode']?.toString() ?? '',
+      village: json['village']?.toString() ?? '',
+      district: json['district']?.toString() ?? '',
+      state: json['state']?.toString() ?? '',
+      address: json['address']?.toString() ?? '',
+      typeOfCultivationPractice:
+          json['typeOfCultivationPractice']?.toString() ?? '',
+      bankName: json['bankName']?.toString() ?? '',
+      accountName: json['accountName']?.toString() ?? '',
+      accountNumber: json['accountNumber']?.toString() ?? '',
+      ifscCode: json['ifscCode']?.toString() ?? '',
+      pan: json['pan']?.toString() ?? '',
+      aadhaarNumber: json['aadhaarNumber']?.toString() ?? '',
+      createdAt: json['createdAt']?.toString() ?? '',
+      updatedAt: json['updatedAt']?.toString() ?? '',
     );
   }
 

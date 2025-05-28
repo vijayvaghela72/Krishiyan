@@ -725,10 +725,10 @@ class _CropCultivationPageState extends State<CropCultivationPage>
       AlertHelper.showToast("Please select date of sowing", context);
       return;
     }
-    if (geoLocationController.text.trim().isEmpty) {
-      AlertHelper.showToast("Please enter geo location", context);
-      return;
-    }
+    // if (geoLocationController.text.trim().isEmpty) {
+    //   AlertHelper.showToast("Please enter geo location", context);
+    //   return;
+    // }
     if (selectedItemValue == null || selectedItemValue!.isEmpty) {
       AlertHelper.showToast(
           "Please select type of cultivation practice", context);
@@ -738,10 +738,10 @@ class _CropCultivationPageState extends State<CropCultivationPage>
       AlertHelper.showToast("Please enter area in acres", context);
       return;
     }
-    if (geoLinkAreaOnMapController.text.trim().isEmpty) {
-      AlertHelper.showToast("Please enter geo link area on map", context);
-      return;
-    }
+    // if (geoLinkAreaOnMapController.text.trim().isEmpty) {
+    //   AlertHelper.showToast("Please enter geo link area on map", context);
+    //   return;
+    // }
 
     String? number = await AppGlobal.getStringPreference('contactNumber');
 
