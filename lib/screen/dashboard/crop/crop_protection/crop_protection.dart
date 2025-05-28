@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../enquiry/enquiry_model.dart';
 import '../../../language/select_language.dart';
 import 'my_weed_management/my_weed_management.dart';
 import 'disease_management/disease_management.dart';
@@ -45,22 +46,32 @@ class _CropProtectionPageState extends State<CropProtectionPage>
     Entity(
       name: "Pest \nManagement",
       id: "1",
+      image: '',
+      description: '',
     ),
     Entity(
       name: "Disease \nManagement",
       id: "2",
+      image: '',
+      description: '',
     ),
     Entity(
       name: "Deficiency \nSymptoms",
       id: "3",
+      image: '',
+      description: '',
     ),
     Entity(
       name: "Weed \nManagement",
       id: "4",
+      image: '',
+      description: '',
     ),
     Entity(
       name: "Weather \nInjuries",
       id: "5",
+      image: '',
+      description: '',
     ),
   ];
   bool showSelectedItemValue = false;
@@ -307,26 +318,4 @@ class _CropProtectionPageState extends State<CropProtectionPage>
       ),
     );
   }
-}
-
-class Entity {
-  String? name;
-  String? id;
-
-  Entity({
-    required this.name,
-    required this.id,
-  });
-}
-
-class bottomCategory {
-  String? name;
-  String? icon;
-  String? id;
-
-  bottomCategory({
-    required this.name,
-    required this.icon,
-    required this.id,
-  });
 }

@@ -380,29 +380,3 @@ class _MyWeedManagementPageState extends State<MyWeedManagementPage>
     );
   }
 }
-
-class Entity {
-  String? name;
-  String? id;
-  String? image;
-  String? description;
-
-  Entity({
-    required this.name,
-    required this.id,
-    required this.image,
-    required this.description,
-  });
-}
-
-class bottomCategory {
-  String? name;
-  String? icon;
-  String? id;
-
-  bottomCategory({
-    required this.name,
-    required this.icon,
-    required this.id,
-  });
-}

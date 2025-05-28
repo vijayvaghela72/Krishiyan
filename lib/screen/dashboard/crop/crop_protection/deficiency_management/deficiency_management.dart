@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import '../../../../../helper/drive_image.dart';
 import '../../../../language/select_language.dart';
 import 'package:krishiyan/screen/dashboard/crop/crop_model.dart';
+import 'package:krishiyan/screen/dashboard/enquiry/enquiry_model.dart';
 
 class DeficiencyManagementPage extends StatefulWidget {
   bool aapbarVisibility;
@@ -466,30 +467,4 @@ class _DeficiencyManagementPageState extends State<DeficiencyManagementPage>
       },
     );
   }
-}
-
-class Entity {
-  String? name;
-  String? id;
-  String? image;
-  String? description;
-
-  Entity({
-    required this.name,
-    required this.id,
-    required this.image,
-    required this.description,
-  });
-}
-
-class bottomCategory {
-  String? name;
-  String? icon;
-  String? id;
-
-  bottomCategory({
-    required this.name,
-    required this.icon,
-    required this.id,
-  });
 }

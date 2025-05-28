@@ -22,13 +22,6 @@ class MyWeatherInjuriesPage extends StatefulWidget {
 
 class _MyWeatherInjuriesPageState extends State<MyWeatherInjuriesPage>
     with TickerProviderStateMixin {
-  List<Entity> ORG_Entity = [
-    Entity(
-      id: "1",
-      image: "assets/images/weather1.png",
-    ),
-  ];
-
   @override
   void initState() {
     super.initState();
@@ -450,26 +443,4 @@ class _MyWeatherInjuriesPageState extends State<MyWeatherInjuriesPage>
       },
     );
   }
-}
-
-class Entity {
-  String? id;
-  String? image;
-
-  Entity({
-    required this.id,
-    required this.image,
-  });
-}
-
-class bottomCategory {
-  String? name;
-  String? icon;
-  String? id;
-
-  bottomCategory({
-    required this.name,
-    required this.icon,
-    required this.id,
-  });
 }

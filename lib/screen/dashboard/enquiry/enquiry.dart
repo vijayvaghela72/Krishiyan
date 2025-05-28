@@ -17,6 +17,7 @@ import '../../../mvc/model/enquiry_by_filter_model.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:krishiyan/screen/dashboard/dashborad.dart';
 import '../../../mvc/controller/enquiry_dashboard_controller.dart';
+import 'package:krishiyan/screen/dashboard/enquiry/enquiry_model.dart';
 import 'package:krishiyan/screen/dashboard/enquiry/widget/sell_commodity.dart';
 
 // ignore: must_be_immutable
@@ -1441,40 +1442,4 @@ class _EnquiryScreenState extends State<EnquiryScreen>
       ),
     );
   }
-}
-
-class Enquiry {
-  String? name;
-  String? id;
-  String? icon;
-
-  Enquiry({
-    required this.name,
-    required this.id,
-    required this.icon,
-  });
-}
-
-class cropsCategory {
-  String? name;
-  String? icon;
-  String? id;
-
-  cropsCategory({
-    required this.name,
-    required this.icon,
-    required this.id,
-  });
-}
-
-class bottomCategory {
-  String? name;
-  String? icon;
-  String? id;
-
-  bottomCategory({
-    required this.name,
-    required this.icon,
-    required this.id,
-  });
 }

@@ -1,15 +1,16 @@
 import 'dart:async';
-import 'package:krishiyan/helper/color.dart';
+import 'crop/crop.dart';
+import 'profile/profile.dart';
+import 'enquiry/enquiry.dart';
 import '../../helper/constant.dart';
 import '../../helper/shared_pref.dart';
 import 'package:flutter/material.dart';
-import 'crop/crop.dart';
-import 'profile/profile.dart';
 import '../language/select_language.dart';
-import 'enquiry/enquiry.dart';
+import 'package:krishiyan/helper/color.dart';
 import '../../localization/app_localizations.dart';
-import 'package:krishiyan/screen/dashboard/home/home.dart';
 import 'package:krishiyan/screen/dashboard/frm/frm.dart';
+import 'package:krishiyan/screen/dashboard/home/home.dart';
+import 'package:krishiyan/screen/dashboard/enquiry/enquiry_model.dart';
 
 // ignore: must_be_immutable
 class HomePage extends StatefulWidget {
@@ -374,16 +375,4 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       typeOfOrganizationData = typeOfOrganizationData;
     });
   }
-}
-
-class bottomCategory {
-  String? name;
-  String? icon;
-  String? id;
-
-  bottomCategory({
-    required this.name,
-    required this.icon,
-    required this.id,
-  });
 }

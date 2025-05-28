@@ -14,18 +14,19 @@ import 'package:otp_text_field/otp_field.dart';
 import 'package:krishiyan/helper/loading.dart';
 import 'package:krishiyan/helper/constant.dart';
 import 'package:krishiyan/helper/snackbar.dart';
+import '../../../mvc/model/villages_model.dart';
 import '../../../mvc/controller/otp_controller.dart';
-import 'package:krishiyan/mvc/model/frm_insight_model.dart';
 import '../../../localization/app_localizations.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:krishiyan/mvc/model/frm_insight_model.dart';
 import 'package:krishiyan/mvc/model/otp_details_model.dart';
-import '../../../mvc/model/villages_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:krishiyan/mvc/model/farmer_dashboard_model.dart';
 import 'package:krishiyan/screen/dashboard/frm/frm_model.dart';
+import 'package:krishiyan/mvc/model/farmer_dashboard_model.dart';
 import '../../../mvc/controller/farmer_dashboard_controller.dart';
+import 'package:krishiyan/screen/dashboard/enquiry/enquiry_model.dart';
 import 'package:krishiyan/screen/dashboard/frm/widget/farmer_edit_profile.dart';
 
 // ignore: must_be_immutable
@@ -3127,30 +3128,6 @@ class _FRMState extends State<FRM> with TickerProviderStateMixin {
       setSnackbar('Something wrong! ${response.body.toString()}');
     }
   }
-}
-
-class cropsCategory {
-  String? name;
-  String? icon;
-  String? id;
-
-  cropsCategory({
-    required this.name,
-    required this.icon,
-    required this.id,
-  });
-}
-
-class bottomCategory {
-  String? name;
-  String? icon;
-  String? id;
-
-  bottomCategory({
-    required this.name,
-    required this.icon,
-    required this.id,
-  });
 }
 
 class MyDrawer extends StatefulWidget {

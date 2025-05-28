@@ -393,27 +393,3 @@ class _MyPestManagementPageState extends State<MyPestManagementPage>
     );
   }
 }
-
-class Entity {
-  String? name;
-  String? id;
-  String? image;
-
-  Entity({
-    required this.name,
-    required this.id,
-    required this.image,
-  });
-}
-
-class bottomCategory {
-  String? name;
-  String? icon;
-  String? id;
-
-  bottomCategory({
-    required this.name,
-    required this.icon,
-    required this.id,
-  });
-}

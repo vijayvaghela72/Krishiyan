@@ -375,18 +375,6 @@ class Verities {
   });
 }
 
-class bottomCategory {
-  String? name;
-  String? icon;
-  String? id;
-
-  bottomCategory({
-    required this.name,
-    required this.icon,
-    required this.id,
-  });
-}
-
 class Variety {
   final String id;
   final String name;

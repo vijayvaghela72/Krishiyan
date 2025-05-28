@@ -568,25 +568,3 @@ class _GeneralInformationPageState extends State<GeneralInformationPage>
     );
   }
 }
-
-class Entity {
-  String? name;
-  String? id;
-
-  Entity({
-    required this.name,
-    required this.id,
-  });
-}
-
-class bottomCategory {
-  String? name;
-  String? icon;
-  String? id;
-
-  bottomCategory({
-    required this.name,
-    required this.icon,
-    required this.id,
-  });
-}

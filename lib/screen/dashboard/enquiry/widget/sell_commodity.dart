@@ -921,7 +921,7 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
             if (_image != null)
               Center(
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(8),
                   child: Image.file(
                     _image!,
                     height: 200,
@@ -930,18 +930,7 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
                   ),
                 ),
               ),
-
             const SizedBox(height: 20),
-
-            // // Display image preview after upload
-            // if (_imageUrl != null)
-            //   Image.network(
-            //     _imageUrl!,
-            //     height: 200,
-            //     width: 200,
-            //     fit: BoxFit.cover,
-            //   ),
-
             // Add comments
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),

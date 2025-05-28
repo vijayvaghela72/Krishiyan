@@ -1,10 +1,10 @@
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:krishiyan/mvc/model/all_enquiry_model.dart';
-import 'package:intl/intl.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../../../helper/alert_helper.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:krishiyan/mvc/model/all_enquiry_model.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 // ignore: must_be_immutable
 class EnquiryDetailPage extends StatefulWidget {
@@ -695,7 +695,6 @@ class _EnquiryDetailPageState extends State<EnquiryDetailPage>
           ],
         ),
       ),
-      // drawer: MyDrawer(),
     );
   }
 }

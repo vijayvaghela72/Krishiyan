@@ -1,8 +1,5 @@
 // ignore_for_file: must_be_immutable
 import 'dart:convert';
-import 'package:krishiyan/screen/dashboard/crop/crop_controller.dart';
-import 'package:krishiyan/screen/dashboard/crop/crop_model.dart';
-
 import 'faq/faq.dart';
 import 'harvest/harvest.dart';
 import 'varienties/my_verities.dart';
@@ -19,6 +16,8 @@ import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'irrigation_management/irrigation_management.dart';
 import 'pre_showing_practices/my_pre_showing_practices.dart';
+import 'package:krishiyan/screen/dashboard/crop/crop_model.dart';
+import 'package:krishiyan/screen/dashboard/crop/crop_controller.dart';
 
 class CropLibraryScreen extends StatefulWidget {
   bool aapbarVisibility;
@@ -411,18 +410,6 @@ class Entity {
 
   Entity({
     required this.name,
-    required this.id,
-  });
-}
-
-class bottomCategory {
-  String? name;
-  String? icon;
-  String? id;
-
-  bottomCategory({
-    required this.name,
-    required this.icon,
     required this.id,
   });
 }

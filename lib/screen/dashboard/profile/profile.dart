@@ -463,15 +463,3 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
     });
   }
 }
-
-class bottomCategory {
-  String? name;
-  String? icon;
-  String? id;
-
-  bottomCategory({
-    required this.name,
-    required this.icon,
-    required this.id,
-  });
-}

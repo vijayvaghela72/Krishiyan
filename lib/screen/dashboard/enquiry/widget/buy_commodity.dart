@@ -1,21 +1,21 @@
-import 'dart:convert';
 import 'dart:io';
+import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
-import 'package:krishiyan/helper/api_base_helper.dart';
+import '../../../../helper/app_global.dart';
+import '../../../../helper/alert_helper.dart';
 import 'package:krishiyan/helper/constant.dart';
-import 'package:krishiyan/localization/app_localizations.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import '../../../../mvc/model/crop_name_model.dart';
+import 'package:krishiyan/helper/api_base_helper.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../../helper/alert_helper.dart';
+import 'package:krishiyan/localization/app_localizations.dart';
 import '../../../../mvc/controller/enquiry_dashboard_controller.dart';
-import '../../../../mvc/model/crop_name_model.dart';
-import '../../../../helper/app_global.dart';
 
 class BuyCommodityPage extends StatefulWidget {
   const BuyCommodityPage({super.key});
@@ -980,18 +980,7 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
                   ),
                 ),
               ),
-
             const SizedBox(height: 20),
-
-            // // Display image preview after upload
-            // if (_imageUrl != null)
-            //   Image.network(
-            //     _imageUrl!,
-            //     height: 200,
-            //     width: 200,
-            //     fit: BoxFit.cover,
-            //   ),
-            // Add comments
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),
               child: Text(

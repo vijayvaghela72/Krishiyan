@@ -780,27 +780,3 @@ class _CropCultivationPageState extends State<CropCultivationPage>
     }
   }
 }
-
-class cropsCategory {
-  String? name;
-  String? icon;
-  String? id;
-
-  cropsCategory({
-    required this.name,
-    required this.icon,
-    required this.id,
-  });
-}
-
-class bottomCategory {
-  String? name;
-  String? icon;
-  String? id;
-
-  bottomCategory({
-    required this.name,
-    required this.icon,
-    required this.id,
-  });
-}

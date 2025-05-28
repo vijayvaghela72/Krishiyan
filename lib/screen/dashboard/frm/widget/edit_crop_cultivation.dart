@@ -1402,27 +1402,3 @@ class _EditCropCultivationPageState extends State<EditCropCultivationPage>
     print("cultivationType : ${widget.cultivationType}");
   }
 }
-
-class cropsCategory {
-  String? name;
-  String? icon;
-  String? id;
-
-  cropsCategory({
-    required this.name,
-    required this.icon,
-    required this.id,
-  });
-}
-
-class bottomCategory {
-  String? name;
-  String? icon;
-  String? id;
-
-  bottomCategory({
-    required this.name,
-    required this.icon,
-    required this.id,
-  });
-}

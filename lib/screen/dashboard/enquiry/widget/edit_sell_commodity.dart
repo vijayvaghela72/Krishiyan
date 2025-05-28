@@ -945,7 +945,7 @@ class _EditSellCommodityPageState extends State<EditSellCommodityPage> {
             if (_image != null)
               Center(
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(8),
                   child: Image.file(
                     _image!,
                     height: 200,
