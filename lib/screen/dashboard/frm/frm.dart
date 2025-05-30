@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:intl/intl.dart';
+import 'bottom_sheet/crop_bs.dart';
 import 'widget/farmer_profile.dart';
 import 'widget/crop_cultivation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import '../../../helper/app_global.dart';
 import '../../../helper/alert_helper.dart';
 import 'package:otp_text_field/style.dart';
@@ -13,6 +15,7 @@ import '../../language/select_language.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:krishiyan/helper/loading.dart';
 import 'package:krishiyan/helper/constant.dart';
+import 'package:krishiyan/helper/provider.dart';
 import 'package:krishiyan/helper/snackbar.dart';
 import '../../../mvc/model/villages_model.dart';
 import '../../../mvc/controller/otp_controller.dart';
@@ -25,8 +28,10 @@ import 'package:krishiyan/mvc/model/otp_details_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:krishiyan/screen/dashboard/frm/frm_model.dart';
 import 'package:krishiyan/mvc/model/farmer_dashboard_model.dart';
+import 'package:krishiyan/screen/dashboard/frm/frm_provider.dart';
 import '../../../mvc/controller/farmer_dashboard_controller.dart';
 import 'package:krishiyan/screen/dashboard/enquiry/enquiry_model.dart';
+import 'package:krishiyan/screen/dashboard/frm/bottom_sheet/farmer_bs.dart';
 import 'package:krishiyan/screen/dashboard/frm/widget/farmer_edit_profile.dart';
 
 // ignore: must_be_immutable
@@ -72,12 +77,20 @@ class _FRMState extends State<FRM> with TickerProviderStateMixin {
         icon: 'assets/images/bottom4.png'),
   ];
 
+  setStateNow() {
+    setState(() {});
+    ;
+  }
+
   int selectedTopData = 0;
   bool otpVisible = false;
 
   List<cropsCategory> search_crops = [
     cropsCategory(
-        name: "Total Farmer", id: "1", icon: 'assets/images/crops1.png'),
+      name: "Total Farmer",
+      id: "1",
+      icon: 'assets/images/crops1.png',
+    ),
     cropsCategory(
         name: "Total Farmer Land(in HA)",
         id: "2",
@@ -123,17 +136,11 @@ class _FRMState extends State<FRM> with TickerProviderStateMixin {
   String enteredOtp = '';
   String otpData = "";
 
-  String? _selectedCrop;
-
   // SelectCropNamesData? _cropData;
-
-  List<String> crops = [];
 
   SelectVillagesNameData? _villageNameData;
   String? _selectedVillageName;
 
-  String? _selectedFarmersName;
-  List<DropdownMenuItem<String>>? dropdownItems;
   String number = "";
 
   Future<InsightDetails?>? futureSearchInsightDetails;
@@ -194,6 +201,7 @@ class _FRMState extends State<FRM> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    frmProvider = Provider.of<FRMProvider>(context, listen: false);
     futureFarmerProfiles = FarmerDashboardController.fetchFarmerDashboard(
         context, widget.villageName, widget.typeName);
     getAllData();
@@ -202,7 +210,7 @@ class _FRMState extends State<FRM> with TickerProviderStateMixin {
   getAllData() async {
     showLoading();
     await fetchCrops();
-    await _fetchFarmerNameData();
+    await frmProvider!.fetchFarmerNameData();
     await _fetchVillageData();
     stopLoading();
   }
@@ -642,8 +650,8 @@ class _FRMState extends State<FRM> with TickerProviderStateMixin {
 
                               // select farmer
                               Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 25.0, right: 25.0),
+                                padding:
+                                    const EdgeInsets.only(left: 25, right: 25),
                                 child: Text(
                                   buildTranslate("selectFarmer")!,
                                   style: const TextStyle(
@@ -652,65 +660,72 @@ class _FRMState extends State<FRM> with TickerProviderStateMixin {
                                       fontFamily: 'poppins-semibold'),
                                 ),
                               ),
-                              const SizedBox(
-                                height: 10,
-                              ),
+
                               Padding(
                                 padding: const EdgeInsets.only(
-                                    left: 25.0, right: 25.0),
-                                child: Container(
+                                    left: 25, right: 25, top: 10),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    selectFarmer(
+                                      context,
+                                      setStateNow,
+                                    );
+                                  },
+                                  child: Container(
                                     color: Colors.white,
-                                    child: DropdownButtonFormField2<String>(
-                                      dropdownStyleData:
-                                          const DropdownStyleData(
-                                              maxHeight: 200),
-                                      hint:
-                                          Text(buildTranslate("selectFarmer")!),
-                                      decoration: InputDecoration(
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(
-                                                vertical: 16),
-                                        filled: true,
-                                        fillColor: Colors.white,
-                                        border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          borderSide: const BorderSide(
-                                            color: Colors.black,
-                                            width: 1.0,
-                                          ),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: Colors.black
+                                                .withValues(alpha: 0.7)),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 12, vertical: 15),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                frmProvider!
+                                                        .selectedFarmersName ??
+                                                    buildTranslate(
+                                                        "selectFarmer")!,
+                                                style: TextStyle(
+                                                  fontSize: frmProvider!
+                                                              .selectedFarmersName !=
+                                                          null
+                                                      ? 15
+                                                      : 15,
+                                                  fontFamily: "poppins-regular",
+                                                  color: frmProvider!
+                                                              .selectedFarmersName !=
+                                                          null
+                                                      ? Colors.black
+                                                      : Colors.black54,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                            const Icon(
+                                              Icons.arrow_drop_down,
+                                              color: Colors.black45,
+                                              size: 24,
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                      buttonStyleData: const ButtonStyleData(
-                                        padding: EdgeInsets.only(right: 8),
-                                      ),
-                                      iconStyleData: const IconStyleData(
-                                        icon: Icon(
-                                          Icons.arrow_drop_down,
-                                          color: Colors.black45,
-                                        ),
-                                        iconSize: 24,
-                                      ),
-                                      menuItemStyleData:
-                                          const MenuItemStyleData(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 16),
-                                      ),
-                                      value: _selectedFarmersName,
-                                      items: dropdownItems,
-                                      onChanged: (String? newValue) {
-                                        _selectedFarmersName = newValue;
-                                      },
-                                    )),
-                              ),
-                              const SizedBox(
-                                height: 20,
+                                    ),
+                                  ),
+                                ),
                               ),
 
                               // crops
                               Padding(
                                 padding: const EdgeInsets.only(
-                                    left: 25.0, right: 25.0),
+                                    left: 25, right: 25, top: 20),
                                 child: Text(
                                   buildTranslate("selectCrops")!,
                                   style: const TextStyle(
@@ -719,74 +734,68 @@ class _FRMState extends State<FRM> with TickerProviderStateMixin {
                                       fontFamily: 'poppins-semibold'),
                                 ),
                               ),
-                              const SizedBox(
-                                height: 10,
-                              ),
                               Padding(
                                 padding: const EdgeInsets.only(
-                                    left: 25.0, right: 25.0),
-                                child: crops.isEmpty
-                                    ? Center(
-                                        child: Text(
-                                            buildTranslate("noDataAvailable")!))
-                                    : DropdownButtonFormField2<String>(
-                                        dropdownStyleData:
-                                            DropdownStyleData(maxHeight: 200),
-                                        hint: Text(
-                                            buildTranslate("selectCrops")!),
-                                        decoration: InputDecoration(
-                                          contentPadding:
-                                              const EdgeInsets.symmetric(
-                                                  vertical: 16),
-                                          filled: true,
-                                          fillColor: Colors.white,
-                                          border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                            borderSide: const BorderSide(
-                                              color: Colors.black,
-                                              width: 1.0,
-                                            ),
-                                          ),
-                                        ),
-                                        buttonStyleData: const ButtonStyleData(
-                                          padding: EdgeInsets.only(right: 8),
-                                        ),
-                                        iconStyleData: const IconStyleData(
-                                          icon: Icon(
-                                            Icons.arrow_drop_down,
-                                            color: Colors.black45,
-                                          ),
-                                          iconSize: 24,
-                                        ),
-                                        menuItemStyleData:
-                                            const MenuItemStyleData(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 16),
-                                        ),
-                                        value: _selectedCrop,
-                                        items: crops.map((String crop) {
-                                          return DropdownMenuItem<String>(
-                                            value: crop,
-                                            child: Text(crop,
-                                                style: const TextStyle(
-                                                    fontSize: 15,
-                                                    color: Colors.black,
-                                                    fontFamily:
-                                                        'poppins-regular')),
-                                          );
-                                        }).toList(),
-                                        onChanged: (String? newValue) {
-                                          setState(() {
-                                            _selectedCrop = newValue;
-                                          });
-                                        },
+                                    left: 25, right: 25, top: 10),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    selectCrop(
+                                      context,
+                                      setStateNow,
+                                    );
+                                  },
+                                  child: Container(
+                                    color: Colors.white,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: Colors.black
+                                                .withValues(alpha: 0.7)),
+                                        borderRadius: BorderRadius.circular(8),
                                       ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 12, vertical: 15),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                frmProvider!.selectedCrop ??
+                                                    buildTranslate(
+                                                        "selectCrops")!,
+                                                style: TextStyle(
+                                                  fontSize: frmProvider!
+                                                              .selectedCrop !=
+                                                          null
+                                                      ? 15
+                                                      : 15,
+                                                  fontFamily: "poppins-regular",
+                                                  color: frmProvider!
+                                                              .selectedCrop !=
+                                                          null
+                                                      ? Colors.black
+                                                      : Colors.black54,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                            const Icon(
+                                              Icons.arrow_drop_down,
+                                              color: Colors.black45,
+                                              size: 24,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
                               ),
                               const SizedBox(
                                 height: 20,
                               ),
-
                               // varity
                               Padding(
                                 padding: const EdgeInsets.only(
@@ -812,7 +821,7 @@ class _FRMState extends State<FRM> with TickerProviderStateMixin {
                                       filled: true,
                                       border: const OutlineInputBorder(
                                         borderRadius: BorderRadius.all(
-                                          Radius.circular(10.0),
+                                          Radius.circular(10),
                                         ),
                                       ),
                                       enabledBorder: const OutlineInputBorder(
@@ -1311,8 +1320,9 @@ class _FRMState extends State<FRM> with TickerProviderStateMixin {
                                                             .symmetric(
                                                                 horizontal: 16),
                                                       ),
-                                                      value: _selectedCrop,
-                                                      items: crops
+                                                      value: frmProvider!
+                                                          .selectedCrop,
+                                                      items: frmProvider!.crops
                                                           .map((String crop) {
                                                         return DropdownMenuItem<
                                                             String>(
@@ -1329,7 +1339,8 @@ class _FRMState extends State<FRM> with TickerProviderStateMixin {
                                                       onChanged:
                                                           (String? newValue) {
                                                         setState(() {
-                                                          _selectedCrop =
+                                                          frmProvider!
+                                                                  .selectedCrop =
                                                               newValue;
                                                         });
                                                       },
@@ -2531,13 +2542,13 @@ class _FRMState extends State<FRM> with TickerProviderStateMixin {
     String? number = await AppGlobal.getStringPreference('contactNumber');
     var num = number ?? "1";
 
-    if (_selectedCrop == null || _selectedVillageName == null) {
+    if (frmProvider!.selectedCrop == null || _selectedVillageName == null) {
       print('Please select both crop and village');
       return null;
     }
 
     final url =
-        '${baseUrl}appFarmer/farmers/insight?dealerNumber=$num&village=$_selectedVillageName&crop=$_selectedCrop&sort=highToLow';
+        '${baseUrl}appFarmer/farmers/insight?dealerNumber=$num&village=$_selectedVillageName&crop=${frmProvider!.selectedCrop}&sort=highToLow';
 
     try {
       final response = await getAPICall(apiUrl: url);
@@ -2560,7 +2571,7 @@ class _FRMState extends State<FRM> with TickerProviderStateMixin {
 
   void onSearchPressed() {
     // Validate if both crop and village are selected
-    if (_selectedCrop != null && _selectedVillageName != null) {
+    if (frmProvider!.selectedCrop != null && _selectedVillageName != null) {
       setState(() {
         // Initialize the future here, which will trigger the API request
         _futureFrminSight = fetchInsightsData();
@@ -2568,29 +2579,6 @@ class _FRMState extends State<FRM> with TickerProviderStateMixin {
     } else {
       // Show an error or prompt to select both crop and village
       print('Please select both crop and village');
-    }
-  }
-
-  Future<void> _fetchFarmerNameData() async {
-    try {
-      String? number = await AppGlobal.getStringPreference('contactNumber');
-      var num = number ?? "1";
-      var response = await getAPICall(apiUrl: FARMER_NAME + num);
-      print(num);
-
-      if (response.statusCode == 200) {
-        var jsonData = json.decode(response.body);
-        dropdownItems = jsonData['data'].map<DropdownMenuItem<String>>((item) {
-          return DropdownMenuItem<String>(
-            value: item['name'],
-            child: Text(item['name']),
-          );
-        }).toList();
-      } else {
-        throw Exception('Failed to load farmers name');
-      }
-    } catch (e) {
-      print('Error fetching farmer name data: $e');
     }
   }
 
@@ -2624,7 +2612,8 @@ class _FRMState extends State<FRM> with TickerProviderStateMixin {
       if (response.statusCode == 200) {
         if (mounted) {
           setState(() {
-            crops = List<String>.from(jsonDecode(response.body)['data']);
+            frmProvider!.crops =
+                List<String>.from(jsonDecode(response.body)['data']);
           });
         }
       } else {
@@ -3049,11 +3038,11 @@ class _FRMState extends State<FRM> with TickerProviderStateMixin {
   }
 
   _cropCultivationRegisterApiCall() async {
-    if (_selectedFarmersName == null) {
+    if (frmProvider!.selectedFarmersName == null) {
       AlertHelper.showToast("Please select farmer name", context);
       return;
     }
-    if (_selectedCrop == null) {
+    if (frmProvider!.selectedCrop == null) {
       AlertHelper.showToast("Please select crop", context);
       return;
     }
@@ -3094,8 +3083,8 @@ class _FRMState extends State<FRM> with TickerProviderStateMixin {
       "dealerNumber": number ?? "1",
       // "fid": WhatsappNumberData,
       "fid": number,
-      "farmerName": _selectedFarmersName.toString(),
-      "crops": _selectedCrop.toString(),
+      "farmerName": frmProvider!.selectedFarmersName.toString(),
+      "crops": frmProvider!.selectedCrop.toString(),
       "variety": varietyController.text.toString(),
       "dateOfSowing": formattedDate,
       "geolocation": geoLocationController.text.toString(),
@@ -3110,8 +3099,8 @@ class _FRMState extends State<FRM> with TickerProviderStateMixin {
     );
     stopLoading();
     if (response.statusCode == 201 || response.statusCode == 200) {
-      _selectedFarmersName = null;
-      _selectedCrop = null;
+      frmProvider!.selectedFarmersName = null;
+      frmProvider!.selectedCrop = null;
       varietyController.text = '';
       formattedDate = '';
       geoLocationController.text = '';

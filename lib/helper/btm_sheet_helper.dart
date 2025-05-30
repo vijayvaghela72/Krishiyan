@@ -6,7 +6,7 @@ getCommanButtomTitleHeading(
   BuildContext context,
 ) {
   return Padding(
-    padding: const EdgeInsets.fromLTRB(20.0, 20.0, 0, 0),
+    padding: const EdgeInsets.fromLTRB(20, 20, 0, 0),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -19,7 +19,7 @@ getCommanButtomTitleHeading(
             Navigator.pop(context);
           },
           child: const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10.0),
+            padding: EdgeInsets.symmetric(horizontal: 10),
             child: Icon(
               Icons.close,
               color: Color(0xfff223e6d),
