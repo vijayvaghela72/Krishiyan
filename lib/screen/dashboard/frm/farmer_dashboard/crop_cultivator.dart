@@ -14,7 +14,7 @@ import 'package:krishiyan/localization/app_localizations.dart';
 import 'package:krishiyan/screen/dashboard/frm/bottom_sheet/crop_bs.dart';
 import 'package:krishiyan/screen/dashboard/frm/bottom_sheet/farmer_bs.dart';
 
-Column thirdTabData(BuildContext context, Function update) {
+thirdTabData(BuildContext context, Function update) {
   return Column(
     mainAxisAlignment: MainAxisAlignment.start,
     crossAxisAlignment: CrossAxisAlignment.start,

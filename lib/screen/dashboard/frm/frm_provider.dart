@@ -7,11 +7,14 @@ import 'package:krishiyan/helper/app_global.dart';
 import 'package:krishiyan/helper/alert_helper.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:krishiyan/localization/app_localizations.dart';
+import 'package:krishiyan/mvc/model/frm_insight_model.dart';
 import 'package:krishiyan/mvc/model/villages_model.dart';
 import 'package:krishiyan/mvc/model/otp_details_model.dart';
 import 'package:krishiyan/mvc/controller/otp_controller.dart';
 import 'package:krishiyan/mvc/model/farmer_dashboard_model.dart';
 import 'package:otp_text_field/otp_field.dart';
+
+import '../enquiry/enquiry_model.dart';
 
 class FRMProvider extends ChangeNotifier {
   // widget data
@@ -251,4 +254,23 @@ class FRMProvider extends ChangeNotifier {
     buildTranslate('organic')!,
     buildTranslate('inOrganic')!,
   ];
+  // Fourth Tab - Insight
+  bool searchCropsFlag = false;
+  List<cropsCategory> search_crops = [
+    cropsCategory(
+      name: "Total Farmer",
+      id: "1",
+      icon: 'assets/images/crops1.png',
+    ),
+    cropsCategory(
+        name: "Total Farmer Land(in HA)",
+        id: "2",
+        icon: 'assets/images/crops2.png'),
+    cropsCategory(
+        name: "Expected Yield(in Qtl)",
+        id: "3",
+        icon: 'assets/images/crops1.png'),
+  ];
+  Future<FrmInsight?>? futureFrminSight;
+  int selectedTopData = 0;
 }
