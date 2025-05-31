@@ -6,6 +6,7 @@ import 'package:krishiyan/helper/constant.dart';
 import 'package:krishiyan/helper/app_global.dart';
 import 'package:krishiyan/helper/alert_helper.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
+import 'package:krishiyan/localization/app_localizations.dart';
 import 'package:krishiyan/mvc/model/villages_model.dart';
 import 'package:krishiyan/mvc/model/otp_details_model.dart';
 import 'package:krishiyan/mvc/controller/otp_controller.dart';
@@ -237,4 +238,17 @@ class FRMProvider extends ChangeNotifier {
       return false; // Return false for errors
     }
   }
+
+  // Third Tab - Crop Cultivation
+  String? selectedItemValue;
+  TextEditingController dateController = TextEditingController();
+  TextEditingController varietyController = TextEditingController();
+  TextEditingController geoLocationController = TextEditingController();
+  TextEditingController areaInArcesController = TextEditingController();
+  TextEditingController geoLinkAreaOnMapController = TextEditingController();
+
+  final List<String> items = [
+    buildTranslate('organic')!,
+    buildTranslate('inOrganic')!,
+  ];
 }
