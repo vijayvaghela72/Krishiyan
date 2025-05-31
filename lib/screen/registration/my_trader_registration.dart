@@ -1,19 +1,19 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:krishiyan/helper/api_base_helper.dart';
-import 'package:krishiyan/localization/app_localizations.dart';
-import 'package:krishiyan/screen/login/login.dart';
-import 'package:krishiyan/screen/registration/my_registration.dart';
-import 'package:krishiyan/helper/constant.dart';
-import 'package:otp_text_field/otp_field.dart';
-import 'package:otp_text_field/style.dart';
-import 'package:krishiyan/mvc/model/otp_details_model.dart';
 import '../../helper/alert_helper.dart';
-import '../../mvc/controller/farmer_dashboard_controller.dart';
+import 'package:otp_text_field/style.dart';
+import 'package:otp_text_field/otp_field.dart';
+import 'package:krishiyan/helper/constant.dart';
 import '../../mvc/controller/otp_controller.dart';
+import 'package:krishiyan/screen/login/login.dart';
+import 'package:krishiyan/helper/api_base_helper.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:krishiyan/mvc/model/otp_details_model.dart';
+import '../../mvc/controller/farmer_dashboard_controller.dart';
+import 'package:krishiyan/localization/app_localizations.dart';
+import 'package:krishiyan/screen/registration/my_registration.dart';
 
 class MyTraderRegistration extends StatefulWidget {
   const MyTraderRegistration({super.key});
