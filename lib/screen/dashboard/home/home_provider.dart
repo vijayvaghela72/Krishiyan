@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:krishiyan/helper/loading.dart';
 import 'package:krishiyan/helper/constant.dart';
 import 'package:krishiyan/helper/provider.dart';
 import 'package:krishiyan/helper/snackbar.dart';
@@ -75,7 +76,7 @@ class HomeProvider extends ChangeNotifier {
 // News
   List<NewsData> newsListData = [];
 
-  Future<void> getNewsDetails() async {
+  Future<void> getNewsDetails(Function update) async {
     var response = await getAPICall(apiUrl: NEWS_LIST);
 
     if (response.statusCode == 200) {
@@ -83,6 +84,7 @@ class HomeProvider extends ChangeNotifier {
       final List<dynamic> data = jsonResponse['data'];
       print("News response : ${data}");
       newsListData = data.map((item) => NewsData.fromJson(item)).toList();
+      update();
     } else {
       newsListData = [];
       setSnackbar('Fail to load news data');
@@ -90,20 +92,26 @@ class HomeProvider extends ChangeNotifier {
   }
 
 //*************************************************************************** */
-
   void getMarketInsight(Function update, BuildContext context) async {
-    if (homeProvider!.selectedMandiStateList != null &&
-        selectedPriceMandiCoodityData != null &&
-        selectedPriceMandiCoodityData != null) {
-      await getMarketInsideDetail(
-        selectedMandiStateList.toString(),
-        selectedDistrictMasterList.toString(),
-        selectedPriceMandiCoodityData.toString(),
-      );
-      update();
-    } else {
-      setSnackbar("Please enter details.");
+    if (selectedMandiStateList == null) {
+      setSnackbar("Please select a state.");
+      return;
     }
+    if (selectedDistrictMasterList == null) {
+      setSnackbar("Please select a district.");
+      return;
+    }
+    if (selectedPriceMandiCoodityData == null) {
+      setSnackbar("Please select a commodity.");
+      return;
+    }
+
+    await getMarketInsideDetail(
+      selectedMandiStateList.toString(),
+      selectedDistrictMasterList.toString(),
+      selectedPriceMandiCoodityData.toString(),
+    );
+    update();
   }
 
 //*************************************************************************** */
@@ -158,11 +166,16 @@ class HomeProvider extends ChangeNotifier {
 //*************************************************************************** */
   List<MarketInsight> marketInsightList = [];
 // market inside detail
-  getMarketInsideDetail(String state, String district, String commodity) async {
+  getMarketInsideDetail(
+    String state,
+    String district,
+    String commodity,
+  ) async {
+    showLoading();
     final response = await getAPICall(
         apiUrl: "${baseUrl}appData/price"
             "?state=$state&district=$district&commodity=$commodity");
-
+    stopLoading();
     if (response.statusCode == 200) {
       print("200");
       final List<dynamic> jsonResponse = json.decode(response.body);
@@ -202,12 +215,13 @@ class HomeProvider extends ChangeNotifier {
         int.parse(finalParts[0]) // day
         );
     String finalFormattedDate = DateFormat('dd/MM/yyyy').format(finalDateTime);
-
+    showLoading();
     final response = await getAPICall(
-        apiUrl: "${baseUrl}mandi/mandiPrices"
-            "?state=$state&district=$district&commodity=$commodity"
-            "&initialDate=$initialFormattedDate&finalDate=$finalFormattedDate");
-
+      apiUrl: "${baseUrl}mandi/mandiPrices"
+          "?state=$state&district=$district&commodity=$commodity"
+          "&initialDate=$initialFormattedDate&finalDate=$finalFormattedDate",
+    );
+    stopLoading();
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
       final List<dynamic> data = jsonResponse['data'];

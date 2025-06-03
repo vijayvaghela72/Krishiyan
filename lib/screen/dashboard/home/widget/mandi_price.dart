@@ -113,11 +113,12 @@ class _MandiPriceScreenState extends State<MandiPriceScreen> {
       setSnackbar("Please select to date");
     } else {
       await homeProvider!.getMandiPriceDetails(
-          homeProvider!.selectedMandiStateList.toString(),
-          homeProvider!.selectedDistrictMasterList.toString(),
-          homeProvider!.selectedPriceMandiCoodityData.toString(),
-          homeProvider!.dateOfFromValue,
-          homeProvider!.dateOfToValue);
+        homeProvider!.selectedMandiStateList.toString(),
+        homeProvider!.selectedDistrictMasterList.toString(),
+        homeProvider!.selectedPriceMandiCoodityData.toString(),
+        homeProvider!.dateOfFromValue,
+        homeProvider!.dateOfToValue,
+      );
 
       setState(() {});
     }

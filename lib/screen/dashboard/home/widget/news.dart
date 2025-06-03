@@ -23,9 +23,15 @@ class _NewsScreenState extends State<NewsScreen> {
     getData();
   }
 
+  update() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
   getData() async {
     showLoading();
-    await homeProvider!.getNewsDetails();
+    await homeProvider!.getNewsDetails(update);
     stopLoading();
   }
 

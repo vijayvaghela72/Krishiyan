@@ -62,16 +62,19 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 splashColor: Colors.transparent,
                 onTap: () {
                   Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const SelectLanguagePage()))
-                      .then((value) {
-                    setState(() {
-                      // refresh state
-                      MyLocalizations.load(Locale(localLang, ''));
-                      print("HomeScreen Lang : $localLang");
-                    });
-                  });
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SelectLanguagePage(),
+                    ),
+                  ).then(
+                    (value) {
+                      setState(() {
+                        // refresh state
+                        MyLocalizations.load(Locale(localLang, ''));
+                        print("HomeScreen Lang : $localLang");
+                      });
+                    },
+                  );
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -124,29 +127,32 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         });
                       },
                       child: Padding(
-                          padding: const EdgeInsets.only(left: 10.0),
-                          child: Chip(
-                            backgroundColor: selectedTopData == index
-                                ? Colors.green
-                                : Colors.white,
-                            padding: const EdgeInsets.all(5),
-                            shape: RoundedRectangleBorder(
-                                side: BorderSide(
-                                    color: selectedTopData == index
-                                        ? Colors.green
-                                        : Colors.black),
-                                borderRadius: const BorderRadius.all(
-                                  Radius.circular(12),
-                                )),
-                            label: Text(homeProvider!.topData[index].toString(),
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontFamily: "poppins-regular",
+                        padding: const EdgeInsets.only(left: 10.0),
+                        child: Chip(
+                          backgroundColor: selectedTopData == index
+                              ? Colors.green
+                              : Colors.white,
+                          padding: const EdgeInsets.all(5),
+                          shape: RoundedRectangleBorder(
+                              side: BorderSide(
                                   color: selectedTopData == index
-                                      ? Colors.white
-                                      : Colors.black,
-                                )),
-                          )),
+                                      ? Colors.green
+                                      : Colors.black),
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(12),
+                              )),
+                          label: Text(
+                            homeProvider!.topData[index].toString(),
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontFamily: "poppins-regular",
+                              color: selectedTopData == index
+                                  ? Colors.white
+                                  : Colors.black,
+                            ),
+                          ),
+                        ),
+                      ),
                     );
                   },
                 ),
@@ -171,9 +177,19 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   void _onSelectedTopDataTapped(int index) {
-    setState(() {
-      selectedTopData = index;
-    });
+    homeProvider!.dateOfFromValue = '';
+    homeProvider!.dateOfToValue = '';
+    homeProvider!.selectedDate = null;
+    homeProvider!.selectedMandiStateList = null;
+    homeProvider!.selectedDistrictMasterList = null;
+    homeProvider!.selectedPriceMandiCoodityData = null;
+    homeProvider!.marketInsightList = [];
+    homeProvider!.mandiPriceData = [];
+    homeProvider!.fromDateController.text = '';
+    homeProvider!.toDateController.text = '';
+    // indexing changes related data
+    selectedTopData = index;
     print("Selected Top Page : $selectedTopData");
+    setState(() {});
   }
 }
