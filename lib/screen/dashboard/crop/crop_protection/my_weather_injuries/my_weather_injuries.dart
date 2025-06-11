@@ -182,9 +182,9 @@ class _MyWeatherInjuriesPageState extends State<MyWeatherInjuriesPage>
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
+                        children: [
                           Container(
-                            padding: const EdgeInsets.all(8.0),
+                            padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(15),
                             ),
@@ -198,7 +198,7 @@ class _MyWeatherInjuriesPageState extends State<MyWeatherInjuriesPage>
                           Container(
                             width: MediaQuery.of(context).size.width,
                             padding: const EdgeInsets.only(
-                                left: 10.0, right: 10.0, top: 5.0, bottom: 5.0),
+                                left: 10, right: 10, top: 5, bottom: 5),
                             child: Row(
                               children: [
                                 Expanded(

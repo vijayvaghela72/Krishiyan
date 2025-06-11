@@ -94,14 +94,13 @@ class _FarmerProfilePageState extends State<FarmerProfilePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
+          children: [
             const SizedBox(
               height: 20,
             ),
-
             // owned farm
             Padding(
-              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+              padding: const EdgeInsets.only(left: 25, right: 25),
               child: Text(
                 buildTranslate("totalOwnedFarmArea")!,
                 style: const TextStyle(

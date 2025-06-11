@@ -83,7 +83,7 @@ class _NutrientManagmentPageState extends State<NutrientManagmentPage>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
+          children: [
             const SizedBox(
               height: 20.0,
             ),
@@ -194,7 +194,7 @@ class _NutrientManagmentPageState extends State<NutrientManagmentPage>
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
+                            children: [
                               Container(
                                 width: MediaQuery.of(context).size.width,
                                 padding: const EdgeInsets.only(

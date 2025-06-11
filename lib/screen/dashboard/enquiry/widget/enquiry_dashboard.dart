@@ -251,61 +251,65 @@ class _EnquiryDashboardPageState extends State<EnquiryDashboardPage>
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    Stack(children: <Widget>[
-                                      Padding(
-                                        padding: const EdgeInsets.all(12.0),
-                                        child: Container(
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          height: 180,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                const BorderRadius.all(
-                                                    Radius.circular(12)),
-                                            image: DecorationImage(
-                                              image: commodity.photoVideoLink !=
-                                                          null &&
-                                                      commodity.photoVideoLink!
-                                                          .isNotEmpty
-                                                  ? NetworkImage(commodity
-                                                      .photoVideoLink!) // Use the URL from the API
-                                                  : const AssetImage(
-                                                          "assets/images/enquiryBG.png")
-                                                      as ImageProvider, // Fallback to the default image
-                                              fit: BoxFit.cover,
+                                    Stack(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.all(12.0),
+                                          child: Container(
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            height: 180,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  const BorderRadius.all(
+                                                      Radius.circular(12)),
+                                              image: DecorationImage(
+                                                image: commodity.photoVideoLink !=
+                                                            null &&
+                                                        commodity
+                                                            .photoVideoLink!
+                                                            .isNotEmpty
+                                                    ? NetworkImage(commodity
+                                                        .photoVideoLink!) // Use the URL from the API
+                                                    : const AssetImage(
+                                                            "assets/images/enquiryBG.png")
+                                                        as ImageProvider, // Fallback to the default image
+                                                fit: BoxFit.cover,
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            top: 12.0, left: 12.0),
-                                        child: Container(
-                                          constraints: const BoxConstraints(
-                                            maxWidth: 150,
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 12.0, left: 12.0),
+                                          child: Container(
+                                            constraints: const BoxConstraints(
+                                              maxWidth: 150,
+                                            ),
+                                            decoration: const BoxDecoration(
+                                              color: Color(0xFF008000),
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(12)),
+                                            ),
+                                            child: Align(
+                                                alignment: Alignment.topLeft,
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(5.0),
+                                                  child: Text(
+                                                    'Price  Rs.${commodity.price.toString()}',
+                                                    style: const TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 11,
+                                                        fontFamily:
+                                                            "poppins-semibold"),
+                                                  ),
+                                                )),
                                           ),
-                                          decoration: const BoxDecoration(
-                                            color: Color(0xFF008000),
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(12)),
-                                          ),
-                                          child: Align(
-                                              alignment: Alignment.topLeft,
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(5.0),
-                                                child: Text(
-                                                  'Price  Rs.${commodity.price.toString()}',
-                                                  style: const TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 11,
-                                                      fontFamily:
-                                                          "poppins-semibold"),
-                                                ),
-                                              )),
                                         ),
-                                      ),
-                                    ]),
+                                      ],
+                                    ),
                                     const SizedBox(
                                       height: 10.0,
                                     ),

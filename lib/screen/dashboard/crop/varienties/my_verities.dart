@@ -150,7 +150,7 @@ class _MyVeritiesPageState extends State<MyVeritiesPage>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
+          children: [
             const SizedBox(
               height: 10,
             ),
@@ -238,7 +238,7 @@ class _MyVeritiesPageState extends State<MyVeritiesPage>
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
+                          children: [
                             Flexible(
                               child: Padding(
                                 padding: const EdgeInsets.only(

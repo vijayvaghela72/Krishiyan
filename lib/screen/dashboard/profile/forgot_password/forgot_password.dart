@@ -93,7 +93,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
+              children: [
                 const SizedBox(
                   height: 60,
                 ),

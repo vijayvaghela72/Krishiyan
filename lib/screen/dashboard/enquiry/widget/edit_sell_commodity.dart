@@ -313,11 +313,10 @@ class _EditSellCommodityPageState extends State<EditSellCommodityPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
+          children: [
             const SizedBox(
               height: 30,
             ),
-
             // Select Commodity
             Padding(
               padding: const EdgeInsets.only(left: 25.0, right: 25.0),

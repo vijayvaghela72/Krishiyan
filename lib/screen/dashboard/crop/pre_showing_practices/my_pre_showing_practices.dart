@@ -85,7 +85,7 @@ class _MyProSawingPracticesPageState extends State<MyProSawingPracticesPage>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
+          children: [
             const SizedBox(
               height: 20.0,
             ),
@@ -242,7 +242,7 @@ class _MyProSawingPracticesPageState extends State<MyProSawingPracticesPage>
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           mainAxisSize: MainAxisSize.min,
-                                          children: <Widget>[
+                                          children: [
                                             Flexible(
                                               child: Padding(
                                                 padding: const EdgeInsets.only(
@@ -395,7 +395,7 @@ class _MyProSawingPracticesPageState extends State<MyProSawingPracticesPage>
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             mainAxisSize: MainAxisSize.min,
-                                            children: <Widget>[
+                                            children: [
                                               const Flexible(
                                                 child: Padding(
                                                   padding: EdgeInsets.only(
@@ -782,7 +782,7 @@ class _MyProSawingPracticesPageState extends State<MyProSawingPracticesPage>
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             mainAxisSize: MainAxisSize.min,
-                                            children: <Widget>[
+                                            children: [
                                               Flexible(
                                                 child: Padding(
                                                   padding:

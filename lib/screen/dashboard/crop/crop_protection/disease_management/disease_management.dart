@@ -82,7 +82,7 @@ class _DiseaseManagementPageState extends State<DiseaseManagementPage>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
+          children: [
             const SizedBox(
               height: 20,
             ),
@@ -195,7 +195,7 @@ class _DiseaseManagementPageState extends State<DiseaseManagementPage>
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
+                              children: [
                                 Center(
                                   child: Container(
                                     padding: const EdgeInsets.all(8.0),

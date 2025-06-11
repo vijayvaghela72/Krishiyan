@@ -82,12 +82,12 @@ class _GeneralInformationPageState extends State<GeneralInformationPage>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
+          children: [
             const SizedBox(
               height: 20,
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 20.0),
+              padding: const EdgeInsets.only(left: 20),
               child: Row(
                 children: [
                   InkWell(

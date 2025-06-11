@@ -81,7 +81,7 @@ class _IrrigationManagementPageState extends State<IrrigationManagementPage>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
+          children: [
             const SizedBox(
               height: 15,
             ),
@@ -175,7 +175,7 @@ class _IrrigationManagementPageState extends State<IrrigationManagementPage>
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
+                              children: [
                                 Container(
                                     width: MediaQuery.of(context).size.width,
                                     padding: const EdgeInsets.only(

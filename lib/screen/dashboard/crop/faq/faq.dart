@@ -85,9 +85,9 @@ class _MyFaqPageState extends State<MyFaqPage> with TickerProviderStateMixin {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
+          children: [
             const SizedBox(
-              height: 20.0,
+              height: 20,
             ),
             Padding(
               padding: const EdgeInsets.only(left: 20.0),
@@ -231,7 +231,7 @@ class _MyFaqPageState extends State<MyFaqPage> with TickerProviderStateMixin {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         mainAxisSize: MainAxisSize.min,
-                                        children: <Widget>[
+                                        children: [
                                           Padding(
                                             padding: const EdgeInsets.only(
                                               top: 20,

@@ -157,7 +157,7 @@ class _CropProtectionPageState extends State<CropProtectionPage>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
+          children: [
             const SizedBox(
               height: 15,
             ),
@@ -288,7 +288,7 @@ class _CropProtectionPageState extends State<CropProtectionPage>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
+                  children: [
                     Flexible(
                       child: Padding(
                         padding: const EdgeInsets.all(5.0),

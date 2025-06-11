@@ -102,7 +102,7 @@ class _ManufactureRegistrationState extends State<ManufactureRegistration> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
+          children: [
             const SizedBox(
               height: 40,
             ),

@@ -68,7 +68,7 @@ class _SelectLanguagePageState extends State<SelectLanguagePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
+          children: [
             const SizedBox(
               height: 30,
             ),
@@ -160,7 +160,7 @@ class _SelectLanguagePageState extends State<SelectLanguagePage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
+                    children: [
                       Row(
                         // mainAxisAlignment: MainAxisAlignment.start,
                         // crossAxisAlignment: CrossAxisAlignment.start,

@@ -44,7 +44,7 @@ class _DetailNewsPageState extends State<DetailNewsPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
+          children: [
             const SizedBox(
               height: 10,
             ),

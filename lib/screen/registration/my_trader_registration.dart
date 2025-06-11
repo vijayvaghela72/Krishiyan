@@ -104,7 +104,7 @@ class _MyTraderRegistrationState extends State<MyTraderRegistration> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
+          children: [
             const SizedBox(
               height: 40,
             ),

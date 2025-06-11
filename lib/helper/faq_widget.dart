@@ -88,7 +88,7 @@ class _FaqWidgetState extends State<FaqWidget> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
+                          children: [
                             Flexible(
                               child: Padding(
                                 padding: EdgeInsets.only(

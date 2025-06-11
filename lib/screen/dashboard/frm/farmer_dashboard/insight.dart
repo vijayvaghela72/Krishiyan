@@ -17,10 +17,13 @@ Column fourthTabData(BuildContext context, Function update) {
         child: Container(
           width: MediaQuery.of(context).size.width,
           decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.all(Radius.circular(18))),
+            color: Colors.white,
+            borderRadius: BorderRadius.all(
+              Radius.circular(18),
+            ),
+          ),
           child: Padding(
-            padding: const EdgeInsets.all(20.0),
+            padding: const EdgeInsets.all(20),
             child: Column(
               children: [
                 // select crops
@@ -55,7 +58,7 @@ Column fourthTabData(BuildContext context, Function update) {
                               borderRadius: BorderRadius.circular(8),
                               borderSide: const BorderSide(
                                 color: Colors.black,
-                                width: 1.0,
+                                width: 1,
                               ),
                             ),
                           ),
@@ -141,7 +144,7 @@ Column fourthTabData(BuildContext context, Function update) {
                               borderRadius: BorderRadius.circular(8),
                               borderSide: const BorderSide(
                                 color: Colors.black,
-                                width: 1.0,
+                                width: 1,
                               ),
                             ),
                           ),
@@ -248,14 +251,14 @@ Column fourthTabData(BuildContext context, Function update) {
       Visibility(
         visible: frmProvider!.searchCropsFlag,
         child: Padding(
-          padding: const EdgeInsets.only(top: 10.0, right: 20.0, left: 20.0),
+          padding: const EdgeInsets.only(top: 10, right: 20, left: 20),
           child: Container(
             width: MediaQuery.of(context).size.width,
             decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.all(Radius.circular(18))),
             child: Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.all(10),
               child: Column(
                 children: [
                   FutureBuilder<FrmInsight?>(
@@ -338,7 +341,7 @@ Widget listWidget(FrmInsight frminSight) {
       }
 
       return Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(8),
         child: Container(
           decoration: BoxDecoration(
               color: Colors.white,
@@ -347,7 +350,7 @@ Widget listWidget(FrmInsight frminSight) {
                   color: Color(0xFFd3d3d3),
                 )
               ],
-              border: Border.all(color: const Color(0xFFd3d3d3), width: 1.0),
+              border: Border.all(color: const Color(0xFFd3d3d3), width: 1),
               borderRadius: BorderRadius.circular(12)),
           child: InkWell(
             highlightColor: Colors.transparent,
@@ -371,7 +374,7 @@ Widget listWidget(FrmInsight frminSight) {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
+              children: [
                 Image.asset(
                   frmProvider!.search_crops[index].icon ?? "",
                   width: 35,
@@ -382,7 +385,7 @@ Widget listWidget(FrmInsight frminSight) {
                 ),
                 Flexible(
                   child: Padding(
-                    padding: const EdgeInsets.all(5.0),
+                    padding: const EdgeInsets.all(5),
                     child: Text(
                       displayText, // Display the dynamic text based on the index
                       textAlign: TextAlign.center,

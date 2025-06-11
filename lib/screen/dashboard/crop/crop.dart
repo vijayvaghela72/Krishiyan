@@ -166,7 +166,7 @@ class _CropLibraryScreenState extends State<CropLibraryScreen>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
+          children: [
             const SizedBox(
               height: 20,
             ),
@@ -185,7 +185,7 @@ class _CropLibraryScreenState extends State<CropLibraryScreen>
             ),
             // type of entity
             Padding(
-              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+              padding: const EdgeInsets.only(left: 25, right: 25),
               child: Text(
                 buildTranslate("selectTheCrop")!,
                 style: const TextStyle(

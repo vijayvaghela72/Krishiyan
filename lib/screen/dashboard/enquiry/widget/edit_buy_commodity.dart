@@ -318,7 +318,7 @@ class _EditBuyCommodityPageState extends State<EditBuyCommodityPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
+          children: [
             const SizedBox(
               height: 30,
             ),

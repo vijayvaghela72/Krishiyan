@@ -48,7 +48,7 @@ class _MyRegistrationState extends State<MyRegistration> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
+          children: [
             const SizedBox(
               height: 60,
             ),
@@ -136,7 +136,7 @@ class _MyRegistrationState extends State<MyRegistration> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
+                  children:[
                     Image.asset(
                       ORG_CATEGORIES[index].icon ?? "",
                     ),

@@ -82,7 +82,7 @@ class _GeneralInformationPageState extends State<GeneralInformationPage>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
+          children: [
             const SizedBox(
               height: 20,
             ),
@@ -514,10 +514,10 @@ class _GeneralInformationPageState extends State<GeneralInformationPage>
                       splashColor: Colors.transparent,
                       onTap: () {},
                       child: Column(
-                        children: <Widget>[
+                        children: [
                           Center(
                             child: Container(
-                              padding: const EdgeInsets.all(8.0),
+                              padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(15),
                               ),

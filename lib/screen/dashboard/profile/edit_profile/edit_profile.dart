@@ -327,7 +327,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
+          children: [
             FutureBuilder<GetFRMProfileDetails?>(
               future: futureProfileDetails,
               builder: (context, snapshot) {

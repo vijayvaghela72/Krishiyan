@@ -119,7 +119,7 @@ class _WelcomePageState extends State<WelcomePage> {
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         Stack(
-          children: <Widget>[
+          children: [
             Align(
               alignment: Alignment.center,
               child: Center(

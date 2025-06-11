@@ -209,7 +209,7 @@ class _EnquiryScreenState extends State<EnquiryScreen>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
+          children: [
             Padding(
               padding: const EdgeInsets.only(left: 10.0, right: 20.0),
               child: Container(
@@ -704,68 +704,81 @@ class _EnquiryScreenState extends State<EnquiryScreen>
                                                               MainAxisAlignment
                                                                   .start,
                                                           children: [
-                                                            Stack(
-                                                                children: <Widget>[
-                                                                  Padding(
-                                                                    padding:
-                                                                        const EdgeInsets
-                                                                            .all(
-                                                                            12.0),
-                                                                    child:
-                                                                        Container(
-                                                                      width: MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .width,
-                                                                      height:
-                                                                          180,
-                                                                      decoration:
-                                                                          BoxDecoration(
-                                                                        borderRadius: const BorderRadius
+                                                            Stack(children: [
+                                                              Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .all(
+                                                                        12.0),
+                                                                child:
+                                                                    Container(
+                                                                  width: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width,
+                                                                  height: 180,
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    borderRadius:
+                                                                        const BorderRadius
                                                                             .all(
                                                                             Radius.circular(12)),
-                                                                        image:
-                                                                            DecorationImage(
-                                                                          image: enquiryFilterData.photoVideoLink != null && enquiryFilterData.photoVideoLink!.isNotEmpty
-                                                                              ? NetworkImage(enquiryFilterData.photoVideoLink!) // Use the URL from the API
-                                                                              : const AssetImage("assets/images/enquiryBG.png") as ImageProvider, // Fallback to the default image
-                                                                          fit: BoxFit
-                                                                              .cover,
-                                                                        ),
-                                                                      ),
+                                                                    image:
+                                                                        DecorationImage(
+                                                                      image: enquiryFilterData.photoVideoLink != null &&
+                                                                              enquiryFilterData
+                                                                                  .photoVideoLink!.isNotEmpty
+                                                                          ? NetworkImage(enquiryFilterData
+                                                                              .photoVideoLink!) // Use the URL from the API
+                                                                          : const AssetImage("assets/images/enquiryBG.png")
+                                                                              as ImageProvider, // Fallback to the default image
+                                                                      fit: BoxFit
+                                                                          .cover,
                                                                     ),
                                                                   ),
-                                                                  Padding(
-                                                                    padding: const EdgeInsets
+                                                                ),
+                                                              ),
+                                                              Padding(
+                                                                padding:
+                                                                    const EdgeInsets
                                                                         .only(
                                                                         top:
                                                                             18.0,
                                                                         left:
                                                                             18.0),
-                                                                    child:
-                                                                        IntrinsicWidth(
-                                                                      child:
-                                                                          Container(
-                                                                        decoration:
-                                                                            const BoxDecoration(
-                                                                          color:
-                                                                              Color(0xFF008000),
-                                                                          borderRadius:
-                                                                              BorderRadius.all(Radius.circular(12)),
-                                                                        ),
-                                                                        child: Align(
-                                                                            alignment: Alignment.topLeft,
-                                                                            child: Padding(
-                                                                              padding: EdgeInsets.only(left: 12.0, right: 12.0, top: 5.0, bottom: 5.0),
-                                                                              child: Text(
-                                                                                'Price  Rs.${enquiryFilterData.price}',
-                                                                                style: TextStyle(color: Colors.white, fontSize: 11, fontFamily: "poppins-semibold"),
-                                                                              ),
-                                                                            )),
-                                                                      ),
+                                                                child:
+                                                                    IntrinsicWidth(
+                                                                  child:
+                                                                      Container(
+                                                                    decoration:
+                                                                        const BoxDecoration(
+                                                                      color: Color(
+                                                                          0xFF008000),
+                                                                      borderRadius:
+                                                                          BorderRadius.all(
+                                                                              Radius.circular(12)),
                                                                     ),
+                                                                    child: Align(
+                                                                        alignment: Alignment.topLeft,
+                                                                        child: Padding(
+                                                                          padding: EdgeInsets.only(
+                                                                              left: 12.0,
+                                                                              right: 12.0,
+                                                                              top: 5.0,
+                                                                              bottom: 5.0),
+                                                                          child:
+                                                                              Text(
+                                                                            'Price  Rs.${enquiryFilterData.price}',
+                                                                            style: TextStyle(
+                                                                                color: Colors.white,
+                                                                                fontSize: 11,
+                                                                                fontFamily: "poppins-semibold"),
+                                                                          ),
+                                                                        )),
                                                                   ),
-                                                                ]),
+                                                                ),
+                                                              ),
+                                                            ]),
                                                             const SizedBox(
                                                               height: 5.0,
                                                             ),
@@ -928,68 +941,81 @@ class _EnquiryScreenState extends State<EnquiryScreen>
                                                               MainAxisAlignment
                                                                   .start,
                                                           children: [
-                                                            Stack(
-                                                                children: <Widget>[
-                                                                  Padding(
-                                                                    padding:
-                                                                        const EdgeInsets
-                                                                            .all(
-                                                                            12.0),
-                                                                    child:
-                                                                        Container(
-                                                                      width: MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .width,
-                                                                      height:
-                                                                          180,
-                                                                      decoration:
-                                                                          BoxDecoration(
-                                                                        borderRadius: const BorderRadius
+                                                            Stack(children: [
+                                                              Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .all(
+                                                                        12.0),
+                                                                child:
+                                                                    Container(
+                                                                  width: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width,
+                                                                  height: 180,
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    borderRadius:
+                                                                        const BorderRadius
                                                                             .all(
                                                                             Radius.circular(12)),
-                                                                        image:
-                                                                            DecorationImage(
-                                                                          image: enquiryFilterData.photoVideoLink != null && enquiryFilterData.photoVideoLink!.isNotEmpty
-                                                                              ? NetworkImage(enquiryFilterData.photoVideoLink!) // Use the URL from the API
-                                                                              : const AssetImage("assets/images/enquiryBG.png") as ImageProvider, // Fallback to the default image
-                                                                          fit: BoxFit
-                                                                              .cover,
-                                                                        ),
-                                                                      ),
+                                                                    image:
+                                                                        DecorationImage(
+                                                                      image: enquiryFilterData.photoVideoLink != null &&
+                                                                              enquiryFilterData
+                                                                                  .photoVideoLink!.isNotEmpty
+                                                                          ? NetworkImage(enquiryFilterData
+                                                                              .photoVideoLink!) // Use the URL from the API
+                                                                          : const AssetImage("assets/images/enquiryBG.png")
+                                                                              as ImageProvider, // Fallback to the default image
+                                                                      fit: BoxFit
+                                                                          .cover,
                                                                     ),
                                                                   ),
-                                                                  Padding(
-                                                                    padding: const EdgeInsets
+                                                                ),
+                                                              ),
+                                                              Padding(
+                                                                padding:
+                                                                    const EdgeInsets
                                                                         .only(
                                                                         top:
                                                                             18.0,
                                                                         left:
                                                                             18.0),
-                                                                    child:
-                                                                        IntrinsicWidth(
-                                                                      child:
-                                                                          Container(
-                                                                        decoration:
-                                                                            const BoxDecoration(
-                                                                          color:
-                                                                              Color(0xFF008000),
-                                                                          borderRadius:
-                                                                              BorderRadius.all(Radius.circular(12)),
-                                                                        ),
-                                                                        child: Align(
-                                                                            alignment: Alignment.topLeft,
-                                                                            child: Padding(
-                                                                              padding: EdgeInsets.only(left: 12.0, right: 12.0, top: 5.0, bottom: 5.0),
-                                                                              child: Text(
-                                                                                'Price  Rs.${enquiryFilterData.price}',
-                                                                                style: TextStyle(color: Colors.white, fontSize: 11, fontFamily: "poppins-semibold"),
-                                                                              ),
-                                                                            )),
-                                                                      ),
+                                                                child:
+                                                                    IntrinsicWidth(
+                                                                  child:
+                                                                      Container(
+                                                                    decoration:
+                                                                        const BoxDecoration(
+                                                                      color: Color(
+                                                                          0xFF008000),
+                                                                      borderRadius:
+                                                                          BorderRadius.all(
+                                                                              Radius.circular(12)),
                                                                     ),
+                                                                    child: Align(
+                                                                        alignment: Alignment.topLeft,
+                                                                        child: Padding(
+                                                                          padding: EdgeInsets.only(
+                                                                              left: 12.0,
+                                                                              right: 12.0,
+                                                                              top: 5.0,
+                                                                              bottom: 5.0),
+                                                                          child:
+                                                                              Text(
+                                                                            'Price  Rs.${enquiryFilterData.price}',
+                                                                            style: TextStyle(
+                                                                                color: Colors.white,
+                                                                                fontSize: 11,
+                                                                                fontFamily: "poppins-semibold"),
+                                                                          ),
+                                                                        )),
                                                                   ),
-                                                                ]),
+                                                                ),
+                                                              ),
+                                                            ]),
                                                             const SizedBox(
                                                               height: 5.0,
                                                             ),
@@ -1325,7 +1351,7 @@ class _EnquiryScreenState extends State<EnquiryScreen>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
+                  children: [
                     Image.asset(
                       postEnquiry[index].icon ?? "",
                       color: Colors.grey,
@@ -1411,7 +1437,7 @@ class _EnquiryScreenState extends State<EnquiryScreen>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
+                  children: [
                     Image.asset(
                       search_crops[index].icon ?? "",
                     ),
