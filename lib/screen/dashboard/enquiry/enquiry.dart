@@ -187,7 +187,7 @@ class _EnquiryScreenState extends State<EnquiryScreen>
                     ),
                     const Spacer(),
                     Padding(
-                      padding: const EdgeInsets.only(right: 5.0, top: 12.0),
+                      padding: const EdgeInsets.only(right: 5, top: 12),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
@@ -211,7 +211,7 @@ class _EnquiryScreenState extends State<EnquiryScreen>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.only(left: 10.0, right: 20.0),
+              padding: const EdgeInsets.only(left: 10, right: 20),
               child: Container(
                 height: 80,
                 child: ListView.builder(
@@ -222,30 +222,33 @@ class _EnquiryScreenState extends State<EnquiryScreen>
                       highlightColor: Colors.transparent,
                       splashColor: Colors.transparent,
                       onTap: () {
-                        setState(() {
-                          _onSelectedTopDataTapped(index);
-                        });
+                        selectedTopData = index;
+                        setState(() {});
+                        print("Selected Top Page : $selectedTopData");
                       },
                       child: Padding(
-                          padding: const EdgeInsets.only(left: 20.0),
-                          child: Chip(
-                            backgroundColor: selectedTopData == index
-                                ? Colors.green
-                                : Colors.white,
-                            padding: const EdgeInsets.all(8),
-                            shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(
-                              Radius.circular(17),
-                            )),
-                            label: Text(topData[index].toString(),
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontFamily: "poppins-regular",
-                                  color: selectedTopData == index
-                                      ? Colors.white
-                                      : Colors.black,
-                                )),
+                        padding: const EdgeInsets.only(left: 20),
+                        child: Chip(
+                          backgroundColor: selectedTopData == index
+                              ? Colors.green
+                              : Colors.white,
+                          padding: const EdgeInsets.all(8),
+                          shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(
+                            Radius.circular(17),
                           )),
+                          label: Text(
+                            topData[index].toString(),
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontFamily: "poppins-regular",
+                              color: selectedTopData == index
+                                  ? Colors.white
+                                  : Colors.black,
+                            ),
+                          ),
+                        ),
+                      ),
                     );
                   },
                 ),
@@ -270,7 +273,7 @@ class _EnquiryScreenState extends State<EnquiryScreen>
                         height: 30,
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(left: 30.0),
+                        padding: const EdgeInsets.only(left: 30),
                         child: Text(
                           buildTranslate("selectYourCommodity")!,
                           softWrap: true,
@@ -281,8 +284,8 @@ class _EnquiryScreenState extends State<EnquiryScreen>
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(
-                            left: 25.0, right: 25.0, top: 10.0),
+                        padding:
+                            const EdgeInsets.only(left: 25, right: 25, top: 10),
                         child: Container(
                           width: MediaQuery.of(context).size.width,
                           decoration: BoxDecoration(
@@ -300,12 +303,15 @@ class _EnquiryScreenState extends State<EnquiryScreen>
                                       _cropData!.data == null
                                   ? Center(
                                       child: Text(
-                                          buildTranslate("noDataAvailable")!))
+                                        buildTranslate("noDataAvailable")!,
+                                      ),
+                                    )
                                   : DropdownButtonFormField2<String>(
                                       dropdownStyleData:
                                           DropdownStyleData(maxHeight: 200),
-                                      hint: Text(buildTranslate(
-                                          "selectYourCommodity")!),
+                                      hint: Text(
+                                        buildTranslate("selectYourCommodity")!,
+                                      ),
                                       decoration: InputDecoration(
                                         contentPadding:
                                             const EdgeInsets.symmetric(
@@ -317,7 +323,7 @@ class _EnquiryScreenState extends State<EnquiryScreen>
                                               BorderRadius.circular(8),
                                           borderSide: const BorderSide(
                                             color: Colors.black,
-                                            width: 1.0,
+                                            width: 1,
                                           ),
                                         ),
                                       ),
@@ -350,9 +356,8 @@ class _EnquiryScreenState extends State<EnquiryScreen>
                                         );
                                       }).toList(),
                                       onChanged: (String? newValue) {
-                                        setState(() {
-                                          _selectedCrop = newValue;
-                                        });
+                                        _selectedCrop = newValue;
+                                        setState(() {});
                                       },
                                     ),
                             ),
@@ -363,34 +368,38 @@ class _EnquiryScreenState extends State<EnquiryScreen>
                         height: 30,
                       ),
                       Container(
-                          width: MediaQuery.of(context).size.width,
-                          padding:
-                              const EdgeInsets.only(left: 30.0, right: 30.0),
-                          child: ElevatedButton(
-                            onPressed: () {
-                              if (_selectedCrop != null &&
-                                  _selectedCrop!.isNotEmpty) {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => EnquiryDashboardPage(
-                                        selectedCrop: _selectedCrop)));
-                              }
-                            },
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.all(12),
-                              textStyle: const TextStyle(fontSize: 15),
-                              backgroundColor: const Color(0xFF3FC041),
-                              shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.circular(12), // <-- Radius
-                              ),
+                        width: MediaQuery.of(context).size.width,
+                        padding: const EdgeInsets.only(left: 30, right: 30),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            if (_selectedCrop != null &&
+                                _selectedCrop!.isNotEmpty) {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => EnquiryDashboardPage(
+                                    selectedCrop: _selectedCrop,
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.all(12),
+                            textStyle: const TextStyle(fontSize: 15),
+                            backgroundColor: const Color(0xFF3FC041),
+                            shape: RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.circular(12), // <-- Radius
                             ),
-                            child: Text(
-                              buildTranslate('SUBMIT')!,
-                              style: const TextStyle(
-                                  fontSize: 18, fontFamily: 'poppins-medium'),
-                            ),
-                          )),
+                          ),
+                          child: Text(
+                            buildTranslate('SUBMIT')!,
+                            style: const TextStyle(
+                                fontSize: 18, fontFamily: 'poppins-medium'),
+                          ),
+                        ),
+                      ),
                     ],
                   )
                 : selectedTopData == 1
@@ -433,7 +442,7 @@ class _EnquiryScreenState extends State<EnquiryScreen>
                                 height: 30,
                               ),
                               Padding(
-                                padding: const EdgeInsets.only(left: 30.0),
+                                padding: const EdgeInsets.only(left: 30),
                                 child: Text(
                                   buildTranslate("selectYourCommodity")!,
                                   softWrap: true,
@@ -445,7 +454,7 @@ class _EnquiryScreenState extends State<EnquiryScreen>
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(
-                                    left: 25.0, right: 25.0, top: 10.0),
+                                    left: 25, right: 25, top: 10),
                                 child: Container(
                                   width: MediaQuery.of(context).size.width,
                                   decoration: BoxDecoration(
@@ -482,7 +491,7 @@ class _EnquiryScreenState extends State<EnquiryScreen>
                                                       BorderRadius.circular(8),
                                                   borderSide: const BorderSide(
                                                     color: Colors.black,
-                                                    width: 1.0,
+                                                    width: 1,
                                                   ),
                                                 ),
                                               ),
@@ -518,9 +527,8 @@ class _EnquiryScreenState extends State<EnquiryScreen>
                                                 );
                                               }).toList(),
                                               onChanged: (String? newValue) {
-                                                setState(() {
-                                                  _selectedCrop = newValue;
-                                                });
+                                                _selectedCrop = newValue;
+                                                setState(() {});
                                               },
                                             ),
                                     ),
@@ -533,7 +541,7 @@ class _EnquiryScreenState extends State<EnquiryScreen>
                               Container(
                                   width: MediaQuery.of(context).size.width,
                                   padding: const EdgeInsets.only(
-                                      left: 30.0, right: 30.0),
+                                      left: 30, right: 30),
                                   child: ElevatedButton(
                                     onPressed: () {
                                       setState(() {
@@ -581,11 +589,11 @@ class _EnquiryScreenState extends State<EnquiryScreen>
                                 height: 20,
                               ),
                               Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 30.0, right: 30.0),
+                                padding:
+                                    const EdgeInsets.only(left: 30, right: 30),
                                 child: Padding(
                                   padding: const EdgeInsets.only(
-                                      left: 20.0, right: 20.0),
+                                      left: 20, right: 20),
                                   child: Container(
                                     height: 45,
                                     alignment: Alignment.center,
@@ -631,7 +639,7 @@ class _EnquiryScreenState extends State<EnquiryScreen>
                                         print("Chip index : $_currentIndex");
                                       },
                                       padding: const EdgeInsets.only(
-                                          left: 30.0, right: 30.0),
+                                          left: 30, right: 30),
                                       activeBgColorList: const [
                                         Color(0xFF2A9D8F)
                                       ],
@@ -686,8 +694,8 @@ class _EnquiryScreenState extends State<EnquiryScreen>
                                                     child: Padding(
                                                       padding:
                                                           const EdgeInsets.only(
-                                                              right: 30.0,
-                                                              left: 30.0),
+                                                              right: 30,
+                                                              left: 30),
                                                       child: Container(
                                                         decoration: const BoxDecoration(
                                                             color: Colors.white,
@@ -709,7 +717,7 @@ class _EnquiryScreenState extends State<EnquiryScreen>
                                                                 padding:
                                                                     const EdgeInsets
                                                                         .all(
-                                                                        12.0),
+                                                                        12),
                                                                 child:
                                                                     Container(
                                                                   width: MediaQuery.of(
@@ -742,10 +750,9 @@ class _EnquiryScreenState extends State<EnquiryScreen>
                                                                 padding:
                                                                     const EdgeInsets
                                                                         .only(
-                                                                        top:
-                                                                            18.0,
+                                                                        top: 18,
                                                                         left:
-                                                                            18.0),
+                                                                            18),
                                                                 child:
                                                                     IntrinsicWidth(
                                                                   child:
@@ -762,10 +769,10 @@ class _EnquiryScreenState extends State<EnquiryScreen>
                                                                         alignment: Alignment.topLeft,
                                                                         child: Padding(
                                                                           padding: EdgeInsets.only(
-                                                                              left: 12.0,
-                                                                              right: 12.0,
-                                                                              top: 5.0,
-                                                                              bottom: 5.0),
+                                                                              left: 12,
+                                                                              right: 12,
+                                                                              top: 5,
+                                                                              bottom: 5),
                                                                           child:
                                                                               Text(
                                                                             'Price  Rs.${enquiryFilterData.price}',
@@ -780,13 +787,12 @@ class _EnquiryScreenState extends State<EnquiryScreen>
                                                               ),
                                                             ]),
                                                             const SizedBox(
-                                                              height: 5.0,
+                                                              height: 5,
                                                             ),
                                                             Padding(
                                                               padding: EdgeInsets
                                                                   .only(
-                                                                      left:
-                                                                          20.0),
+                                                                      left: 20),
                                                               child: Text(
                                                                 "Name : ${enquiryFilterData.commodity.toString()} ${enquiryFilterData.variety.toString()}",
                                                                 softWrap: true,
@@ -802,10 +808,8 @@ class _EnquiryScreenState extends State<EnquiryScreen>
                                                             Padding(
                                                               padding: EdgeInsets
                                                                   .only(
-                                                                      left:
-                                                                          20.0,
-                                                                      top:
-                                                                          10.0),
+                                                                      left: 20,
+                                                                      top: 10),
                                                               child: Text(
                                                                 "Purpose:  To ${enquiryFilterData.operation}",
                                                                 softWrap: true,
@@ -821,10 +825,8 @@ class _EnquiryScreenState extends State<EnquiryScreen>
                                                             Padding(
                                                               padding: EdgeInsets
                                                                   .only(
-                                                                      left:
-                                                                          20.0,
-                                                                      top:
-                                                                          10.0),
+                                                                      left: 20,
+                                                                      top: 10),
                                                               child: Text(
                                                                 "Quantity : ${enquiryFilterData.quantity.toString()}",
                                                                 softWrap: true,
@@ -840,10 +842,8 @@ class _EnquiryScreenState extends State<EnquiryScreen>
                                                             Padding(
                                                               padding: EdgeInsets
                                                                   .only(
-                                                                      left:
-                                                                          20.0,
-                                                                      top:
-                                                                          10.0),
+                                                                      left: 20,
+                                                                      top: 10),
                                                               child: Text(
                                                                 "Location : ${enquiryFilterData.location}",
                                                                 softWrap: true,
@@ -860,12 +860,9 @@ class _EnquiryScreenState extends State<EnquiryScreen>
                                                               padding:
                                                                   const EdgeInsets
                                                                       .only(
-                                                                      left:
-                                                                          10.0,
-                                                                      right:
-                                                                          10.0,
-                                                                      top:
-                                                                          20.0),
+                                                                      left: 10,
+                                                                      right: 10,
+                                                                      top: 20),
                                                               child: Container(
                                                                 width: MediaQuery.of(
                                                                         context)
@@ -923,8 +920,8 @@ class _EnquiryScreenState extends State<EnquiryScreen>
                                                     child: Padding(
                                                       padding:
                                                           const EdgeInsets.only(
-                                                              right: 30.0,
-                                                              left: 30.0),
+                                                              right: 30,
+                                                              left: 30),
                                                       child: Container(
                                                         decoration: const BoxDecoration(
                                                             color: Colors.white,
@@ -946,7 +943,7 @@ class _EnquiryScreenState extends State<EnquiryScreen>
                                                                 padding:
                                                                     const EdgeInsets
                                                                         .all(
-                                                                        12.0),
+                                                                        12),
                                                                 child:
                                                                     Container(
                                                                   width: MediaQuery.of(
@@ -979,10 +976,9 @@ class _EnquiryScreenState extends State<EnquiryScreen>
                                                                 padding:
                                                                     const EdgeInsets
                                                                         .only(
-                                                                        top:
-                                                                            18.0,
+                                                                        top: 18,
                                                                         left:
-                                                                            18.0),
+                                                                            18),
                                                                 child:
                                                                     IntrinsicWidth(
                                                                   child:
@@ -999,10 +995,10 @@ class _EnquiryScreenState extends State<EnquiryScreen>
                                                                         alignment: Alignment.topLeft,
                                                                         child: Padding(
                                                                           padding: EdgeInsets.only(
-                                                                              left: 12.0,
-                                                                              right: 12.0,
-                                                                              top: 5.0,
-                                                                              bottom: 5.0),
+                                                                              left: 12,
+                                                                              right: 12,
+                                                                              top: 5,
+                                                                              bottom: 5),
                                                                           child:
                                                                               Text(
                                                                             'Price  Rs.${enquiryFilterData.price}',
@@ -1017,13 +1013,12 @@ class _EnquiryScreenState extends State<EnquiryScreen>
                                                               ),
                                                             ]),
                                                             const SizedBox(
-                                                              height: 5.0,
+                                                              height: 5,
                                                             ),
                                                             Padding(
                                                               padding: EdgeInsets
                                                                   .only(
-                                                                      left:
-                                                                          20.0),
+                                                                      left: 20),
                                                               child: Text(
                                                                 "Name : ${enquiryFilterData.commodity.toString()} ${enquiryFilterData.variety.toString()}",
                                                                 softWrap: true,
@@ -1039,10 +1034,8 @@ class _EnquiryScreenState extends State<EnquiryScreen>
                                                             Padding(
                                                               padding: EdgeInsets
                                                                   .only(
-                                                                      left:
-                                                                          20.0,
-                                                                      top:
-                                                                          10.0),
+                                                                      left: 20,
+                                                                      top: 10),
                                                               child: Text(
                                                                 "Purpose:  To ${enquiryFilterData.operation}",
                                                                 softWrap: true,
@@ -1058,10 +1051,8 @@ class _EnquiryScreenState extends State<EnquiryScreen>
                                                             Padding(
                                                               padding: EdgeInsets
                                                                   .only(
-                                                                      left:
-                                                                          20.0,
-                                                                      top:
-                                                                          10.0),
+                                                                      left: 20,
+                                                                      top: 10),
                                                               child: Text(
                                                                 "Quantity : ${enquiryFilterData.quantity.toString()}",
                                                                 softWrap: true,
@@ -1077,10 +1068,8 @@ class _EnquiryScreenState extends State<EnquiryScreen>
                                                             Padding(
                                                               padding: EdgeInsets
                                                                   .only(
-                                                                      left:
-                                                                          20.0,
-                                                                      top:
-                                                                          10.0),
+                                                                      left: 20,
+                                                                      top: 10),
                                                               child: Text(
                                                                 "Location : ${enquiryFilterData.location}",
                                                                 softWrap: true,
@@ -1097,12 +1086,9 @@ class _EnquiryScreenState extends State<EnquiryScreen>
                                                               padding:
                                                                   const EdgeInsets
                                                                       .only(
-                                                                      left:
-                                                                          10.0,
-                                                                      right:
-                                                                          10.0,
-                                                                      top:
-                                                                          20.0),
+                                                                      left: 10,
+                                                                      right: 10,
+                                                                      top: 20),
                                                               child: Container(
                                                                 width: MediaQuery.of(
                                                                         context)
@@ -1185,10 +1171,10 @@ class _EnquiryScreenState extends State<EnquiryScreen>
         shape: const RoundedRectangleBorder(
           // <= Change BeveledRectangleBorder to RoundedRectangularBorder
           borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(30.0),
-            topRight: Radius.circular(30.0),
-            bottomLeft: Radius.circular(30.0),
-            bottomRight: Radius.circular(30.0),
+            topLeft: Radius.circular(30),
+            topRight: Radius.circular(30),
+            bottomLeft: Radius.circular(30),
+            bottomRight: Radius.circular(30),
           ),
         ),
         child: Image.asset(
@@ -1214,8 +1200,8 @@ class _EnquiryScreenState extends State<EnquiryScreen>
               decoration: BoxDecoration(
                   color: Colors.grey,
                   borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(30.0), // Top-left corner
-                    topRight: Radius.circular(30.0), // Top-right corner
+                    topLeft: Radius.circular(30), // Top-left corner
+                    topRight: Radius.circular(30), // Top-right corner
                   ),
                   boxShadow: [
                     BoxShadow(
@@ -1268,8 +1254,8 @@ class _EnquiryScreenState extends State<EnquiryScreen>
               decoration: BoxDecoration(
                   color: Colors.grey,
                   borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(30.0), // Top-left corner
-                    topRight: Radius.circular(30.0), // Top-right corner
+                    topLeft: Radius.circular(30), // Top-left corner
+                    topRight: Radius.circular(30), // Top-right corner
                   ),
                   boxShadow: [
                     BoxShadow(
@@ -1282,9 +1268,9 @@ class _EnquiryScreenState extends State<EnquiryScreen>
               child: ClipRRect(
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(
-                      30.0), // Matches the Container's border radius
+                      30), // Matches the Container's border radius
                   topRight: Radius.circular(
-                      30.0), // Matches the Container's border radius
+                      30), // Matches the Container's border radius
                 ),
                 child: BottomNavigationBar(
                   currentIndex: _bottomNavIndex,
@@ -1321,7 +1307,7 @@ class _EnquiryScreenState extends State<EnquiryScreen>
 
   Widget listPostWidget() {
     return Padding(
-      padding: const EdgeInsets.only(left: 12.0, right: 12.0),
+      padding: const EdgeInsets.only(left: 12, right: 12),
       child: GridView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
@@ -1338,7 +1324,7 @@ class _EnquiryScreenState extends State<EnquiryScreen>
               }
             },
             child: Padding(
-              padding: const EdgeInsets.all(15.0),
+              padding: const EdgeInsets.all(15),
               child: Container(
                 decoration: BoxDecoration(
                     color: Colors.white,
@@ -1402,23 +1388,16 @@ class _EnquiryScreenState extends State<EnquiryScreen>
             typeOfOrganization: typeOfOrganizationData)));
   }
 
-  void _onSelectedTopDataTapped(int index) {
-    setState(() {
-      selectedTopData = index;
-    });
-    print("Selected Top Page : $selectedTopData");
-  }
-
   Widget listWidget() {
     return Padding(
-      padding: const EdgeInsets.only(left: 12.0, right: 12.0),
+      padding: const EdgeInsets.only(left: 12, right: 12),
       child: GridView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         itemCount: search_crops.length,
         itemBuilder: (_, index) {
           return Padding(
-            padding: const EdgeInsets.all(5.0),
+            padding: const EdgeInsets.all(5),
             child: Container(
               decoration: BoxDecoration(
                   color: Colors.white,
@@ -1427,8 +1406,7 @@ class _EnquiryScreenState extends State<EnquiryScreen>
                       color: Color(0xFFd3d3d3),
                     )
                   ],
-                  border:
-                      Border.all(color: const Color(0xFFd3d3d3), width: 1.0),
+                  border: Border.all(color: const Color(0xFFd3d3d3), width: 1),
                   borderRadius: BorderRadius.circular(12)),
               child: InkWell(
                 highlightColor: Colors.transparent,
@@ -1446,7 +1424,7 @@ class _EnquiryScreenState extends State<EnquiryScreen>
                     ),
                     Flexible(
                       child: Padding(
-                        padding: const EdgeInsets.all(5.0),
+                        padding: const EdgeInsets.all(5),
                         child: Text(
                           search_crops[index].name ?? "",
                           textAlign: TextAlign.center,

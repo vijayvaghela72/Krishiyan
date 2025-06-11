@@ -25,10 +25,11 @@ class _EnquiryDetailPageState extends State<EnquiryDetailPage>
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-    ));
-
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+      ),
+    );
     return Scaffold(
       backgroundColor: const Color(0xFFf9f9f9),
       extendBody: false,
@@ -39,21 +40,23 @@ class _EnquiryDetailPageState extends State<EnquiryDetailPage>
         title: Row(
           children: [
             InkWell(
-                highlightColor: Colors.transparent,
-                splashColor: Colors.transparent,
-                onTap: () {
-                  Navigator.of(context).pop();
-                },
-                child: Image.asset('assets/images/back.png')),
+              highlightColor: Colors.transparent,
+              splashColor: Colors.transparent,
+              onTap: () {
+                Navigator.of(context).pop();
+              },
+              child: Image.asset('assets/images/back.png'),
+            ),
             const SizedBox(
               width: 10,
             ),
             const Text(
               "Enquiry Detail",
               style: TextStyle(
-                  color: Colors.white,
-                  fontFamily: 'poppins-medium',
-                  fontSize: 20),
+                color: Colors.white,
+                fontFamily: 'poppins-medium',
+                fontSize: 20,
+              ),
             ),
           ],
         ),
@@ -66,26 +69,30 @@ class _EnquiryDetailPageState extends State<EnquiryDetailPage>
             const SizedBox(
               height: 10,
             ),
-
-            // user card
             Padding(
-              padding:
-                  const EdgeInsets.only(top: 10.0, right: 10.0, left: 10.0),
+              padding: const EdgeInsets.only(top: 10, right: 10, left: 10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(12.0),
+                    padding: const EdgeInsets.all(12),
                     child: Container(
                       width: MediaQuery.of(context).size.width,
                       height: 210,
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(12)),
-                          image: DecorationImage(
-                              image: NetworkImage(
-                                  widget.commodity.photoVideoLink ?? ''),
-                              fit: BoxFit.cover)),
+                        borderRadius: BorderRadius.all(Radius.circular(12)),
+                        image: DecorationImage(
+                          image: widget.commodity.photoVideoLink != null &&
+                                  widget.commodity.photoVideoLink!.isNotEmpty
+                              ? NetworkImage(
+                                  widget.commodity.photoVideoLink ?? '',
+                                )
+                              : const AssetImage("assets/images/enquiryBG.png")
+                                  as ImageProvider,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                     ),
                   ),
 
@@ -688,7 +695,6 @@ class _EnquiryDetailPageState extends State<EnquiryDetailPage>
                 ],
               ),
             ),
-
             const SizedBox(
               height: 10,
             ),
@@ -700,11 +706,15 @@ class _EnquiryDetailPageState extends State<EnquiryDetailPage>
 }
 
 String convertDate(String dateString) {
-  // Parse the date string into a DateTime object
-  DateTime dateTime = DateTime.parse(dateString);
+  try {
+    // Parse the date string into a DateTime object
+    DateTime dateTime = DateTime.parse(dateString);
 
-  // Format the DateTime object into "dd-MM-yyyy"
-  String formattedDate = DateFormat('dd-MM-yyyy').format(dateTime);
+    // Format the DateTime object into "dd-MM-yyyy"
+    String formattedDate = DateFormat('dd-MM-yyyy').format(dateTime);
 
-  return formattedDate;
+    return formattedDate;
+  } catch (e) {
+    return dateString;
+  }
 }

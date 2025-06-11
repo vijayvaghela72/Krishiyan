@@ -103,7 +103,7 @@ class _EnquiryDashboardPageState extends State<EnquiryDashboardPage>
               height: 20,
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 25.0),
+              padding: const EdgeInsets.only(left: 25),
               child: Text(
                 buildTranslate("selectYourCommodity")!,
                 softWrap: true,
@@ -114,8 +114,7 @@ class _EnquiryDashboardPageState extends State<EnquiryDashboardPage>
               ),
             ),
             Padding(
-              padding:
-                  const EdgeInsets.only(left: 25.0, right: 25.0, top: 10.0),
+              padding: const EdgeInsets.only(left: 25, right: 25, top: 10),
               child: Container(
                 width: MediaQuery.of(context).size.width,
                 decoration: BoxDecoration(
@@ -174,9 +173,8 @@ class _EnquiryDashboardPageState extends State<EnquiryDashboardPage>
                               );
                             }).toList(),
                             onChanged: (String? newValue) {
-                              setState(() {
-                                _selectedCrop = newValue;
-                              });
+                              _selectedCrop = newValue;
+                              setState(() {});
                             },
                           ),
                   ),
@@ -237,11 +235,10 @@ class _EnquiryDashboardPageState extends State<EnquiryDashboardPage>
                           scrollDirection: Axis.vertical,
                           itemBuilder: (context, index) {
                             final commodity = commodities[index];
-                            return
-                                // user card
-                                Padding(
+
+                            return Padding(
                               padding: const EdgeInsets.only(
-                                  top: 10.0, right: 20.0, left: 20.0),
+                                  top: 10, right: 20, left: 20),
                               child: Container(
                                 decoration: const BoxDecoration(
                                     color: Colors.white,
@@ -254,7 +251,7 @@ class _EnquiryDashboardPageState extends State<EnquiryDashboardPage>
                                     Stack(
                                       children: [
                                         Padding(
-                                          padding: const EdgeInsets.all(12.0),
+                                          padding: const EdgeInsets.all(12),
                                           child: Container(
                                             width: MediaQuery.of(context)
                                                 .size
@@ -271,10 +268,10 @@ class _EnquiryDashboardPageState extends State<EnquiryDashboardPage>
                                                             .photoVideoLink!
                                                             .isNotEmpty
                                                     ? NetworkImage(commodity
-                                                        .photoVideoLink!) // Use the URL from the API
+                                                        .photoVideoLink!)
                                                     : const AssetImage(
                                                             "assets/images/enquiryBG.png")
-                                                        as ImageProvider, // Fallback to the default image
+                                                        as ImageProvider,
                                                 fit: BoxFit.cover,
                                               ),
                                             ),
@@ -282,7 +279,7 @@ class _EnquiryDashboardPageState extends State<EnquiryDashboardPage>
                                         ),
                                         Padding(
                                           padding: const EdgeInsets.only(
-                                              top: 12.0, left: 12.0),
+                                              top: 12, left: 12),
                                           child: Container(
                                             constraints: const BoxConstraints(
                                               maxWidth: 150,
@@ -293,29 +290,29 @@ class _EnquiryDashboardPageState extends State<EnquiryDashboardPage>
                                                   Radius.circular(12)),
                                             ),
                                             child: Align(
-                                                alignment: Alignment.topLeft,
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(5.0),
-                                                  child: Text(
-                                                    'Price  Rs.${commodity.price.toString()}',
-                                                    style: const TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 11,
-                                                        fontFamily:
-                                                            "poppins-semibold"),
-                                                  ),
-                                                )),
+                                              alignment: Alignment.topLeft,
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(5),
+                                                child: Text(
+                                                  'Price  Rs.${commodity.price.toString()}',
+                                                  style: const TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 11,
+                                                      fontFamily:
+                                                          "poppins-semibold"),
+                                                ),
+                                              ),
+                                            ),
                                           ),
                                         ),
                                       ],
                                     ),
                                     const SizedBox(
-                                      height: 10.0,
+                                      height: 10,
                                     ),
                                     Padding(
-                                      padding:
-                                          const EdgeInsets.only(left: 20.0),
+                                      padding: const EdgeInsets.only(left: 20),
                                       child: Text(
                                         "Name : ${commodity.commodity.toString()} ${commodity.variety.toString()}",
                                         softWrap: true,
@@ -327,7 +324,7 @@ class _EnquiryDashboardPageState extends State<EnquiryDashboardPage>
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.only(
-                                          left: 20.0, top: 10.0),
+                                          left: 20, top: 10),
                                       child: Text(
                                         "Purpose: ${commodity.operation.toString()}",
                                         softWrap: true,
@@ -339,7 +336,7 @@ class _EnquiryDashboardPageState extends State<EnquiryDashboardPage>
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.only(
-                                          left: 20.0, top: 10.0),
+                                          left: 20, top: 10),
                                       child: Text(
                                         "Quantity :  ${commodity.quantity.toString()}",
                                         softWrap: true,
@@ -351,7 +348,7 @@ class _EnquiryDashboardPageState extends State<EnquiryDashboardPage>
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.only(
-                                          left: 20.0, top: 10.0),
+                                          left: 20, top: 10),
                                       child: Text(
                                         "Location : ${commodity.location.toString()}",
                                         softWrap: true,
@@ -363,7 +360,7 @@ class _EnquiryDashboardPageState extends State<EnquiryDashboardPage>
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.only(
-                                          left: 10.0, right: 10.0, top: 10.0),
+                                          left: 10, right: 10, top: 10),
                                       child: Container(
                                         width:
                                             MediaQuery.of(context).size.width,
@@ -376,65 +373,62 @@ class _EnquiryDashboardPageState extends State<EnquiryDashboardPage>
                                           children: [
                                             Expanded(
                                               child: Container(
-                                                  width: MediaQuery.of(context)
-                                                      .size
-                                                      .width,
-                                                  child: ElevatedButton(
-                                                    onPressed: () {
-                                                      AlertHelper.showToast(
-                                                          "This feature is locked",
-                                                          context);
-                                                    },
-                                                    style: ElevatedButton
-                                                        .styleFrom(
-                                                      foregroundColor:
-                                                          Colors.white,
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              5),
-                                                      textStyle:
-                                                          const TextStyle(
-                                                              fontSize: 18),
-                                                      backgroundColor:
-                                                          const Color(
-                                                              0xFF3FC041),
-                                                      shape:
-                                                          RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                                20), // <-- Radius
+                                                width: MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                child: ElevatedButton(
+                                                  onPressed: () {
+                                                    AlertHelper.showToast(
+                                                        "This feature is locked",
+                                                        context);
+                                                  },
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    foregroundColor:
+                                                        Colors.white,
+                                                    padding:
+                                                        const EdgeInsets.all(5),
+                                                    textStyle: const TextStyle(
+                                                        fontSize: 18),
+                                                    backgroundColor:
+                                                        const Color(0xFF3FC041),
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              20),
+                                                    ),
+                                                  ),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Text(
+                                                        buildTranslate('chat')!,
+                                                        style: const TextStyle(
+                                                            fontSize: 11,
+                                                            fontFamily:
+                                                                'poppins-medium'),
                                                       ),
-                                                    ),
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        Text(
-                                                          buildTranslate(
-                                                              'chat')!,
-                                                          style: const TextStyle(
-                                                              fontSize: 11,
-                                                              fontFamily:
-                                                                  'poppins-medium'),
-                                                        ),
-                                                        const SizedBox(
-                                                          width: 5,
-                                                        ),
-                                                        Image.asset(
-                                                          'assets/images/chat.png',
-                                                          height: 11,
-                                                          width: 11,
-                                                        )
-                                                      ],
-                                                    ),
-                                                  )),
+                                                      const SizedBox(
+                                                        width: 5,
+                                                      ),
+                                                      Image.asset(
+                                                        'assets/images/chat.png',
+                                                        height: 11,
+                                                        width: 11,
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
                                             ),
                                             const SizedBox(
-                                              width: 10.0,
+                                              width: 10,
                                             ),
                                             Expanded(
                                               child: Container(
@@ -575,13 +569,17 @@ class _EnquiryDashboardPageState extends State<EnquiryDashboardPage>
                                                       .width,
                                                   child: ElevatedButton(
                                                     onPressed: () {
-                                                      Navigator.of(context).push(
-                                                          MaterialPageRoute(
-                                                              builder: (context) =>
-                                                                  EnquiryDetailPage(
-                                                                      commodity:
-                                                                          commodities[
-                                                                              index])));
+                                                      Navigator.of(context)
+                                                          .push(
+                                                        MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              EnquiryDetailPage(
+                                                            commodity:
+                                                                commodities[
+                                                                    index],
+                                                          ),
+                                                        ),
+                                                      );
                                                     },
                                                     style: ElevatedButton
                                                         .styleFrom(

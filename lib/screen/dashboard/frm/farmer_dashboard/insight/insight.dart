@@ -388,7 +388,7 @@ Widget listWidget(FrmInsight frminSight, Function update) {
                   child: Padding(
                     padding: const EdgeInsets.all(5),
                     child: Text(
-                      displayText, // Display the dynamic text based on the index
+                      displayText,
                       textAlign: TextAlign.center,
                       softWrap: true,
                       maxLines: 2,
