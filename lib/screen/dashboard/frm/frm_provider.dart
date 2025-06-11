@@ -20,7 +20,6 @@ class FRMProvider extends ChangeNotifier {
   // widget data
   String? villageName, typeName;
   // farmer selection
-  String? selectedFarmersName;
   List<String> dropdownItems = [];
 
   Future<void> fetchFarmerNameData() async {
@@ -243,6 +242,8 @@ class FRMProvider extends ChangeNotifier {
   }
 
   // Third Tab - Crop Cultivation
+
+  String? selectedFarmersName;
   String? selectedItemValue;
   TextEditingController dateController = TextEditingController();
   TextEditingController varietyController = TextEditingController();

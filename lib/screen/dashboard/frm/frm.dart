@@ -13,7 +13,7 @@ import 'package:krishiyan/screen/dashboard/frm/frm_model.dart';
 import 'package:krishiyan/screen/dashboard/frm/frm_provider.dart';
 import '../../../mvc/controller/farmer_dashboard_controller.dart';
 import 'package:krishiyan/screen/dashboard/frm/farmer_dashboard/insight.dart';
-import 'package:krishiyan/screen/dashboard/frm/farmer_dashboard/crop_cultivator.dart';
+import 'package:krishiyan/screen/dashboard/frm/farmer_dashboard/crop_cultivation/crop_cultivator.dart';
 import 'package:krishiyan/screen/dashboard/frm/farmer_dashboard/farmer_dashboard.dart';
 import 'package:krishiyan/screen/dashboard/frm/farmer_dashboard/farmer_registration.dart';
 
