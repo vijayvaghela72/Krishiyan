@@ -71,8 +71,7 @@ class EnquiryDashboardController {
 
   static Future<String?> buySellCommodityData(dynamic data,
       {required BuildContext context}) async {
-    var response =
-        await postAPICall(apiUrl: BUY_COMMODITY, parameter: json.encode(data));
+    var response = await postAPICall(apiUrl: BUY_COMMODITY, parameter: data);
 
     if (response.statusCode == 201) {
       print("Commodity Response : " + response.body);
