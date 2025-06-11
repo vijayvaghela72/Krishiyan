@@ -287,7 +287,9 @@ Column fourthTabData(BuildContext context, Function update) {
                         }
                         print('Has data: ${frminSight.data}');
                         return listWidget(
-                            frminSight); // Your list display widget
+                          frminSight,
+                          update,
+                        ); // Your list display widget
                       }
                     },
                   ),
@@ -307,7 +309,7 @@ Column fourthTabData(BuildContext context, Function update) {
   );
 }
 
-Widget listWidget(FrmInsight frminSight) {
+Widget listWidget(FrmInsight frminSight, Function update) {
   // Extracting required data from the API response
   int totalfarmers = frminSight.data.numberOfFarmers;
   int totalLandInAcres = frminSight.data.totalAreaInAcres;

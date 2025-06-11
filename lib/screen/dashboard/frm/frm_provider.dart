@@ -307,4 +307,7 @@ class FRMProvider extends ChangeNotifier {
   ];
   Future<FrmInsight?>? futureFrminSight;
   int selectedTopData = 0;
+
+  // farmmer list index = 5
+  String? selectedSortItemsValue;
 }
