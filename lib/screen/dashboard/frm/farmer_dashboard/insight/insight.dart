@@ -182,10 +182,12 @@ Column fourthTabData(BuildContext context, Function update) {
                       width: 80,
                       height: 40,
                       decoration: const BoxDecoration(
-                          color: Colors.green,
-                          borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(10),
-                              bottomRight: Radius.circular(10))),
+                        color: Colors.green,
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(10),
+                          bottomRight: Radius.circular(10),
+                        ),
+                      ),
                       child: Center(
                         child: Text(
                           buildTranslate("villages")!,
@@ -200,42 +202,44 @@ Column fourthTabData(BuildContext context, Function update) {
                     ),
                   ],
                 ),
-
                 const SizedBox(
                   height: 20,
                 ),
                 Container(
-                    width: MediaQuery.of(context).size.width,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (frmProvider!.selectedCrop != null &&
-                            frmProvider!.selectedVillageName != null) {
-                          // Initialize the future here, which will trigger the API request
-                          frmProvider!.futureFrminSight =
-                              frmProvider!.fetchInsightsData();
-                          update();
-                        } else {
-                          // Show an error or prompt to select both crop and village
-                          print('Please select both crop and village');
-                        }
-                        frmProvider!.searchCropsFlag = true;
+                  width: MediaQuery.of(context).size.width,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (frmProvider!.selectedCrop != null &&
+                          frmProvider!.selectedVillageName != null) {
+                        // Initialize the future here, which will trigger the API request
+                        frmProvider!.futureFrminSight =
+                            frmProvider!.fetchInsightsData();
                         update();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.all(12),
-                        textStyle: const TextStyle(fontSize: 18),
-                        backgroundColor: const Color(0xFF3FC041),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10), // <-- Radius
-                        ),
+                      } else {
+                        // Show an error or prompt to select both crop and village
+                        print('Please select both crop and village');
+                      }
+                      frmProvider!.searchCropsFlag = true;
+                      update();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.all(12),
+                      textStyle: const TextStyle(fontSize: 18),
+                      backgroundColor: const Color(0xFF3FC041),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                      child: Text(
-                        buildTranslate('SEARCH')!,
-                        style: const TextStyle(
-                            fontSize: 18, fontFamily: 'poppins-medium'),
+                    ),
+                    child: Text(
+                      buildTranslate('SEARCH')!,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontFamily: 'poppins-medium',
                       ),
-                    )),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -268,13 +272,11 @@ Column fourthTabData(BuildContext context, Function update) {
 
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return Center(
-                            child:
-                                CircularProgressIndicator()); // Loading state
+                          child: CircularProgressIndicator(),
+                        );
                       } else if (snapshot.hasError) {
-                        // Handle the error case
                         return Center(child: Text('Error: ${snapshot.error}'));
                       } else if (!snapshot.hasData) {
-                        // Handle the case where there's no data
                         return Center(child: Text('No data available.'));
                       } else {
                         FrmInsight? frminSight = snapshot.data;
@@ -285,7 +287,7 @@ Column fourthTabData(BuildContext context, Function update) {
                         return listWidget(
                           frminSight,
                           update,
-                        ); // Your list display widget
+                        );
                       }
                     },
                   ),
