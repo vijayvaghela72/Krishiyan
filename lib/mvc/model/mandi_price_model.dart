@@ -36,9 +36,9 @@ class MandiPriceData {
   String? variety;
   String? grade;
   String? arrivalDate;
-  int? minPrice;
-  int? maxPrice;
-  int? modalPrice;
+  double? minPrice;
+  double? maxPrice;
+  double? modalPrice;
   int? iV;
 
   MandiPriceData(

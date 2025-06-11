@@ -722,7 +722,9 @@ class _MandiPriceScreenState extends State<MandiPriceScreen> {
                             child: Row(
                               children: [
                                 Image.asset(
-                                  "assets/images/mandiBG.png",
+                                  "assets/images/Commodity.webp",
+                                  width: 40,
+                                  height: 40,
                                 ),
                                 const SizedBox(
                                   width: 5,
