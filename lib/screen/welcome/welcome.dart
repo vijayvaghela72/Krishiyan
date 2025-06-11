@@ -35,14 +35,16 @@ class _WelcomePageState extends State<WelcomePage> {
           image: DecorationImage(
             image: const AssetImage("assets/images/welcomeBg.png"),
             colorFilter: ColorFilter.mode(
-                AppColor.blackColor.withOpacity(0.1), BlendMode.dstATop),
+              AppColor.blackColor.withValues(alpha: 0.1),
+              BlendMode.dstATop,
+            ),
             fit: BoxFit.cover,
           ),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
+          children: [
             Expanded(child: topWidget()),
           ],
         ),
@@ -70,7 +72,7 @@ class _WelcomePageState extends State<WelcomePage> {
         ),
         Container(
           width: MediaQuery.of(context).size.width,
-          padding: const EdgeInsets.only(left: 50.0, right: 50.0),
+          padding: const EdgeInsets.only(left: 50, right: 50),
           child: ElevatedButton(
             onPressed: () async {
               checkLogin =

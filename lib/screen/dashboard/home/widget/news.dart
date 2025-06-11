@@ -59,11 +59,12 @@ class _NewsScreenState extends State<NewsScreen> {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+          padding: const EdgeInsets.only(left: 20, right: 20),
           child: Container(
             decoration: BoxDecoration(
-                color: const Color(0xFFC4C4C4).withOpacity(0.4),
-                borderRadius: const BorderRadius.all(Radius.circular(10))),
+              color: const Color(0xFFC4C4C4).withValues(alpha: 0.4),
+              borderRadius: const BorderRadius.all(Radius.circular(10)),
+            ),
             child: Column(
               mainAxisSize: MainAxisSize.max,
               children: [
@@ -83,7 +84,7 @@ class _NewsScreenState extends State<NewsScreen> {
                             fontSize: 20,
                             fontFamily: 'poppins-medium'),
                       )),
-                      const VerticalDivider(width: 1.0),
+                      const VerticalDivider(width: 1),
                     ],
                   ),
                 ),
@@ -136,8 +137,7 @@ class _NewsScreenState extends State<NewsScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Padding(
-                                      padding:
-                                          const EdgeInsets.only(left: 20.0),
+                                      padding: const EdgeInsets.only(left: 20),
                                       child: RichText(
                                         text: TextSpan(
                                           style: const TextStyle(
@@ -154,7 +154,7 @@ class _NewsScreenState extends State<NewsScreen> {
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.only(
-                                          left: 20.0, right: 10.0),
+                                          left: 20, right: 10),
                                       child: RichText(
                                         text: TextSpan(
                                           style: TextStyle(
@@ -245,7 +245,7 @@ class _NewsScreenState extends State<NewsScreen> {
                             ],
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: 20.0, right: 20.0),
+                            padding: EdgeInsets.only(left: 20, right: 20),
                             child: Text(
                               AppGlobal.convertToCustomDateFormat(
                                   newsData.createdAt.toString()),
@@ -257,7 +257,7 @@ class _NewsScreenState extends State<NewsScreen> {
                             ),
                           ),
                           const Padding(
-                            padding: EdgeInsets.only(left: 20.0, right: 20.0),
+                            padding: EdgeInsets.only(left: 20, right: 20),
                             child: Divider(
                               color: Colors.black,
                               thickness: 2,

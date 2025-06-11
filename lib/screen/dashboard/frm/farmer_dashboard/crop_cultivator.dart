@@ -32,7 +32,6 @@ thirdTabData(BuildContext context, Function update) {
       const SizedBox(
         height: 20,
       ),
-
       // select farmer
       Padding(
         padding: const EdgeInsets.only(left: 25, right: 25),
@@ -44,7 +43,6 @@ thirdTabData(BuildContext context, Function update) {
               fontFamily: 'poppins-semibold'),
         ),
       ),
-
       Padding(
         padding: const EdgeInsets.only(left: 25, right: 25, top: 10),
         child: GestureDetector(
@@ -239,7 +237,7 @@ thirdTabData(BuildContext context, Function update) {
               enabledBorder: const OutlineInputBorder(
                 borderSide: BorderSide(
                   color: Colors.grey,
-                  width: 1.0,
+                  width: 1,
                 ),
                 borderRadius: BorderRadius.all(Radius.circular(8)),
               ),
@@ -288,7 +286,7 @@ thirdTabData(BuildContext context, Function update) {
               enabledBorder: OutlineInputBorder(
                 borderSide: BorderSide(
                   color: Colors.grey,
-                  width: 1.0,
+                  width: 1,
                 ),
                 borderRadius: BorderRadius.all(Radius.circular(8)),
               ),
@@ -333,7 +331,7 @@ thirdTabData(BuildContext context, Function update) {
                 borderRadius: BorderRadius.circular(8),
                 borderSide: const BorderSide(
                   color: Colors.grey,
-                  width: 1.0,
+                  width: 1,
                 ),
               ),
             ),
@@ -469,7 +467,7 @@ thirdTabData(BuildContext context, Function update) {
               enabledBorder: OutlineInputBorder(
                 borderSide: BorderSide(
                   color: Colors.grey,
-                  width: 1.0,
+                  width: 1,
                 ),
                 borderRadius: BorderRadius.all(Radius.circular(8)),
               ),
@@ -669,9 +667,10 @@ showAlertDialog(BuildContext context, String message) {
           softWrap: true,
           textAlign: TextAlign.center,
           style: const TextStyle(
-              fontFamily: "poppins-semibold",
-              fontSize: 15.0,
-              color: Colors.grey),
+            fontFamily: "poppins-semibold",
+            fontSize: 15,
+            color: Colors.grey,
+          ),
         ),
         const SizedBox(
           height: 20,
@@ -680,9 +679,10 @@ showAlertDialog(BuildContext context, String message) {
           buildTranslate("thankYou")!,
           softWrap: true,
           style: const TextStyle(
-              fontFamily: "poppins-semibold",
-              fontSize: 20,
-              color: Colors.black),
+            fontFamily: "poppins-semibold",
+            fontSize: 20,
+            color: Colors.black,
+          ),
         ),
         const SizedBox(
           height: 20,
