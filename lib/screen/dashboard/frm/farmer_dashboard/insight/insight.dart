@@ -1,10 +1,5 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:krishiyan/helper/constant.dart';
 import 'package:krishiyan/helper/provider.dart';
-import 'package:krishiyan/helper/snackbar.dart';
-import 'package:krishiyan/helper/app_global.dart';
-import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:krishiyan/mvc/model/frm_insight_model.dart';
 import 'package:krishiyan/localization/app_localizations.dart';
@@ -216,7 +211,8 @@ Column fourthTabData(BuildContext context, Function update) {
                         if (frmProvider!.selectedCrop != null &&
                             frmProvider!.selectedVillageName != null) {
                           // Initialize the future here, which will trigger the API request
-                          frmProvider!.futureFrminSight = fetchInsightsData();
+                          frmProvider!.futureFrminSight =
+                              frmProvider!.fetchInsightsData();
                           update();
                         } else {
                           // Show an error or prompt to select both crop and village
@@ -365,7 +361,8 @@ Widget listWidget(FrmInsight frminSight, Function update) {
                 if (frmProvider!.selectedCrop != null &&
                     frmProvider!.selectedVillageName != null) {
                   // Initialize the future here, which will trigger the API request
-                  frmProvider!.futureFrminSight = fetchInsightsData();
+                  frmProvider!.futureFrminSight =
+                      frmProvider!.fetchInsightsData();
                   update();
                 } else {
                   // Show an error or prompt to select both crop and village
@@ -416,36 +413,4 @@ Widget listWidget(FrmInsight frminSight, Function update) {
     gridDelegate:
         const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
   );
-}
-
-Future<FrmInsight?> fetchInsightsData() async {
-  String? number = await AppGlobal.getStringPreference('contactNumber');
-  var num = number ?? "1";
-
-  if (frmProvider!.selectedCrop == null ||
-      frmProvider!.selectedVillageName == null) {
-    print('Please select both crop and village');
-    return null;
-  }
-
-  final url =
-      '${baseUrl}appFarmer/farmers/insight?dealerNumber=$num&village=${frmProvider!.selectedVillageName}&crop=${frmProvider!.selectedCrop}&sort=highToLow';
-
-  try {
-    final response = await getAPICall(apiUrl: url);
-    if (response.statusCode == 200) {
-      print('API Response: ${response.body}');
-      return FrmInsight.fromJson(jsonDecode(response.body));
-    } else if (response.statusCode == 404) {
-      var data = json.decode(response.body);
-      setSnackbar(' ${data['message']}');
-      return null;
-    } else {
-      setSnackbar('Failed to load data: ${response.statusCode}');
-      return null;
-    }
-  } catch (e) {
-    print('Error: $e');
-    return null;
-  }
 }

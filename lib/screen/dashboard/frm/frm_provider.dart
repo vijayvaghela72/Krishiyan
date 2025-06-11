@@ -6,6 +6,7 @@ import 'package:krishiyan/helper/constant.dart';
 import 'package:krishiyan/helper/app_global.dart';
 import 'package:krishiyan/helper/alert_helper.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
+import 'package:krishiyan/helper/snackbar.dart';
 import 'package:krishiyan/localization/app_localizations.dart';
 import 'package:krishiyan/mvc/model/frm_insight_model.dart';
 import 'package:krishiyan/mvc/model/villages_model.dart';
@@ -309,5 +310,34 @@ class FRMProvider extends ChangeNotifier {
   int selectedTopData = 0;
 
   // farmmer list index = 5
-  String? selectedSortItemsValue;
+  String? selectedSortItemsValue = '';
+
+  Future<FrmInsight?> fetchInsightsData() async {
+    String? number = await AppGlobal.getStringPreference('contactNumber');
+    var num = number ?? "1";
+
+    if (selectedCrop == null || selectedVillageName == null) {
+      print('Please select both crop and village');
+      return null;
+    }
+    final url =
+        '${baseUrl}appFarmer/farmers/insight?dealerNumber=$num&village=${selectedVillageName}&crop=${selectedCrop}&sort=${selectedSortItemsValue == 'highExpYield' ? 'highToLow' : 'lowToHigh'}';
+    try {
+      final response = await getAPICall(apiUrl: url);
+      if (response.statusCode == 200) {
+        print('API Response: ${response.body}');
+        return FrmInsight.fromJson(jsonDecode(response.body));
+      } else if (response.statusCode == 404) {
+        var data = json.decode(response.body);
+        setSnackbar(' ${data['message']}');
+        return null;
+      } else {
+        setSnackbar('Failed to load data: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      print('Error: $e');
+      return null;
+    }
+  }
 }
