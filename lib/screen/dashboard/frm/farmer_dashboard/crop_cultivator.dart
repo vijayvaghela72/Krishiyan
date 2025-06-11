@@ -56,7 +56,9 @@ thirdTabData(BuildContext context, Function update) {
             color: Colors.white,
             child: Container(
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.black.withValues(alpha: 0.7)),
+                border: Border.all(
+                  color: Colors.black.withValues(alpha: 0.7),
+                ),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Padding(
@@ -117,7 +119,9 @@ thirdTabData(BuildContext context, Function update) {
             color: Colors.white,
             child: Container(
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.black.withValues(alpha: 0.7)),
+                border: Border.all(
+                  color: Colors.black.withValues(alpha: 0.7),
+                ),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Padding(
@@ -173,27 +177,34 @@ thirdTabData(BuildContext context, Function update) {
         padding: const EdgeInsets.only(left: 25, right: 25),
         child: TextFormField(
           decoration: InputDecoration(
-              alignLabelWithHint: true,
-              fillColor: Colors.white,
-              filled: true,
-              border: const OutlineInputBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(10),
-                ),
+            alignLabelWithHint: true,
+            fillColor: Colors.white,
+            filled: true,
+            border: const OutlineInputBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(10),
               ),
-              enabledBorder: const OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: Colors.grey,
-                  width: 1,
-                ),
-                borderRadius: BorderRadius.all(Radius.circular(8)),
+            ),
+            enabledBorder: const OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.grey,
+                width: 1,
               ),
-              hintText: buildTranslate("enterVariety")!,
-              hintStyle: const TextStyle(color: Color(0xFFe7e7e7)),
-              focusedBorder: const OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(8)),
-                borderSide: BorderSide(color: Colors.green, width: 0.5),
-              )),
+              borderRadius: BorderRadius.all(
+                Radius.circular(8),
+              ),
+            ),
+            hintText: buildTranslate("enterVariety")!,
+            hintStyle: const TextStyle(
+              color: Color(0xFFe7e7e7),
+            ),
+            focusedBorder: const OutlineInputBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(8),
+              ),
+              borderSide: BorderSide(color: Colors.green, width: 0.5),
+            ),
+          ),
           validator: (value) =>
               value!.isEmpty ? 'Please, fill this field.' : null,
           controller: frmProvider!.varietyController,
@@ -220,33 +231,40 @@ thirdTabData(BuildContext context, Function update) {
         padding: const EdgeInsets.only(left: 25, right: 25),
         child: TextFormField(
           decoration: InputDecoration(
-              alignLabelWithHint: true,
-              filled: true,
-              fillColor: Colors.white,
-              suffixIcon: IconButton(
-                icon: const Icon(Icons.calendar_today),
-                onPressed: () {
-                  _selectDate(context);
-                }, // Open date picker on icon press
+            alignLabelWithHint: true,
+            filled: true,
+            fillColor: Colors.white,
+            suffixIcon: IconButton(
+              icon: const Icon(Icons.calendar_today),
+              onPressed: () {
+                _selectDate(context);
+              }, // Open date picker on icon press
+            ),
+            border: const OutlineInputBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(10),
               ),
-              border: const OutlineInputBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(10),
-                ),
+            ),
+            enabledBorder: const OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.grey,
+                width: 1,
               ),
-              enabledBorder: const OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: Colors.grey,
-                  width: 1,
-                ),
-                borderRadius: BorderRadius.all(Radius.circular(8)),
+              borderRadius: BorderRadius.all(
+                Radius.circular(8),
               ),
-              hintText: 'DD/MM/YYYY',
-              hintStyle: const TextStyle(color: Color(0xFFe7e7e7)),
-              focusedBorder: const OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(8)),
-                borderSide: BorderSide(color: Colors.green, width: 0.5),
-              )),
+            ),
+            hintText: 'DD/MM/YYYY',
+            hintStyle: const TextStyle(
+              color: Color(0xFFe7e7e7),
+            ),
+            focusedBorder: const OutlineInputBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(8),
+              ),
+              borderSide: BorderSide(color: Colors.green, width: 0.5),
+            ),
+          ),
           validator: (value) =>
               value!.isEmpty ? 'Please, fill this field.' : null,
           controller: frmProvider!.dateController,
@@ -275,27 +293,34 @@ thirdTabData(BuildContext context, Function update) {
         padding: const EdgeInsets.only(left: 25, right: 25),
         child: TextFormField(
           decoration: const InputDecoration(
-              alignLabelWithHint: true,
-              fillColor: Colors.white,
-              filled: true,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(10),
-                ),
+            alignLabelWithHint: true,
+            fillColor: Colors.white,
+            filled: true,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(10),
               ),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: Colors.grey,
-                  width: 1,
-                ),
-                borderRadius: BorderRadius.all(Radius.circular(8)),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.grey,
+                width: 1,
               ),
-              hintText: '----',
-              hintStyle: TextStyle(color: Color(0xFFe7e7e7)),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(8)),
-                borderSide: BorderSide(color: Colors.green, width: 0.5),
-              )),
+              borderRadius: BorderRadius.all(
+                Radius.circular(8),
+              ),
+            ),
+            hintText: '----',
+            hintStyle: TextStyle(
+              color: Color(0xFFe7e7e7),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(8),
+              ),
+              borderSide: BorderSide(color: Colors.green, width: 0.5),
+            ),
+          ),
           validator: (value) =>
               value!.isEmpty ? 'Please, fill this field.' : null,
           controller: frmProvider!.geoLocationController,
@@ -340,14 +365,15 @@ thirdTabData(BuildContext context, Function update) {
               style: TextStyle(fontSize: 14),
             ),
             items: frmProvider!.items
-                .map((item) => DropdownMenuItem<String>(
-                      value: item,
-                      child: Text(
-                        item,
-                        style:
-                            const TextStyle(fontSize: 14, color: Colors.grey),
-                      ),
-                    ))
+                .map(
+                  (item) => DropdownMenuItem<String>(
+                    value: item,
+                    child: Text(
+                      item,
+                      style: const TextStyle(fontSize: 14, color: Colors.grey),
+                    ),
+                  ),
+                )
                 .toList(),
             validator: (value) {
               if (value == null) {
@@ -401,34 +427,47 @@ thirdTabData(BuildContext context, Function update) {
         child: TextFormField(
           keyboardType: TextInputType.number,
           inputFormatters: <TextInputFormatter>[
-            FilteringTextInputFormatter.allow(RegExp('[0-9]')),
+            FilteringTextInputFormatter.allow(
+              RegExp('[0-9]'),
+            ),
             //To remove first '0'
-            FilteringTextInputFormatter.deny(RegExp(r'^0+')),
+            FilteringTextInputFormatter.deny(
+              RegExp(r'^0+'),
+            ),
             //To remove first '94' or your country code
-            FilteringTextInputFormatter.deny(RegExp(r'^94+')),
+            FilteringTextInputFormatter.deny(
+              RegExp(r'^94+'),
+            ),
           ],
           decoration: const InputDecoration(
-              alignLabelWithHint: true,
-              fillColor: Colors.white,
-              filled: true,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(10),
-                ),
+            alignLabelWithHint: true,
+            fillColor: Colors.white,
+            filled: true,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(10),
               ),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: Colors.grey,
-                  width: 1,
-                ),
-                borderRadius: BorderRadius.all(Radius.circular(8)),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.grey,
+                width: 1,
               ),
-              hintText: 'Enter area in acres',
-              hintStyle: TextStyle(color: Color(0xFFe7e7e7)),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(8)),
-                borderSide: BorderSide(color: Colors.green, width: 0.5),
-              )),
+              borderRadius: BorderRadius.all(
+                Radius.circular(8),
+              ),
+            ),
+            hintText: 'Enter area in acres',
+            hintStyle: TextStyle(
+              color: Color(0xFFe7e7e7),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(8),
+              ),
+              borderSide: BorderSide(color: Colors.green, width: 0.5),
+            ),
+          ),
           validator: (value) =>
               value!.isEmpty ? 'Please, fill this field.' : null,
           controller: frmProvider!.areaInArcesController,
@@ -456,27 +495,34 @@ thirdTabData(BuildContext context, Function update) {
         padding: const EdgeInsets.only(left: 25, right: 25),
         child: TextFormField(
           decoration: const InputDecoration(
-              alignLabelWithHint: true,
-              fillColor: Colors.white,
-              filled: true,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(10),
-                ),
+            alignLabelWithHint: true,
+            fillColor: Colors.white,
+            filled: true,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(10),
               ),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: Colors.grey,
-                  width: 1,
-                ),
-                borderRadius: BorderRadius.all(Radius.circular(8)),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.grey,
+                width: 1,
               ),
-              hintText: 'Enter geoLink area on map',
-              hintStyle: TextStyle(color: Color(0xFFe7e7e7)),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(8)),
-                borderSide: BorderSide(color: Colors.green, width: 0.5),
-              )),
+              borderRadius: BorderRadius.all(
+                Radius.circular(8),
+              ),
+            ),
+            hintText: 'Enter geoLink area on map',
+            hintStyle: TextStyle(
+              color: Color(0xFFe7e7e7),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(8),
+              ),
+              borderSide: BorderSide(color: Colors.green, width: 0.5),
+            ),
+          ),
           validator: (value) =>
               value!.isEmpty ? 'Please, fill this field.' : null,
           controller: frmProvider!.geoLinkAreaOnMapController,
@@ -486,56 +532,57 @@ thirdTabData(BuildContext context, Function update) {
         height: 20,
       ),
       Container(
-          width: 180,
-          height: 45,
-          padding: const EdgeInsets.only(left: 25, right: 25),
-          child: ElevatedButton(
-            onPressed: () {},
-            style: ElevatedButton.styleFrom(
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.all(12),
-              textStyle: const TextStyle(fontSize: 18),
-              backgroundColor: const Color(0xFF3FC041),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12), // <-- Radius
+        width: 180,
+        height: 45,
+        padding: const EdgeInsets.only(left: 25, right: 25),
+        child: ElevatedButton(
+          onPressed: () {},
+          style: ElevatedButton.styleFrom(
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.all(12),
+            textStyle: const TextStyle(fontSize: 18),
+            backgroundColor: const Color(0xFF3FC041),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12), // <-- Radius
+            ),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.add),
+              Text(
+                "Add Crop",
+                style:
+                    const TextStyle(fontSize: 16, fontFamily: 'poppins-medium'),
               ),
-            ),
-            child: Row(
-              children: [
-                Icon(Icons.add),
-                Text(
-                  "Add Crop",
-                  style: const TextStyle(
-                      fontSize: 16, fontFamily: 'poppins-medium'),
-                ),
-              ],
-            ),
-          )),
+            ],
+          ),
+        ),
+      ),
       const SizedBox(
         height: 20,
       ),
       Container(
-          width: MediaQuery.of(context).size.width,
-          padding: const EdgeInsets.only(left: 25, right: 25),
-          child: ElevatedButton(
-            onPressed: () {
-              _cropCultivationRegisterApiCall(context);
-            },
-            style: ElevatedButton.styleFrom(
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.all(12),
-              textStyle: const TextStyle(fontSize: 18),
-              backgroundColor: const Color(0xFF3FC041),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
+        width: MediaQuery.of(context).size.width,
+        padding: const EdgeInsets.only(left: 25, right: 25),
+        child: ElevatedButton(
+          onPressed: () {
+            _cropCultivationRegisterApiCall(context);
+          },
+          style: ElevatedButton.styleFrom(
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.all(12),
+            textStyle: const TextStyle(fontSize: 18),
+            backgroundColor: const Color(0xFF3FC041),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
             ),
-            child: Text(
-              buildTranslate('SUBMIT')!,
-              style:
-                  const TextStyle(fontSize: 18, fontFamily: 'poppins-medium'),
-            ),
-          )),
+          ),
+          child: Text(
+            buildTranslate('SUBMIT')!,
+            style: const TextStyle(fontSize: 18, fontFamily: 'poppins-medium'),
+          ),
+        ),
+      ),
       const SizedBox(
         height: 100,
       ),
@@ -592,8 +639,9 @@ _cropCultivationRegisterApiCall(BuildContext context) async {
   String? number = await AppGlobal.getStringPreference('contactNumber');
 
   // Parse the input date string
-  DateTime parsedDate = DateFormat('dd-MM-yyyy')
-      .parse(frmProvider!.dateController.text.toString());
+  DateTime parsedDate = DateFormat('dd-MM-yyyy').parse(
+    frmProvider!.dateController.text.toString(),
+  );
   // Format it to YYYY-MM-DD
   String formattedDate = DateFormat('yyyy-MM-dd').format(parsedDate);
 
@@ -657,11 +705,12 @@ showAlertDialog(BuildContext context, String message) {
           ),
         ),
         Center(
-            child: Image.asset(
-          'assets/images/check_green.png',
-          width: 100,
-          height: 100,
-        )),
+          child: Image.asset(
+            'assets/images/check_green.png',
+            width: 100,
+            height: 100,
+          ),
+        ),
         Text(
           message,
           softWrap: true,
