@@ -3,9 +3,10 @@ import 'package:krishiyan/helper/provider.dart';
 import 'package:krishiyan/helper/btm_sheet_helper.dart';
 import 'package:krishiyan/localization/app_localizations.dart';
 
-selectCrop(
+selectFarmer(
   BuildContext context,
   Function setState,
+  int selectionIndex,
 ) {
   TextEditingController searchValue = TextEditingController();
   showModalBottomSheet(
@@ -30,7 +31,7 @@ selectCrop(
               mainAxisSize: MainAxisSize.min,
               children: [
                 getCommanButtomTitleHeading(
-                    buildTranslate("selectCrops")!, context),
+                    buildTranslate("selectFarmer")!, context),
                 const Divider(),
                 Padding(
                   padding: const EdgeInsets.symmetric(
@@ -59,7 +60,7 @@ selectCrop(
                     ),
                   ),
                 ),
-                frmProvider!.crops.isNotEmpty
+                frmProvider!.dropdownItems.isNotEmpty
                     ? Flexible(
                         child: SizedBox(
                           height: MediaQuery.of(context).size.height * 0.6,
@@ -70,6 +71,7 @@ selectCrop(
                                 setState,
                                 context,
                                 searchValue.text.toLowerCase(),
+                                selectionIndex,
                               ),
                             ),
                           ),
@@ -95,18 +97,20 @@ getList(
   Function setState,
   BuildContext context,
   String searchValue,
+  int selectionIndex,
 ) {
-  return frmProvider!.crops
+  return frmProvider!.dropdownItems
       .asMap()
       .map(
         (index, element) => MapEntry(
           index,
-          frmProvider!.crops[index].toLowerCase().contains(
+          frmProvider!.dropdownItems[index].toLowerCase().contains(
                     searchValue,
                   )
               ? InkWell(
                   onTap: () async {
-                    frmProvider!.selectedCrop = frmProvider!.crops[index];
+                    frmProvider!.selectedFarmersName[selectionIndex] =
+                        frmProvider!.dropdownItems[index];
                     Navigator.pop(context);
                     setState();
                   },
@@ -120,7 +124,7 @@ getList(
                         child: Padding(
                           padding: const EdgeInsets.all(8),
                           child: Text(
-                            "${frmProvider!.crops[index]}",
+                            "${frmProvider!.dropdownItems[index]}",
                             style: Theme.of(context)
                                 .textTheme
                                 .titleSmall

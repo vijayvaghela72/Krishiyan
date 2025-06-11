@@ -242,14 +242,47 @@ class FRMProvider extends ChangeNotifier {
   }
 
   // Third Tab - Crop Cultivation
+  initializeCrop() {
+    selectedFarmersName = [''];
+    selectedCropList = [''];
+    selectedItemValue = [''];
+    dateController = [TextEditingController()];
+    varietyController = [TextEditingController()];
+    geoLocationController = [TextEditingController()];
+    areaInArcesController = [TextEditingController()];
+    geoLinkAreaOnMapController = [TextEditingController()];
+  }
 
-  String? selectedFarmersName;
-  String? selectedItemValue;
-  TextEditingController dateController = TextEditingController();
-  TextEditingController varietyController = TextEditingController();
-  TextEditingController geoLocationController = TextEditingController();
-  TextEditingController areaInArcesController = TextEditingController();
-  TextEditingController geoLinkAreaOnMapController = TextEditingController();
+  addCrop() {
+    selectedFarmersName.add('');
+    selectedCropList.add('');
+    selectedItemValue.add('');
+    dateController.add(TextEditingController());
+    varietyController.add(TextEditingController());
+    geoLocationController.add(TextEditingController());
+    areaInArcesController.add(TextEditingController());
+    geoLinkAreaOnMapController.add(TextEditingController());
+  }
+
+  removeCrop(int i) {
+    selectedFarmersName.removeAt(i);
+    selectedCropList.removeAt(i);
+    selectedItemValue.removeAt(i);
+    dateController.removeAt(i);
+    varietyController.removeAt(i);
+    geoLocationController.removeAt(i);
+    areaInArcesController.removeAt(i);
+    geoLinkAreaOnMapController.removeAt(i);
+  }
+
+  List<String> selectedFarmersName = [];
+  List<String> selectedCropList = [];
+  List<String> selectedItemValue = [];
+  List<TextEditingController> dateController = [];
+  List<TextEditingController> varietyController = [];
+  List<TextEditingController> geoLocationController = [];
+  List<TextEditingController> areaInArcesController = [];
+  List<TextEditingController> geoLinkAreaOnMapController = [];
 
   final List<String> items = [
     buildTranslate('organic')!,

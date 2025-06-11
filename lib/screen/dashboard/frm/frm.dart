@@ -8,7 +8,6 @@ import 'package:krishiyan/helper/provider.dart';
 import '../../../localization/app_localizations.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:krishiyan/mvc/model/frm_insight_model.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:krishiyan/screen/dashboard/frm/frm_model.dart';
 import 'package:krishiyan/screen/dashboard/frm/frm_provider.dart';
 import '../../../mvc/controller/farmer_dashboard_controller.dart';
@@ -81,6 +80,7 @@ class _FRMState extends State<FRM> with TickerProviderStateMixin {
         FarmerDashboardController.fetchFarmerDashboard(
             context, widget.villageName, widget.typeName);
     getAllData();
+    frmProvider!.initializeCrop();
   }
 
   getAllData() async {
