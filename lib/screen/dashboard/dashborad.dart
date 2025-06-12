@@ -1,4 +1,11 @@
 import 'dart:async';
+import 'dart:io';
+import 'package:app_version_update/app_version_update.dart';
+import 'package:in_app_update/in_app_update.dart';
+import 'package:krishiyan/helper/api.dart';
+import 'package:krishiyan/helper/networkAvailablity.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 import 'crop/crop.dart';
 import 'profile/profile.dart';
 import 'enquiry/enquiry.dart';
@@ -95,9 +102,146 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     });
   }
 
+  checkUpdate() async {
+    await AppVersionUpdate.checkForUpdates(
+      appleId: appleId,
+      playStoreId: packageName,
+    ).then(
+      (data) async {
+        print("data.storeUrl : ${data.storeUrl}");
+        print("data.storeVersion : ${data.storeVersion}");
+        if (data.canUpdate!) {
+          AppVersionUpdate.showAlertUpdate(
+            appVersionResult: data,
+            context: context,
+            mandatory: true,
+          );
+        }
+      },
+    );
+  }
+
+  dialogAnimate(BuildContext context, Widget dialge) {
+    return showGeneralDialog(
+      barrierColor: Colors.black.withValues(alpha: 0.5),
+      transitionBuilder: (context, a1, a2, widget) {
+        return Transform.scale(
+          scale: a1.value,
+          child: Opacity(opacity: a1.value, child: dialge),
+        );
+      },
+      transitionDuration: const Duration(milliseconds: 250),
+      barrierDismissible: false,
+      barrierLabel: 'test',
+      context: context,
+      pageBuilder: (context, animation1, animation2) {
+        return Container();
+      },
+    );
+  }
+
+  showAppUpdateDialog(BuildContext context) async {
+    await dialogAnimate(
+      context,
+      StatefulBuilder(
+        builder: (BuildContext context, StateSetter setStater) {
+          return AlertDialog(
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(5),
+              ),
+            ),
+            title: const Text("Update App"),
+            content: Text(
+              'Update is available, please update app to the latest version!',
+              style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                    color: Colors.black,
+                    fontFamily: 'ubuntu',
+                  ),
+            ),
+            actions: [
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: TextButton(
+                  child: Text(
+                    'No',
+                    style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'ubuntu',
+                        ),
+                  ),
+                  onPressed: () {
+                    exit(0);
+                  },
+                ),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: TextButton(
+                  child: Text(
+                    'Update Now',
+                    style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'ubuntu',
+                        ),
+                  ),
+                  onPressed: () async {
+                    String url = '';
+                    if (Platform.isAndroid) {
+                      url = "$androidLink$packageName";
+                    }
+                    if (await canLaunchUrl(
+                      Uri.parse(url),
+                    )) {
+                      await launchUrl(
+                        Uri.parse(url),
+                        mode: LaunchMode.externalApplication,
+                      );
+                    } else {
+                      throw 'Could not launch $url';
+                    }
+                  },
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  showUpdateDialog() async {
+    print("show updated dialog");
+    isNetworkAvailable = await checkIsNetworkAvailable();
+    if (isNetworkAvailable) {
+      if (Platform.isAndroid) {
+        InAppUpdate.checkForUpdate().then((info) {
+          if (info.updateAvailability == UpdateAvailability.updateAvailable) {
+            showAppUpdateDialog(context);
+          }
+          print('info : $info');
+          print('info : ${info.availableVersionCode}');
+          print('info : ${info.updateAvailability}');
+        });
+      } else {
+        checkUpdate();
+      }
+      setState(() {});
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    showUpdateDialog();
     _bottomNavIndex = widget.selectedIndex;
     typeOfOrganizationData = widget.typeOfOrganization;
     print(_bottomNavIndex);

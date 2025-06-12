@@ -192,13 +192,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _loadImageUrl(organizationName);
   }
 
-  Future<void> _saveImageUrl(String imageUrl) async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString('uploaded_image_url',
-        imageUrl); // Save URL to shared preferences (cache)
-    print("Image URL saved: $imageUrl");
-  }
-
   Future<void> _loadImageUrl(String organizationName) async {
     if (organizationName.isEmpty) {
       print("Organization name is empty. Please enter a valid name.");

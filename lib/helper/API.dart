@@ -20,3 +20,7 @@ class API {
 }
 
 enum MethodType { GET, POST, PUT, DELETE }
+
+String androidLink = 'https://play.google.com/store/apps/details?id=';
+String packageName = 'com.wetacre.krishiyan';
+String appleId = '6744020111';
