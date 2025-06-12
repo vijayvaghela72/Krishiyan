@@ -1,23 +1,24 @@
 import 'dart:io';
 import 'dart:convert';
-import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
-import 'package:krishiyan/helper/constant.dart';
-import '../../../../helper/app_global.dart';
-import 'package:flutter/material.dart';
-import '../../../../helper/alert_helper.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:otp_text_field/style.dart';
+import '../../../../helper/app_global.dart';
+import 'package:http_parser/http_parser.dart';
+import '../../../../helper/alert_helper.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:krishiyan/helper/constant.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:krishiyan/screen/dashboard/dashborad.dart';
 import 'package:krishiyan/mvc/model/frm_profile_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../../mvc/controller/account_setting_controller.dart';
-import 'package:krishiyan/screen/dashboard/dashborad.dart';
 import 'package:krishiyan/localization/app_localizations.dart';
+import '../../../../mvc/controller/account_setting_controller.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -121,81 +122,70 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<void> _uploadImageToAWS(
-      File imageFile, String organizationName) async {
-    Dio dio = Dio();
-
+    File image,
+    String organizationName,
+  ) async {
     if (organizationName.isEmpty) {
       print("Organization name is empty. Please enter a valid name.");
       return;
     }
 
     // Modify the file name based on the organization name
-    String modifiedFileName = '${organizationName}_profile_image.jpg';
+    String fileName = '${organizationName}_profile_image.jpg';
 
     try {
-      // Prepare the image for upload with the modified file name
-      FormData formData = FormData.fromMap({
-        'image': await MultipartFile.fromFile(imageFile.path,
-            filename: modifiedFileName), // Use the modified name
-      });
+      print("FileName");
+      print(fileName);
 
+      // Create a multipart request
+      var request =
+          http.MultipartRequest('POST', Uri.parse('${baseUrl}upload'));
+
+      // Add headers
       final timestamp = DateTime.now().millisecondsSinceEpoch.toString();
       final signature = hmacSha256(encryptionKey, timestamp);
+      request.headers.addAll({
+        "Accept": "application/json",
+        "Connection": "application/json",
+        "Authorization": 'Bearer',
+        'x-timestamp': timestamp,
+        'x-signature': signature,
+      });
+      print("Image size: ${(await image.length()) / (1024 * 1024)} MB");
+      // Add the image file
+      request.files.add(await http.MultipartFile.fromPath(
+        'image',
+        image.path,
+        filename: fileName,
+        contentType: MediaType('multipart', 'form-data'),
+      ));
 
-      // Send the request to the API
-      Response response = await dio.post('${baseUrl}upload',
-          data: formData,
-          options: Options(headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json",
-            "Connection": "application/json",
-            "Authorization": 'Bearer',
-            'x-timestamp': timestamp,
-            'x-signature': signature,
-          }));
-
-      // Debugging: Print the full response to check the returned data
-      print("Response status: ${response.statusCode}");
-      print("Response data: ${response.data}");
+      // Send the request
+      var response = await request.send();
+      print('response status: ${response.statusCode}');
 
       if (response.statusCode == 200) {
-        // The server has responded with a success (HTTP 200)
-        var responseData = response.data;
-
-        // You can retrieve the Location or the key for the uploaded image
-        String uploadedImageUrl = responseData[
-            'Location']; // This is the full URL to access the image
-
-        // Debugging: Print the uploaded image URL
-        print("Image uploaded successfully: $uploadedImageUrl");
-
-        // Save the uploaded image URL to SharedPreferences for caching
-        await _saveImageUrl(uploadedImageUrl);
-
-        // Update the UI with the uploaded image URL
-        setState(() {
-          _imageUrl =
-              uploadedImageUrl; // Store the image URL in state to display it
-        });
+        // Parse the response
+        var responseBody = await response.stream.bytesToString();
+        var jsonResponse = jsonDecode(responseBody);
+        print('object: $jsonResponse');
+        String imageKey = jsonResponse['Key'].toString();
+        // Construct the image URL
+        String imageUrl = jsonResponse['location'].toString();
+        // await cacheImage(imageKey, imageUrl);
+        _imageUrl = imageUrl;
+        setState(() {});
+        // Handle the successful response
+        print("Image uploaded successfully. Image URL: $imageUrl");
+        print(_imageUrl);
+        print("Image key: $imageKey");
       } else {
-        // In case of an error response from the server (non-200 status)
+        // Handle error response
         print("Failed to upload image. Status code: ${response.statusCode}");
-        print(
-            "Error details: ${response.data}"); // Print the error response body
       }
     } catch (e) {
       // Handle any errors that occur during the image upload process
       print("Error uploading image: $e");
-
-      if (e is DioException) {
-        // If the error is a DioError, print more specific details
-        print("Dio error type: ${e.type}");
-        print("Dio error message: ${e.message}");
-        if (e.response != null) {
-          // Print the server's response, even if it's an error
-          print("Dio error response: ${e.response?.data}");
-        }
-      }
     }
 
     // Optionally load the saved image URL to make sure the image is reflected on the UI
@@ -1829,7 +1819,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       });
       print('data  : $data');
 
-      // var dio = Dio();
       print('link : ${FRM_UPDATE_PROFILE_DETAILS + contactNumber}');
       var response = await putAPICall(
         apiUrl: FRM_UPDATE_PROFILE_DETAILS + contactNumber,

@@ -1,10 +1,11 @@
 import 'dart:io';
 import 'dart:convert';
-import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 import '../../../../helper/app_global.dart';
+import 'package:http_parser/http_parser.dart';
 import '../../../../helper/alert_helper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:krishiyan/helper/constant.dart';
@@ -100,7 +101,6 @@ class _EditSellCommodityPageState extends State<EditSellCommodityPage> {
   final ImagePicker _picker = ImagePicker();
   File? _image;
   String? _imageUrl;
-  Dio _dio = Dio();
   final int cacheExpirationDays = 10;
 
   // Generate a unique file name for the image
@@ -168,45 +168,51 @@ class _EditSellCommodityPageState extends State<EditSellCommodityPage> {
 
   // Upload the image to AWS using Dio
   Future<void> uploadImageToAWS(File image) async {
-    setState(() {
-      _isUploading = true; // Start uploading
-    });
+    _isUploading = true;
+    setState(() {});
     try {
-      String fileName = generateFileName(id); // Example id (can be dynamic)
+      String fileName = generateFileName(id);
       print("FileName");
       print(fileName);
 
-      FormData formData = FormData.fromMap({
-        'image': await MultipartFile.fromFile(image.path, filename: fileName),
-      });
+      // Create a multipart request
+      var request =
+          http.MultipartRequest('POST', Uri.parse('${baseUrl}upload'));
+
+      // Add headers
       final timestamp = DateTime.now().millisecondsSinceEpoch.toString();
       final signature = hmacSha256(encryptionKey, timestamp);
+      request.headers.addAll({
+        "Accept": "application/json",
+        "Connection": "application/json",
+        "Authorization": 'Bearer',
+        'x-timestamp': timestamp,
+        'x-signature': signature,
+      });
+      print("Image size: ${(await image.length()) / (1024 * 1024)} MB");
+      // Add the image file
+      request.files.add(await http.MultipartFile.fromPath(
+        'image',
+        image.path,
+        filename: fileName,
+        contentType: MediaType('multipart', 'form-data'),
+      ));
 
-      // Send the POST request to the API
-      Response response = await _dio.post('${baseUrl}upload',
-          data: formData,
-          options: Options(headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json",
-            "Connection": "application/json",
-            "Authorization": 'Bearer',
-            'x-timestamp': timestamp,
-            'x-signature': signature,
-          }));
+      // Send the request
+      var response = await request.send();
+      print('response status: ${response.statusCode}');
 
       if (response.statusCode == 200) {
-        var jsonResponse = response.data;
-        String imageKey = jsonResponse['Key'];
+        // Parse the response
+        var responseBody = await response.stream.bytesToString();
+        var jsonResponse = jsonDecode(responseBody);
+        print('object: $jsonResponse');
+        String imageKey = jsonResponse['Key'].toString();
         // Construct the image URL
-        String imageUrl = '${baseUrlEnd}images/$imageKey';
-
-        // Store the image URL in cache and local storage
-        await cacheImage(imageKey, imageUrl);
-
-        setState(() {
-          _imageUrl = imageUrl;
-        });
-
+        String imageUrl = jsonResponse['location'].toString();
+        // await cacheImage(imageKey, imageUrl);
+        _imageUrl = imageUrl;
+        setState(() {});
         // Handle the successful response
         print("Image uploaded successfully. Image URL: $imageUrl");
         print(_imageUrl);
@@ -220,9 +226,8 @@ class _EditSellCommodityPageState extends State<EditSellCommodityPage> {
       print("Error uploading image: $e");
     } finally {
       // Regardless of success or failure, re-enable the button
-      setState(() {
-        _isUploading = false; // End the upload process
-      });
+      _isUploading = false;
+      setState(() {});
     }
   }
 

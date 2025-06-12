@@ -28,7 +28,7 @@ class BuyCommodityData {
   String? operation;
   String? commodity;
   String? variety;
-  int? quantity;
+  String? quantity;
   String? moisture;
   String? localGradeSpecification;
   String? size;
@@ -68,7 +68,7 @@ class BuyCommodityData {
     operation = json['operation'];
     commodity = json['commodity'];
     variety = json['variety'];
-    quantity = json['quantity'];
+    quantity = json['quantity'].toString();
     moisture = json['moisture'];
     localGradeSpecification = json['localGradeSpecification'];
     size = json['size'];

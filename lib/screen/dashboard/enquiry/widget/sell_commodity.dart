@@ -1,18 +1,19 @@
 import 'dart:io';
 import 'dart:convert';
-import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 import '../../../../helper/app_global.dart';
+import 'package:http_parser/http_parser.dart';
 import '../../../../helper/alert_helper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:krishiyan/helper/constant.dart';
 import 'package:path_provider/path_provider.dart';
+import '../../../../mvc/model/crop_name_model.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import '../../../../localization/app_localizations.dart';
-import '../../../../mvc/model/crop_name_model.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../mvc/controller/enquiry_dashboard_controller.dart';
@@ -37,9 +38,6 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
   TextEditingController commentsController = TextEditingController();
   bool _isUploading = false;
 
-  // final List<String> commodityItems = ['Maize', 'Coriander', 'Soya'];
-  // String? selectedCommodityItemValue;
-
   final List<String> quantityItems = ['Ton', 'Kg', 'Qtl'];
   String? selectedQuantityItemValue;
 
@@ -49,7 +47,6 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
   final List<String> purchaseItems = ['Kg', 'Qtl', 'Ton'];
   String? selectedPurchaseItemValue;
 
-  // late Future<List<CropLibraryData>?> futureCropData;
   String? _selectedCrop;
   SelectCropNamesData? _cropData;
   String? contactNumber;
@@ -71,7 +68,6 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
 
       if (response.statusCode == 200) {
         _cropData = SelectCropNamesData.fromJson(jsonDecode(response.body));
-        // futureCropData = CropController.fetchCrop(_cropData!.data!.first);
         setState(() {});
       } else {
         throw Exception('Failed to load crops');
@@ -84,7 +80,6 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
   final ImagePicker _picker = ImagePicker();
   File? _image;
   String? _imageUrl;
-  Dio _dio = Dio();
 
   // Generate a unique file name for the image
   String generateFileName(String id) {
@@ -139,8 +134,8 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
     }
   }
 
-  // Upload the image to AWS using Dio
-  Future<void> uploadImageToAWS(File image) async {
+  Future<void> uploadImageToAWS(File images) async {
+    File image = images;
     setState(() {
       _isUploading = true;
     });
@@ -149,53 +144,57 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
       print("FileName");
       print(fileName);
 
-      FormData formData = FormData.fromMap({
-        'image': await MultipartFile.fromFile(image.path, filename: fileName),
-      });
+      // Create a multipart request
+      var request =
+          http.MultipartRequest('POST', Uri.parse('${baseUrl}upload'));
+
+      // Add headers
       final timestamp = DateTime.now().millisecondsSinceEpoch.toString();
       final signature = hmacSha256(encryptionKey, timestamp);
-      // Send the POST request to the API
-      Response response = await _dio.post(
-        '${baseUrl}upload',
-        data: formData,
-        options: Options(headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/json",
-          "Connection": "application/json",
-          "Authorization": 'Bearer',
-          'x-timestamp': timestamp,
-          'x-signature': signature,
-        }),
-      );
+      request.headers.addAll({
+        "Accept": "application/json",
+        "Connection": "application/json",
+        "Authorization": 'Bearer',
+        'x-timestamp': timestamp,
+        'x-signature': signature,
+      });
+      print("Image size: ${(await image.length()) / (1024 * 1024)} MB");
+      // Add the image file
+      request.files.add(await http.MultipartFile.fromPath(
+        'image',
+        image.path,
+        filename: fileName,
+        contentType: MediaType('multipart', 'form-data'),
+      ));
+
+      // Send the request
+      var response = await request.send();
+      print('response status: ${response.statusCode}');
 
       if (response.statusCode == 200) {
-        var jsonResponse = response.data;
-        String imageKey = jsonResponse['Key'];
+        // Parse the response
+        var responseBody = await response.stream.bytesToString();
+        var jsonResponse = jsonDecode(responseBody);
+        print('object: $jsonResponse');
+        String imageKey = jsonResponse['Key'].toString();
         // Construct the image URL
-        String imageUrl = '${baseUrlEnd}images/$imageKey';
-
-        // Store the image URL in cache and local storage
-        await cacheImage(imageKey, imageUrl);
-
-        setState(() {
-          _imageUrl = imageUrl;
-        });
-
+        String imageUrl = jsonResponse['location'].toString();
+        // await cacheImage(imageKey, imageUrl);
+        _imageUrl = imageUrl;
+        setState(() {});
         // Handle the successful response
         print("Image uploaded successfully. Image URL: $imageUrl");
+        print(_imageUrl);
         print("Image key: $imageKey");
       } else {
         // Handle error response
         print("Failed to upload image. Status code: ${response.statusCode}");
       }
     } catch (e) {
-      // Handle exceptions
       print("Error uploading image: $e");
     } finally {
-      // Regardless of success or failure, re-enable the button
-      setState(() {
-        _isUploading = false; // End the upload process
-      });
+      _isUploading = false;
+      setState(() {});
     }
   }
 
@@ -256,7 +255,7 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
         alignment: FractionalOffset.bottomCenter,
         child: Container(
           width: MediaQuery.of(context).size.width,
-          padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+          padding: const EdgeInsets.only(left: 25, right: 25),
           child: ElevatedButton(
             onPressed: _isUploading
                 ? null
@@ -269,7 +268,7 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
               textStyle: const TextStyle(fontSize: 18),
               backgroundColor: const Color(0xFF3FC041),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12), // <-- Radius
+                borderRadius: BorderRadius.circular(12),
               ),
             ),
             child: Text(
@@ -289,22 +288,22 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
             const SizedBox(
               height: 30,
             ),
-            // Select Commodity
             Padding(
-              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+              padding: const EdgeInsets.only(left: 25, right: 25),
               child: Text(
                 buildTranslate("selectCommodity")!,
                 style: const TextStyle(
-                    fontSize: 15,
-                    color: Color(0xFF666666),
-                    fontFamily: 'poppins-semibold'),
+                  fontSize: 15,
+                  color: Color(0xFF666666),
+                  fontFamily: 'poppins-semibold',
+                ),
               ),
             ),
             const SizedBox(
               height: 10,
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+              padding: const EdgeInsets.only(left: 25, right: 25),
               child: _cropData == null || _cropData!.data == null
                   ? const Center(child: Text('No data available'))
                   : DropdownButtonFormField2<String>(
@@ -320,7 +319,7 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
                           borderRadius: BorderRadius.circular(8),
                           borderSide: const BorderSide(
                             color: Colors.black,
-                            width: 1.0,
+                            width: 1,
                           ),
                         ),
                         // Add more decoration..
@@ -362,7 +361,7 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
 
             // variety
             Padding(
-              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+              padding: const EdgeInsets.only(left: 25, right: 25),
               child: Text(
                 buildTranslate("Variety")!,
                 style: const TextStyle(
@@ -375,13 +374,13 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
               height: 10,
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+              padding: const EdgeInsets.only(left: 25, right: 25),
               child: TextFormField(
                 keyboardType: TextInputType.text,
                 controller: varietyController,
                 decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.symmetric(
-                      vertical: 10.0, horizontal: 10.0),
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   hintText: buildTranslate('enterNameOfVariety')!,
                   hintStyle: const TextStyle(color: Colors.grey),
                   fillColor: Colors.white,
@@ -396,7 +395,7 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
 
             // Quantity
             Padding(
-              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+              padding: const EdgeInsets.only(left: 25, right: 25),
               child: Text(
                 buildTranslate("quantity")!,
                 style: const TextStyle(
@@ -409,7 +408,7 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
               height: 10,
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+              padding: const EdgeInsets.only(left: 25, right: 25),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -420,7 +419,7 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
                       controller: quantityController,
                       decoration: InputDecoration(
                         contentPadding: const EdgeInsets.symmetric(
-                            vertical: 10.0, horizontal: 10.0),
+                            vertical: 10, horizontal: 10),
                         hintText: buildTranslate('addYourQuantity'),
                         hintStyle: const TextStyle(color: Colors.grey),
                         fillColor: Colors.white,
@@ -446,7 +445,7 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
                               borderSide: BorderSide.none
                               // borderSide: const BorderSide(
                               //   color: Colors.grey,
-                              //   width: 1.0,
+                              //   width: 1,
                               // ),
                               ),
                           // Add more decoration..
@@ -502,7 +501,7 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
 
             // Moisture%
             Padding(
-              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+              padding: const EdgeInsets.only(left: 25, right: 25),
               child: Text(
                 buildTranslate("moisture")!,
                 style: const TextStyle(
@@ -515,13 +514,13 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
               height: 10,
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+              padding: const EdgeInsets.only(left: 25, right: 25),
               child: TextFormField(
                 keyboardType: TextInputType.text,
                 controller: moistureController,
                 decoration: const InputDecoration(
                   contentPadding:
-                      EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                      EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   hintText: '__%',
                   hintStyle: TextStyle(color: Colors.grey),
                   fillColor: Colors.white,
@@ -536,7 +535,7 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
 
             // Any Local Grade Specification
             Padding(
-              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+              padding: const EdgeInsets.only(left: 25, right: 25),
               child: Text(
                 buildTranslate("anyLocalGradeSpecification")!,
                 style: const TextStyle(
@@ -549,13 +548,13 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
               height: 10,
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+              padding: const EdgeInsets.only(left: 25, right: 25),
               child: TextFormField(
                 keyboardType: TextInputType.text,
                 controller: localGradeController,
                 decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.symmetric(
-                      vertical: 10.0, horizontal: 10.0),
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   hintText: buildTranslate("anyLocalGradeSpecification")!,
                   hintStyle: const TextStyle(color: Colors.grey),
                   fillColor: Colors.white,
@@ -570,7 +569,7 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
 
             // size
             Padding(
-              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+              padding: const EdgeInsets.only(left: 25, right: 25),
               child: Text(
                 buildTranslate("size")!,
                 style: const TextStyle(
@@ -583,7 +582,7 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
               height: 10,
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+              padding: const EdgeInsets.only(left: 25, right: 25),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -593,8 +592,8 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
                       keyboardType: TextInputType.text,
                       controller: sizeController,
                       decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: 10.0, horizontal: 10.0),
+                        contentPadding:
+                            EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                         hintText: '',
                         hintStyle: TextStyle(color: Colors.grey),
                         fillColor: Colors.white,
@@ -620,7 +619,7 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
                               borderSide: BorderSide.none
                               // borderSide: const BorderSide(
                               //   color: Colors.grey,
-                              //   width: 1.0,
+                              //   width: 1,
                               // ),
                               ),
                           // Add more decoration..
@@ -676,7 +675,7 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
 
             // Count
             Padding(
-              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+              padding: const EdgeInsets.only(left: 25, right: 25),
               child: Text(
                 buildTranslate("count")!,
                 style: const TextStyle(
@@ -689,13 +688,13 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
               height: 10,
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+              padding: const EdgeInsets.only(left: 25, right: 25),
               child: TextFormField(
                 keyboardType: TextInputType.text,
                 controller: countController,
                 decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.symmetric(
-                      vertical: 10.0, horizontal: 10.0),
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   hintText: buildTranslate('enterCount')!,
                   hintStyle: const TextStyle(color: Colors.grey),
                   fillColor: Colors.white,
@@ -710,7 +709,7 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
 
             // supply
             Padding(
-              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+              padding: const EdgeInsets.only(left: 25, right: 25),
               child: Text(
                 buildTranslate("supplyPriceInRs")!,
                 style: const TextStyle(
@@ -723,7 +722,7 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
               height: 10,
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+              padding: const EdgeInsets.only(left: 25, right: 25),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -733,8 +732,8 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
                       keyboardType: TextInputType.text,
                       controller: supplyPriceController,
                       decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: 10.0, horizontal: 10.0),
+                        contentPadding:
+                            EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                         hintText: '',
                         hintStyle: TextStyle(color: Colors.grey),
                         fillColor: Colors.white,
@@ -760,7 +759,7 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
                               borderSide: BorderSide.none
                               // borderSide: const BorderSide(
                               //   color: Colors.grey,
-                              //   width: 1.0,
+                              //   width: 1,
                               // ),
                               ),
                           // Add more decoration..
@@ -813,10 +812,9 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
             const SizedBox(
               height: 20,
             ),
-
             // date of delivery
             Padding(
-              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+              padding: const EdgeInsets.only(left: 25, right: 25),
               child: Text(
                 buildTranslate("dateOfExpectedShipmentLoading")!,
                 style: const TextStyle(
@@ -829,13 +827,13 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
               height: 10,
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+              padding: const EdgeInsets.only(left: 25, right: 25),
               child: TextFormField(
                 keyboardType: TextInputType.text,
                 controller: dateOfShipmentController,
                 decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.symmetric(
-                      vertical: 10.0, horizontal: 10.0),
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   hintText: 'DD/MM/YYYY',
                   suffixIcon: IconButton(
                     icon: const Icon(Icons.calendar_today),
@@ -857,7 +855,7 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
 
             // origin of commodity
             Padding(
-              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+              padding: const EdgeInsets.only(left: 25, right: 25),
               child: Text(
                 buildTranslate("originOfCommodity")!,
                 style: const TextStyle(
@@ -870,13 +868,13 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
               height: 10,
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+              padding: const EdgeInsets.only(left: 25, right: 25),
               child: TextFormField(
                 keyboardType: TextInputType.text,
                 controller: originCommodityController,
                 decoration: const InputDecoration(
                   contentPadding:
-                      EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                      EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   hintText: '',
                   hintStyle: TextStyle(color: Colors.grey),
                   fillColor: Colors.white,
@@ -885,14 +883,12 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
                 ),
               ),
             ),
-
             const SizedBox(
               height: 20,
             ),
-
             Container(
               width: MediaQuery.of(context).size.width,
-              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+              padding: const EdgeInsets.only(left: 25, right: 25),
               child: ElevatedButton(
                 onPressed: () {
                   pickImage();
@@ -932,7 +928,7 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
             const SizedBox(height: 20),
             // Add comments
             Padding(
-              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+              padding: const EdgeInsets.only(left: 25, right: 25),
               child: Text(
                 buildTranslate("addComments")!,
                 style: const TextStyle(
@@ -945,7 +941,7 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
               height: 10,
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+              padding: const EdgeInsets.only(left: 25, right: 25),
               child: TextFormField(
                 keyboardType: TextInputType.text,
                 controller: commentsController,
@@ -953,7 +949,7 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
                 minLines: 5,
                 decoration: const InputDecoration(
                   contentPadding:
-                      EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                      EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   hintText: '',
                   hintStyle: TextStyle(color: Colors.grey),
                   fillColor: Colors.white,
@@ -1041,9 +1037,6 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
       if (buyCommodity.toString().isNotEmpty) {
         Future.delayed(const Duration(seconds: 1), () {
           print('Commodity created successfully');
-
-          // AlertHelper.showToast("Commodity created successfully",context);
-
           showAlertDialog(context);
         });
       } else {
@@ -1072,7 +1065,7 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
               child: Icon(
                 Icons.close,
                 color: Colors.black,
-                size: 20.0,
+                size: 20,
               ),
             ),
           ),
@@ -1088,7 +1081,7 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
             textAlign: TextAlign.center,
             style: const TextStyle(
                 fontFamily: "poppins-semibold",
-                fontSize: 15.0,
+                fontSize: 15,
                 color: Colors.grey),
           ),
           const SizedBox(
@@ -1099,7 +1092,7 @@ class _SellCommodityPageState extends State<SellCommodityPage> {
             softWrap: true,
             style: const TextStyle(
                 fontFamily: "poppins-semibold",
-                fontSize: 20.0,
+                fontSize: 20,
                 color: Colors.black),
           ),
           const SizedBox(

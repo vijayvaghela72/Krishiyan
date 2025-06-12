@@ -1,18 +1,19 @@
 import 'dart:io';
 import 'dart:math';
 import 'dart:convert';
-import 'package:dio/dio.dart';
-import 'package:krishiyan/helper/constant.dart';
-import '../../../../helper/app_global.dart';
+import '../profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
+import '../../../../helper/app_global.dart';
+import 'package:http_parser/http_parser.dart';
 import '../../../../helper/alert_helper.dart';
 import '../../../../mvc/model/bank_model.dart';
+import 'package:krishiyan/helper/constant.dart';
 import 'package:image_picker/image_picker.dart';
-import '../profile.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
-import '../../../../mvc/controller/account_setting_controller.dart';
 import 'package:krishiyan/localization/app_localizations.dart';
+import '../../../../mvc/controller/account_setting_controller.dart';
 
 class EditBankDetailPage extends StatefulWidget {
   const EditBankDetailPage({super.key});
@@ -73,51 +74,55 @@ class _EditBankDetailPageState extends State<EditBankDetailPage> {
   // Function to upload the image to AWS using Dio
   Future<void> _uploadImage(File image) async {
     try {
-      // Generate a unique key using the bank name and last 6 digits of the account number
-      String uniqueKey = _generateUniqueKey(bankName!, accountNumber!);
-      print(uniqueKey);
+      String fileName = _generateUniqueKey(bankName!, accountNumber!);
+      print("FileName");
+      print(fileName);
 
-      // Dio instance for HTTP requests
-      Dio dio = Dio();
+      // Create a multipart request
+      var request =
+          http.MultipartRequest('POST', Uri.parse('${baseUrl}upload'));
 
-      // Prepare the form data for the upload
-      FormData formData = FormData.fromMap({
-        'image': await MultipartFile.fromFile(image.path, filename: uniqueKey),
-      });
+      // Add headers
       final timestamp = DateTime.now().millisecondsSinceEpoch.toString();
       final signature = hmacSha256(encryptionKey, timestamp);
+      request.headers.addAll({
+        "Accept": "application/json",
+        "Connection": "application/json",
+        "Authorization": 'Bearer',
+        'x-timestamp': timestamp,
+        'x-signature': signature,
+      });
+      print("Image size: ${(await image.length()) / (1024 * 1024)} MB");
+      // Add the image file
+      request.files.add(await http.MultipartFile.fromPath(
+        'image',
+        image.path,
+        filename: fileName,
+        contentType: MediaType('multipart', 'form-data'),
+      ));
 
       // Send the request
-      Response response = await dio.post(
-        '${baseUrl}upload',
-        data: formData,
-        options: Options(headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/json",
-          "Connection": "application/json",
-          "Authorization": 'Bearer',
-          'x-timestamp': timestamp,
-          'x-signature': signature,
-        }),
-      );
+      var response = await request.send();
+      print('response status: ${response.statusCode}');
 
       if (response.statusCode == 200) {
-        var jsonResponse = response.data;
-        String imageKey = jsonResponse['Key'];
+        // Parse the response
+        var responseBody = await response.stream.bytesToString();
+        var jsonResponse = jsonDecode(responseBody);
+        print('object: $jsonResponse');
+        String imageKey = jsonResponse['Key'].toString();
         // Construct the image URL
-        _imageUrl = '${baseUrlEnd}images/$imageKey';
-
-        setState(() {
-          _imageUrl = _imageUrl;
-          print(_imageUrl);
-        });
-
+        String imageUrl = jsonResponse['location'].toString();
+        // await cacheImage(imageKey, imageUrl);
+        _imageUrl = imageUrl;
+        setState(() {});
         // Handle the successful response
-        print("Image uploaded successfully. Image URL: $_imageUrl");
-
+        print("Image uploaded successfully. Image URL: $imageUrl");
+        print(_imageUrl);
         print("Image key: $imageKey");
       } else {
-        print("Failed to upload image: ${response.statusCode}");
+        // Handle error response
+        print("Failed to upload image. Status code: ${response.statusCode}");
       }
     } catch (e) {
       print("Error uploading image: $e");
@@ -443,9 +448,8 @@ class _EditBankDetailPageState extends State<EditBankDetailPage> {
                                     left: 20.0, right: 10.0),
                                 child: TextButton(
                                   style: ButtonStyle(
-                                      backgroundColor:
-                                          WidgetStateProperty.all(
-                                              const Color(0xFFd3d3d3)),
+                                      backgroundColor: WidgetStateProperty.all(
+                                          const Color(0xFFd3d3d3)),
                                       shape: WidgetStateProperty.all<
                                               RoundedRectangleBorder>(
                                           const RoundedRectangleBorder(

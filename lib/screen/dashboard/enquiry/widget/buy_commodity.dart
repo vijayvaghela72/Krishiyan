@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'dart:convert';
-import 'package:dio/dio.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 import '../../../../helper/app_global.dart';
+import 'package:http_parser/http_parser.dart';
 import '../../../../helper/alert_helper.dart';
 import 'package:krishiyan/helper/constant.dart';
 import 'package:image_picker/image_picker.dart';
@@ -17,8 +17,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:krishiyan/localization/app_localizations.dart';
 import '../../../../mvc/controller/enquiry_dashboard_controller.dart';
-import 'package:http/http.dart' as http;
-import 'package:http_parser/http_parser.dart';
 
 class BuyCommodityPage extends StatefulWidget {
   const BuyCommodityPage({super.key});
@@ -79,7 +77,6 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
   final ImagePicker _picker = ImagePicker();
   File? _image;
   String? _imageUrl;
-  Dio _dio = Dio();
   // Cache expiration in days
   final int cacheExpirationDays = 10;
 
@@ -146,41 +143,11 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
     }
   }
 
-  Future<File> _processImage(File image) async {
-    final compressedImage = await FlutterImageCompress.compressAndGetFile(
-      image.path,
-      "${image.path}_compressed.jpg",
-      quality: 70, // Adjust quality (0-100) to reduce size
-      minWidth: 1024, // Optional: resize dimensions
-      minHeight: 1024,
-    );
-    return File(compressedImage!.path);
-  }
-
-  Future<File> _compressImage(File file) async {
+  Future<void> uploadImageToAWS(File image) async {
+    _isUploading = true;
+    setState(() {});
     try {
-      final result = await FlutterImageCompress.compressAndGetFile(
-        file.absolute.path,
-        '${file.path}_compressed.jpg',
-        quality: 80, // Adjust quality (0-100)
-        minWidth: 800, // Optional minimum width
-        minHeight: 800, // Optional minimum height
-      );
-      return File(result!.path);
-    } catch (e) {
-      print('Compression failed, using original: $e');
-      return file;
-    }
-  }
-
-// Upload the image to AWS using http
-  Future<void> uploadImageToAWS(File images) async {
-    File image = await _processImage(images);
-    setState(() {
-      _isUploading = true; // Start uploading
-    });
-    try {
-      String fileName = generateFileName(id); // Example id (can be dynamic)
+      String fileName = generateFileName(id);
       print("FileName");
       print(fileName);
 
@@ -231,11 +198,9 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
         print("Failed to upload image. Status code: ${response.statusCode}");
       }
     } catch (e) {
-      // Handle exceptions
       print("Error uploading image: $e");
     } finally {
-      // Regardless of success or failure, re-enable the button
-      _isUploading = false; // End the upload process
+      _isUploading = false;
       setState(() {});
     }
   }
@@ -903,11 +868,9 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
                 ),
               ),
             ),
-
             const SizedBox(
               height: 20,
             ),
-
             // origin of commodity
             Padding(
               padding: const EdgeInsets.only(left: 25, right: 25),
@@ -938,12 +901,9 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
                 ),
               ),
             ),
-
             const SizedBox(
               height: 20,
             ),
-
-            // delivery location
             Padding(
               padding: const EdgeInsets.only(left: 25, right: 25),
               child: Text(
@@ -976,7 +936,6 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
             const SizedBox(
               height: 20,
             ),
-
             Container(
               width: MediaQuery.of(context).size.width,
               padding: const EdgeInsets.only(left: 25, right: 25),
@@ -1050,7 +1009,6 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
                 ),
               ),
             ),
-
             const SizedBox(
               height: 80,
             ),
@@ -1098,7 +1056,7 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
         "localGradeSpecification": localGradeController.text.toString(),
         "size": sizeController.text.toString(),
         "count": countController.text.toString().isNotEmpty
-            ? countController.toString()
+            ? countController.text.toString()
             : 0,
         "price": purchasePriceController.text.toString().isNotEmpty
             ? purchasePriceController.text.toString()
