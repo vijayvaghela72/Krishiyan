@@ -190,9 +190,12 @@ class _MyWeatherInjuriesPageState extends State<MyWeatherInjuriesPage>
                             ),
                             child: filteredData!.weatherInjuries![injuryIndex]
                                     .image!.isNotEmpty
-                                ? DriveImage(
-                                    imageUrlData: filteredData
-                                        .weatherInjuries![injuryIndex].image!)
+                                ? Center(
+                                    child: DriveImage(
+                                        imageUrlData: filteredData
+                                            .weatherInjuries![injuryIndex]
+                                            .image!),
+                                  )
                                 : Container(),
                           ),
                           Container(

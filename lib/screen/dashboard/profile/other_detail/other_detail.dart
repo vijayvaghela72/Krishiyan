@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:krishiyan/helper/constant.dart';
+import 'package:krishiyan/helper/loading.dart';
 import '../profile.dart';
 import '../../../../helper/app_global.dart';
 import 'package:flutter/material.dart';
@@ -504,7 +505,10 @@ class _OtherDetailPageState extends State<OtherDetailPage> {
 
       if (panCard != null && gstNumber != null && udyamNumber != null) {
         _otherDetailsApiCall(
-            panCard.toString(), gstNumber.toString(), udyamNumber.toString());
+          panCard.toString(),
+          gstNumber.toString(),
+          udyamNumber.toString(),
+        );
       } else {
         AlertHelper.showToast("Please enter data.", context);
       }
@@ -520,12 +524,12 @@ class _OtherDetailPageState extends State<OtherDetailPage> {
       "udyamNumber": udyamNumber,
       "aadhaarNumber": "1234-5678-9012"
     });
-
+    showLoading();
     var response = await postAPICall(
       apiUrl: UPDATE_OTHER_DETAILS,
       parameter: data,
     );
-
+    stopLoading();
     if (response.statusCode == 201) {
       print("Other details updated : " + response.body);
       showAlertDialog(context);

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:krishiyan/helper/color.dart';
 import 'package:krishiyan/helper/constant.dart';
+import 'package:krishiyan/helper/loading.dart';
 import '../../../../helper/alert_helper.dart';
 import 'package:otp_text_field/style.dart';
 import 'package:otp_text_field/otp_field.dart';
@@ -519,11 +520,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     final url = "${baseUrl}check-contact/$number";
 
     try {
+      showLoading();
       // Make the GET request to check the phone number
       final response = await getAPICall(
         apiUrl: url,
       );
-
+      stopLoading();
       // Check the response from the server
       if (response.statusCode == 200) {
         // Phone number exists

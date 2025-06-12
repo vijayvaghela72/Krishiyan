@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'dart:math';
 import 'dart:convert';
+import 'package:krishiyan/helper/loading.dart';
+
 import '../profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -909,15 +911,25 @@ class _EditBankDetailPageState extends State<EditBankDetailPage> {
       print(newURL);
       print('apiURL : ');
       print(apiURL);
-      _bankDetailsApiCall(bankName.toString(), accountName.toString(),
-          accountNumber.toString(), ifscCode.toString(), newURL.toString());
+      _bankDetailsApiCall(
+        bankName.toString(),
+        accountName.toString(),
+        accountNumber.toString(),
+        ifscCode.toString(),
+        newURL.toString(),
+      );
     } else {
       AlertHelper.showToast("Please enter data.", context);
     }
   }
 
-  _bankDetailsApiCall(String bankName, String accountName, String accountNumber,
-      String ifscCode, String _imageUrl) async {
+  _bankDetailsApiCall(
+    String bankName,
+    String accountName,
+    String accountNumber,
+    String ifscCode,
+    String _imageUrl,
+  ) async {
     if (bankName.isNotEmpty &&
         accountName.isNotEmpty &&
         accountNumber.isNotEmpty &&
@@ -936,11 +948,12 @@ class _EditBankDetailPageState extends State<EditBankDetailPage> {
       print("Request Payload: $data"); // Log the request payload
 
       try {
+        showLoading();
         var response = await postAPICall(
           apiUrl: UPDATE_BANK_DETAILS,
           parameter: data,
         );
-
+        stopLoading();
         if (response.statusCode == 201) {
           print("Bank details updated : " + response.body);
           showAlertDialog(context);

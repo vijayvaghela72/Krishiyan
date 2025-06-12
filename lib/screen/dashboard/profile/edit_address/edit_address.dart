@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:krishiyan/helper/constant.dart';
+import 'package:krishiyan/helper/loading.dart';
 import 'package:krishiyan/localization/app_localizations.dart';
 import '../../../../helper/alert_helper.dart';
 import '../../../../mvc/controller/account_setting_controller.dart';
@@ -76,9 +77,10 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
             Text(
               buildTranslate("editAddress")!,
               style: const TextStyle(
-                  color: Colors.white,
-                  fontFamily: 'poppins-semibold',
-                  fontSize: 20),
+                color: Colors.white,
+                fontFamily: 'poppins-semibold',
+                fontSize: 20,
+              ),
             ),
           ],
         ),
@@ -769,11 +771,12 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
       });
       print('data : $data');
       print('link : ${UPDATE_ADDRESS_DETAILS}');
-
+      showLoading();
       var response = await postAPICall(
         apiUrl: UPDATE_ADDRESS_DETAILS,
         parameter: data,
       );
+      stopLoading();
       if (response.statusCode == 201) {
         showAlertDialog(context);
       } else {

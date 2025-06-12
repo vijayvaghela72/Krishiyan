@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:krishiyan/helper/loading.dart';
 import 'package:otp_text_field/style.dart';
 import '../../../../helper/app_global.dart';
 import 'package:http_parser/http_parser.dart';
@@ -98,8 +99,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       });
 
       // Upload the image to AWS
-      await _uploadImageToAWS(localImageFile,
-          organizationName); // Pass the org name to upload function
+      await _uploadImageToAWS(
+        localImageFile,
+        organizationName,
+      ); // Pass the org name to upload function
     }
   }
 
@@ -201,11 +204,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     // Construct the image URL
     String imageUrl =
         '${baseUrlEnd}images/${organizationName}_profile_image.jpg';
-    print("Fetching image from URL: $imageUrl");
+    // print("Fetching image from URL: $imageUrl");
 
     // Update the UI with the fetched image URL
     setState(() {
-      _imageUrl = imageUrl; // Store the fetched image URL to display it
+      _imageUrl; // Store the fetched image URL to display it
     });
   }
 
@@ -1627,11 +1630,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           ),
                         ),
                       ),
-
                       const SizedBox(
                         height: 30,
                       ),
-
                       Align(
                         alignment: FractionalOffset.bottomCenter,
                         child: Container(
@@ -1762,15 +1763,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         print('Testing C');
 
         _updateProfileDetailsApiCall(
-            nameOfOrganization.toString(),
-            selectedFPOItemValue.toString(),
-            dateOfOrganization.toString(),
-            registrationNumber.toString(),
-            officeContactNumber.toString(),
-            emailId.toString(),
-            nameOfPromoter.toString(),
-            cbboName.toString(),
-            yourDesignation.toString());
+          nameOfOrganization.toString(),
+          selectedFPOItemValue.toString(),
+          dateOfOrganization.toString(),
+          registrationNumber.toString(),
+          officeContactNumber.toString(),
+          emailId.toString(),
+          nameOfPromoter.toString(),
+          cbboName.toString(),
+          yourDesignation.toString(),
+        );
       } else {
         AlertHelper.showToast("Please enter data.", context);
       }
@@ -1813,10 +1815,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       print('data  : $data');
 
       print('link : ${FRM_UPDATE_PROFILE_DETAILS + contactNumber}');
+      showLoading();
       var response = await putAPICall(
         apiUrl: FRM_UPDATE_PROFILE_DETAILS + contactNumber,
         parameter: data,
       );
+      stopLoading();
       print('response1 : ${response.statusCode}');
       print('response2 : ${response.body}');
 
