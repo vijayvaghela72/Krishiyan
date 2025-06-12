@@ -4,44 +4,39 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
-import '../../../../helper/app_global.dart';
+import '../../../../../helper/app_global.dart';
 import 'package:http_parser/http_parser.dart';
-import '../../../../helper/alert_helper.dart';
-import 'package:krishiyan/helper/constant.dart';
+import '../../../../../helper/alert_helper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:krishiyan/helper/constant.dart';
 import 'package:path_provider/path_provider.dart';
-import '../../../../mvc/model/crop_name_model.dart';
+import '../../../../../mvc/model/crop_name_model.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import '../../../../../localization/app_localizations.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:krishiyan/localization/app_localizations.dart';
-import '../../../../mvc/controller/enquiry_dashboard_controller.dart';
+import '../../../../../mvc/controller/enquiry_dashboard_controller.dart';
 
-class BuyCommodityPage extends StatefulWidget {
-  const BuyCommodityPage({super.key});
+class SellCommodityPage extends StatefulWidget {
+  const SellCommodityPage({super.key});
 
   @override
-  State<BuyCommodityPage> createState() => _BuyCommodityPageState();
+  State<SellCommodityPage> createState() => _SellCommodityPageState();
 }
 
-class _BuyCommodityPageState extends State<BuyCommodityPage> {
+class _SellCommodityPageState extends State<SellCommodityPage> {
   TextEditingController varietyController = TextEditingController();
   TextEditingController quantityController = TextEditingController();
   TextEditingController moistureController = TextEditingController();
   TextEditingController localGradeController = TextEditingController();
   TextEditingController sizeController = TextEditingController();
   TextEditingController countController = TextEditingController();
-  TextEditingController purchasePriceController = TextEditingController();
-  TextEditingController dateOfDeliveryController = TextEditingController();
+  TextEditingController supplyPriceController = TextEditingController();
+  TextEditingController dateOfShipmentController = TextEditingController();
   TextEditingController originCommodityController = TextEditingController();
-  TextEditingController deliveryLocationController = TextEditingController();
   TextEditingController commentsController = TextEditingController();
   bool _isUploading = false;
-
-  String id = "";
-  String? _selectedCrop;
-  SelectCropNamesData? _cropData;
 
   final List<String> quantityItems = ['Ton', 'Kg', 'Qtl'];
   String? selectedQuantityItemValue;
@@ -51,18 +46,26 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
 
   final List<String> purchaseItems = ['Kg', 'Qtl', 'Ton'];
   String? selectedPurchaseItemValue;
+
+  String? _selectedCrop;
+  SelectCropNamesData? _cropData;
   String? contactNumber;
+  // Cache expiration in days
+  final int cacheExpirationDays = 10;
 
   @override
   void initState() {
+    // TODO: implement initState
     super.initState();
+
     _fetchCropData();
-    getProfileDetails();
   }
 
   Future<void> _fetchCropData() async {
     try {
+      // Replace with your actual API endpoint
       var response = await getAPICall(apiUrl: CROPS_NAMES);
+
       if (response.statusCode == 200) {
         _cropData = SelectCropNamesData.fromJson(jsonDecode(response.body));
         setState(() {});
@@ -70,84 +73,74 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
         throw Exception('Failed to load crops');
       }
     } catch (e) {
-      print('Buy Commodity : Error fetching crop data: $e');
+      print('My SellCommodity : Error fetching crop data: $e');
     }
   }
 
   final ImagePicker _picker = ImagePicker();
   File? _image;
   String? _imageUrl;
-  // Cache expiration in days
-  final int cacheExpirationDays = 10;
 
   // Generate a unique file name for the image
   String generateFileName(String id) {
     String timestamp = DateFormat("yyyyMMdd_HHmmss").format(DateTime.now());
     String? crop = _selectedCrop;
-    // Encode the crop name to handle spaces and special characters
-    String encodedCrop = Uri.encodeComponent(crop ?? "");
-
-    // Return the formatted file name with the encoded crop name
-    return "${id}_${encodedCrop}_$timestamp.png";
+    return "${id}_${crop}_$timestamp.png";
   }
 
-// Pick an image from the gallery with permission check
+  // Pick an image from the gallery with permission check
   Future<void> pickImage() async {
-    // Check if the storage permission is granted
+    // Check for storage permission
     PermissionStatus status = await Permission.storage.status;
 
     if (status.isGranted) {
-      // Permission is granted, proceed to pick an image
+      // Permission is granted, proceed to pick image
       print("Storage permission granted");
-
-      // Open the image picker
       final XFile? pickedFile =
           await _picker.pickImage(source: ImageSource.gallery);
       if (pickedFile != null) {
         setState(() {
           _image = File(pickedFile.path);
         });
-        uploadImageToAWS(_image!); // Call your upload function here
+        uploadImageToAWS(_image!);
       }
     } else if (status.isDenied) {
       // Permission is denied, request permission
       print("Storage permission denied, requesting permission...");
       await Permission.storage.request();
 
-      // After requesting, check the permission status again
+      // Check permission status again after requesting
       if (await Permission.storage.isGranted) {
         print("Storage permission granted after request");
-
-        // Proceed with picking an image if permission is granted
         final XFile? pickedFile =
             await _picker.pickImage(source: ImageSource.gallery);
         if (pickedFile != null) {
           setState(() {
             _image = File(pickedFile.path);
           });
-          uploadImageToAWS(_image!); // Call your upload function here
+          uploadImageToAWS(_image!);
         }
       } else {
         print("Storage permission still denied");
-
-        // Optionally, prompt user to go to app settings to enable the permission manually
+        // Handle the case when permission is still denied
+        // Optionally, guide the user to open app settings to enable the permission
         openAppSettings();
       }
     } else if (status.isPermanentlyDenied) {
-      // Permission is permanently denied, show a message or redirect user to settings
+      // Permission is permanently denied, open app settings
       print(
           "Storage permission permanently denied. Please enable it in settings.");
-
-      // Optionally, open the app settings for the user to manually enable the permission
       openAppSettings();
     }
   }
 
-  Future<void> uploadImageToAWS(File image) async {
-    _isUploading = true;
-    setState(() {});
+  Future<void> uploadImageToAWS(File images) async {
+    File image = images;
+    setState(() {
+      _isUploading = true;
+    });
     try {
-      String fileName = generateFileName(id);
+      String fileName = generateFileName(id); // Example id (can be dynamic)
       print("FileName");
       print(fileName);
 
@@ -205,7 +198,6 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
     }
   }
 
-  // Cache the image locally (stores URL and file)
   Future<void> cacheImage(String imageKey, String imageUrl) async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -220,7 +212,7 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
       // Download and store the image locally
       final response = await getAPICall(apiUrl: imageUrl);
       if (response.statusCode == 200) {
-        File(imageCachePath)..writeAsBytes(response.bodyBytes);
+        File(imageCachePath)..writeAsBytesSync(response.bodyBytes);
       }
     } catch (e) {
       print("Error caching image: $e");
@@ -250,12 +242,11 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
               width: 10,
             ),
             Text(
-              buildTranslate("buyCommodity")!,
+              buildTranslate("sellCommodity")!,
               style: const TextStyle(
-                color: Colors.white,
-                fontFamily: 'poppins-semibold',
-                fontSize: 20,
-              ),
+                  color: Colors.white,
+                  fontFamily: 'poppins-semibold',
+                  fontSize: 20),
             ),
           ],
         ),
@@ -269,7 +260,7 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
             onPressed: _isUploading
                 ? null
                 : () {
-                    _buyCommodityApiCall();
+                    _sellCommodityApiCall();
                   },
             style: ElevatedButton.styleFrom(
               foregroundColor: Colors.white,
@@ -281,11 +272,9 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
               ),
             ),
             child: Text(
-              buildTranslate("buyCommodity")!,
-              style: const TextStyle(
-                fontSize: 15,
-                fontFamily: 'poppins-medium',
-              ),
+              buildTranslate("sellCommodity")!,
+              style:
+                  const TextStyle(fontSize: 15, fontFamily: 'poppins-medium'),
             ),
           ),
         ),
@@ -333,6 +322,7 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
                             width: 1,
                           ),
                         ),
+                        // Add more decoration..
                       ),
                       buttonStyleData: const ButtonStyleData(
                         padding: EdgeInsets.only(right: 8),
@@ -351,19 +341,17 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
                       items: _cropData!.data!.map((String crop) {
                         return DropdownMenuItem<String>(
                           value: crop,
-                          child: Text(
-                            crop,
-                            style: const TextStyle(
-                              fontSize: 15,
-                              color: Colors.black,
-                              fontFamily: 'poppins-regular',
-                            ),
-                          ),
+                          child: Text(crop,
+                              style: const TextStyle(
+                                  fontSize: 15,
+                                  color: Colors.black,
+                                  fontFamily: 'poppins-regular')),
                         );
                       }).toList(),
                       onChanged: (String? newValue) {
-                        _selectedCrop = newValue;
-                        setState(() {});
+                        setState(() {
+                          _selectedCrop = newValue;
+                        });
                       },
                     ),
             ),
@@ -393,7 +381,7 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
                 decoration: InputDecoration(
                   contentPadding:
                       const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                  hintText: buildTranslate('Enter name of variety'),
+                  hintText: buildTranslate('enterNameOfVariety')!,
                   hintStyle: const TextStyle(color: Colors.grey),
                   fillColor: Colors.white,
                   filled: true,
@@ -401,7 +389,6 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
                 ),
               ),
             ),
-
             const SizedBox(
               height: 20,
             ),
@@ -508,12 +495,11 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
                 ],
               ),
             ),
-
             const SizedBox(
               height: 20,
             ),
 
-            // Moisture
+            // Moisture%
             Padding(
               padding: const EdgeInsets.only(left: 25, right: 25),
               child: Text(
@@ -543,7 +529,6 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
                 ),
               ),
             ),
-
             const SizedBox(
               height: 20,
             ),
@@ -578,7 +563,6 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
                 ),
               ),
             ),
-
             const SizedBox(
               height: 20,
             ),
@@ -685,7 +669,6 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
                 ],
               ),
             ),
-
             const SizedBox(
               height: 20,
             ),
@@ -720,16 +703,15 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
                 ),
               ),
             ),
-
             const SizedBox(
               height: 20,
             ),
 
-            // purchase
+            // supply
             Padding(
               padding: const EdgeInsets.only(left: 25, right: 25),
               child: Text(
-                buildTranslate("purchasePriceInRs")!,
+                buildTranslate("supplyPriceInRs")!,
                 style: const TextStyle(
                     fontSize: 15,
                     color: Color(0xFF666666),
@@ -748,7 +730,7 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
                     flex: 2,
                     child: TextFormField(
                       keyboardType: TextInputType.text,
-                      controller: purchasePriceController,
+                      controller: supplyPriceController,
                       decoration: const InputDecoration(
                         contentPadding:
                             EdgeInsets.symmetric(vertical: 10, horizontal: 10),
@@ -830,12 +812,11 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
             const SizedBox(
               height: 20,
             ),
-
             // date of delivery
             Padding(
               padding: const EdgeInsets.only(left: 25, right: 25),
               child: Text(
-                buildTranslate("dateOfExpectedDelivery")!,
+                buildTranslate("dateOfExpectedShipmentLoading")!,
                 style: const TextStyle(
                     fontSize: 15,
                     color: Color(0xFF666666),
@@ -849,28 +830,29 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
               padding: const EdgeInsets.only(left: 25, right: 25),
               child: TextFormField(
                 keyboardType: TextInputType.text,
-                controller: dateOfDeliveryController,
-                readOnly: true,
+                controller: dateOfShipmentController,
                 decoration: InputDecoration(
                   contentPadding:
                       const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   hintText: 'DD/MM/YYYY',
-                  hintStyle: const TextStyle(color: Colors.grey),
-                  fillColor: Colors.white,
-                  filled: true,
                   suffixIcon: IconButton(
                     icon: const Icon(Icons.calendar_today),
                     onPressed: () {
                       _selectDate(context);
                     }, // Open date picker on icon press
                   ),
+                  hintStyle: const TextStyle(color: Colors.grey),
+                  fillColor: Colors.white,
+                  filled: true,
                   border: InputBorder.none,
                 ),
+                readOnly: true,
               ),
             ),
             const SizedBox(
               height: 20,
             ),
+
             // origin of commodity
             Padding(
               padding: const EdgeInsets.only(left: 25, right: 25),
@@ -904,38 +886,6 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
             const SizedBox(
               height: 20,
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 25, right: 25),
-              child: Text(
-                buildTranslate("deliveryLocation")!,
-                style: const TextStyle(
-                    fontSize: 15,
-                    color: Color(0xFF666666),
-                    fontFamily: 'poppins-semibold'),
-              ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 25, right: 25),
-              child: TextFormField(
-                keyboardType: TextInputType.text,
-                controller: deliveryLocationController,
-                decoration: const InputDecoration(
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                  hintText: '',
-                  hintStyle: TextStyle(color: Colors.grey),
-                  fillColor: Colors.white,
-                  filled: true,
-                  border: InputBorder.none,
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
             Container(
               width: MediaQuery.of(context).size.width,
               padding: const EdgeInsets.only(left: 25, right: 25),
@@ -949,15 +899,13 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
                   textStyle: const TextStyle(fontSize: 18),
                   backgroundColor: const Color(0xFF3692FF),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(22),
+                    borderRadius: BorderRadius.circular(22), // <-- Radius
                   ),
                 ),
                 child: Text(
                   buildTranslate('uploadImage')!,
                   style: const TextStyle(
-                    fontSize: 15,
-                    fontFamily: 'poppins-medium',
-                  ),
+                      fontSize: 15, fontFamily: 'poppins-medium'),
                 ),
               ),
             ),
@@ -978,6 +926,7 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
                 ),
               ),
             const SizedBox(height: 20),
+            // Add comments
             Padding(
               padding: const EdgeInsets.only(left: 25, right: 25),
               child: Text(
@@ -1009,6 +958,7 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
                 ),
               ),
             ),
+
             const SizedBox(
               height: 80,
             ),
@@ -1024,25 +974,26 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
       context: context,
       initialDate: DateTime.now(), // Default date is the current date
       firstDate: DateTime(2000), // Earliest selectable date
-      lastDate: DateTime(2101), // Latest selectable date
+      lastDate: DateTime.now(), // Latest selectable date
       helpText: 'Select a date', // Optional help text
     );
     if (pickedDate != null) {
       setState(() {
         // Format the selected date and display it in the TextFormField
-        dateOfDeliveryController.text =
+        dateOfShipmentController.text =
             DateFormat('dd-MM-yyyy').format(pickedDate);
       });
     }
   }
 
-  _buyCommodityApiCall() async {
+  _sellCommodityApiCall() async {
     if (quantityController.text.trim().isNotEmpty &&
         _selectedCrop.toString().isNotEmpty) {
       contactNumber = (await AppGlobal.getStringPreference('contactNumber'))!;
+
       var body = json.encode({
         "uid": contactNumber,
-        "operation": "Buy",
+        "operation": "Sell",
         "commodity": _selectedCrop,
         "variety": varietyController.text.toString().isNotEmpty
             ? varietyController.text.toString()
@@ -1053,33 +1004,36 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
         "moisture": moistureController.text.toString().isNotEmpty
             ? moistureController.text.toString()
             : 0,
-        "localGradeSpecification": localGradeController.text.toString(),
-        "size": sizeController.text.toString(),
+        "localGradeSpecification":
+            localGradeController.text.toString().isNotEmpty
+                ? localGradeController.text.toString()
+                : "",
+        "size": sizeController.text.toString().isNotEmpty
+            ? sizeController.text.toString()
+            : "",
         "count": countController.text.toString().isNotEmpty
             ? countController.text.toString()
             : 0,
-        "price": purchasePriceController.text.toString().isNotEmpty
-            ? purchasePriceController.text.toString()
+        "price": supplyPriceController.text.toString().isNotEmpty
+            ? supplyPriceController.text.toString()
             : 0,
-        "date": dateOfDeliveryController.text.isNotEmpty
-            ? "${AppGlobal.convertToIsoFormat(dateOfDeliveryController.text)}Z"
+        "date": dateOfShipmentController.text.isNotEmpty
+            ? "${AppGlobal.convertToIsoFormat(dateOfShipmentController.text)}Z"
             : "",
         "origin": originCommodityController.text.toString().isNotEmpty
             ? originCommodityController.text
             : "",
-        "location": deliveryLocationController.text.toString().isNotEmpty
-            ? deliveryLocationController.text.toString()
-            : "",
+        "location": "",
         "photoVideoLink": _imageUrl,
         "comments": commentsController.text.toString().isNotEmpty
-            ? commentsController.text.toString()
+            ? commentsController.text
             : "",
         "verified": true
       });
-      var buyCommodity = EnquiryDashboardController.buySellCommodityData(
-        body,
-        context: context,
-      );
+
+      var buyCommodity = EnquiryDashboardController.buySellCommodityData(body,
+          context: context);
+
       if (buyCommodity.toString().isNotEmpty) {
         Future.delayed(const Duration(seconds: 1), () {
           print('Commodity created successfully');
@@ -1155,11 +1109,5 @@ class _BuyCommodityPageState extends State<BuyCommodityPage> {
         return alert;
       },
     );
-  }
-
-  Future<void> getProfileDetails() async {
-    id = (await AppGlobal.getStringPreference('id'))!;
-    print("IDDD");
-    print(id);
   }
 }

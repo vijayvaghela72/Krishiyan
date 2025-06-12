@@ -1,6 +1,13 @@
+import 'dart:convert';
+
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:krishiyan/helper/api_base_helper.dart';
+import 'package:krishiyan/helper/constant.dart';
+import 'package:krishiyan/helper/loading.dart';
+import 'package:krishiyan/helper/snackbar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../helper/alert_helper.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:krishiyan/mvc/model/all_enquiry_model.dart';
@@ -643,15 +650,39 @@ class _EnquiryDetailPageState extends State<EnquiryDetailPage>
                             child: Container(
                                 width: MediaQuery.of(context).size.width,
                                 child: ElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () async {
+                                    SharedPreferences prefs =
+                                        await SharedPreferences.getInstance();
+                                    String userId =
+                                        await prefs.get('id').toString();
+                                    var parameter = {
+                                      "userId": userId,
+                                    };
+                                    showLoading();
+                                    var response = await postAPICall(
+                                      apiUrl:
+                                          "${baseUrl}wishlist/add/${widget.commodity.sId}",
+                                      parameter: json.encode(parameter),
+                                    );
+
+                                    if (response.statusCode == 201 ||
+                                        response.statusCode == 202 ||
+                                        response.statusCode == 200) {
+                                      final data = json.decode(response.body);
+                                      setSnackbar(data['message']);
+                                    } else {
+                                      setSnackbar(
+                                          'Something went wrong! ${response.body.toString()}');
+                                    }
+                                    stopLoading();
+                                  },
                                   style: ElevatedButton.styleFrom(
                                     foregroundColor: Colors.white,
                                     padding: const EdgeInsets.all(5),
                                     textStyle: const TextStyle(fontSize: 15),
                                     backgroundColor: const Color(0xFF3FC041),
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(
-                                          20), // <-- Radius
+                                      borderRadius: BorderRadius.circular(20),
                                     ),
                                   ),
                                   child: Row(
@@ -661,14 +692,15 @@ class _EnquiryDetailPageState extends State<EnquiryDetailPage>
                                     children: [
                                       const Flexible(
                                         child: Padding(
-                                          padding: EdgeInsets.only(left: 2.0),
+                                          padding: EdgeInsets.only(left: 2),
                                           child: Text(
                                             'Interested',
                                             softWrap: true,
                                             maxLines: 2,
                                             style: TextStyle(
-                                                fontSize: 10,
-                                                fontFamily: 'poppins-medium'),
+                                              fontSize: 10,
+                                              fontFamily: 'poppins-medium',
+                                            ),
                                           ),
                                         ),
                                       ),

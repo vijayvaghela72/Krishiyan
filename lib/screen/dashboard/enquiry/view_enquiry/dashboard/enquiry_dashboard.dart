@@ -1,17 +1,17 @@
 import 'dart:convert';
-import 'enquiry_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../widget/enquiry_detail.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:krishiyan/helper/constant.dart';
-import '../../../../mvc/model/crop_name_model.dart';
 import 'package:krishiyan/helper/alert_helper.dart';
-import '../../../../mvc/model/all_enquiry_model.dart';
+import '../../../../../mvc/model/crop_name_model.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import '../../../../../mvc/model/all_enquiry_model.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:krishiyan/localization/app_localizations.dart';
-import '../../../../mvc/controller/enquiry_dashboard_controller.dart';
+import '../../../../../mvc/controller/enquiry_dashboard_controller.dart';
 
 // ignore: must_be_immutable
 class EnquiryDashboardPage extends StatefulWidget {
