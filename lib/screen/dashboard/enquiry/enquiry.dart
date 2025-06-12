@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -7,9 +6,7 @@ import '../../language/select_language.dart';
 import 'package:krishiyan/helper/color.dart';
 import 'package:krishiyan/helper/constant.dart';
 import 'package:krishiyan/helper/provider.dart';
-import '../../../mvc/model/crop_name_model.dart';
 import '../../../localization/app_localizations.dart';
-import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:krishiyan/screen/dashboard/dashborad.dart';
 import 'package:krishiyan/screen/dashboard/enquiry/enquiry_model.dart';
 import 'package:krishiyan/screen/dashboard/enquiry/enquiry_provider.dart';
@@ -21,9 +18,11 @@ import 'package:krishiyan/screen/dashboard/enquiry/view_enquiry/view_enquiry.dar
 class EnquiryScreen extends StatefulWidget {
   bool aapbarVisibility;
   final String? typeOfOrganization;
-
-  EnquiryScreen(
-      {super.key, required this.aapbarVisibility, this.typeOfOrganization});
+  EnquiryScreen({
+    super.key,
+    required this.aapbarVisibility,
+    this.typeOfOrganization,
+  });
 
   @override
   State<EnquiryScreen> createState() => _EnquiryScreenState();
@@ -31,8 +30,6 @@ class EnquiryScreen extends StatefulWidget {
 
 class _EnquiryScreenState extends State<EnquiryScreen>
     with TickerProviderStateMixin {
-  String? selectedItemValue;
-
   final List<String> topData = [
     buildTranslate("viewEnquiries")!,
     buildTranslate("postEnquiries")!,
@@ -71,19 +68,6 @@ class _EnquiryScreenState extends State<EnquiryScreen>
 
   String typeOfOrganizationData = "";
 
-  List<cropsCategory> search_crops = [
-    cropsCategory(
-        name: "Total Farmer 350", id: "1", icon: 'assets/images/crops1.png'),
-    cropsCategory(
-        name: "Total Farmer Land(in HA) 125400",
-        id: "2",
-        icon: 'assets/images/crops2.png'),
-    cropsCategory(
-        name: "Expected Yield(in Qtl)256300",
-        id: "3",
-        icon: 'assets/images/crops1.png'),
-  ];
-
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   setStateNow() {
@@ -95,10 +79,9 @@ class _EnquiryScreenState extends State<EnquiryScreen>
   @override
   void initState() {
     super.initState();
-
     enquiryProvider = Provider.of<EnquiryProvider>(context, listen: false);
     enquiryProvider!.initalizeVarible(setStateNow);
-    _fetchCropData();
+    enquiryProvider!.fetchCropData(setStateNow);
     getPrefValue();
   }
 
@@ -107,35 +90,18 @@ class _EnquiryScreenState extends State<EnquiryScreen>
         typeOfOrganization, PrefEnum.STRING);
     print(
         "BottomCenterEnquiry TypeOfOrganizationData : $typeOfOrganizationData");
-    setState(() {
-      typeOfOrganizationData = typeOfOrganizationData;
-      print(typeOfOrganizationData);
-    });
-  }
-
-  Future<void> _fetchCropData() async {
-    try {
-      final response = await getAPICall(apiUrl: CROPS_NAMES);
-
-      if (response.statusCode == 200) {
-        setState(() {
-          enquiryProvider!.cropData =
-              SelectCropNamesData.fromJson(jsonDecode(response.body));
-        });
-      } else {
-        throw Exception('Failed to load crops');
-      }
-    } catch (e) {
-      print('My BottomCenterEnquiry : Error fetching crop data: $e');
-    }
+    typeOfOrganizationData = typeOfOrganizationData;
+    print(typeOfOrganizationData);
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-    ));
-
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+      ),
+    );
     return Scaffold(
       backgroundColor: const Color(0xFFf9f9f9),
       extendBody: false,
@@ -150,7 +116,8 @@ class _EnquiryScreenState extends State<EnquiryScreen>
                 onTap: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                        builder: (context) => const SelectLanguagePage()),
+                      builder: (context) => const SelectLanguagePage(),
+                    ),
                   );
                 },
                 child: Row(
@@ -213,9 +180,8 @@ class _EnquiryScreenState extends State<EnquiryScreen>
                                   : Colors.white,
                           padding: const EdgeInsets.all(8),
                           shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.all(
-                            Radius.circular(17),
-                          )),
+                            borderRadius: BorderRadius.all(Radius.circular(17)),
+                          ),
                           label: Text(
                             topData[index].toString(),
                             style: TextStyle(
@@ -244,11 +210,10 @@ class _EnquiryScreenState extends State<EnquiryScreen>
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: AppColor.whiteColor.withAlpha(0), // add this line.
-        elevation: 0, // also important, removes the shadow
+        backgroundColor: AppColor.whiteColor.withAlpha(0),
+        elevation: 0,
         heroTag: "floatingActionBtn",
         shape: const RoundedRectangleBorder(
-          // <= Change BeveledRectangleBorder to RoundedRectangularBorder
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(30),
             topRight: Radius.circular(30),
@@ -261,15 +226,16 @@ class _EnquiryScreenState extends State<EnquiryScreen>
         ),
         onPressed: () {
           print("Center dock");
-          setState(() {
-            typeOfOrganizationData == "Farmer groups"
-                ? Navigator.of(context).push(MaterialPageRoute(
+          typeOfOrganizationData == "Farmer groups"
+              ? Navigator.of(context).push(
+                  MaterialPageRoute(
                     builder: (BuildContext context) => EnquiryScreen(
-                          aapbarVisibility: true,
-                        )))
-                : Container();
-            // _onItemTapped(4);
-          });
+                      aapbarVisibility: true,
+                    ),
+                  ),
+                )
+              : Container();
+          setState(() {});
         },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -277,19 +243,20 @@ class _EnquiryScreenState extends State<EnquiryScreen>
           ? Container(
               height: 100,
               decoration: BoxDecoration(
-                  color: Colors.grey,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(30), // Top-left corner
-                    topRight: Radius.circular(30), // Top-right corner
+                color: Colors.grey,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(30),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    offset: Offset(0, 1),
+                    blurRadius: 2,
+                    spreadRadius: 0.2,
+                    color: AppColor.whiteColor,
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      offset: Offset(0, 1),
-                      blurRadius: 2,
-                      spreadRadius: 0.2,
-                      color: AppColor.whiteColor,
-                    ),
-                  ]),
+                ],
+              ),
               child: ClipRRect(
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(30),
@@ -298,9 +265,8 @@ class _EnquiryScreenState extends State<EnquiryScreen>
                 child: BottomNavigationBar(
                   currentIndex: enquiryProvider!.bottomNavIndex,
                   onTap: (index) {
-                    setState(() {
-                      enquiryProvider!.bottomNavIndex = index;
-                    });
+                    enquiryProvider!.bottomNavIndex = index;
+                    setState(() {});
                     _onItemTapped(enquiryProvider!.bottomNavIndex);
                     print(
                         "_bottomNavIndex 1: ${enquiryProvider!.bottomNavIndex}");
@@ -325,42 +291,38 @@ class _EnquiryScreenState extends State<EnquiryScreen>
                       label: category.name,
                     );
                   }).toList(),
-                  type: BottomNavigationBarType
-                      .fixed, // Keeps the icons in a fixed position
+                  type: BottomNavigationBarType.fixed,
                 ),
               ),
             )
           : Container(
               height: 100,
               decoration: BoxDecoration(
-                  color: Colors.grey,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(30), // Top-left corner
-                    topRight: Radius.circular(30), // Top-right corner
+                color: Colors.grey,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(30),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    offset: Offset(0, 5),
+                    blurRadius: 2,
+                    spreadRadius: 0.8,
+                    color: AppColor.whiteColor,
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      offset: Offset(0, 5),
-                      blurRadius: 2,
-                      spreadRadius: 0.8,
-                      color: AppColor.whiteColor,
-                    ),
-                  ]),
+                ],
+              ),
               child: ClipRRect(
                 borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(
-                      30), // Matches the Container's border radius
-                  topRight: Radius.circular(
-                      30), // Matches the Container's border radius
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(30),
                 ),
                 child: BottomNavigationBar(
                   currentIndex: enquiryProvider!.bottomNavIndex,
                   onTap: (index) {
-                    setState(() {
-                      enquiryProvider!.bottomNavIndex =
-                          index; // Set the current index when tapped
-                      _onItemTappedData(enquiryProvider!.bottomNavIndex);
-                    });
+                    enquiryProvider!.bottomNavIndex = index;
+                    _onItemTappedData(enquiryProvider!.bottomNavIndex);
+                    setState(() {});
                     print(
                         "_bottomNavIndex 2: ${enquiryProvider!.bottomNavIndex}");
                   },
@@ -388,22 +350,24 @@ class _EnquiryScreenState extends State<EnquiryScreen>
   }
 
   void _onItemTapped(int index) {
-    setState(() {
-      enquiryProvider!.bottomNavIndex = index;
-      print(enquiryProvider!.bottomNavIndex);
-    });
+    enquiryProvider!.bottomNavIndex = index;
+    print(enquiryProvider!.bottomNavIndex);
+    setState(() {});
     Navigator.pop(context);
-    Navigator.of(context).push(MaterialPageRoute(
+    Navigator.of(context).push(
+      MaterialPageRoute(
         builder: (BuildContext context) => HomePage(
-            selectedIndex: enquiryProvider!.bottomNavIndex,
-            typeOfOrganization: typeOfOrganizationData)));
+          selectedIndex: enquiryProvider!.bottomNavIndex,
+          typeOfOrganization: typeOfOrganizationData,
+        ),
+      ),
+    );
   }
 
   void _onItemTappedData(int index) {
-    setState(() {
-      enquiryProvider!.bottomNavIndex = index;
-      print(enquiryProvider!.bottomNavIndex);
-    });
+    enquiryProvider!.bottomNavIndex = index;
+    print(enquiryProvider!.bottomNavIndex);
+    setState(() {});
     Navigator.pop(context);
     Navigator.of(context).push(
       MaterialPageRoute(
