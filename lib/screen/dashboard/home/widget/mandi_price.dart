@@ -625,14 +625,18 @@ class _MandiPriceScreenState extends State<MandiPriceScreen> {
                   if (homeProvider!.selectedSortItemsValue.trim() ==
                       'Low To High Price') {
                     homeProvider!.mandiPriceData.sort((a, b) {
-                      final priceA = a.modalPrice ?? double.infinity;
-                      final priceB = b.modalPrice ?? double.infinity;
+                      final priceA = double.tryParse(a.modalPrice ?? '0.0') ??
+                          double.infinity;
+                      final priceB = double.tryParse(b.modalPrice ?? '0.0') ??
+                          double.infinity;
                       return priceA.compareTo(priceB);
                     });
                   } else {
                     homeProvider!.mandiPriceData.sort((a, b) {
-                      final priceA = a.modalPrice ?? -double.infinity;
-                      final priceB = b.modalPrice ?? -double.infinity;
+                      final priceA = double.tryParse(a.modalPrice ?? '0.0') ??
+                          -double.infinity;
+                      final priceB = double.tryParse(b.modalPrice ?? '0.0') ??
+                          -double.infinity;
                       return priceB.compareTo(priceA);
                     });
                   }

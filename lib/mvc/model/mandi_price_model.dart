@@ -36,9 +36,9 @@ class MandiPriceData {
   String? variety;
   String? grade;
   String? arrivalDate;
-  double? minPrice;
-  double? maxPrice;
-  double? modalPrice;
+  String? minPrice;
+  String? maxPrice;
+  String? modalPrice;
   int? iV;
 
   MandiPriceData(
@@ -64,9 +64,9 @@ class MandiPriceData {
     variety = json['variety'];
     grade = json['grade'];
     arrivalDate = json['arrival_date'];
-    minPrice = json['min_price'];
-    maxPrice = json['max_price'];
-    modalPrice = json['modal_price'];
+    minPrice = json['min_price'].toString();
+    maxPrice = json['max_price'].toString();
+    modalPrice = json['modal_price'].toString();
     iV = json['__v'];
   }
 

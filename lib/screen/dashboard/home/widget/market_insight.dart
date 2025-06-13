@@ -415,7 +415,7 @@ class _MarketInsightScreenState extends State<MarketInsightScreen> {
                           ),
                           Padding(
                             padding: const EdgeInsets.only(
-                                left: 15.0, right: 15.0, top: 15.0),
+                                left: 15, right: 15, top: 15),
                             child: TextButton(
                               onPressed: () {
                                 Navigator.push(
@@ -423,8 +423,7 @@ class _MarketInsightScreenState extends State<MarketInsightScreen> {
                                   MaterialPageRoute(
                                     builder: (context) => PriceHistoryPage(
                                       commodityId: homeProvider!
-                                          .marketInsightList[index]
-                                          .primaryKey, // Pass the primary key here
+                                          .marketInsightList[index].id,
                                     ),
                                   ),
                                 );

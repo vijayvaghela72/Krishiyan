@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:intl/intl.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:krishiyan/helper/constant.dart';
 
@@ -12,7 +13,7 @@ class PriceData {
   factory PriceData.fromJson(Map<String, dynamic> json) {
     return PriceData(
       price: json['price'].toDouble(),
-      date: DateTime.parse(json['date']),
+      date: DateFormat('dd/MM/yyyy').parse(json['date']),
     );
   }
 }

@@ -173,12 +173,13 @@ class HomeProvider extends ChangeNotifier {
   ) async {
     showLoading();
     final response = await getAPICall(
-        apiUrl: "${baseUrl}appData/price"
+        apiUrl: "${baseUrl}market/market-insight"
             "?state=$state&district=$district&commodity=$commodity");
     stopLoading();
     if (response.statusCode == 200) {
       print("200");
-      final List<dynamic> jsonResponse = json.decode(response.body);
+      var dataResponse = json.decode(response.body);
+      final List<dynamic> jsonResponse = dataResponse['data'];
       print("Get Market Price Details: $jsonResponse");
       marketInsightList =
           jsonResponse.map((item) => MarketInsight.fromJson(item)).toList();

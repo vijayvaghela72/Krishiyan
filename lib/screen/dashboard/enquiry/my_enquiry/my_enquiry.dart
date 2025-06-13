@@ -1,9 +1,5 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:chip_list/chip_list.dart';
-import 'package:krishiyan/helper/api_base_helper.dart';
-import 'package:krishiyan/helper/constant.dart';
 import 'package:krishiyan/helper/loading.dart';
 import 'package:krishiyan/helper/provider.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -13,7 +9,6 @@ import 'package:krishiyan/mvc/controller/enquiry_dashboard_controller.dart';
 import 'package:krishiyan/screen/dashboard/enquiry/enquiry_model.dart';
 import 'package:krishiyan/screen/dashboard/enquiry/widget/edit_buy_commodity.dart';
 import 'package:krishiyan/screen/dashboard/enquiry/widget/edit_sell_commodity.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 myEnquiryWidget(BuildContext context, Function update) {
   return Column(
