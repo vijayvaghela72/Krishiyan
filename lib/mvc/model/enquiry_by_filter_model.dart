@@ -45,7 +45,7 @@ class EnquiryByFilterData {
   String? photoVideoLink;
   String? comments;
   bool? verified;
-  int? iV;
+  String? iV;
 
   EnquiryByFilterData(
       {this.sId,

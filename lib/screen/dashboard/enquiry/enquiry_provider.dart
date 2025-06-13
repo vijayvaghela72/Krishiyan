@@ -3,10 +3,13 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:krishiyan/helper/constant.dart';
+import 'package:krishiyan/helper/loading.dart';
+import 'package:krishiyan/helper/snackbar.dart';
 import 'package:krishiyan/localization/app_localizations.dart';
 import 'package:krishiyan/mvc/model/crop_name_model.dart';
 import 'package:krishiyan/mvc/model/enquiry_by_filter_model.dart';
 import 'package:krishiyan/screen/dashboard/enquiry/enquiry_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class EnquiryProvider extends ChangeNotifier {
   // Main Data Variable
@@ -65,5 +68,46 @@ class EnquiryProvider extends ChangeNotifier {
     selectedCrop = null;
     cropData = null;
     update();
+  }
+
+  List<WishlistItem> wishList = [];
+  getWishList() async {
+    print('Testing A ');
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String userId = await prefs.get('id').toString();
+    final response = await getAPICall(
+      apiUrl: '${baseUrl}wishlist/?userId=$userId',
+    );
+    if (response.statusCode == 200) {
+      wishList = WishlistResponse.fromJson(json.decode(response.body)).wishlist;
+    } else {
+      throw Exception('Failed to load wishlist');
+    }
+  }
+
+  getRemoveFromWishList(
+    String whishListId,
+    int index,
+    Function update,
+  ) async {
+    print('Testing B ');
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String userId = await prefs.get('id').toString();
+    showLoading();
+    final response = await deleteAPICall(
+      apiUrl: '${baseUrl}wishlist/remove/whishListId',
+      parameter: json.encode({'userId': userId}),
+    );
+    stopLoading();
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      setSnackbar(data['message']);
+      wishList.removeAt(index);
+      update();
+    } else {
+      setSnackbar('Failed to load wishlist');
+      update();
+      throw Exception('Failed to load wishlist');
+    }
   }
 }
