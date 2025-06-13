@@ -1170,7 +1170,7 @@ class _FarmerProfilePageState extends State<FarmerProfilePage> {
   void _onTextChanged(String text) async {
     try {
       final response = await postAPICall(
-        apiUrl: baseUrl + PincodeToState,
+        apiUrl: PincodeToState,
         parameter: json.encode({'pincode': text}),
       );
 
@@ -1211,7 +1211,7 @@ class _FarmerProfilePageState extends State<FarmerProfilePage> {
 
   Future<List<PostOffice>> fetchItems() async {
     final response = await postAPICall(
-      apiUrl: baseUrl + PincodeToState,
+      apiUrl: PincodeToState,
       parameter: json.encode({'pincode': '360001'}),
     );
 

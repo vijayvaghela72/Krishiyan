@@ -185,42 +185,52 @@ class _PriceHistoryPageState extends State<PriceHistoryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Price History")),
+      appBar: AppBar(
+        title: Text("Price History"),
+      ),
       body: Column(
         children: [
           // Time interval buttons
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              ElevatedButton(
-                onPressed: () => updateChartData(0),
-                child: Text('1 Month'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: intSelectedType == 0 ? Colors.grey : null,
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: () => updateChartData(0),
+                  child: Text('1 Month'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: intSelectedType == 0 ? Colors.grey : null,
+                  ),
                 ),
-              ),
-              ElevatedButton(
-                onPressed: () => updateChartData(1),
-                child: Text('3 Months'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: intSelectedType == 1 ? Colors.grey : null,
+                SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: () => updateChartData(1),
+                  child: Text('3 Months'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: intSelectedType == 1 ? Colors.grey : null,
+                  ),
                 ),
-              ),
-              ElevatedButton(
-                onPressed: () => updateChartData(2),
-                child: Text('6 Months'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: intSelectedType == 2 ? Colors.grey : null,
+                SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: () => updateChartData(2),
+                  child: Text('6 Months'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: intSelectedType == 2 ? Colors.grey : null,
+                  ),
                 ),
-              ),
-              ElevatedButton(
-                onPressed: () => updateChartData(3),
-                child: Text('1 Year'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: intSelectedType == 3 ? Colors.grey : null,
+                SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: () => updateChartData(3),
+                  child: Text('1 Year'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: intSelectedType == 3 ? Colors.grey : null,
+                  ),
                 ),
-              ),
-            ],
+                SizedBox(width: 10),
+              ],
+            ),
           ),
           Container(
             height: MediaQuery.of(context).size.height * 0.6,
@@ -233,7 +243,7 @@ class _PriceHistoryPageState extends State<PriceHistoryPage> {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else if (snapshot.hasData) {
                   return Padding(
-                    padding: const EdgeInsets.all(25.0),
+                    padding: const EdgeInsets.all(25),
                     child: LineChart(
                       LineChartData(
                         minY: calculateMinY(chartData), // Set minY dynamically
@@ -326,55 +336,58 @@ class _PriceHistoryPageState extends State<PriceHistoryPage> {
                             maxContentWidth: 100,
                             getTooltipColor: (touchedSpot) => Colors.black,
                             getTooltipItems: (touchedSpots) {
-                              return touchedSpots
-                                  .map((LineBarSpot touchedSpot) {
-                                // Convert the x value (milliseconds since epoch) to a DateTime object
-                                DateTime date =
-                                    DateTime.fromMillisecondsSinceEpoch(
-                                        touchedSpot.x.toInt());
-
-                                // Format the date as desired (e.g., "dd MMM yyyy" or any other format)
-                                String formattedDate =
-                                    "${date.day} ${_getMonthName(date.month)}";
-
-                                final textStyle = TextStyle(
-                                  color: Colors.green,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
-                                );
-
-                                // Display the formatted date and the y value in the tooltip
-                                return LineTooltipItem(
-                                  '$formattedDate : ${touchedSpot.y.toStringAsFixed(2)}',
-                                  textStyle,
-                                );
-                              }).toList();
+                              return touchedSpots.map(
+                                (LineBarSpot touchedSpot) {
+                                  // Convert the x value (milliseconds since epoch) to a DateTime object
+                                  DateTime date =
+                                      DateTime.fromMillisecondsSinceEpoch(
+                                          touchedSpot.x.toInt());
+                                  // Format the date as desired (e.g., "dd MMM yyyy" or any other format)
+                                  String formattedDate =
+                                      "${date.day} ${_getMonthName(date.month)}";
+                                  final textStyle = TextStyle(
+                                    color: Colors.green,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                  );
+                                  // Display the formatted date and the y value in the tooltip
+                                  return LineTooltipItem(
+                                    '$formattedDate : ${touchedSpot.y.toStringAsFixed(2)}',
+                                    textStyle,
+                                  );
+                                },
+                              ).toList();
                             },
                           ),
                           getTouchedSpotIndicator: (LineChartBarData barData,
                               List<int> spotIndexes) {
-                            return spotIndexes.map((spotIndex) {
-                              return TouchedSpotIndicatorData(
-                                FlLine(color: Colors.green, strokeWidth: 2),
-                                FlDotData(
-                                  show: true,
-                                  getDotPainter:
-                                      (spot, percent, barData, index) =>
-                                          FlDotCirclePainter(
-                                              radius: 5,
-                                              color: Colors.green,
-                                              strokeWidth: 2,
-                                              strokeColor: Colors.white),
-                                ),
-                              );
-                            }).toList();
+                            return spotIndexes.map(
+                              (spotIndex) {
+                                return TouchedSpotIndicatorData(
+                                  FlLine(color: Colors.green, strokeWidth: 2),
+                                  FlDotData(
+                                    show: true,
+                                    getDotPainter:
+                                        (spot, percent, barData, index) =>
+                                            FlDotCirclePainter(
+                                      radius: 5,
+                                      color: Colors.green,
+                                      strokeWidth: 2,
+                                      strokeColor: Colors.white,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ).toList();
                           },
                         ),
                       ),
                     ),
                   );
                 } else {
-                  return Center(child: Text("No data available"));
+                  return Center(
+                    child: Text("No data available"),
+                  );
                 }
               },
             ),

@@ -868,7 +868,7 @@ class _EditAddressScreenState extends State<EditAddressScreen> {
   void _onTextChanged(String text) async {
     try {
       final response = await postAPICall(
-        apiUrl: baseUrl + PincodeToState,
+        apiUrl: PincodeToState,
         parameter: json.encode({'pincode': text}),
       );
 

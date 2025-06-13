@@ -4,12 +4,12 @@ import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:krishiyan/helper/loading.dart';
 import 'package:otp_text_field/style.dart';
 import '../../../../helper/app_global.dart';
 import 'package:http_parser/http_parser.dart';
 import '../../../../helper/alert_helper.dart';
 import 'package:otp_text_field/otp_field.dart';
+import 'package:krishiyan/helper/loading.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:krishiyan/helper/constant.dart';
 import 'package:path_provider/path_provider.dart';
@@ -201,11 +201,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       return;
     }
 
-    // Construct the image URL
-    String imageUrl =
-        '${baseUrlEnd}images/${organizationName}_profile_image.jpg';
-    // print("Fetching image from URL: $imageUrl");
-
     // Update the UI with the fetched image URL
     setState(() {
       _imageUrl; // Store the fetched image URL to display it
@@ -366,7 +361,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                         : _image != null
                                             ? FileImage(
                                                 _image!) // Show local selected image
-
                                             : AssetImage(
                                                     "assets/images/user_profile.png")
                                                 as ImageProvider, // Default image
@@ -1041,8 +1035,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             alignment: FractionalOffset.bottomCenter,
                             child: Container(
                               width: MediaQuery.of(context).size.width,
-                              padding: const EdgeInsets.only(
-                                  left: 25.0, right: 25.0),
+                              padding:
+                                  const EdgeInsets.only(left: 25, right: 25),
                               child: ElevatedButton(
                                 onPressed: () {
                                   _getValue();
@@ -1053,15 +1047,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   textStyle: const TextStyle(fontSize: 18),
                                   backgroundColor: const Color(0xFF3FC041),
                                   shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.circular(12), // <-- Radius
+                                    borderRadius: BorderRadius.circular(12),
                                   ),
                                 ),
                                 child: Text(
                                   buildTranslate('save')!,
                                   style: const TextStyle(
-                                      fontSize: 15,
-                                      fontFamily: 'poppins-medium'),
+                                    fontSize: 15,
+                                    fontFamily: 'poppins-medium',
+                                  ),
                                 ),
                               ),
                             ),
@@ -1780,15 +1774,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   _updateProfileDetailsApiCall(
-      String nameOfOrganization,
-      String typeOfOrganization,
-      String dateOrganization,
-      String registrationNumber,
-      String officeNumber,
-      String emailID,
-      String promoterName,
-      String cbboName,
-      String designation) async {
+    String nameOfOrganization,
+    String typeOfOrganization,
+    String dateOrganization,
+    String registrationNumber,
+    String officeNumber,
+    String emailID,
+    String promoterName,
+    String cbboName,
+    String designation,
+  ) async {
     print('Testing D');
 
     if (nameOfOrganization.isNotEmpty &&
@@ -1810,7 +1805,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         "yourDesignation": designation,
         "promoterName": promoterName,
         "RegistrationNumber": registrationNumber,
-        "CBBOName": cbboName
+        "CBBOName": cbboName,
+        "URL": 'ok',
       });
       print('data  : $data');
 

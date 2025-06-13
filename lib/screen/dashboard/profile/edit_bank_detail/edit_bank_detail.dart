@@ -51,84 +51,83 @@ class _EditBankDetailPageState extends State<EditBankDetailPage> {
 
 // Function to pick an image from the gallery or camera
   Future<void> _pickImage() async {
-    try {
-      // Check if permissions are granted
-      final XFile? pickedFile =
-          await _picker.pickImage(source: ImageSource.gallery);
+    // try {
+    // Check if permissions are granted
+    final XFile? pickedFile =
+        await _picker.pickImage(source: ImageSource.gallery);
 
-      if (pickedFile != null) {
-        setState(() {
-          _image = File(pickedFile.path);
-        });
+    if (pickedFile != null) {
+      setState(() {
+        _image = File(pickedFile.path);
+      });
 
-        // Uncomment this line if you want to upload after selecting the image
-        // _uploadImage(_image!);
-      } else {
-        // Handle case when user cancels image picking
-        print("No image selected.");
-      }
-    } catch (e) {
-      // Handle any exceptions
-      print("Error picking image: $e");
+      // Uncomment this line if you want to upload after selecting the image
+      _uploadImage(_image!);
+    } else {
+      // Handle case when user cancels image picking
+      print("No image selected.");
     }
+    // } catch (e) {
+    //   // Handle any exceptions
+    //   print("Error picking image: $e");
+    // }
   }
 
   // Function to upload the image to AWS using Dio
   Future<void> _uploadImage(File image) async {
-    try {
-      String fileName = _generateUniqueKey(bankName!, accountNumber!);
-      print("FileName");
-      print(fileName);
+    // try {
+    String fileName = _generateUniqueKey(bankName ?? '', accountNumber ?? '');
+    print("FileName");
+    print(fileName);
 
-      // Create a multipart request
-      var request =
-          http.MultipartRequest('POST', Uri.parse('${baseUrl}upload'));
+    // Create a multipart request
+    var request = http.MultipartRequest('POST', Uri.parse('${baseUrl}upload'));
 
-      // Add headers
-      final timestamp = DateTime.now().millisecondsSinceEpoch.toString();
-      final signature = hmacSha256(encryptionKey, timestamp);
-      request.headers.addAll({
-        "Accept": "application/json",
-        "Connection": "application/json",
-        "Authorization": 'Bearer',
-        'x-timestamp': timestamp,
-        'x-signature': signature,
-      });
-      print("Image size: ${(await image.length()) / (1024 * 1024)} MB");
-      // Add the image file
-      request.files.add(await http.MultipartFile.fromPath(
-        'image',
-        image.path,
-        filename: fileName,
-        contentType: MediaType('multipart', 'form-data'),
-      ));
+    // Add headers
+    final timestamp = DateTime.now().millisecondsSinceEpoch.toString();
+    final signature = hmacSha256(encryptionKey, timestamp);
+    request.headers.addAll({
+      "Accept": "application/json",
+      "Connection": "application/json",
+      "Authorization": 'Bearer',
+      'x-timestamp': timestamp,
+      'x-signature': signature,
+    });
+    print("Image size: ${(await image.length()) / (1024 * 1024)} MB");
+    // Add the image file
+    request.files.add(await http.MultipartFile.fromPath(
+      'image',
+      image.path,
+      filename: fileName,
+      contentType: MediaType('multipart', 'form-data'),
+    ));
 
-      // Send the request
-      var response = await request.send();
-      print('response status: ${response.statusCode}');
+    // Send the request
+    var response = await request.send();
+    print('response status: ${response.statusCode}');
 
-      if (response.statusCode == 200) {
-        // Parse the response
-        var responseBody = await response.stream.bytesToString();
-        var jsonResponse = jsonDecode(responseBody);
-        print('object: $jsonResponse');
-        String imageKey = jsonResponse['Key'].toString();
-        // Construct the image URL
-        String imageUrl = jsonResponse['location'].toString();
-        // await cacheImage(imageKey, imageUrl);
-        _imageUrl = imageUrl;
-        setState(() {});
-        // Handle the successful response
-        print("Image uploaded successfully. Image URL: $imageUrl");
-        print(_imageUrl);
-        print("Image key: $imageKey");
-      } else {
-        // Handle error response
-        print("Failed to upload image. Status code: ${response.statusCode}");
-      }
-    } catch (e) {
-      print("Error uploading image: $e");
+    if (response.statusCode == 200) {
+      // Parse the response
+      var responseBody = await response.stream.bytesToString();
+      var jsonResponse = jsonDecode(responseBody);
+      print('object: $jsonResponse');
+      String imageKey = jsonResponse['Key'].toString();
+      // Construct the image URL
+      String imageUrl = jsonResponse['location'].toString();
+      // await cacheImage(imageKey, imageUrl);
+      _imageUrl = imageUrl;
+      setState(() {});
+      // Handle the successful response
+      print("Image uploaded successfully. Image URL: $imageUrl");
+      print(_imageUrl);
+      print("Image key: $imageKey");
+    } else {
+      // Handle error response
+      print("Failed to upload image. Status code: ${response.statusCode}");
     }
+    // } catch (e) {
+    //   print("Error uploading image: $e");
+    // }
   }
 
   // Function to generate a unique key from the bank name and account number

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'other_detail/other_detail.dart';
@@ -11,7 +12,9 @@ import 'package:krishiyan/helper/constant.dart';
 import 'package:krishiyan/screen/login/login.dart';
 import 'other_profile_edit/other_profile_edit.dart';
 import '../../../localization/app_localizations.dart';
+import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:krishiyan/mvc/model/api_reaponse_model.dart';
 import 'package:krishiyan/screen/dashboard/profile/delete_account/delete_account.dart';
 
 class Profile extends StatefulWidget {
@@ -34,6 +37,21 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
     super.initState();
     getDetails();
     getPrefValue();
+  }
+
+  Future<void> getProfileDetails() async {
+    String id = (await AppGlobal.getStringPreference('id'))!;
+    print("IDDD");
+    print(id);
+    contactNumber = (await AppGlobal.getStringPreference('contactNumber'))!;
+    print("contactNumber : $contactNumber");
+    var response =
+        await getAPICall(apiUrl: FRM_PROFILE_DETAILS + contactNumber);
+    if (response.statusCode == 200) {
+      APIResponse? apiResponse =
+          APIResponse.fromJson(json.decode(response.toString()));
+      String? date = apiResponse.frmProfileData!.promoterName;
+    } else {}
   }
 
   @override
