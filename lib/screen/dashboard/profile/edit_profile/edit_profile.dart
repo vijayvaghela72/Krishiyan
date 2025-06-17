@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:krishiyan/screen/dashboard/profile/profile.dart';
 import 'package:otp_text_field/style.dart';
 import '../../../../helper/app_global.dart';
 import 'package:http_parser/http_parser.dart';
@@ -58,8 +59,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       dateOfOrganizationValue = "",
       typeOfOrg = "";
   // Method to pick an image from the gallery
-  String? _imageUrl; // AWS image URL
-
   Future<void> _pickImage(String organizationName) async {
     // Check if the organization name is empty and handle accordingly
     if (organizationName.isEmpty) {
@@ -176,11 +175,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         // Construct the image URL
         String imageUrl = jsonResponse['location'].toString();
         // await cacheImage(imageKey, imageUrl);
-        _imageUrl = imageUrl;
+        url = imageUrl;
         setState(() {});
         // Handle the successful response
         print("Image uploaded successfully. Image URL: $imageUrl");
-        print(_imageUrl);
+        print(url);
         print("Image key: $imageKey");
       } else {
         // Handle error response
@@ -190,21 +189,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       // Handle any errors that occur during the image upload process
       print("Error uploading image: $e");
     }
-
-    // Optionally load the saved image URL to make sure the image is reflected on the UI
-    _loadImageUrl(organizationName);
-  }
-
-  Future<void> _loadImageUrl(String organizationName) async {
-    if (organizationName.isEmpty) {
-      print("Organization name is empty. Please enter a valid name.");
-      return;
-    }
-
-    // Update the UI with the fetched image URL
-    setState(() {
-      _imageUrl; // Store the fetched image URL to display it
-    });
   }
 
   String convertDateFormat(String date) {
@@ -325,12 +309,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     print(
                         'snapshot.data!.registrationNumber : ${snapshot.data!.registrationNumber}');
 
-                    print('_imageUrl : ${_imageUrl}');
+                    print('_imageUrl : ${url}');
 
                     print('_image : ${_image}');
 
-                    print(
-                        'condition : ${_imageUrl != null && _imageUrl!.isNotEmpty}');
+                    print('condition : ${url != null && url!.isNotEmpty}');
                     return Form(
                       key: _formKey,
                       child: Column(
@@ -353,11 +336,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                         File(
                                             '')), // Use _imageUrl to refresh widget
                                     backgroundColor: Colors.white,
-                                    backgroundImage: _imageUrl != null &&
-                                            _imageUrl!.isNotEmpty
+                                    backgroundImage: url != null && url != ''
                                         ? NetworkImage(
-                                            "${_imageUrl!}?${DateTime.now().millisecondsSinceEpoch}") // Show AWS image URL
-
+                                            "${url!}?${DateTime.now().millisecondsSinceEpoch}",
+                                            headers: commonHeader,
+                                          )
                                         : _image != null
                                             ? FileImage(
                                                 _image!) // Show local selected image
@@ -475,48 +458,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           const SizedBox(
                             height: 10,
                           ),
-                          // GestureDetector(
-                          //   onTapDown: (TapDownDetails details) {
-                          //     servingPopupMenu(
-                          //       context,
-                          //       details.globalPosition,
-                          //       update,
-                          //     );
-                          //   },
-                          //   child: Container(
-                          //     margin: const EdgeInsets.fromLTRB(5, 0, 5, 0),
-                          //     height: 30,
-                          //     decoration: BoxDecoration(
-                          //       color: Colors.white,
-                          //       borderRadius: BorderRadius.circular(20),
-                          //     ),
-                          //     child: Padding(
-                          //       padding:
-                          //           const EdgeInsets.symmetric(horizontal: 8),
-                          //       child: Row(
-                          //         children: [
-                          //           Expanded(
-                          //             child: Text(
-                          //               selectedFPOItemValue == null ? "" : selectedFPOItemValue,
-                          //               style: const TextStyle(
-                          //                 color: Colors.black,
-                          //                 fontSize: 9,
-                          //                 fontWeight: FontWeight.bold,
-                          //               ),
-                          //               overflow: TextOverflow.ellipsis,
-                          //             ),
-                          //           ),
-                          //           const Icon(
-                          //             Icons.keyboard_arrow_down,
-                          //             color: Colors.black,
-                          //             size: 25,
-                          //           ),
-                          //         ],
-                          //       ),
-                          //     ),
-                          //   ),
-                          // ),
-
                           Padding(
                             padding:
                                 const EdgeInsets.only(left: 25.0, right: 25.0),
@@ -616,11 +557,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               controller: dateOfOrganizationController,
                               keyboardType: TextInputType.text,
                               onSaved: (value) => dateOfOrganization = value,
-                              // initialValue:
-                              // dateOfOrganizationController == null
-                              //     ? AppGlobal.convertToCustomDateFormat(snapshot.data!.dateOfFpo.toString())
-                              //     : null,
-                              // initialValue: AppGlobal.convertToCustomDateFormat(snapshot.data!.dateOfFpo.toString()),
                               decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.symmetric(
                                     vertical: 10.0, horizontal: 10.0),
@@ -1806,7 +1742,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         "promoterName": promoterName,
         "RegistrationNumber": registrationNumber,
         "CBBOName": cbboName,
-        "URL": 'ok',
+        "URl": url,
       });
       print('data  : $data');
 

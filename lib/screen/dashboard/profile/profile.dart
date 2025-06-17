@@ -14,8 +14,21 @@ import 'other_profile_edit/other_profile_edit.dart';
 import '../../../localization/app_localizations.dart';
 import 'package:krishiyan/helper/api_base_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:krishiyan/mvc/model/api_reaponse_model.dart';
 import 'package:krishiyan/screen/dashboard/profile/delete_account/delete_account.dart';
+
+String? orgId;
+String? typeOfOrganizationVariable;
+String? nameOfFpo;
+String? typeOfFpo;
+String? dateOfFpo;
+String? organizationalEmail;
+String? contactNumber;
+String? promoterName;
+String? url;
+String? cbboName;
+String? registrationNumber;
+String? yourDesignation;
+List<String>? wishlist;
 
 class Profile extends StatefulWidget {
   const Profile({
@@ -37,21 +50,48 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
     super.initState();
     getDetails();
     getPrefValue();
+    fetchOrganizationData();
   }
 
-  Future<void> getProfileDetails() async {
-    String id = (await AppGlobal.getStringPreference('id'))!;
-    print("IDDD");
+  Future<void> fetchOrganizationData() async {
+    var id = (await AppGlobal.getStringPreference('id'))!;
+    print("Testing A");
     print(id);
     contactNumber = (await AppGlobal.getStringPreference('contactNumber'))!;
     print("contactNumber : $contactNumber");
-    var response =
-        await getAPICall(apiUrl: FRM_PROFILE_DETAILS + contactNumber);
+
+    final response = await getAPICall(
+      apiUrl: FRM_PROFILE_DETAILS + contactNumber,
+    );
+
     if (response.statusCode == 200) {
-      APIResponse? apiResponse =
-          APIResponse.fromJson(json.decode(response.toString()));
-      String? date = apiResponse.frmProfileData!.promoterName;
-    } else {}
+      final result = jsonDecode(response.body);
+
+      if (result['success'] == true && result['data'] != null) {
+        final data = result['data'];
+
+        orgId = data['_id'];
+        typeOfOrganizationVariable = data['typeOfOrganization'];
+        nameOfFpo = data['nameOfFpo'];
+        typeOfFpo = data['typeOfFpo'];
+        dateOfFpo = data['dateOfFpo'];
+        organizationalEmail = data['organizationalEmail'];
+        contactNumber = data['contactNumber'];
+        promoterName = data['promoterName'];
+        url = data['URl'];
+        cbboName = data['CBBOName'];
+        registrationNumber = data['RegistrationNumber'];
+        yourDesignation = data['yourDesignation'];
+        wishlist = List<String>.from(data['wishlist'] ?? []);
+        print('Organization _imageUrl : ${url}');
+        print('FPO data loaded successfully!');
+      } else {
+        print('No data found in API response.');
+      }
+      setState(() {});
+    } else {
+      print('API call failed with status: ${response.statusCode}');
+    }
   }
 
   @override
@@ -59,26 +99,6 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
     super.didChangeDependencies();
     // This will be called every time the page is pushed or the dependencies change
     getDetails(); // Make sure to call getDetails here to update the values
-  }
-
-  String? _imageUrl;
-
-  // Method to load the saved image from SharedPreferences
-  Future<void> _loadImageUrl(String organizationName) async {
-    if (organizationName.isEmpty) {
-      print("Organization name is empty. Please enter a valid name.");
-      return;
-    }
-
-    // Construct the image URL
-    String imageUrl =
-        '${baseUrlEnd}images/${organizationName}_profile_image.jpg';
-    print("Fetching image from URL: $imageUrl");
-
-    // Update the UI with the fetched image URL
-    setState(() {
-      _imageUrl = imageUrl; // Store the fetched image URL to display it
-    });
   }
 
   @override
@@ -116,9 +136,8 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       image: DecorationImage(
-                        image: _imageUrl != null
-                            ? NetworkImage(
-                                _imageUrl!) // If an image is selected, show it
+                        image: (url != null && url == '')
+                            ? NetworkImage(url!, headers: commonHeader)
                             : AssetImage("assets/images/user_profile.png")
                                 as ImageProvider, // Default image
                         fit: BoxFit
@@ -459,7 +478,6 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
       name = name;
       email = email;
       contactNumber = contactNumber;
-      _loadImageUrl(name);
     });
   }
 
