@@ -13,34 +13,34 @@ import 'package:krishiyan/mvc/model/villages_model.dart';
 import 'package:krishiyan/mvc/model/otp_details_model.dart';
 import 'package:krishiyan/mvc/controller/otp_controller.dart';
 import 'package:krishiyan/mvc/model/farmer_dashboard_model.dart';
+import 'package:krishiyan/screen/dashboard/frm/frm_model.dart';
 import 'package:otp_text_field/otp_field.dart';
-
-import '../enquiry/enquiry_model.dart';
 
 class FRMProvider extends ChangeNotifier {
   // widget data
   String? villageName, typeName;
   // farmer selection
   List<String> dropdownItems = [];
-
+  List<FarmerDataModel> farmerDataList = [];
   Future<void> fetchFarmerNameData() async {
-    try {
-      String? number = await AppGlobal.getStringPreference('contactNumber');
-      var num = number ?? "1";
-      var response = await getAPICall(apiUrl: FARMER_NAME + num);
-      print(num);
+    // try {
+    String? number = await AppGlobal.getStringPreference('contactNumber');
+    var num = number ?? "1";
+    var response = await getAPICall(apiUrl: FARMER_NAME + num);
+    print('*****************');
+    print(FARMER_NAME + num);
 
-      if (response.statusCode == 200) {
-        var jsonData = json.decode(response.body);
-        dropdownItems = jsonData['data']
-            .map<String>((item) => item['name'].toString())
-            .toList();
-      } else {
-        throw Exception('Failed to load farmers name');
-      }
-    } catch (e) {
-      print('Error fetching farmer name data: $e');
+    if (response.statusCode == 200) {
+      var jsonData = json.decode(response.body);
+      dropdownItems = jsonData['data']
+          .map<String>((item) => item['name'].toString())
+          .toList();
+    } else {
+      throw Exception('Failed to load farmers name');
     }
+    // } catch (e) {
+    //   print('Error fetching farmer name data: $e');
+    // }
   }
 
   // for crops selection
@@ -48,7 +48,7 @@ class FRMProvider extends ChangeNotifier {
   List<String> crops = [];
   Future<void> fetchCrops(Function update) async {
     try {
-      final response = await getAPICall(apiUrl: "${baseUrl}/all/crops");
+      final response = await getAPICall(apiUrl: "${baseUrl}all/crops");
       if (response.statusCode == 200) {
         crops = List<String>.from(jsonDecode(response.body)['data']);
         update();
@@ -291,41 +291,28 @@ class FRMProvider extends ChangeNotifier {
   ];
   // Fourth Tab - Insight
   bool searchCropsFlag = false;
-  List<cropsCategory> search_crops = [
-    cropsCategory(
-      name: "Total Farmer",
-      id: "1",
-      icon: 'assets/images/crops1.png',
-    ),
-    cropsCategory(
-        name: "Total Farmer Land(in HA)",
-        id: "2",
-        icon: 'assets/images/crops2.png'),
-    cropsCategory(
-        name: "Expected Yield(in Qtl)",
-        id: "3",
-        icon: 'assets/images/crops1.png'),
-  ];
+
   Future<FrmInsight?>? futureFrminSight;
   int selectedTopData = 0;
-
+  bool isNull = false;
   // farmmer list index = 5
   String? selectedSortItemsValue = '';
 
-  Future<FrmInsight?> fetchInsightsData() async {
+  Future<FrmInsight?> fetchInsightsData(bool fromInit) async {
     String? number = await AppGlobal.getStringPreference('contactNumber');
     var num = number ?? "1";
-
-    if (selectedCrop == null || selectedVillageName == null) {
-      print('Please select both crop and village');
-      return null;
+    if (!fromInit) {
+      if (selectedCrop == null || selectedVillageName == null) {
+        print('Please select both crop and village');
+        return null;
+      }
     }
-    final url =
-        '${baseUrl}appFarmer/farmers/insight?dealerNumber=$num&village=${selectedVillageName}&crop=${selectedCrop}&sort=${selectedSortItemsValue == 'highExpYield' ? 'highToLow' : 'lowToHigh'}';
+    final url = fromInit
+        ? '${baseUrl}appFarmer/farmers/insight?dealerNumber=$num'
+        : '${baseUrl}appFarmer/farmers/insight?dealerNumber=$num&village=${selectedVillageName}&crop=${selectedCrop}&sort=${selectedSortItemsValue == 'highExpYield' ? 'highToLow' : 'lowToHigh'}';
     try {
       final response = await getAPICall(apiUrl: url);
       if (response.statusCode == 200) {
-        print('API Response: ${response.body}');
         return FrmInsight.fromJson(jsonDecode(response.body));
       } else if (response.statusCode == 404) {
         var data = json.decode(response.body);

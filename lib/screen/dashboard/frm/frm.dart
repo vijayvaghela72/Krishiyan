@@ -82,6 +82,7 @@ class _FRMState extends State<FRM> with TickerProviderStateMixin {
     await frmProvider!.fetchCrops(setStateNow);
     await frmProvider!.fetchFarmerNameData();
     await frmProvider!.getVillageData(setStateNow, false);
+    frmProvider!.futureFrminSight = frmProvider!.fetchInsightsData(true);
     stopLoading();
   }
 
@@ -207,7 +208,7 @@ class _FRMState extends State<FRM> with TickerProviderStateMixin {
                     : frmProvider!.selectedTopData == 2
                         ? thirdTabData(context, setStateNow)
                         : frmProvider!.selectedTopData == 3
-                            ? fourthTabData(context, setStateNow)
+                            ? FourthTab()
                             : frmProvider!.selectedTopData == 4
                                 ? getFarmerListing(context, setStateNow)
                                 : Container(),

@@ -4,7 +4,50 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:krishiyan/mvc/model/frm_insight_model.dart';
 import 'package:krishiyan/localization/app_localizations.dart';
 
-getFarmerListing(BuildContext context, Function setStateNow) {
+Future<FrmInsight?> data() async {
+  return FrmInsight.fromJson({
+    "success": true,
+    "message": "Intersected farmers' data retrieved successfully",
+    "data": {
+      "farmers": frmProvider!.farmerDataList.map((farmer) {
+        // Get the first crop details if available, otherwise use defaults
+        final cropDetails = farmer.cropCultivationDetails != null &&
+                farmer.cropCultivationDetails!.isNotEmpty
+            ? farmer.cropCultivationDetails!.first
+            : null;
+
+        return {
+          "name": farmer.farmerDetails.name,
+          "whatsappNumber": farmer.farmerDetails.whatsappNumber,
+          "crop": cropDetails?.crops ?? "Unknown",
+          "areaInAcres": cropDetails?.areaInAcres.toInt() ?? 0,
+          "expectedYield": 0,
+        };
+      }).toList(),
+      "totalAreaInAcres": () {
+        int value = 0;
+        for (var farmer in frmProvider!.farmerDataList) {
+          print('farmer : ${farmer.cropCultivationDetails}');
+          if (farmer.cropCultivationDetails != null) {
+            for (var crop in farmer.cropCultivationDetails!) {
+              value += crop.areaInAcres.toInt();
+            }
+          }
+        }
+        return value;
+      }(),
+      "numberOfFarmers": frmProvider!.farmerDataList.length,
+    }
+  });
+}
+
+getFarmerListing(
+  BuildContext context,
+  Function setStateNow,
+) {
+  if (frmProvider!.isNull) {
+    frmProvider!.futureFrminSight = data();
+  }
   return Column(
     children: [
       Padding(
@@ -95,65 +138,65 @@ getFarmerListing(BuildContext context, Function setStateNow) {
               ),
             ),
             const Spacer(),
-            Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: Container(
-                width: 150,
-                height: 40,
-                color: Colors.white,
-                child: DropdownButtonFormField2<String>(
-                  isExpanded: true,
-                  decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.symmetric(vertical: 5),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: const BorderSide(
-                        color: Colors.grey,
-                        width: 1,
-                      ),
-                    ),
-                  ),
-                  hint: Text(
-                    buildTranslate('sortBy')!,
-                    style: const TextStyle(fontSize: 10),
-                  ),
-                  items: sortItems
-                      .map(
-                        (item) => DropdownMenuItem<String>(
-                          value: item,
-                          child: Text(
-                            item,
-                            style: const TextStyle(
-                              fontSize: 10,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ),
-                      )
-                      .toList(),
-                  onChanged: (value) {
-                    frmProvider!.futureFrminSight =
-                        frmProvider!.fetchInsightsData();
-                    setStateNow();
-                    //Do something when selected item is changed.
-                  },
-                  onSaved: (value) {
-                    frmProvider!.selectedSortItemsValue = value.toString();
-                  },
-                  buttonStyleData: const ButtonStyleData(
-                    padding: EdgeInsets.only(right: 10),
-                  ),
-                  iconStyleData: const IconStyleData(
-                    icon: ImageIcon(AssetImage('assets/images/sortBy.png')),
-                    iconSize: 20,
-                    iconEnabledColor: Colors.black,
-                  ),
-                  menuItemStyleData: const MenuItemStyleData(
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                  ),
-                ),
-              ),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.only(right: 8),
+            //   child: Container(
+            //     width: 150,
+            //     height: 40,
+            //     color: Colors.white,
+            //     child: DropdownButtonFormField2<String>(
+            //       isExpanded: true,
+            //       decoration: InputDecoration(
+            //         contentPadding: const EdgeInsets.symmetric(vertical: 5),
+            //         border: OutlineInputBorder(
+            //           borderRadius: BorderRadius.circular(8),
+            //           borderSide: const BorderSide(
+            //             color: Colors.grey,
+            //             width: 1,
+            //           ),
+            //         ),
+            //       ),
+            //       hint: Text(
+            //         buildTranslate('sortBy')!,
+            //         style: const TextStyle(fontSize: 10),
+            //       ),
+            //       items: sortItems
+            //           .map(
+            //             (item) => DropdownMenuItem<String>(
+            //               value: item,
+            //               child: Text(
+            //                 item,
+            //                 style: const TextStyle(
+            //                   fontSize: 10,
+            //                   color: Colors.grey,
+            //                 ),
+            //               ),
+            //             ),
+            //           )
+            //           .toList(),
+            //       onChanged: (value) {
+            //         frmProvider!.futureFrminSight =
+            //             frmProvider!.fetchInsightsData(false);
+            //         setStateNow();
+            //         //Do something when selected item is changed.
+            //       },
+            //       onSaved: (value) {
+            //         frmProvider!.selectedSortItemsValue = value.toString();
+            //       },
+            //       buttonStyleData: const ButtonStyleData(
+            //         padding: EdgeInsets.only(right: 10),
+            //       ),
+            //       iconStyleData: const IconStyleData(
+            //         icon: ImageIcon(AssetImage('assets/images/sortBy.png')),
+            //         iconSize: 20,
+            //         iconEnabledColor: Colors.black,
+            //       ),
+            //       menuItemStyleData: const MenuItemStyleData(
+            //         padding: EdgeInsets.symmetric(horizontal: 16),
+            //       ),
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),

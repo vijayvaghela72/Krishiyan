@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:krishiyan/helper/provider.dart';
+import 'package:krishiyan/screen/dashboard/frm/frm_model.dart';
 import '../../helper/alert_helper.dart';
 import '../model/api_reaponse_model.dart';
 import '../model/farmer_dashboard_model.dart';
@@ -34,8 +36,15 @@ class FarmerDashboardController {
         response = await getAPICall(apiUrl: endUrl);
       }
       if (response.statusCode == 200) {
+        var jsonData = json.decode(response.body);
+        FarmerResponse farmerResponse = FarmerResponse.fromJson(jsonData);
+        // Store the data in farmerDataList
+        frmProvider!.farmerDataList = farmerResponse.data;
+        print('farmerDataList : ${frmProvider!.farmerDataList.length}');
+        print('farmerDataList : ${frmProvider!.farmerDataList.length}');
         List jsonResponse = json.decode(response.body)['data'];
         print("Farmer Dashboard Response : ${jsonResponse}");
+
         return jsonResponse
             .map((data) => FarmerDetails.fromJson(data))
             .toList();
