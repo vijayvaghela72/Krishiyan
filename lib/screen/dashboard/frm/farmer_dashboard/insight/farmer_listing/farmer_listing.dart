@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:krishiyan/helper/provider.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:krishiyan/mvc/model/frm_insight_model.dart';
 import 'package:krishiyan/localization/app_localizations.dart';
 
