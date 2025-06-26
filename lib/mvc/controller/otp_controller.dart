@@ -11,7 +11,7 @@ class OtpController {
       {required BuildContext context}) async {
     var response = await postAPICall(
       apiUrl: GET_OTP,
-      parameter: jsonEncode(data),
+      parameter: data,
     );
 
     if (response.statusCode == 200) {
